@@ -1,32 +1,4 @@
-cars = [
-    {
-        'vid': 0,
-        'posx': 0,  # m
-        'lane': 0,
-        'speed': 5,  # m/s
-        'length': 4,
-        'pid': 0,
-        'dest': 6 * 1000,  # m
-        'start': 0  # s
-    },
-    {
-        'vid': 1,
-        'posx': 0,  # m
-        'lane': 0,
-        'speed': 8,  # m/s
-        'length': 5,
-        'pid': 0,
-        'dest': 4 * 1000,  # m
-        'start': 10  # s
-    }
-]
-
-maxstep = 1 * 60 * 60  # s
-step = 0  # s
-step_length = 1  # s
-road_length = 100000  # m
-number_of_lanes = 2
-safety_gap = 0  # m
+from random import randrange
 
 # assumptions
 # continoius driving speed
@@ -34,6 +6,46 @@ safety_gap = 0  # m
 # posx is in the middle of the front bumper
 # a car ends at posx + length
 # crash detection does not work with steps greater than 1
+
+# simulation properties
+maxstep = 2 * 60 * 60  # s
+step = 0  # s
+step_length = 1  # s
+
+# road network properties
+road_length = 10 * 1000  # m
+number_of_lanes = 4
+
+# car properties
+safety_gap = 0  # m
+
+# cars
+number_of_cars = 100
+last_vehicle_id = -1
+cars = []
+
+# generate cars
+for num in range(0, number_of_cars):
+    vid = last_vehicle_id + 1
+    posx = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
+    posx = 0  # start from beginning
+    lane = randrange(0, number_of_lanes, 1)
+    speed = randrange(0, 28, 1)
+    length = randrange(4, 5 + 1, 1)
+    pid = -1
+    dest = randrange(posx, road_length, 1 * 1000)  # off-ramps every 1000 m
+    start = randrange(0, maxstep, 1 * 60)  # in which minute to start
+    cars.append({
+        'vid': vid,
+        'posx': posx,
+        'lane': lane,
+        'speed': speed,
+        'length': length,
+        'pid': pid,
+        'dest': dest,
+        'start': start
+    })
+    last_vehicle_id = vid
 
 while 1:
     if step >= maxstep:
