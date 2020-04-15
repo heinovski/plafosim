@@ -53,7 +53,7 @@ while 1:
         exit(0)
     if len(cars) == 0:
         print("no more cars in the simulation")
-#        exit(0)  # do we really want to exit here?
+        exit(0)  # do we really want to exit here?
 
     for car in cars:
         if car['start'] > step:
