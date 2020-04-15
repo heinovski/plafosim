@@ -34,6 +34,7 @@ for num in range(0, number_of_cars):
     posx = 0  # start from beginning
     lane = randrange(0, number_of_lanes, 1)
     speed = randrange(0, 28, 1)
+    speed = 0  # start with 0 speed
     desired_speed = randrange(22, 28, 1)
     length = randrange(4, 5 + 1, 1)
     pid = -1
