@@ -54,17 +54,23 @@ while 1:
     if len(cars) == 0:
         print("no more cars in the simulation")
 #        exit(0)  # do we really want to exit here?
+
     for car in cars:
         if car['start'] > step:
             # car did not start yet
             continue
+        # destination reached?
         if car['posx'] >= car['dest']:
             print(step, ":", car['vid'], "reached its destination", car['dest'])
             cars.remove(car)
             continue
+
+        # the current status of the car
         print(step, ":", car['vid'], "is at", car['posx'], car['posx']-car['length'], car['lane'], "with", car['speed'])
+
         # increase position according to speed
         car['posx'] += car['speed'] * step_length
+
         # check for crashes of this car with any other car
         for other_car in cars:
             if car is other_car:
@@ -82,4 +88,5 @@ while 1:
                 print("crash", car['vid'], car['posx'], car['length'],
                       other_car['vid'], other_car['posx'], other_car['length'])
                 exit(1)
+
     step += step_length
