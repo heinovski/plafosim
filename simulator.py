@@ -6,6 +6,7 @@ from random import randrange
 # posx is in the middle of the front bumper
 # a car ends at posx + length
 # crash detection does not work with steps greater than 1
+# linear velocity
 
 # simulation properties
 maxstep = 2 * 60 * 60  # s
@@ -17,6 +18,8 @@ road_length = 10 * 1000  # m
 number_of_lanes = 4
 
 # car properties
+max_accel = 3  # m/s
+max_deccel = -5  # m/s
 safety_gap = 0  # m
 
 # cars
@@ -31,6 +34,7 @@ for num in range(0, number_of_cars):
     posx = 0  # start from beginning
     lane = randrange(0, number_of_lanes, 1)
     speed = randrange(0, 28, 1)
+    desired_speed = randrange(22, 28, 1)
     length = randrange(4, 5 + 1, 1)
     pid = -1
     dest = randrange(posx, road_length, 1 * 1000)  # off-ramps every 1000 m
@@ -40,6 +44,7 @@ for num in range(0, number_of_cars):
         'posx': posx,
         'lane': lane,
         'speed': speed,
+        'desired_speed': desired_speed,
         'length': length,
         'pid': pid,
         'dest': dest,
@@ -67,6 +72,19 @@ while 1:
 
         # the current status of the car
         print(step, ":", car['vid'], "is at", car['posx'], car['posx']-car['length'], car['lane'], "with", car['speed'])
+
+        # do we need to adjust our speed?
+        diff_to_desired = car['desired_speed'] - car['speed']
+        if diff_to_desired > 0:
+            # we need to accelerate
+            diff = min(diff_to_desired, max_accel)
+        elif diff_to_desired < 0:
+            # we need to deccelerate
+            diff = max(diff_to_desired, max_deccel)
+        else:
+            # we are good
+            diff = 0
+        car['speed'] += diff
 
         # increase position according to speed
         car['posx'] += car['speed'] * step_length
