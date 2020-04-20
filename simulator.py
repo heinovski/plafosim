@@ -37,7 +37,6 @@ for num in range(0, number_of_cars):
     speed = 0  # start with 0 speed
     desired_speed = randrange(22, 28, 1)
     length = randrange(4, 5 + 1, 1)
-    pid = -1
     dest = randrange(posx, road_length, 1 * 1000)  # off-ramps every 1000 m
     start = randrange(0, maxstep, 1 * 60)  # in which minute to start
     cars.append({
@@ -47,7 +46,6 @@ for num in range(0, number_of_cars):
         'speed': speed,
         'desired_speed': desired_speed,
         'length': length,
-        'pid': pid,
         'dest': dest,
         'start': start
     })
