@@ -30,8 +30,8 @@ cars = []
 # generate cars
 for num in range(0, number_of_cars):
     vid = last_vehicle_id + 1
-    posx = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
-    posx = 0  # start from beginning
+    origin = posx = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
+    origin = posx = 0  # start from beginning
     lane = randrange(0, number_of_lanes, 1)
     speed = randrange(0, 28, 1)
     speed = 0  # start with 0 speed
