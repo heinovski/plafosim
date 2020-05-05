@@ -1,12 +1,10 @@
 from random import randrange
 
 # assumptions
-# continoius driving speed
 # you just reach your destination
 # posx is in the middle of the front bumper
 # a vehicle ends at posx + length
 # crash detection does not work with steps greater than 1
-# linear velocity
 
 # simulation properties
 maxstep = 100 * 60 * 60  # s
@@ -17,15 +15,20 @@ step_length = 1  # s
 road_length = 10 * 1000  # m
 number_of_lanes = 1
 
-# vehicle properties
-max_accel = 3  # m/s
-max_deccel = -5  # m/s
-safety_gap = 0  # m
-
 # vehicles
 number_of_vehicles = 10
-last_vehicle_id = -1
 vehicles = []
+
+
+def record_stats():
+    for vehicle in vehicles:
+        if vehicle.start_time == step:
+            vehicle.stats()
+        if vehicle.start_time > step:
+            # vehicle did not start yet
+            continue
+        # the current status of the vehicle
+    #    vehicle.stats()
 
 
 def change_lanes():
@@ -41,7 +44,8 @@ def adjust_speeds():
         if vehicle.start_time > step:
             # vehicle did not start yet
             continue
-        vehicle.speed = new_speed(vehicle.speed, vehicle.desired_speed, max_accel, max_deccel)
+        vehicle.speed = new_speed(vehicle.speed, vehicle.desired_speed,
+                                  vehicle.max_acceleration, vehicle.max_deceleration)
 
 
 def move_vehicles():
@@ -64,7 +68,7 @@ def move_vehicles():
 
 
 def check_collisions():
-    # TODO we kind of do not want collissions at all
+    # TODO we kind of do not want collisions at all
     # either the cf model shouldn't allow collisions or we should move this to the move part
     for vehicle in vehicles:
         if vehicle.start_time > step:
@@ -116,16 +120,16 @@ def check_collisions():
 # then move
 
 
-def new_speed(current_speed, desired_speed, max_accel, max_decel):
+def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
     new_speed = -1
     # do we need to adjust our speed?
     diff_to_desired = desired_speed - current_speed
     if diff_to_desired > 0:
         # we need to accelerate
-        new_speed = current_speed + min(diff_to_desired, max_accel)
+        new_speed = current_speed + min(diff_to_desired, max_acceleration)
     elif diff_to_desired < 0:
-        # we need to deccelerate
-        new_speed = current_speed - max(diff_to_desired, max_deccel)
+        # we need to decelerate
+        new_speed = current_speed - max(diff_to_desired, max_deceleration)
 
     # TODO vsafe?
 
@@ -141,7 +145,7 @@ def new_speed(current_speed, desired_speed, max_accel, max_decel):
 class Vehicle:
     'A vehicle in the simulation'
 
-    def __init__(self, vid, origin, destination, desired_speed, length, start_time):
+    def __init__(self, vid, origin, destination, desired_speed, start_time, length, max_acceleration, max_deceleration):
         '''Initialize a vehicle'''
         self.vid = vid
         # trip details
@@ -155,6 +159,8 @@ class Vehicle:
         self.speed = randrange(0, 28, 1)
         self.speed = 0  # start with 0 speed for now
         self.length = length
+        self.max_acceleration = max_acceleration
+        self.max_deceleration = max_deceleration
 
     def stats(self):
         '''Print stats of a vehicle'''
@@ -162,19 +168,26 @@ class Vehicle:
 
 
 # generate vehicles
+last_vehicle_id = -1
 for num in range(0, number_of_vehicles):
     vid = last_vehicle_id + 1
     origin = posx = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
     origin = posx = 0  # start from beginning
     desired_speed = randrange(22, 28, 1)
-    length = randrange(4, 5 + 1, 1)
     dest = randrange(posx, road_length, 1 * 1000)  # off-ramps every 1000 m
     start = randrange(0, maxstep, 1 * 60)  # in which minute to start
+    # vehicle properties
+    length = randrange(4, 5 + 1, 1)
+    max_acceleration = 3  # m/s
+    max_deceleration = -5  # m/s
+    # safety_gap = 0  # m
 
-    vehicles.append(Vehicle(vid, origin, dest, desired_speed, length, start))
+    vehicles.append(Vehicle(vid, origin, dest, desired_speed, start, length,  max_acceleration, max_deceleration))
 
     last_vehicle_id = vid
 
+
+# let the simulator run
 while 1:
     if step >= maxstep:
         print("reached step limit")
@@ -184,14 +197,7 @@ while 1:
         exit(0)  # do we really want to exit here?
 
     # stats
-    for vehicle in vehicles:
-        if vehicle.start_time == step:
-            vehicle.stats()
-        if vehicle.start_time > step:
-            # vehicle did not start yet
-            continue
-        # the current status of the vehicle
-    #    vehicle.stats()
+    record_stats()
 
     # perform lane changes (for all vehicles)
     change_lanes()
