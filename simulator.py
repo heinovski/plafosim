@@ -4,7 +4,7 @@ from random import randrange
 # continoius driving speed
 # you just reach your destination
 # posx is in the middle of the front bumper
-# a car ends at posx + length
+# a vehicle ends at posx + length
 # crash detection does not work with steps greater than 1
 # linear velocity
 
@@ -17,75 +17,75 @@ step_length = 1  # s
 road_length = 10 * 1000  # m
 number_of_lanes = 1
 
-# car properties
+# vehicle properties
 max_accel = 3  # m/s
 max_deccel = -5  # m/s
 safety_gap = 0  # m
 
-# cars
-number_of_cars = 10
+# vehicles
+number_of_vehicles = 10
 last_vehicle_id = -1
-cars = []
+vehicles = []
 
 
 def change_lanes():
-    for car in cars:
-        if car.start_time > step:
-            # car did not start yet
+    for vehicle in vehicles:
+        if vehicle.start_time > step:
+            # vehicle did not start yet
             continue
         # TODO
 
 
 def adjust_speeds():
-    for car in cars:
-        if car.start_time > step:
-            # car did not start yet
+    for vehicle in vehicles:
+        if vehicle.start_time > step:
+            # vehicle did not start yet
             continue
-        car.speed = new_speed(car.speed, car.desired_speed, max_accel, max_deccel)
+        vehicle.speed = new_speed(vehicle.speed, vehicle.desired_speed, max_accel, max_deccel)
 
 
 def move_vehicles():
-    for car in cars:
-        if car.start_time > step:
-            # car did not start yet
+    for vehicle in vehicles:
+        if vehicle.start_time > step:
+            # vehicle did not start yet
             continue
         # increase position according to speed
-        car.posx += car.speed * step_length
+        vehicle.posx += vehicle.speed * step_length
         # TODO use diff to destination for increasing
 
         # destination reached?
-        if car.posx >= car.destination:
+        if vehicle.posx >= vehicle.destination:
             # posx does not match destination
-            travelled_distance = car.posx - car.origin
-            travelled_time = step - car.start_time
-            print(step, ":", car.vid, "reached its destination", car.destination, travelled_distance, travelled_time)
-            cars.remove(car)
+            travel_distance = vehicle.posx - vehicle.origin
+            travel_time = step - vehicle.start_time
+            print(step, ":", vehicle.vid, "reached destination", vehicle.destination, travel_distance, travel_time)
+            vehicles.remove(vehicle)
             continue
 
 
 def check_collisions():
     # TODO we kind of do not want collissions at all
     # either the cf model shouldn't allow collisions or we should move this to the move part
-    for car in cars:
-        if car.start_time > step:
-            # car did not start yet
+    for vehicle in vehicles:
+        if vehicle.start_time > step:
+            # vehicle did not start yet
             continue
-        # check for crashes of this car with any other car
-        for other_car in cars:
-            if car is other_car:
+        # check for crashes of this vehicle with any other vehicle
+        for other_vehicle in vehicles:
+            if vehicle is other_vehicle:
                 # we do not need to compare us to ourselves
                 continue
-            if other_car.start_time > step:
-                # other car did not start yet
+            if other_vehicle.start_time > step:
+                # other vehicle did not start yet
                 continue
-            if car.lane is not other_car.lane:
-                # we do not car about other lanes
+            if vehicle.lane is not other_vehicle.lane:
+                # we do not vehicle about other lanes
                 continue
-            if car.posx >= (other_car.posx - other_car.length) and \
-                    other_car.posx >= (car.posx - car.length):
-                # car is within the back of other_car
-                print("crash", car.vid, car.posx, car.length,
-                      other_car.vid, other_car.posx, other_car.length)
+            if vehicle.posx >= (other_vehicle.posx - other_vehicle.length) and \
+                    other_vehicle.posx >= (vehicle.posx - vehicle.length):
+                # vehicle is within the back of other_vehicle
+                print("crash", vehicle.vid, vehicle.posx, vehicle.length,
+                      other_vehicle.vid, other_vehicle.posx, other_vehicle.length)
                 exit(1)
 
 
@@ -161,8 +161,8 @@ class Vehicle:
         print(step, ":", self.vid, "is at", self.posx, self.lane, "with", self.speed)
 
 
-# generate cars
-for num in range(0, number_of_cars):
+# generate vehicles
+for num in range(0, number_of_vehicles):
     vid = last_vehicle_id + 1
     origin = posx = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
     origin = posx = 0  # start from beginning
@@ -171,7 +171,7 @@ for num in range(0, number_of_cars):
     dest = randrange(posx, road_length, 1 * 1000)  # off-ramps every 1000 m
     start = randrange(0, maxstep, 1 * 60)  # in which minute to start
 
-    cars.append(Vehicle(vid, origin, dest, desired_speed, length, start))
+    vehicles.append(Vehicle(vid, origin, dest, desired_speed, length, start))
 
     last_vehicle_id = vid
 
@@ -179,30 +179,30 @@ while 1:
     if step >= maxstep:
         print("reached step limit")
         exit(0)
-    if len(cars) == 0:
-        print("no more cars in the simulation")
+    if len(vehicles) == 0:
+        print("no more vehicles in the simulation")
         exit(0)  # do we really want to exit here?
 
     # stats
-    for car in cars:
-        if car.start_time == step:
-            car.stats()
-        if car.start_time > step:
-            # car did not start yet
+    for vehicle in vehicles:
+        if vehicle.start_time == step:
+            vehicle.stats()
+        if vehicle.start_time > step:
+            # vehicle did not start yet
             continue
-        # the current status of the car
-    #    car.stats()
+        # the current status of the vehicle
+    #    vehicle.stats()
 
     # perform lane changes (for all vehicles)
     change_lanes()
 
-    # adjust speed (of all cars)
+    # adjust speed (of all vehicles)
     adjust_speeds()
 
-    # adjust positions (of all cars)
+    # adjust positions (of all vehicles)
     move_vehicles()
 
-    # do collision check (for all cars)
+    # do collision check (for all vehicles)
     check_collisions()
 
     step += step_length
