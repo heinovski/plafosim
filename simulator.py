@@ -1,9 +1,9 @@
 from random import randrange
 
 # assumptions
-# you just reach your destination
-# posx is in the middle of the front bumper
-# a vehicle ends at posx + length
+# you just reach your arrival_position
+# position is in the middle of the front bumper
+# a vehicle ends at position + length
 # crash detection does not work with steps greater than 1
 
 # simulation properties
@@ -12,28 +12,111 @@ step = 0  # s
 step_length = 1  # s
 
 # road network properties
-road_length = 10 * 1000  # m
-number_of_lanes = 1
+road_length = 100 * 1000  # m
+number_of_lanes = 4
 
 # vehicles
-number_of_vehicles = 10
+number_of_vehicles = 1000
 vehicles = []
+
+debug = False
+
+
+class Vehicle:
+    'A vehicle in the simulation'
+
+    def __init__(self, vid, depart_position, arrival_position, desired_speed, depart_time,
+                 length, max_acceleration, max_deceleration):
+        '''Initialize a vehicle'''
+        self.vid = vid
+        # trip details
+        self.depart_position = depart_position
+        self.depart_position = 0  # start from beginning for now
+        self.arrival_position = arrival_position
+        self.desired_speed = desired_speed
+        self.depart_speed = randrange(0, 28, 1)
+        self.depart_speed = 0  # start with 0 speed for now
+        self.depart_lane = randrange(0, number_of_lanes, 1)
+#        self.depart_lane = 0  # start on lane 0 for now
+        self.depart_time = depart_time
+        # vehicle details
+        self.position = self.depart_position
+        self.lane = self.depart_lane
+        self.speed = self.depart_speed
+        self.length = length
+        self.max_acceleration = max_acceleration
+        self.max_deceleration = max_deceleration
+        # statistics
+        self.co = 0
+        self.co2 = 0
+        self.hc = 0
+        self.pmx = 0
+        self.npx = 0
+        self.fuel = 0
+
+    def travel_distance(self):
+        return self.position - self.depart_position
+
+    def travel_time(self, step):
+        return step - self.depart_time
+
+    def info(self):
+        '''Print info of a vehicle'''
+        e_remaining_travel_time = round((self.arrival_position - self.position) / self.desired_speed)
+        print(step, ":", self.vid, "at", self.position, self.lane, "with", self.speed,
+              "takes", e_remaining_travel_time)
+
+    def statistics(self):
+        # TODO write proper statistics
+        return
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __del__(self):
+        if (self.position != self.arrival_position):
+            return
+
+        e_travel_time = round((self.arrival_position - self.depart_position) / self.desired_speed)
+        time_loss = self.travel_time(step) - e_travel_time
+        travel_time_ratio = round(self.travel_time(step) / e_travel_time, 2)  # FIXME prodcues a division by 0 error
+        print(step, ":", self.vid, "arrived", self.position, self.lane, "with", self.speed,
+              "took", self.travel_time(step), self.travel_distance(), time_loss, travel_time_ratio)
+
+        # TODO write proper statistics
+        trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d departDelay=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d" % (self.vid, self.depart_time, self.depart_lane, self.depart_position, self.depart_speed, -1, step, self.lane, self.position, self.speed, self.travel_time(step), self.travel_distance(), time_loss)
+        print(trip_info)
+
+        emissions = "CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d" % (self.co, self.co2, self.hc, self.pmx, self.npx, self.fuel)
+        print(emissions)
 
 
 def record_stats():
     for vehicle in vehicles:
-        if vehicle.start_time == step:
-            vehicle.stats()
-        if vehicle.start_time > step:
+        if vehicle.depart_time > step:
             # vehicle did not start yet
             continue
-        # the current status of the vehicle
-    #    vehicle.stats()
+        elif vehicle.depart_time == step:
+            vehicle.info()
+        elif debug is True:
+            # the current status of the vehicle
+            print(vehicle)
+
+        # log periodic statistics
+        vehicle.statistics()
 
 
+# kraus - multi lane traffic
+# lane-change
+# congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
+# favorable(right->left) = (v_safe < v_max) and (not congested)
+# favorable(left->right) = (v_safe >= v_max) and (v^0_safe >= v_max)
+# if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
+# for vehicles on the right lane:
+# if (v > v^0_safe) and (not congested) then v <- v^0_safe
 def change_lanes():
     for vehicle in vehicles:
-        if vehicle.start_time > step:
+        if vehicle.depart_time > step:
             # vehicle did not start yet
             continue
         # TODO
@@ -41,37 +124,37 @@ def change_lanes():
 
 def adjust_speeds():
     for vehicle in vehicles:
-        if vehicle.start_time > step:
+        if vehicle.depart_time > step:
             # vehicle did not start yet
             continue
         vehicle.speed = new_speed(vehicle.speed, vehicle.desired_speed,
                                   vehicle.max_acceleration, vehicle.max_deceleration)
 
 
+# krauss - single lane traffic
+# adjust position (move)
+# x(t + step_size) = x(t) + v(t)*step_size
 def move_vehicles():
     for vehicle in vehicles:
-        if vehicle.start_time > step:
+        if vehicle.depart_time > step:
             # vehicle did not start yet
             continue
         # increase position according to speed
-        vehicle.posx += vehicle.speed * step_length
-        # TODO use diff to destination for increasing
-
-        # destination reached?
-        if vehicle.posx >= vehicle.destination:
-            # posx does not match destination
-            travel_distance = vehicle.posx - vehicle.origin
-            travel_time = step - vehicle.start_time
-            print(step, ":", vehicle.vid, "reached destination", vehicle.destination, travel_distance, travel_time)
+        position_difference = vehicle.speed * step_length
+        # arrival_position reached?
+        if vehicle.position + position_difference >= vehicle.arrival_position:
+            vehicle.position = vehicle.arrival_position
             vehicles.remove(vehicle)
             continue
+        else:
+            vehicle.position += position_difference
 
 
 def check_collisions():
     # TODO we kind of do not want collisions at all
     # either the cf model shouldn't allow collisions or we should move this to the move part
     for vehicle in vehicles:
-        if vehicle.start_time > step:
+        if vehicle.depart_time > step:
             # vehicle did not start yet
             continue
         # check for crashes of this vehicle with any other vehicle
@@ -79,17 +162,17 @@ def check_collisions():
             if vehicle is other_vehicle:
                 # we do not need to compare us to ourselves
                 continue
-            if other_vehicle.start_time > step:
+            if other_vehicle.depart_time > step:
                 # other vehicle did not start yet
                 continue
             if vehicle.lane is not other_vehicle.lane:
                 # we do not vehicle about other lanes
                 continue
-            if vehicle.posx >= (other_vehicle.posx - other_vehicle.length) and \
-                    other_vehicle.posx >= (vehicle.posx - vehicle.length):
+            if vehicle.position >= (other_vehicle.position - other_vehicle.length) and \
+                    other_vehicle.position >= (vehicle.position - vehicle.length):
                 # vehicle is within the back of other_vehicle
-                print("crash", vehicle.vid, vehicle.posx, vehicle.length,
-                      other_vehicle.vid, other_vehicle.posx, other_vehicle.length)
+                print("crash", vehicle.vid, vehicle.position, vehicle.length,
+                      other_vehicle.vid, other_vehicle.position, other_vehicle.length)
                 exit(1)
 
 
@@ -103,23 +186,6 @@ def check_collisions():
 # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
 # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
 # v(t + step_size) = max[0, v_des(t) - epsilon]
-#
-# adjust position (move)
-# x(t + step_size) = x(t) + v(t)*step_size
-
-
-# kraus - multi lane traffic
-# lane-change
-# congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
-# favorable(right->left) = (v_safe < v_max) and (not congested)
-# favorable(left->right) = (v_safe >= v_max) and (v^0_safe >= v_max)
-# if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
-# for vehicles on the right lane:
-# if (v > v^0_safe) and (not congested) then v <- v^0_safe
-# then adjust
-# then move
-
-
 def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
     new_speed = -1
     # do we need to adjust our speed?
@@ -130,6 +196,8 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
     elif diff_to_desired < 0:
         # we need to decelerate
         new_speed = current_speed - max(diff_to_desired, max_deceleration)
+    else:
+        new_speed = current_speed
 
     # TODO vsafe?
 
@@ -142,47 +210,22 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
     return new_speed
 
 
-class Vehicle:
-    'A vehicle in the simulation'
-
-    def __init__(self, vid, origin, destination, desired_speed, start_time, length, max_acceleration, max_deceleration):
-        '''Initialize a vehicle'''
-        self.vid = vid
-        # trip details
-        self.origin = origin
-        self.destination = destination
-        self.desired_speed = desired_speed
-        self.start_time = start_time
-        # vehicle details
-        self.posx = self.origin
-        self.lane = 0
-        self.speed = randrange(0, 28, 1)
-        self.speed = 0  # start with 0 speed for now
-        self.length = length
-        self.max_acceleration = max_acceleration
-        self.max_deceleration = max_deceleration
-
-    def stats(self):
-        '''Print stats of a vehicle'''
-        print(step, ":", self.vid, "is at", self.posx, self.lane, "with", self.speed)
-
-
 # generate vehicles
 last_vehicle_id = -1
 for num in range(0, number_of_vehicles):
     vid = last_vehicle_id + 1
-    origin = posx = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
-    origin = posx = 0  # start from beginning
+    depart_position = position = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
     desired_speed = randrange(22, 28, 1)
-    dest = randrange(posx, road_length, 1 * 1000)  # off-ramps every 1000 m
-    start = randrange(0, maxstep, 1 * 60)  # in which minute to start
+    arrival_position = randrange(position, road_length, 1 * 1000)  # off-ramps every 1000 m
+    depart_time = randrange(0, maxstep, 1 * 60)  # in which minute to start
     # vehicle properties
     length = randrange(4, 5 + 1, 1)
     max_acceleration = 3  # m/s
     max_deceleration = -5  # m/s
     # safety_gap = 0  # m
 
-    vehicles.append(Vehicle(vid, origin, dest, desired_speed, start, length,  max_acceleration, max_deceleration))
+    vehicles.append(Vehicle(vid, depart_position, arrival_position, desired_speed, depart_time,
+                            length, max_acceleration, max_deceleration))
 
     last_vehicle_id = vid
 
