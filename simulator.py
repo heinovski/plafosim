@@ -230,7 +230,7 @@ for num in range(0, number_of_vehicles):
     vid = last_vehicle_id + 1
     depart_position = position = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
     desired_speed = randrange(22, 28, 1)
-    arrival_position = randrange(position, road_length, 1 * 1000)  # off-ramps every 1000 m
+    arrival_position = randrange(position + 1, road_length, 1 * 1000)  # off-ramps every 1000 m
     depart_time = randrange(0, maxstep, 1 * 60)  # in which minute to start
     # vehicle properties
     length = randrange(4, 5 + 1, 1)
