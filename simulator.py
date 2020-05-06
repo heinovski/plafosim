@@ -1,3 +1,5 @@
+import argparse
+
 from random import randrange
 
 # assumptions
@@ -6,19 +8,31 @@ from random import randrange
 # a vehicle ends at position + length
 # crash detection does not work with steps greater than 1
 
+# parse some parameters
+parser = argparse.ArgumentParser(description="This is a simulator.")
+# road network properties
+parser.add_argument('--length', type=int, default=100, help="The length of the road in km (default 100)")
+parser.add_argument('--lanes', type=int, default=4, help="The number of lanes (default 4)")
+# vehicles
+parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
 # simulation properties
-maxstep = 100 * 60 * 60  # s
-step = 0  # s
-step_length = 1  # s
+parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
+args = parser.parse_args()
 
 # road network properties
-road_length = 100 * 1000  # m
-number_of_lanes = 4
+road_length = args.length * 1000  # m
+number_of_lanes = args.lanes
 
 # vehicles
-number_of_vehicles = 1000
-vehicles = []
+number_of_vehicles = args.vehicles
 
+# simulation properties
+step_length = args.step  # s
+
+# simulator variables
+maxstep = 100 * 60 * 60  # s
+step = 0  # s
+vehicles = []
 debug = False
 
 
