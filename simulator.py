@@ -9,17 +9,6 @@ from vehicle import Vehicle
 # a vehicle ends at position + length
 # crash detection does not work with steps greater than 1
 
-# parse some parameters
-parser = argparse.ArgumentParser(description="This is a simulator.")
-# road network properties
-parser.add_argument('--length', type=int, default=100, help="The length of the road in km (default 100)")
-parser.add_argument('--lanes', type=int, default=4, help="The number of lanes (default 4)")
-# vehicles
-parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
-# simulation properties
-parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
-args = parser.parse_args()
-
 
 # krauss - single lane traffic
 # adjust speed
@@ -200,6 +189,17 @@ class Simulator:
 
 
 def main():
+    # parse some parameters
+    parser = argparse.ArgumentParser(description="This is a simulator.")
+    # road network properties
+    parser.add_argument('--length', type=int, default=100, help="The length of the road in km (default 100)")
+    parser.add_argument('--lanes', type=int, default=4, help="The number of lanes (default 4)")
+    # vehicles
+    parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
+    # simulation properties
+    parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
+    args = parser.parse_args()
+
     simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.step, 100 * 60 * 60, False)
     simulator.generte_vehicles()
     simulator.run()
