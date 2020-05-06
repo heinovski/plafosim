@@ -39,8 +39,8 @@ debug = False
 class Vehicle:
     'A vehicle in the simulation'
 
-    def __init__(self, vid, depart_position, arrival_position, desired_speed, depart_time,
-                 length, max_acceleration, max_deceleration):
+    def __init__(self, vid, depart_position, arrival_position, desired_speed, depart_lane,
+                 depart_time, length, max_acceleration, max_deceleration):
         '''Initialize a vehicle'''
         self.vid = vid
         # trip details
@@ -50,8 +50,7 @@ class Vehicle:
         self.desired_speed = desired_speed
         self.depart_speed = randrange(0, 28, 1)
         self.depart_speed = 0  # start with 0 speed for now
-        self.depart_lane = randrange(0, number_of_lanes, 1)
-#        self.depart_lane = 0  # start on lane 0 for now
+        self.depart_lane = depart_lane
         self.depart_time = depart_time
         # vehicle details
         self.position = self.depart_position
@@ -235,6 +234,8 @@ last_vehicle_id = -1
 for num in range(0, number_of_vehicles):
     vid = last_vehicle_id + 1
     depart_position = position = randrange(0, road_length, 1 * 1000)  # on-ramps every 1000 m
+    depart_lane = randrange(0, number_of_lanes, 1)
+#   depart_lane = 0  # start on lane 0 for now
     desired_speed = randrange(22, 28, 1)
     arrival_position = randrange(position + 1, road_length, 1 * 1000)  # off-ramps every 1000 m
     depart_time = randrange(0, maxstep, 1 * 60)  # in which minute to start
@@ -244,8 +245,8 @@ for num in range(0, number_of_vehicles):
     max_deceleration = -5  # m/s
     # safety_gap = 0  # m
 
-    vehicles.append(Vehicle(vid, depart_position, arrival_position, desired_speed, depart_time,
-                            length, max_acceleration, max_deceleration))
+    vehicles.append(Vehicle(vid, depart_position, arrival_position, desired_speed, depart_lane,
+                            depart_time, length, max_acceleration, max_deceleration))
 
     last_vehicle_id = vid
 
