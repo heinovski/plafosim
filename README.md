@@ -1,3 +1,3 @@
-# platoon-formation-simulator
+# Platoon Formation Simulator (PlaFoSim)
 
-My new simulator for platoon formation
+A simple simulator for platoon formation.
