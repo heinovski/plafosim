@@ -80,8 +80,11 @@ class Vehicle:
               "took", self.travel_time(), self.travel_distance(), time_loss, travel_time_ratio)
 
         # TODO write proper statistics
-        trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d departDelay=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d" % (self.vid, self.depart_time, self.depart_lane, self.depart_position, self.depart_speed, -1, self.simulator.step, self.lane, self.position, self.speed, self.travel_time(), self.travel_distance(), time_loss)
-        print(trip_info)
+        trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d" % (self.vid, self.depart_time, self.depart_lane, self.depart_position, self.depart_speed, self.simulator.step, self.lane, self.position, self.speed, self.travel_time(), self.travel_distance(), time_loss)
+        emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d" % (self.vid, self.co, self.co2, self.hc, self.pmx, self.npx, self.fuel)
 
-        emissions = "CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d" % (self.co, self.co2, self.hc, self.pmx, self.npx, self.fuel)
-        print(emissions)
+        with open("vehicles.out", 'a') as f:
+            f.write(trip_info)
+            f.write("\n")
+            f.write(emissions)
+            f.write("\n")
