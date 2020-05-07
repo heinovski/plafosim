@@ -46,11 +46,10 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
 
 class Simulator:
 
-    def __init__(self, road_length, number_of_lanes, number_of_vehicles, collisions,
+    def __init__(self, road_length, number_of_lanes, collisions,
                  step_length, max_step, debug):
         self.road_length = road_length
         self.number_of_lanes = number_of_lanes
-        self.number_of_vehicles = number_of_vehicles
         self.collisions = collisions
         self.step_length = step_length
         self.max_step = max_step
@@ -139,9 +138,9 @@ class Simulator:
                           other_vehicle.vid, other_vehicle.position, other_vehicle.length)
                     exit(1)
 
-    def generate_vehicles(self, depart_interval, arrival_interval):
+    def generate_vehicles(self, number_of_vehicles, depart_interval, arrival_interval):
         last_vehicle_id = -1
-        for num in range(0, self.number_of_vehicles):
+        for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
             depart_position = position = randrange(0, self.road_length, depart_interval)
             depart_position = 0  # start from beginning for now
@@ -212,9 +211,9 @@ def main():
     parser.add_argument('--debug', type=bool, default=False, help="Enable debug output (default False)")
     args = parser.parse_args()
 
-    simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.collisions,
+    simulator = Simulator(args.length * 1000, args.lanes, args.collisions,
                           args.step, args.limit * 60 * 60, args.debug)
-    simulator.generate_vehicles(args.depart_interval, args.arrival_interval)
+    simulator.generate_vehicles(args.vehicles, args.depart_interval, args.arrival_interval)
     simulator.run()
 
 
