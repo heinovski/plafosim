@@ -11,6 +11,26 @@ class VehicleType:
 class Vehicle:
     'A vehicle in the simulation'
 
+    simulator = None
+    vid = -1
+    vehicle_type = None
+    depart_position = -1
+    arrival_position = -1
+    desired_speed = -1
+    depart_lane = -1
+    depart_speed = -1
+    depart_time = -1
+    position = -1
+    lane = -1
+    speed = -1
+    # statistics
+    co = 0
+    co2 = 0
+    hc = 0
+    pmx = 0
+    npx = 0
+    fuel = 0
+
     def __init__(self, simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                  depart_speed, depart_time):
         '''Initialize a vehicle'''
@@ -29,13 +49,6 @@ class Vehicle:
         self.position = self.depart_position
         self.lane = self.depart_lane
         self.speed = self.depart_speed
-        # statistics
-        self.co = 0
-        self.co2 = 0
-        self.hc = 0
-        self.pmx = 0
-        self.npx = 0
-        self.fuel = 0
 
     def length(self):
         return self.vehicle_type.length
