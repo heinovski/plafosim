@@ -139,18 +139,18 @@ class Simulator:
                           other_vehicle.vid, other_vehicle.position, other_vehicle.length)
                     exit(1)
 
-    def generate_vehicles(self):
+    def generate_vehicles(self, depart_interval, arrival_interval):
         last_vehicle_id = -1
         for num in range(0, self.number_of_vehicles):
             vid = last_vehicle_id + 1
-            depart_position = position = randrange(0, self.road_length, 1 * 1000)  # on-ramps every 1000 m
+            depart_position = position = randrange(0, self.road_length, depart_interval)
             depart_position = 0  # start from beginning for now
             depart_lane = randrange(0, self.number_of_lanes, 1)
         #   depart_lane = 0  # start on lane 0 for now
             depart_speed = randrange(0, 28, 1)
             depart_speed = 0  # start with 0 speed for now
             desired_speed = randrange(22, 28, 1)
-            arrival_position = randrange(position + 1, self.road_length, 1 * 1000)  # off-ramps every 1000 m
+            arrival_position = randrange(position + 1, self.road_length, arrival_interval)
             depart_time = randrange(0, self.max_step, 1 * 60)  # in which minute to start
             # vehicle properties
             length = randrange(4, 5 + 1, 1)
@@ -199,6 +199,10 @@ def main():
     # road network properties
     parser.add_argument('--length', type=int, default=100, help="The length of the road in km (default 100)")
     parser.add_argument('--lanes', type=int, default=4, help="The number of lanes (default 4)")
+    parser.add_argument('--depart-interval', type=int, default=1000,
+                        help="The distance between departure positions (on-ramps) in m (default 1000)")
+    parser.add_argument('--arrival-interval', type=int, default=1000,
+                        help="The distance between arrival positions (off-ramps) in m (default 1000)")
     # vehicles
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
     parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks (default True)")
@@ -210,7 +214,7 @@ def main():
 
     simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.collisions,
                           args.step, args.limit * 60 * 60, args.debug)
-    simulator.generate_vehicles()
+    simulator.generate_vehicles(args.depart_interval, args.arrival_interval)
     simulator.run()
 
 
