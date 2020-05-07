@@ -52,14 +52,9 @@ class Vehicle:
         if (self.position < self.arrival_position):
             return
 
-        e_travel_time = round((self.arrival_position - self.depart_position) / self.desired_speed)
-        time_loss = self.travel_time() - e_travel_time
-        try:
-            travel_time_ratio = round(self.travel_time() / e_travel_time, 2)  # FIXME prodcues a division by 0 error after a crash happened
-        except ZeroDivisionError:
-            print("ZeroDivisionError")
-            print(self)
-            quit(1)
+        e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
+        time_loss = self.travel_time() - round(e_travel_time)
+        travel_time_ratio = round(self.travel_time() / e_travel_time, 2)
 
         print(self.simulator.step, ":", self.vid, "arrived", self.position, self.lane, "with", self.speed,
               "took", self.travel_time(), self.travel_distance(), time_loss, travel_time_ratio)
