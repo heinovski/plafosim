@@ -46,13 +46,11 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
 
 class Simulator:
 
-    def __init__(self, road_length, number_of_lanes, collisions,
-                 step_length, max_step, debug):
+    def __init__(self, road_length, number_of_lanes, collisions, step_length, debug):
         self.road_length = road_length
         self.number_of_lanes = number_of_lanes
         self.collisions = collisions
         self.step_length = step_length
-        self.max_step = max_step
         self.debug = debug
 
         self.step = 0  # s
@@ -139,7 +137,7 @@ class Simulator:
                           other_vehicle.vid, other_vehicle.position, other_vehicle.length())
                     exit(1)
 
-    def generate_vehicles(self, number_of_vehicles, depart_interval, arrival_interval,
+    def generate_vehicles(self, max_step, number_of_vehicles, depart_interval, arrival_interval,
                           min_desired_speed, max_desired_speed, max_speed):
         last_vehicle_id = -1
         # vehicle properties
@@ -157,7 +155,7 @@ class Simulator:
             depart_speed = randrange(0, desired_speed, 1)
             depart_speed = 0  # FIXME start with 0 speed for now
             arrival_position = randrange(position + 1, self.road_length, arrival_interval)
-            depart_time = randrange(0, self.max_step, 1 * 60)  # in which minute to start
+            depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
 
             vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position, desired_speed,
@@ -166,10 +164,10 @@ class Simulator:
 
             last_vehicle_id = vid
 
-    def run(self):
+    def run(self, max_step):
         # let the simulator run
         while 1:
-            if self.step >= self.max_step:
+            if self.step >= max_step:
                 print("reached step limit")
                 exit(0)
             if len(self.vehicles) == 0:
@@ -221,10 +219,11 @@ def main():
     args = parser.parse_args()
 
     simulator = Simulator(args.length * 1000, args.lanes, args.collisions,
-                          args.step, args.limit * 60 * 60, args.debug)
-    simulator.generate_vehicles(args.vehicles, args.depart_interval, args.arrival_interval,
+                          args.step, args.debug)
+    max_step = args.limit * 60 * 60
+    simulator.generate_vehicles(max_step, args.vehicles, args.depart_interval, args.arrival_interval,
                                 args.min_desired_speed, args.max_desired_speed, args.max_speed)
-    simulator.run()
+    simulator.run(max_step)
 
 
 if __name__ == "__main__":
