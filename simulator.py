@@ -137,6 +137,7 @@ class Simulator:
                           other_vehicle.vid, other_vehicle.position, other_vehicle.length())
                     exit(1)
 
+    # TODO move out of simulator class
     def generate_vehicles(self, max_step, number_of_vehicles, depart_interval, arrival_interval,
                           min_desired_speed, max_desired_speed, max_speed):
         last_vehicle_id = -1
