@@ -140,11 +140,10 @@ class Simulator:
                     exit(1)
 
     def generate_vehicles(self, number_of_vehicles, depart_interval, arrival_interval,
-                          min_desired_speed, max_desired_speed):
+                          min_desired_speed, max_desired_speed, max_speed):
         last_vehicle_id = -1
         # vehicle properties
         length = randrange(4, 5 + 1, 1)
-        max_speed = 36  # m/s
         max_acceleration = 3  # m/s
         max_deceleration = -5  # m/s
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
@@ -208,8 +207,12 @@ def main():
                         help="The distance between arrival positions (off-ramps) in m (default 1000)")
     # vehicles
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
-    parser.add_argument('--min-speed', type=int, default=22, help="The minimum desired driving speed im m/s (default 22)")
-    parser.add_argument('--max-speed', type=int, default=28, help="The minimum desired driving speed im m/s (default 28)")
+    parser.add_argument('--min-desired-speed', type=int, default=22,
+                        help="The minimum desired driving speed im m/s (default 22)")
+    parser.add_argument('--max-desired-speed', type=int, default=28,
+                        help="The minimum desired driving speed im m/s (default 28)")
+    parser.add_argument('--max-speed', type=int, default=36,
+                        help="The maximum possible driving speed in m/s (default 36)")
     parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks (default True)")
     # simulation properties
     parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
@@ -220,7 +223,7 @@ def main():
     simulator = Simulator(args.length * 1000, args.lanes, args.collisions,
                           args.step, args.limit * 60 * 60, args.debug)
     simulator.generate_vehicles(args.vehicles, args.depart_interval, args.arrival_interval,
-                                args.min_speed, args.max_speed)
+                                args.min_desired_speed, args.max_desired_speed, args.max_speed)
     simulator.run()
 
 
