@@ -198,9 +198,11 @@ def main():
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
     # simulation properties
     parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
+    parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h (default 100)")
+    parser.add_argument('--debug', type=bool, default=False, help="Enable debug output (default False)")
     args = parser.parse_args()
 
-    simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.step, 100 * 60 * 60, False)
+    simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.step, args.limit * 60 * 60, args.debug)
     simulator.generte_vehicles()
     simulator.run()
 
