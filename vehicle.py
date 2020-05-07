@@ -1,12 +1,23 @@
+class VehicleType:
+
+    def __init__(self, name, length, max_speed, max_acceleration, max_deceleration):
+        self.name = name
+        self.length = length
+        self.max_speed = max_speed
+        self.max_acceleration = max_acceleration
+        self.max_deceleration = max_deceleration
+
+
 class Vehicle:
     'A vehicle in the simulation'
 
-    def __init__(self, simulator, vid, depart_position, arrival_position, desired_speed, depart_lane,
-                 depart_speed, depart_time, length, max_acceleration, max_deceleration):
+    def __init__(self, simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
+                 depart_speed, depart_time):
         '''Initialize a vehicle'''
         self.simulator = simulator
 
         self.vid = vid
+        self.vehicle_type = vehicle_type
         # trip details
         self.depart_position = depart_position
         self.arrival_position = arrival_position
@@ -18,9 +29,6 @@ class Vehicle:
         self.position = self.depart_position
         self.lane = self.depart_lane
         self.speed = self.depart_speed
-        self.length = length
-        self.max_acceleration = max_acceleration
-        self.max_deceleration = max_deceleration
         # statistics
         self.co = 0
         self.co2 = 0
@@ -28,6 +36,18 @@ class Vehicle:
         self.pmx = 0
         self.npx = 0
         self.fuel = 0
+
+    def length(self):
+        return self.vehicle_type.length
+
+    def max_speed(self):
+        return self.vehicle_type.max_speed
+
+    def max_acceleration(self):
+        return self.vehicle_type.max_acceleration
+
+    def max_deceleration(self):
+        return self.vehicle_type.max_deceleration
 
     def travel_distance(self):
         return self.position - self.depart_position

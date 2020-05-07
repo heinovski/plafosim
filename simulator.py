@@ -1,7 +1,7 @@
 import argparse
 
 from random import randrange
-from vehicle import Vehicle
+from vehicle import Vehicle, VehicleType
 
 # assumptions
 # you just reach your arrival_position
@@ -93,7 +93,8 @@ class Simulator:
                 # vehicle did not start yet
                 continue
             vehicle.speed = new_speed(vehicle.speed, vehicle.desired_speed,
-                                      vehicle.max_acceleration, vehicle.max_deceleration)
+                                      vehicle.max_acceleration(),
+                                      vehicle.max_deceleration())
 
     # krauss - single lane traffic
     # adjust position (move)
@@ -131,16 +132,22 @@ class Simulator:
                 if vehicle.lane is not other_vehicle.lane:
                     # we do not care about other lanes
                     continue
-                if vehicle.position >= (other_vehicle.position - other_vehicle.length) and \
-                        other_vehicle.position >= (vehicle.position - vehicle.length):
+                if vehicle.position >= (other_vehicle.position - other_vehicle.length()) and \
+                        other_vehicle.position >= (vehicle.position - vehicle.length()):
                     # vehicle is within the back of other_vehicle
-                    print(self.step, ": crash", vehicle.vid, vehicle.position, vehicle.length,
-                          other_vehicle.vid, other_vehicle.position, other_vehicle.length)
+                    print(self.step, ": crash", vehicle.vid, vehicle.position, vehicle.length(),
+                          other_vehicle.vid, other_vehicle.position, other_vehicle.length())
                     exit(1)
 
     def generate_vehicles(self, number_of_vehicles, depart_interval, arrival_interval,
                           min_desired_speed, max_desired_speed):
         last_vehicle_id = -1
+        # vehicle properties
+        length = randrange(4, 5 + 1, 1)
+        max_speed = 36  # m/s
+        max_acceleration = 3  # m/s
+        max_deceleration = -5  # m/s
+        vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
         for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
             depart_position = position = randrange(0, self.road_length, depart_interval)
@@ -152,14 +159,10 @@ class Simulator:
             depart_speed = 0  # FIXME start with 0 speed for now
             arrival_position = randrange(position + 1, self.road_length, arrival_interval)
             depart_time = randrange(0, self.max_step, 1 * 60)  # in which minute to start
-            # vehicle properties
-            length = randrange(4, 5 + 1, 1)
-            max_acceleration = 3  # m/s
-            max_deceleration = -5  # m/s
             # safety_gap = 0  # m
 
-            vehicle = Vehicle(self, vid, depart_position, arrival_position, desired_speed,
-                              depart_speed, depart_lane, depart_time, length, max_acceleration, max_deceleration)
+            vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position, desired_speed,
+                              depart_speed, depart_lane, depart_time)
             self.vehicles.append(vehicle)
 
             last_vehicle_id = vid
