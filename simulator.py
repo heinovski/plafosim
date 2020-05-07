@@ -46,10 +46,12 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
 
 class Simulator:
 
-    def __init__(self, road_length, number_of_lanes, number_of_vehicles, step_length, max_step, debug):
+    def __init__(self, road_length, number_of_lanes, number_of_vehicles, collisions,
+                 step_length, max_step, debug):
         self.road_length = road_length
         self.number_of_lanes = number_of_lanes
         self.number_of_vehicles = number_of_vehicles
+        self.collisions = collisions
         self.step_length = step_length
         self.max_step = max_step
         self.debug = debug
@@ -183,7 +185,8 @@ class Simulator:
             self.move_vehicles()
 
             # do collision check (for all vehicles)
-            self.check_collisions()
+            if self.collisions:
+                self.check_collisions()
 
             self.step += self.step_length
 
@@ -196,13 +199,15 @@ def main():
     parser.add_argument('--lanes', type=int, default=4, help="The number of lanes (default 4)")
     # vehicles
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
+    parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks (default True)")
     # simulation properties
     parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
     parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h (default 100)")
     parser.add_argument('--debug', type=bool, default=False, help="Enable debug output (default False)")
     args = parser.parse_args()
 
-    simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.step, args.limit * 60 * 60, args.debug)
+    simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.collisions,
+                          args.step, args.limit * 60 * 60, args.debug)
     simulator.generte_vehicles()
     simulator.run()
 
