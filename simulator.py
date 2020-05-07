@@ -133,7 +133,7 @@ class Simulator:
                 if vehicle.position >= (other_vehicle.position - other_vehicle.length) and \
                         other_vehicle.position >= (vehicle.position - vehicle.length):
                     # vehicle is within the back of other_vehicle
-                    print("crash", vehicle.vid, vehicle.position, vehicle.length,
+                    print(self.step, ": crash", vehicle.vid, vehicle.position, vehicle.length,
                           other_vehicle.vid, other_vehicle.position, other_vehicle.length)
                     exit(1)
 
