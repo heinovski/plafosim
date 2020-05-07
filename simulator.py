@@ -138,17 +138,18 @@ class Simulator:
                           other_vehicle.vid, other_vehicle.position, other_vehicle.length)
                     exit(1)
 
-    def generate_vehicles(self, number_of_vehicles, depart_interval, arrival_interval):
+    def generate_vehicles(self, number_of_vehicles, depart_interval, arrival_interval,
+                          min_desired_speed, max_desired_speed):
         last_vehicle_id = -1
         for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
             depart_position = position = randrange(0, self.road_length, depart_interval)
-            depart_position = 0  # start from beginning for now
+            depart_position = 0  # FIXME start from beginning for now
             depart_lane = randrange(0, self.number_of_lanes, 1)
-        #   depart_lane = 0  # start on lane 0 for now
-            depart_speed = randrange(0, 28, 1)
-            depart_speed = 0  # start with 0 speed for now
-            desired_speed = randrange(22, 28, 1)
+        #   depart_lane = 0  # FIXME start on lane 0 for now
+            desired_speed = randrange(min_desired_speed, max_desired_speed, 1)
+            depart_speed = randrange(0, desired_speed, 1)
+            depart_speed = 0  # FIXME start with 0 speed for now
             arrival_position = randrange(position + 1, self.road_length, arrival_interval)
             depart_time = randrange(0, self.max_step, 1 * 60)  # in which minute to start
             # vehicle properties
@@ -204,6 +205,8 @@ def main():
                         help="The distance between arrival positions (off-ramps) in m (default 1000)")
     # vehicles
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
+    parser.add_argument('--min-speed', type=int, default=22, help="The minimum desired driving speed im m/s (default 22)")
+    parser.add_argument('--max-speed', type=int, default=28, help="The minimum desired driving speed im m/s (default 28)")
     parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks (default True)")
     # simulation properties
     parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
@@ -213,7 +216,8 @@ def main():
 
     simulator = Simulator(args.length * 1000, args.lanes, args.collisions,
                           args.step, args.limit * 60 * 60, args.debug)
-    simulator.generate_vehicles(args.vehicles, args.depart_interval, args.arrival_interval)
+    simulator.generate_vehicles(args.vehicles, args.depart_interval, args.arrival_interval,
+                                args.min_speed, args.max_speed)
     simulator.run()
 
 
