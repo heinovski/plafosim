@@ -158,7 +158,9 @@ class Simulator:
             max_deceleration = -5  # m/s
             # safety_gap = 0  # m
 
-            self.vehicles.append(Vehicle(self, vid, depart_position, arrival_position, desired_speed, depart_speed, depart_lane, depart_time, length, max_acceleration, max_deceleration))
+            vehicle = Vehicle(self, vid, depart_position, arrival_position, desired_speed,
+                              depart_speed, depart_lane, depart_time, length, max_acceleration, max_deceleration)
+            self.vehicles.append(vehicle)
 
             last_vehicle_id = vid
 
