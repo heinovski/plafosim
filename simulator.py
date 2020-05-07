@@ -169,10 +169,10 @@ class Simulator:
         # let the simulator run
         while 1:
             if self.step >= max_step:
-                print("reached step limit")
+                print(self.step, ": reached step limit")
                 exit(0)
             if len(self.vehicles) == 0:
-                print("no more vehicles in the simulation")
+                print(self.step, ": no more vehicles in the simulation")
                 exit(0)  # do we really want to exit here?
 
             # stats
