@@ -197,7 +197,7 @@ def main():
     # parse some parameters
     parser = argparse.ArgumentParser(description="This is a simulator.")
     # road network properties
-    parser.add_argument('--length', type=int, default=100, help="The length of the road in km (default 100)")
+    parser.add_argument('--road-length', type=int, default=100, help="The length of the road in km (default 100)")
     parser.add_argument('--lanes', type=int, default=4, help="The number of lanes (default 4)")
     parser.add_argument('--depart-interval', type=int, default=1000,
                         help="The distance between departure positions (on-ramps) in m (default 1000)")
@@ -218,7 +218,7 @@ def main():
     parser.add_argument('--debug', type=bool, default=False, help="Enable debug output (default False)")
     args = parser.parse_args()
 
-    simulator = Simulator(args.length * 1000, args.lanes, args.collisions,
+    simulator = Simulator(args.road_length * 1000, args.lanes, args.collisions,
                           args.step, args.debug)
     max_step = args.limit * 60 * 60
     simulator.generate_vehicles(max_step, args.vehicles, args.depart_interval, args.arrival_interval,
