@@ -152,8 +152,8 @@ class Simulator:
             vid = last_vehicle_id + 1
             depart_position = position = randrange(0, self.road_length, depart_interval)
             depart_position = 0  # FIXME start from beginning for now
-            depart_lane = randrange(0, self.number_of_lanes, 1)
-        #   depart_lane = 0  # FIXME start on lane 0 for now
+            depart_lane = 0
+            depart_lane = randrange(0, self.number_of_lanes, 1)  # FIXME start on random lane for now
             desired_speed = randrange(min_desired_speed, max_desired_speed, 1)
             depart_speed = randrange(0, desired_speed, 1)
             depart_speed = 0  # FIXME start with 0 speed for now
