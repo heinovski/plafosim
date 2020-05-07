@@ -139,7 +139,7 @@ class Simulator:
                           other_vehicle.vid, other_vehicle.position, other_vehicle.length)
                     exit(1)
 
-    def generte_vehicles(self):
+    def generate_vehicles(self):
         last_vehicle_id = -1
         for num in range(0, self.number_of_vehicles):
             vid = last_vehicle_id + 1
@@ -210,7 +210,7 @@ def main():
 
     simulator = Simulator(args.length * 1000, args.lanes, args.vehicles, args.collisions,
                           args.step, args.limit * 60 * 60, args.debug)
-    simulator.generte_vehicles()
+    simulator.generate_vehicles()
     simulator.run()
 
 
