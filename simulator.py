@@ -167,7 +167,7 @@ class Simulator:
 
     def run(self, max_step):
         # let the simulator run
-        while 1:
+        while True:
             if self.step >= max_step:
                 print(self.step, ": reached step limit")
                 exit(0)
