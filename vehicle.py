@@ -96,12 +96,12 @@ class Vehicle:
         return self.__position - self.__depart_position
 
     def travel_time(self):
-        return self.__simulator.step - self.__depart_time
+        return self.__simulator.step() - self.__depart_time
 
     def info(self):
         '''Print info of a vehicle'''
         e_remaining_travel_time = round((self.__arrival_position - self.__position) / self.__desired_speed)
-        print(self.__simulator.step, ":", self.__vid, "at", self.__position, self.__lane, "with", self.__speed,
+        print(self.__simulator.step(), ":", self.__vid, "at", self.__position, self.__lane, "with", self.__speed,
               "takes", e_remaining_travel_time)
 
     def statistics(self):
@@ -119,12 +119,12 @@ class Vehicle:
         time_loss = self.travel_time() - round(e_travel_time)
         travel_time_ratio = round(self.travel_time() / e_travel_time, 2)
 
-        print(self.__simulator.step, ":", self.__vid, "arrived", self.__position, self.__lane, "with", self.__speed,
+        print(self.__simulator.step(), ":", self.__vid, "arrived", self.__position, self.__lane, "with", self.__speed,
               "took", self.travel_time(), self.travel_distance(), time_loss, travel_time_ratio)
 
         # TODO write proper statistics
         trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d" % (
-            self.__vid, self.__depart_time, self.__depart_lane, self.__depart_position, self.__depart_speed, self.__simulator.step,
+            self.__vid, self.__depart_time, self.__depart_lane, self.__depart_position, self.__depart_speed, self.__simulator.step(),
             self.__lane, self.__position, self.__speed, self.travel_time(), self.travel_distance(), time_loss)
         emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d" % (
             self.__vid, self.__co, self.__co2, self.__hc, self.__pmx, self.__npx, self.__fuel)

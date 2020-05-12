@@ -48,24 +48,43 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
 
 class Simulator:
 
-    def __init__(self, road_length, number_of_lanes, collisions, step_length, debug):
-        self.road_length = road_length
-        self.number_of_lanes = number_of_lanes
-        self.collisions = collisions
-        self.step_length = step_length
-        self.debug = debug
+    # road network properties
+    __road_length = -1
+    __number_of_lanes = -1
 
-        self.step = 0  # s
-        self.vehicles = []
+    # vehicle properties
+    __vehicles = []
+    __collisions = None
+
+    # simulation properties
+    __step = 0  # s
+    __step_length = -1
+    __debug = None
+
+    def __init__(self, road_length, number_of_lanes, collisions, step_length, debug):
+        self.__road_length = road_length
+        self.__number_of_lanes = number_of_lanes
+        self.__collisions = collisions
+        self.__step_length = step_length
+        self.__debug = debug
+
+    def road_length(self):
+        return self.__road_length
+
+    def number_of_lanes(self):
+        return self.__number_of_lanes
+
+    def step(self):
+        return self.__step
 
     def record_stats(self):
-        for vehicle in self.vehicles:
-            if vehicle.depart_time() > self.step:
+        for vehicle in self.__vehicles:
+            if vehicle.depart_time() > self.__step:
                 # vehicle did not start yet
                 continue
-            elif vehicle.depart_time() == self.step:
+            elif vehicle.depart_time() == self.__step:
                 vehicle.info()
-            elif self.debug is True:
+            elif self.__debug is True:
                 # the current status of the vehicle
                 print(vehicle)
 
@@ -81,15 +100,15 @@ class Simulator:
     # for vehicles on the right lane:
     # if (v > v^0_safe) and (not congested) then v <- v^0_safe
     def change_lanes(self):
-        for vehicle in self.vehicles:
-            if vehicle.depart_time() > self.step:
+        for vehicle in self.__vehicles:
+            if vehicle.depart_time() > self.__step:
                 # vehicle did not start yet
                 continue
             # TODO
 
     def adjust_speeds(self):
-        for vehicle in self.vehicles:
-            if vehicle.depart_time() > self.step:
+        for vehicle in self.__vehicles:
+            if vehicle.depart_time() > self.__step:
                 # vehicle did not start yet
                 continue
             vehicle._Vehicle__speed = new_speed(vehicle.speed(), vehicle.desired_speed(),
@@ -100,33 +119,35 @@ class Simulator:
     # adjust position (move)
     # x(t + step_size) = x(t) + v(t)*step_size
     def move_vehicles(self):
-        for vehicle in self.vehicles:
-            if vehicle.depart_time() > self.step:
+        for vehicle in self.__vehicles:
+            if vehicle.depart_time() > self.__step:
                 # vehicle did not start yet
                 continue
             # increase position according to speed
-            position_difference = vehicle.speed() * self.step_length
+            position_difference = vehicle.speed() * self.__step_length
             # arrival_position reached?
             if vehicle.position() + position_difference >= vehicle.arrival_position():
+                # TODO use proper method
                 vehicle._Vehicle__position = vehicle.arrival_position()
-                self.vehicles.remove(vehicle)
+                self.__vehicles.remove(vehicle)
                 continue
             else:
+                # TODO use proper method
                 vehicle._Vehicle__position += position_difference
 
     def check_collisions(self):
         # TODO we kind of do not want collisions at all
         # either the cf model shouldn't allow collisions or we should move this to the move part
-        for vehicle in self.vehicles:
-            if vehicle.depart_time() > self.step:
+        for vehicle in self.__vehicles:
+            if vehicle.depart_time() > self.__step:
                 # vehicle did not start yet
                 continue
             # check for crashes of this vehicle with any other vehicle
-            for other_vehicle in self.vehicles:
+            for other_vehicle in self.__vehicles:
                 if vehicle is other_vehicle:
                     # we do not need to compare us to ourselves
                     continue
-                if other_vehicle.depart_time() > self.step:
+                if other_vehicle.depart_time() > self.__step:
                     # other vehicle did not start yet
                     continue
                 if vehicle.lane() != other_vehicle.lane():
@@ -135,7 +156,7 @@ class Simulator:
                 if vehicle.position() >= (other_vehicle.position() - other_vehicle.length()) and \
                         other_vehicle.position() >= (vehicle.position() - vehicle.length()):
                     # vehicle is within the back of other_vehicle
-                    print(self.step, ": crash", vehicle.vid(), vehicle.position(), vehicle.length(),
+                    print(self.__step, ": crash", vehicle.vid(), vehicle.position(), vehicle.length(),
                           other_vehicle.vid(), other_vehicle.position(), other_vehicle.length())
                     exit(1)
 
@@ -150,31 +171,31 @@ class Simulator:
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
         for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
-            depart_position = position = randrange(0, self.road_length, depart_interval)
+            depart_position = position = randrange(0, self.__road_length, depart_interval)
             depart_position = 0  # FIXME start from beginning for now
             depart_lane = 0
-            depart_lane = randrange(0, self.number_of_lanes, 1)  # FIXME start on random lane for now
+            depart_lane = randrange(0, self.__number_of_lanes, 1)  # FIXME start on random lane for now
             desired_speed = randrange(min_desired_speed, max_desired_speed, 1)
             depart_speed = randrange(0, desired_speed, 1)
             depart_speed = 0  # FIXME start with 0 speed for now
-            arrival_position = randrange(position + 1, self.road_length, arrival_interval)
+            arrival_position = randrange(position + 1, self.__road_length, arrival_interval)
             depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
 
             vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position, desired_speed,
                               depart_speed, depart_lane, depart_time)
-            self.vehicles.append(vehicle)
+            self.__vehicles.append(vehicle)
 
             last_vehicle_id = vid
 
     def run(self, max_step):
         # let the simulator run
         while True:
-            if self.step >= max_step:
-                print(self.step, ": reached step limit")
+            if self.__step >= max_step:
+                print(self.__step, ": reached step limit")
                 exit(0)
-            if len(self.vehicles) == 0:
-                print(self.step, ": no more vehicles in the simulation")
+            if len(self.__vehicles) == 0:
+                print(self.__step, ": no more vehicles in the simulation")
                 exit(0)  # do we really want to exit here?
 
             # stats
@@ -190,10 +211,10 @@ class Simulator:
             self.move_vehicles()
 
             # do collision check (for all vehicles)
-            if self.collisions:
+            if self.__collisions:
                 self.check_collisions()
 
-            self.step += self.step_length
+            self.__step += self.__step_length
 
 
 def main():
@@ -206,7 +227,7 @@ def main():
                         help="The distance between departure positions (on-ramps) in m (default 1000)")
     parser.add_argument('--arrival-interval', type=int, default=1000,
                         help="The distance between arrival positions (off-ramps) in m (default 1000)")
-    # vehicles
+    # vehicle properties
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
     parser.add_argument('--min-desired-speed', type=int, default=22,
                         help="The minimum desired driving speed im m/s (default 22)")
