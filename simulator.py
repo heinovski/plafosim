@@ -49,17 +49,17 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
 class Simulator:
 
     # road network properties
-    __road_length = -1
-    __number_of_lanes = -1
+    __road_length = -1  # invalid
+    __number_of_lanes = -1  # invalid
 
     # vehicle properties
     __vehicles = []
-    __collisions = None
+    __collisions = None  # invalid
 
     # simulation properties
     __step = 0  # s
-    __step_length = -1
-    __debug = None
+    __step_length = -1  # invalid
+    __debug = None  # invalid
 
     def __init__(self, road_length, number_of_lanes, collisions, step_length, debug):
         self.__road_length = road_length

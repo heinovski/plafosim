@@ -11,18 +11,18 @@ class VehicleType:
 class Vehicle:
     'A vehicle in the simulation'
 
-    __simulator = None
-    __vid = -1
-    __vehicle_type = None
-    __depart_position = -1
-    __arrival_position = -1
-    __desired_speed = -1
-    __depart_lane = -1
-    __depart_speed = -1
-    __depart_time = -1
-    __position = -1
-    __lane = -1
-    __speed = -1
+    __simulator = None  # invalid
+    __vid = -1  # invalid
+    __vehicle_type = None  # invalid
+    __depart_position = -1  # invalid
+    __arrival_position = -1  # invalid
+    __desired_speed = -1  # invalid
+    __depart_lane = -1  # invalid
+    __depart_speed = -1  # invalid
+    __depart_time = -1  # invalid
+    __position = -1  # invalid
+    __lane = -1  # invalid
+    __speed = -1  # invalid
     # statistics
     __co = 0
     __co2 = 0
