@@ -230,30 +230,41 @@ class Simulator:
 
             self._step += self._step_length
 
+class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
+                      argparse.RawDescriptionHelpFormatter,
+                      argparse.MetavarTypeHelpFormatter):
+    pass
+
 
 def main():
     # parse some parameters
-    parser = argparse.ArgumentParser(description="This is a simulator.")
+    parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="""
+    Platoon Formation Simulator (PlaFoSim) -- A simple simulator for platoon formation.
+
+    Copyright (c) 2020 Julian Heinovski <heinovski@ccs-labs.org>
+    This program comes with ABSOLUTELY NO WARRANTY.
+    This is free software, and you are welcome to redistribute it under certain conditions.
+    """)
     # road network properties
-    parser.add_argument('--road-length', type=int, default=100, help="The length of the road in km (default 100)")
-    parser.add_argument('--lanes', type=int, default=4, help="The number of lanes (default 4)")
+    parser.add_argument('--road-length', type=int, default=100, help="The length of the road in km")
+    parser.add_argument('--lanes', type=int, default=4, help="The number of lanes")
     parser.add_argument('--depart-interval', type=int, default=1000,
-                        help="The distance between departure positions (on-ramps) in m (default 1000)")
+                        help="The distance between departure positions (on-ramps) in m")
     parser.add_argument('--arrival-interval', type=int, default=1000,
-                        help="The distance between arrival positions (off-ramps) in m (default 1000)")
+                        help="The distance between arrival positions (off-ramps) in m")
     # vehicle properties
-    parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles (default 100)")
+    parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
     parser.add_argument('--min-desired-speed', type=int, default=22,
-                        help="The minimum desired driving speed im m/s (default 22)")
+                        help="The minimum desired driving speed im m/s")
     parser.add_argument('--max-desired-speed', type=int, default=28,
-                        help="The minimum desired driving speed im m/s (default 28)")
+                        help="The minimum desired driving speed im m/s")
     parser.add_argument('--max-speed', type=int, default=36,
-                        help="The maximum possible driving speed in m/s (default 36)")
-    parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks (default True)")
+                        help="The maximum possible driving speed in m/s")
+    parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks")
     # simulation properties
-    parser.add_argument('--step', type=int, default=1, help="The step length in s (default 1)")
-    parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h (default 100)")
-    parser.add_argument('--debug', type=bool, default=False, help="Enable debug output (default False)")
+    parser.add_argument('--step', type=int, default=1, help="The step length in s")
+    parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h")
+    parser.add_argument('--debug', type=bool, default=False, help="Enable debug output")
     args = parser.parse_args()
 
     simulator = Simulator(args.road_length * 1000, args.lanes, args.collisions,
