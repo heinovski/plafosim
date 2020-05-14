@@ -150,3 +150,34 @@ class Vehicle:
             f.write("\n")
             f.write(emissions)
             f.write("\n")
+
+    def transmit(self, destination_vid, message):
+        if isinstance(message, Message):
+            # TODO use threading?
+            if destination_vid == -1:
+                # TODO make proper
+                for vehicle in self._simulator._vehicles:
+                    vehicle.receive(message)
+            else:
+                # TODO make proper
+                self._simulator._vehicles[destination_vid].receive(message)
+            return True
+        else:
+            # TODO raise exception
+            print("error transmit")
+            exit(1)
+
+    def receive(self, message):
+        if self._simulator.step() < self._depart_time:
+            # we cannot receive anything since we did not start yet
+            return False
+        if isinstance(message, Message):
+            if message.destination() == self._vid or message.destination() == -1:
+                print(message)
+                return True
+            # we cannot receive this message since it was not for us
+            return False
+        else:
+            # TODO raise exception
+            print("error receive")
+            exit(1)
