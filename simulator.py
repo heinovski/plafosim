@@ -64,42 +64,42 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
 class Simulator:
 
     # road network properties
-    __road_length = -1  # invalid
-    __number_of_lanes = -1  # invalid
+    _road_length = -1  # invalid
+    _number_of_lanes = -1  # invalid
 
     # vehicle properties
-    __vehicles = []
-    __collisions = None  # invalid
+    _vehicles = []
+    _collisions = None  # invalid
 
     # simulation properties
-    __step = 0  # s
-    __step_length = -1  # invalid
-    __debug = None  # invalid
+    _step = 0  # s
+    _step_length = -1  # invalid
+    _debug = None  # invalid
 
     def __init__(self, road_length, number_of_lanes, collisions, step_length, debug):
-        self.__road_length = road_length
-        self.__number_of_lanes = number_of_lanes
-        self.__collisions = collisions
-        self.__step_length = step_length
-        self.__debug = debug
+        self._road_length = road_length
+        self._number_of_lanes = number_of_lanes
+        self._collisions = collisions
+        self._step_length = step_length
+        self._debug = debug
 
     def road_length(self):
-        return self.__road_length
+        return self._road_length
 
     def number_of_lanes(self):
-        return self.__number_of_lanes
+        return self._number_of_lanes
 
     def step(self):
-        return self.__step
+        return self._step
 
     def record_stats(self):
-        for vehicle in self.__vehicles:
-            if vehicle.depart_time() > self.__step:
+        for vehicle in self._vehicles:
+            if vehicle.depart_time() > self._step:
                 # vehicle did not start yet
                 continue
-            elif vehicle.depart_time() == self.__step:
+            elif vehicle.depart_time() == self._step:
                 vehicle.info()
-            elif self.__debug is True:
+            elif self._debug is True:
                 # the current status of the vehicle
                 print(vehicle)
 
@@ -115,54 +115,53 @@ class Simulator:
     # for vehicles on the right lane:
     # if (v > v^0_safe) and (not congested) then v <- v^0_safe
     def change_lanes(self):
-        for vehicle in self.__vehicles:
-            if vehicle.depart_time() > self.__step:
+        for vehicle in self._vehicles:
+            if vehicle.depart_time() > self._step:
                 # vehicle did not start yet
                 continue
             # TODO
 
     def adjust_speeds(self):
-        for vehicle in self.__vehicles:
-            if vehicle.depart_time() > self.__step:
+        for vehicle in self._vehicles:
+            if vehicle.depart_time() > self._step:
                 # vehicle did not start yet
                 continue
-            vehicle._Vehicle__speed = new_speed(vehicle.speed(), vehicle.desired_speed(),
-                                                vehicle.max_acceleration(),
-                                                vehicle.max_deceleration())
+            vehicle._speed = new_speed(vehicle.speed(), vehicle.desired_speed(),
+                                       vehicle.max_acceleration(), vehicle.max_deceleration())
 
     # krauss - single lane traffic
     # adjust position (move)
     # x(t + step_size) = x(t) + v(t)*step_size
     def move_vehicles(self):
-        for vehicle in self.__vehicles:
-            if vehicle.depart_time() > self.__step:
+        for vehicle in self._vehicles:
+            if vehicle.depart_time() > self._step:
                 # vehicle did not start yet
                 continue
             # increase position according to speed
-            position_difference = vehicle.speed() * self.__step_length
+            position_difference = vehicle.speed() * self._step_length
             # arrival_position reached?
             if vehicle.position() + position_difference >= vehicle.arrival_position():
                 # TODO use proper method
-                vehicle._Vehicle__position = vehicle.arrival_position()
-                self.__vehicles.remove(vehicle)
+                vehicle._position = vehicle.arrival_position()
+                self._vehicles.remove(vehicle)
                 continue
             else:
                 # TODO use proper method
-                vehicle._Vehicle__position += position_difference
+                vehicle._position += position_difference
 
     def check_collisions(self):
         # TODO we kind of do not want collisions at all
         # either the cf model shouldn't allow collisions or we should move this to the move part
-        for vehicle in self.__vehicles:
-            if vehicle.depart_time() > self.__step:
+        for vehicle in self._vehicles:
+            if vehicle.depart_time() > self._step:
                 # vehicle did not start yet
                 continue
             # check for crashes of this vehicle with any other vehicle
-            for other_vehicle in self.__vehicles:
+            for other_vehicle in self._vehicles:
                 if vehicle is other_vehicle:
                     # we do not need to compare us to ourselves
                     continue
-                if other_vehicle.depart_time() > self.__step:
+                if other_vehicle.depart_time() > self._step:
                     # other vehicle did not start yet
                     continue
                 if vehicle.lane() != other_vehicle.lane():
@@ -171,7 +170,7 @@ class Simulator:
                 if vehicle.position() >= (other_vehicle.position() - other_vehicle.length()) and \
                         other_vehicle.position() >= (vehicle.position() - vehicle.length()):
                     # vehicle is within the back of other_vehicle
-                    print(self.__step, ": crash", vehicle.vid(), vehicle.position(), vehicle.length(),
+                    print(self._step, ": crash", vehicle.vid(), vehicle.position(), vehicle.length(),
                           other_vehicle.vid(), other_vehicle.position(), other_vehicle.length())
                     exit(1)
 
@@ -186,31 +185,31 @@ class Simulator:
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
         for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
-            depart_position = position = randrange(0, self.__road_length, depart_interval)
+            depart_position = position = randrange(0, self._road_length, depart_interval)
             depart_position = 0  # FIXME start from beginning for now
             depart_lane = 0
-            depart_lane = randrange(0, self.__number_of_lanes, 1)  # FIXME start on random lane for now
+            depart_lane = randrange(0, self._number_of_lanes, 1)  # FIXME start on random lane for now
             desired_speed = randrange(min_desired_speed, max_desired_speed, 1)
             depart_speed = randrange(0, desired_speed, 1)
             depart_speed = 0  # FIXME start with 0 speed for now
-            arrival_position = randrange(position + 1, self.__road_length, arrival_interval)
+            arrival_position = randrange(position + 1, self._road_length, arrival_interval)
             depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
 
             vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position, desired_speed,
                               depart_speed, depart_lane, depart_time)
-            self.__vehicles.append(vehicle)
+            self._vehicles.append(vehicle)
 
             last_vehicle_id = vid
 
     def run(self, max_step):
         # let the simulator run
         while True:
-            if self.__step >= max_step:
-                print(self.__step, ": reached step limit")
+            if self._step >= max_step:
+                print(self._step, ": reached step limit")
                 exit(0)
-            if len(self.__vehicles) == 0:
-                print(self.__step, ": no more vehicles in the simulation")
+            if len(self._vehicles) == 0:
+                print(self._step, ": no more vehicles in the simulation")
                 exit(0)  # do we really want to exit here?
 
             # stats
@@ -226,10 +225,10 @@ class Simulator:
             self.move_vehicles()
 
             # do collision check (for all vehicles)
-            if self.__collisions:
+            if self._collisions:
                 self.check_collisions()
 
-            self.__step += self.__step_length
+            self._step += self._step_length
 
 
 def main():
