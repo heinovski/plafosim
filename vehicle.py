@@ -202,3 +202,12 @@ class Vehicle:
             # TODO raise exception
             print("error receive")
             exit(1)
+
+
+class PlatooningVehicle(Vehicle):
+    """A vehicle that has platooning functionality enabled"""
+
+    def __init__(self, simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
+                 depart_speed, depart_time):
+        super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
+                         desired_speed, depart_time)

@@ -18,7 +18,7 @@
 import argparse
 
 from random import randrange
-from vehicle import Vehicle, VehicleType
+from vehicle import VehicleType, Vehicle, PlatooningVehicle
 
 # assumptions
 # you just reach your arrival_position
@@ -199,8 +199,9 @@ class Simulator:
             depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
 
-            vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position, desired_speed,
-                              depart_speed, depart_lane, depart_time)
+            # TODO add penetration rate for platooning vehicles
+            vehicle = PlatooningVehicle(self, vid, vtype, depart_position, arrival_position, desired_speed,
+                                        depart_speed, depart_lane, depart_time)
             self._vehicles.append(vehicle)
 
             last_vehicle_id = vid
