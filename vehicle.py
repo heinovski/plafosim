@@ -145,10 +145,8 @@ class Vehicle:
         # TODO write proper statistics
         return
 
-    def __str__(self):
-        return str(self._dict_)
-
-    def __del__(self):
+    def finish(self):
+        """Record final statistics and do finishing stuff"""
         if (self._position < self._arrival_position):
             return
 
@@ -171,6 +169,9 @@ class Vehicle:
             f.write("\n")
             f.write(emissions)
             f.write("\n")
+
+    def __str__(self):
+        return str(self._dict_)
 
     def transmit(self, destination_vid, message):
         if isinstance(message, Message):

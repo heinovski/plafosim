@@ -146,6 +146,7 @@ class Simulator:
             if vehicle.position + position_difference >= vehicle.arrival_position:
                 # TODO use proper method
                 vehicle._position = vehicle.arrival_position
+                vehicle.finish()
                 self._vehicles.remove(vehicle)
                 continue
             else:
