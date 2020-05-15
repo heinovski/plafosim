@@ -24,23 +24,21 @@ class MessageType(Enum):
 
 class Message:
 
-    _origin = -1  # invalid
-    _destination = -1  # broadcast
-    _message_type = MessageType.INVALID
-    _data = None
-
     def __init__(self, origin, destination, message_type, *data):
-        self._origin = origin
-        self._destination = destination
-        self._message_type = message_type
-        self._data = data
+        self._origin = origin  # id of the originiator of this message
+        self._destination = destination  # id of the destination of this message
+        self._message_type = message_type  # MessageType of this message
+        self._data = data  # generic data of this message
 
+    @property
     def origin(self):
         return self._origin
 
+    @property
     def destination(self):
         return self._destination
 
+    @property
     def data(self):
         return self._data
 
