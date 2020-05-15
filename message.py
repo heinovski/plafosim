@@ -18,7 +18,6 @@ from enum import Enum
 
 
 class MessageType(Enum):
-    INVALID = -1
     CAM = 1
 
 
