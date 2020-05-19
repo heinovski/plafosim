@@ -219,9 +219,11 @@ class Simulator:
         while True:
             if self._step >= max_step:
                 print(self._step, ": reached step limit")
+                self.finish()
                 exit(0)
             if len(self._vehicles) == 0:
                 print(self._step, ": no more vehicles in the simulation")
+                self.finish()
                 exit(0)  # do we really want to exit here?
 
             # stats
@@ -241,6 +243,12 @@ class Simulator:
                 self.check_collisions()
 
             self._step += self._step_length
+
+    def finish(self):
+        """Clean up the simulation"""
+
+        pass
+
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter,
