@@ -50,7 +50,7 @@ class Message:
         return self._data
 
     def __str__(self) -> str:
-        return "%d -> %d (%s): %s" % (self._origin,  self._destination, self._message_type, self._data)
+        return "%d -> %d (%s): %s" % (self._origin, self._destination, self._message_type, self._data)
 
 
 class ManeuverType(Enum):
@@ -155,13 +155,25 @@ class AbortManeuver(ManeuverMessage):
 
 class PlatoonAdvertisement(Message):
 
-    def __init__(self, origin: int, destination: int, platoon_id: int, leader_id: int, platoon_speed: int, platoon_lane: int, platoon_formation, platoon_position_front: int, platoon_position_back: int):
+    def __init__(
+            self,
+            origin: int,
+            destination: int,
+            platoon_id: int,
+            leader_id: int,
+            platoon_speed: int,
+            platoon_lane: int,
+            platoon_formation,
+            platoon_position_front: int,
+            platoon_position_back: int):
         super().__init__(origin, destination, MessageType.PLATOON_ADVERTISEMENT, platoon_id, leader_id)
         self._platoon_speed = platoon_speed  # current speed of the advertised platoon
         self._platoon_lane = platoon_lane  # current lane of the advertised platoon
         self._platoon_formation = platoon_formation  # current formation of the advertised platoon
-        self._platoon_position_front = platoon_position_front  # current position of the front of the advertised platoon (front of leader)
-        self._platoon_position_back = platoon_position_back  # current position of the back of the advertised platoon (back of last vehicle)
+        # current position of the front of the advertised platoon (front of leader)
+        self._platoon_position_front = platoon_position_front
+        # current position of the back of the advertised platoon (back of last vehicle)
+        self._platoon_position_back = platoon_position_back
 
     @property
     def platoon_speed(self) -> int:

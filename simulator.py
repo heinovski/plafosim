@@ -67,7 +67,14 @@ def new_speed(current_speed: int, desired_speed: int, max_acceleration: int, max
 class Simulator:
     """A collection of paramaters and information of the simulator"""
 
-    def __init__(self, road_length: int, number_of_lanes: int, collisions: bool, step_length: int, debug: bool, result_file: str):
+    def __init__(
+            self,
+            road_length: int,
+            number_of_lanes: int,
+            collisions: bool,
+            step_length: int,
+            debug: bool,
+            result_file: str):
         # road network properties
         self._road_length = road_length  # the length of the road
         self._number_of_lanes = number_of_lanes  # the number of lanes
@@ -295,7 +302,13 @@ def main():
     parser.add_argument('--result-file', type=str, default='results.out', help="The name of the result file")
     args = parser.parse_args()
 
-    simulator = Simulator(args.road_length * 1000, args.lanes, args.collisions, args.step, args.debug, args.result_file)
+    simulator = Simulator(
+        args.road_length * 1000,
+        args.lanes,
+        args.collisions,
+        args.step,
+        args.debug,
+        args.result_file)
     max_step = args.limit * 60 * 60
     simulator.generate_vehicles(max_step, args.vehicles, args.depart_interval, args.arrival_interval,
                                 args.min_desired_speed, args.max_desired_speed, args.max_speed)
