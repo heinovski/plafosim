@@ -172,7 +172,7 @@ class Vehicle:
         emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d" % (
             self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel)
 
-        with open("vehicles.out", 'a') as f:
+        with open(self._simulator._result_file, 'a') as f:
             f.write(trip_info)
             f.write("\n")
             f.write(emissions)

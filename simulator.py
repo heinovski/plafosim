@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 import argparse
+import time
 
 from random import randrange
 from vehicle import VehicleType, Vehicle, PlatooningVehicle
@@ -80,13 +81,14 @@ class Simulator:
     _step_length = -1  # invalid
     _debug = None  # invalid
 
-    def __init__(self, road_length: int, number_of_lanes: int, collisions: bool, step_length: int, debug: bool):
+    def __init__(self, road_length: int, number_of_lanes: int, collisions: bool, step_length: int, debug: bool, result_file: str):
         # TODO either class variables or instance variables
         self._road_length = road_length
         self._number_of_lanes = number_of_lanes
         self._collisions = collisions
         self._step_length = step_length
         self._debug = debug
+        self._result_file = result_file  # file name of the output file
 
     @property
     def road_length(self) -> int:
@@ -215,6 +217,13 @@ class Simulator:
     def run(self, max_step):
         """Run the simulation with the specified parameters"""
 
+        # write some general information about the simulation
+        with open(self._result_file, 'w') as f:
+            f.write("---HEAD---\n")
+            f.write("simulation start: " + time.asctime(time.localtime(time.time())) + '\n')
+            f.write("parameters" + str(self) + '\n')
+            f.write("...HEAD...\n")
+
         # let the simulator run
         while True:
             if self._step >= max_step:
@@ -291,9 +300,10 @@ def main():
     parser.add_argument('--step', type=int, default=1, help="The step length in s")
     parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h")
     parser.add_argument('--debug', type=bool, default=False, help="Enable debug output")
+    parser.add_argument('--result-file', type=str, default='results.out', help="The name of the result file")
     args = parser.parse_args()
 
-    simulator = Simulator(args.road_length * 1000, args.lanes, args.collisions, args.step, args.debug)
+    simulator = Simulator(args.road_length * 1000, args.lanes, args.collisions, args.step, args.debug, args.result_file)
     max_step = args.limit * 60 * 60
     simulator.generate_vehicles(max_step, args.vehicles, args.depart_interval, args.arrival_interval,
                                 args.min_desired_speed, args.max_desired_speed, args.max_speed)
