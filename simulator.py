@@ -18,7 +18,7 @@
 import argparse
 import time
 
-from random import randrange
+from random import randrange, random
 from vehicle import VehicleType, Vehicle, PlatooningVehicle
 
 # assumptions
@@ -185,8 +185,16 @@ class Simulator:
                     exit(1)
 
     # TODO move out of simulator class
-    def generate_vehicles(self, max_step: int, number_of_vehicles: int, depart_interval: int, arrival_interval: int,
-                          min_desired_speed: int, max_desired_speed: int, max_speed: int):
+    def generate_vehicles(
+            self,
+            max_step: int,
+            number_of_vehicles: int,
+            penetration_rate: float,
+            depart_interval: int,
+            arrival_interval: int,
+            min_desired_speed: int,
+            max_desired_speed: int,
+            max_speed: int):
         last_vehicle_id = -1
         # vehicle properties
         length = randrange(4, 5 + 1, 1)
@@ -206,9 +214,21 @@ class Simulator:
             depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
 
-            # TODO add penetration rate for platooning vehicles
-            vehicle = PlatooningVehicle(self, vid, vtype, depart_position, arrival_position, desired_speed,
-                                        depart_speed, depart_lane, depart_time)
+            if random() < penetration_rate:
+                vehicle = PlatooningVehicle(
+                    self,
+                    vid,
+                    vtype,
+                    depart_position,
+                    arrival_position,
+                    desired_speed,
+                    depart_speed,
+                    depart_lane,
+                    depart_time)
+            else:
+                vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
+                                  desired_speed, depart_speed, depart_lane, depart_time)
+
             self._vehicles.append(vehicle)
 
             last_vehicle_id = vid
@@ -295,6 +315,8 @@ def main():
     parser.add_argument('--max-speed', type=int, default=36,
                         help="The maximum possible driving speed in m/s")
     parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks")
+    parser.add_argument('--penetration', type=float, default=1.0,
+                        help="Penetration rate of vehicles with platooning capabilities")
     # simulation properties
     parser.add_argument('--step', type=int, default=1, help="The step length in s")
     parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h")
@@ -310,8 +332,15 @@ def main():
         args.debug,
         args.result_file)
     max_step = args.limit * 60 * 60
-    simulator.generate_vehicles(max_step, args.vehicles, args.depart_interval, args.arrival_interval,
-                                args.min_desired_speed, args.max_desired_speed, args.max_speed)
+    simulator.generate_vehicles(
+        max_step,
+        args.vehicles,
+        args.penetration,
+        args.depart_interval,
+        args.arrival_interval,
+        args.min_desired_speed,
+        args.max_desired_speed,
+        args.max_speed)
     simulator.run(max_step)
 
 
