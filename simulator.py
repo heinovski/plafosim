@@ -67,27 +67,19 @@ def new_speed(current_speed: int, desired_speed: int, max_acceleration: int, max
 class Simulator:
     """A collection of paramaters and information of the simulator"""
 
-    # TODO either class variables or instance variables
-    # road network properties
-    _road_length = -1  # invalid
-    _number_of_lanes = -1  # invalid
-
-    # vehicle properties
-    _vehicles = []
-    _collisions = None  # invalid
-
-    # simulation properties
-    _step = 0  # s
-    _step_length = -1  # invalid
-    _debug = None  # invalid
-
     def __init__(self, road_length: int, number_of_lanes: int, collisions: bool, step_length: int, debug: bool, result_file: str):
-        # TODO either class variables or instance variables
-        self._road_length = road_length
-        self._number_of_lanes = number_of_lanes
-        self._collisions = collisions
-        self._step_length = step_length
-        self._debug = debug
+        # road network properties
+        self._road_length = road_length  # the length of the road
+        self._number_of_lanes = number_of_lanes  # the number of lanes
+
+        # vehicle properties
+        self._vehicles = []  # the list of vehicles within the simulation
+        self._collisions = collisions  # whether to check for collisions
+
+        # simulation properties
+        self._step = 0  # the current simulation steo in s
+        self._step_length = step_length  # the lengh of a simulation step
+        self._debug = debug  # whether debugging is enabled
         self._result_file = result_file  # file name of the output file
 
     @property
