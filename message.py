@@ -83,6 +83,76 @@ class ManeuverMessage(Message):
         return self._leader_id
 
 
+# TODO
+class JoinPlatoonRequest(ManeuverMessage):
+    # joiner_speed
+    # joiner_lane
+    # joiner_position
+    # joiner_length
+    pass
+
+
+# TODO
+class JoinPlatoonResponse(ManeuverMessage):
+    # permitted
+    pass
+
+
+# TODO
+class MoveToPosition(ManeuverMessage):
+    # platoon_speed
+    # platoon_lane
+    # platoon_position_front
+    # platoon_position_back
+    # new_platoon_formation
+    pass
+
+
+# TODO
+class MoveToPositionAck(ManeuverMessage):
+    # platoon_speed
+    # platoon_lane
+    # new_platoon_formation
+    pass
+
+
+# TODO
+class JoinFormation(ManeuverMessage):
+    # platoon_speed
+    # platoon_lane
+    # new_platoon_formation
+    pass
+
+
+# TODO
+class JoinFormationAck(ManeuverMessage):
+    # platoon_speed
+    # platoon_lane
+    # new_platoon_formation
+    pass
+
+
+# TODO
+class UpdatePlatoonFormation(ManeuverMessage):
+    # platoon_speed
+    # platoon_lane
+    # new_platoon_formation
+    pass
+
+
+# TODO
+class UpdatePlatoonFormationAck(ManeuverMessage):
+    # platoon_speed
+    # platoon_lane
+    # new_platoon_formation
+    pass
+
+
+# TODO
+class AbortManeuver(ManeuverMessage):
+    pass
+
+
 class PlatoonAdvertisement(Message):
 
     def __init__(self, origin: int, destination: int, platoon_id: int, leader_id: int, platoon_speed: int, platoon_lane: int, platoon_formation, platoon_position_front: int, platoon_position_back: int):
