@@ -37,7 +37,9 @@ from vehicle import VehicleType, Vehicle, PlatooningVehicle
 # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
 # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
 # v(t + step_size) = max[0, v_des(t) - epsilon]
-def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
+def new_speed(current_speed: int, desired_speed: int, max_acceleration: int, max_deceleration: int) -> int:
+    """Calcuate the new speed for a vehicle using the kraus model"""
+
     new_speed = -1
     # do we need to adjust our speed?
     diff_to_desired = desired_speed - current_speed
@@ -62,6 +64,7 @@ def new_speed(current_speed, desired_speed, max_acceleration, max_deceleration):
 
 
 class Simulator:
+    """A collection of paramaters and information of the simulator"""
 
     # road network properties
     _road_length = -1  # invalid
@@ -76,7 +79,7 @@ class Simulator:
     _step_length = -1  # invalid
     _debug = None  # invalid
 
-    def __init__(self, road_length, number_of_lanes, collisions, step_length, debug):
+    def __init__(self, road_length: int, number_of_lanes: int, collisions: bool, step_length: int, debug: bool):
         self._road_length = road_length
         self._number_of_lanes = number_of_lanes
         self._collisions = collisions
@@ -84,15 +87,15 @@ class Simulator:
         self._debug = debug
 
     @property
-    def road_length(self):
+    def road_length(self) -> int:
         return self._road_length
 
     @property
-    def number_of_lanes(self):
+    def number_of_lanes(self) -> int:
         return self._number_of_lanes
 
     @property
-    def step(self):
+    def step(self) -> int:
         return self._step
 
     def record_stats(self):
@@ -179,8 +182,8 @@ class Simulator:
                     exit(1)
 
     # TODO move out of simulator class
-    def generate_vehicles(self, max_step, number_of_vehicles, depart_interval, arrival_interval,
-                          min_desired_speed, max_desired_speed, max_speed):
+    def generate_vehicles(self, max_step: int, number_of_vehicles: int, depart_interval: int, arrival_interval: int,
+                          min_desired_speed: int, max_desired_speed: int, max_speed: int):
         last_vehicle_id = -1
         # vehicle properties
         length = randrange(4, 5 + 1, 1)
@@ -208,6 +211,8 @@ class Simulator:
             last_vehicle_id = vid
 
     def run(self, max_step):
+        """Run the simulation with the specified parameters"""
+
         # let the simulator run
         while True:
             if self._step >= max_step:
@@ -238,6 +243,7 @@ class Simulator:
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter,
                       argparse.MetavarTypeHelpFormatter):
+    """Metaclass combining multiple formatter classes for argparse"""
     pass
 
 
@@ -272,8 +278,7 @@ def main():
     parser.add_argument('--debug', type=bool, default=False, help="Enable debug output")
     args = parser.parse_args()
 
-    simulator = Simulator(args.road_length * 1000, args.lanes, args.collisions,
-                          args.step, args.debug)
+    simulator = Simulator(args.road_length * 1000, args.lanes, args.collisions, args.step, args.debug)
     max_step = args.limit * 60 * 60
     simulator.generate_vehicles(max_step, args.vehicles, args.depart_interval, args.arrival_interval,
                                 args.min_desired_speed, args.max_desired_speed, args.max_speed)
