@@ -66,6 +66,7 @@ def new_speed(current_speed: int, desired_speed: int, max_acceleration: int, max
 class Simulator:
     """A collection of paramaters and information of the simulator"""
 
+    # TODO either class variables or instance variables
     # road network properties
     _road_length = -1  # invalid
     _number_of_lanes = -1  # invalid
@@ -80,6 +81,7 @@ class Simulator:
     _debug = None  # invalid
 
     def __init__(self, road_length: int, number_of_lanes: int, collisions: bool, step_length: int, debug: bool):
+        # TODO either class variables or instance variables
         self._road_length = road_length
         self._number_of_lanes = number_of_lanes
         self._collisions = collisions
