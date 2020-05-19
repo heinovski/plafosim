@@ -17,7 +17,7 @@
 #
 import argparse
 
-from simulator import Simulator
+from src.plafosim.simulator import Simulator
 
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,

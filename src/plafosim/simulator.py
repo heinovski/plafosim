@@ -17,7 +17,7 @@
 import time
 
 from random import randrange, random
-from vehicle import VehicleType, Vehicle, PlatooningVehicle
+from .vehicle import VehicleType, Vehicle, PlatooningVehicle
 
 # assumptions
 # you just reach your arrival_position
