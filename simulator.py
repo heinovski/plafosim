@@ -244,6 +244,11 @@ class Simulator:
 
             self._step += self._step_length
 
+    def __str__(self) -> str:
+        """Return a nice string representation of a simulator instance"""
+
+        return str(self.__dict__)
+
     def finish(self):
         """Clean up the simulation"""
 
