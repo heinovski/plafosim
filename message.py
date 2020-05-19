@@ -18,63 +18,74 @@ from enum import Enum
 
 
 class MessageType(Enum):
-    CAM = 1
-    MANEUVER = 2
-    PLATOON_ADVERTISEMENT = 3
+    """A collection of available message types"""
+
+    CAM = 1  # corresponds to a regular beacon (e.g., ETSI CAM)
+    MANEUVER = 2  # corresponds to a maneuver message
+    PLATOON_ADVERTISEMENT = 3  # corresponds to a regular advertisement of a platoon
 
 
 class Message:
+    """A collection of general data for an arbitrary message"""
 
-    def __init__(self, origin, destination, message_type, *data):
+    def __init__(self, origin: int, destination: int, message_type, *data):
         self._origin = origin  # id of the originiator of this message
         self._destination = destination  # id of the destination of this message
         self._message_type = message_type  # MessageType of this message
         self._data = data  # generic data of this message
 
     @property
-    def origin(self):
+    def origin(self) -> int:
+        """Get the originator of the message"""
         return self._origin
 
     @property
-    def destination(self):
+    def destination(self) -> int:
+        """Get the destination of the message"""
         return self._destination
 
     @property
     def data(self):
+        """Get the data of the message"""
         return self._data
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "%d -> %d (%s): %s" % (self._origin,  self._destination, self._message_type, self._data)
 
 
 class ManeuverType(Enum):
-    JOIN = 1
-    LEAVE = 2
-    MERGE = 3
-    SPLIT = 4
-    LANE_CHANGE = 5
+    """A collection of available maneuver (message) types"""
+
+    JOIN = 1  # corresponds to a join maneuver
+    LEAVE = 2  # corresponds to a leave maneuver
+    MERGE = 3  # corresponds to a merge maneuver
+    SPLIT = 4  # corresponds to a split maneuver
+    LANE_CHANGE = 5  # corresponds to a lane change maneuver
 
 
 class ManeuverMessage(Message):
+    """A collection of general data for an arbitrary maneuver"""
 
-    def __init__(self, origin, destination, maneuver_type, platoon_id, leader_id):
+    def __init__(self, origin: int, destination: int, maneuver_type, platoon_id: int, leader_id: int):
         super().__init__(origin, destination, MessageType.MANEUVER)
         self._maneuver_type = maneuver_type  # ManeuverType of this message
-        self._platoon_id = platoon_id  # id of the platoon this message is about
-        self._leder_id = leader_id  # id of the corresponding leader of the platoon
+        self._platoon_id = platoon_id  # id of the platoon the message corresponds to
+        self._leder_id = leader_id  # id of the leader of the corresponding platoon
 
     @property
-    def platoon_id(self):
+    def platoon_id(self) -> int:
+        """Get the platoon id the message corresponds to"""
         return self._platoon_id
 
     @property
-    def leader_id(self):
+    def leader_id(self) -> int:
+        """Get the leader id of the platoon the message corresponds to"""
         return self._leader_id
 
 
 class PlatoonAdvertisement(Message):
 
-    def __init__(self, origin, destination, platoon_id, leader_id, platoon_speed, platoon_lane, platoon_formation, platoon_position_front, platoon_position_back):
+    def __init__(self, origin: int, destination: int, platoon_id: int, leader_id: int, platoon_speed: int, platoon_lane: int, platoon_formation, platoon_position_front: int, platoon_position_back: int):
         super().__init__(origin, destination, MessageType.PLATOON_ADVERTISEMENT, platoon_id, leader_id)
         self._platoon_speed = platoon_speed  # current speed of the advertised platoon
         self._platoon_lane = platoon_lane  # current lane of the advertised platoon
@@ -83,11 +94,11 @@ class PlatoonAdvertisement(Message):
         self._platoon_position_back = platoon_position_back  # current position of the back of the advertised platoon (back of last vehicle)
 
     @property
-    def platoon_speed(self):
+    def platoon_speed(self) -> int:
         return self._platoon_speed
 
     @property
-    def platoon_lane(self):
+    def platoon_lane(self) -> int:
         return self._platoon_lane
 
     @property
@@ -95,9 +106,9 @@ class PlatoonAdvertisement(Message):
         return self._platoon_formation
 
     @property
-    def platoon_position_front(self):
+    def platoon_position_front(self) -> int:
         return self._platoon_position_front
 
     @property
-    def platoon_position_back(self):
+    def platoon_position_back(self) -> int:
         return self._platoon_position_back
