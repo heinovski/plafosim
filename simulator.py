@@ -106,7 +106,7 @@ class Simulator:
                 # vehicle did not start yet
                 continue
             elif vehicle.depart_time == self._step:
-                vehicle.info()
+                vehicle.start()
             elif self._debug is True:
                 # the current status of the vehicle
                 print(vehicle)

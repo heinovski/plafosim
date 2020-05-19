@@ -135,6 +135,11 @@ class Vehicle:
     def travel_time(self) -> int:
         return self._simulator.step - self._depart_time
 
+    def start(self):
+        """Start a vehicle's logic"""
+
+        self.info()
+
     def info(self):
         '''Print info of a vehicle'''
         e_remaining_travel_time = round((self._arrival_position - self._position) / self._desired_speed)
