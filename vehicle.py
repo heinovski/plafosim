@@ -181,7 +181,7 @@ class Vehicle:
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
 
-        return str(self._dict_)
+        return str(self.__dict__)
 
     def transmit(self, destination_vid, message):
         if isinstance(message, Message):
