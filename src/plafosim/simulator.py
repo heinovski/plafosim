@@ -146,6 +146,7 @@ class Simulator:
                 continue
             # increase position according to speed
             position_difference = vehicle.speed * self._step_length
+            # TODO add emissions/fuel statistics
             # arrival_position reached?
             if vehicle.position + position_difference >= vehicle.arrival_position:
                 # TODO use proper method
