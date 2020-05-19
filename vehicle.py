@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+from enum import Enum
+
+
 class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
@@ -223,6 +226,16 @@ class Vehicle:
             # TODO raise exception
             print("error receive")
             exit(1)
+
+
+class PlatoonRole(Enum):
+    """A collection of available platoon roles"""
+
+    NONE = 0  # corresponds to driving individually
+    LEADER = 1  # corresponds to being the leader of a platoon
+    FOLLOWER = 2  # corresponds to being a followr of a platoon
+    JOINER = 3  # corresponds to be in the process of joining a platoon
+    LEAVER = 4  # corresponds to be in the process of leaving a platoon
 
 
 class PlatooningVehicle(Vehicle):
