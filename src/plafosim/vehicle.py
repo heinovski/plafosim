@@ -61,7 +61,6 @@ class Vehicle:
             depart_time: int):
         '''Initialize a vehicle'''
 
-        # TODO documentation
         self._simulator = simulator  # the simulator
 
         self._vid = vid  # the id of the vehicle
