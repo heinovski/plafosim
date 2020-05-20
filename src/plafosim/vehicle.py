@@ -254,3 +254,8 @@ class PlatooningVehicle(Vehicle):
             depart_time):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          desired_speed, depart_time)
+
+    def start(self):
+        super().start()
+
+        # TODO start sending regular advertisements
