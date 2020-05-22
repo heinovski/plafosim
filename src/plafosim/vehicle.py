@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 from enum import Enum
-from .message import Message
+from .message import Message, PlatoonAdvertisement
 
 
 class VehicleType:
@@ -259,3 +259,18 @@ class PlatooningVehicle(Vehicle):
         super().start()
 
         # TODO start sending regular advertisements
+        self.advertise()
+
+    def advertise(self):
+        for vehicle in self._simulator._vehicles:
+            self.transmit(-1, PlatoonAdvertisement(
+                self.vid,
+                vehicle.vid,
+                self.vid,
+                self.vid,
+                self.speed,
+                self.lane,
+                self.vid,
+                self.position,
+                self.position + self.length
+            ))
