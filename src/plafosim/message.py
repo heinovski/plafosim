@@ -163,7 +163,7 @@ class PlatoonAdvertisement(Message):
             leader_id: int,
             platoon_speed: int,
             platoon_lane: int,
-            platoon_formation,
+            platoon_formation: list,
             platoon_position_front: int,
             platoon_position_back: int):
         super().__init__(origin, destination, MessageType.PLATOON_ADVERTISEMENT, platoon_id, leader_id)
@@ -184,7 +184,7 @@ class PlatoonAdvertisement(Message):
         return self._platoon_lane
 
     @property
-    def platoon_formation(self):
+    def platoon_formation(self) -> list:
         return self._platoon_formation
 
     @property
