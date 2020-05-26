@@ -197,7 +197,9 @@ class Vehicle:
 
         return str(self.__dict__)
 
-    def transmit(self, destination_vid, message):
+    def _transmit(self, destination_vid: int, message: Message) -> bool:
+        """Transmit a message of type Message"""
+
         if isinstance(message, Message):
             # TODO use threading?
             if destination_vid == -1:
@@ -214,19 +216,26 @@ class Vehicle:
             exit(1)
 
     def receive(self, message) -> bool:
+        """Receive a message of arbitrary type"""
+
         if self._simulator.step < self._depart_time:
             # we cannot receive anything since we did not start yet
             return False
         if isinstance(message, Message):
             if message.destination == self._vid or message.destination == -1:
-                print(message)
-                return True
+                self._handle_message(message)
             # we cannot receive this message since it was not for us
             return False
         else:
             # TODO raise exception
             print("error receive")
             exit(1)
+
+    def _handle_message(self, message: Message):
+        """Handle a message of arbitrary type Message"""
+
+        func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__, lambda v, m: print("cannot handle message", m))
+        return func(self, message)
 
 
 class PlatoonRole(Enum):
@@ -264,7 +273,7 @@ class PlatooningVehicle(Vehicle):
 
     def advertise(self):
         for vehicle in self._simulator._vehicles:
-            self.transmit(-1, PlatoonAdvertisement(
+            self._transmit(-1, PlatoonAdvertisement(
                 self.vid,
                 vehicle.vid,
                 self.vid,
@@ -275,3 +284,9 @@ class PlatooningVehicle(Vehicle):
                 self.position,
                 self.position + self.length
             ))
+
+    def _handle_message(self, message: Message):
+        """Handle a message of arbitrary type Message"""
+
+        func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__, super().__dict__.get('_handle_message'))
+        return func(self, message)
