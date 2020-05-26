@@ -47,7 +47,7 @@ class VehicleType:
 
 
 class Vehicle:
-    'A collection of state information for a vehicle in the simulation'
+    """A collection of state information for a vehicle in the simulation"""
 
     def __init__(
             self,
@@ -60,7 +60,7 @@ class Vehicle:
             depart_lane: int,
             depart_speed: int,
             depart_time: int):
-        '''Initialize a vehicle'''
+        """Initialize a vehicle instance"""
 
         self._simulator = simulator  # the simulator
         self._started = False  # flag indicating whether the vehicles has actually started
@@ -151,6 +151,8 @@ class Vehicle:
         return self._simulator.step - self._depart_time
 
     def action(self):
+        """Trigger actions of a Vehicle"""
+
         if self._simulator.step < self.depart_time:
             # we did not start yet
             pass
@@ -171,14 +173,19 @@ class Vehicle:
         self._last_action_step = self._simulator.step
 
     def _action(self):
+        """Trigger concrete actions of a Vehicle"""
+
         pass
 
     def _start(self):
+        """Start this Vehicle"""
+
         self._started = True
         self.info()
 
     def info(self):
-        '''Print info of a vehicle'''
+        """Print info of a Vehicle"""
+
         e_remaining_travel_time = round((self._arrival_position - self._position) / self._desired_speed)
         print(self._simulator.step, ":", self._vid, "at", self._position, self._lane, "with", self._speed,
               "takes", e_remaining_travel_time)
@@ -289,6 +296,8 @@ class PlatooningVehicle(Vehicle):
                          desired_speed, depart_time)
 
     def _action(self):
+        """Trigger concrete actions of a PlatooningVehicle"""
+
         super()._action()
 
         # TODO start sending regular advertisements

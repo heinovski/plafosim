@@ -73,6 +73,8 @@ class Simulator:
             step_length: int,
             debug: bool,
             result_file: str):
+        """Initialize a simulator instance"""
+
         # road network properties
         self._road_length = road_length  # the length of the road
         self._number_of_lanes = number_of_lanes  # the number of lanes
@@ -100,6 +102,8 @@ class Simulator:
         return self._step
 
     def call_actions(self):
+        """Trigger actions of all vehicles"""
+
         for vehicle in self._vehicles:
             vehicle.action()
 
@@ -112,6 +116,8 @@ class Simulator:
     # for vehicles on the right lane:
     # if (v > v^0_safe) and (not congested) then v <- v^0_safe
     def change_lanes(self):
+        """Do lane changes for all vehicles"""
+
         for vehicle in self._vehicles:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
@@ -119,6 +125,8 @@ class Simulator:
             # TODO
 
     def adjust_speeds(self):
+        """Do speed adjustments for all vehicles"""
+
         for vehicle in self._vehicles:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
@@ -130,6 +138,8 @@ class Simulator:
     # adjust position (move)
     # x(t + step_size) = x(t) + v(t)*step_size
     def move_vehicles(self):
+        """Do postion updates for all vehicles"""
+
         for vehicle in self._vehicles:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
@@ -149,6 +159,8 @@ class Simulator:
                 vehicle._position += position_difference
 
     def check_collisions(self):
+        """Do collision checks for all vehicles"""
+
         # TODO we kind of do not want collisions at all
         # either the cf model shouldn't allow collisions or we should move this to the move part
         for vehicle in self._vehicles:
@@ -184,6 +196,8 @@ class Simulator:
             min_desired_speed: int,
             max_desired_speed: int,
             max_speed: int):
+        """Generate vehicles for the simulation"""
+
         last_vehicle_id = -1
         # vehicle properties
         length = randrange(4, 5 + 1, 1)
