@@ -232,7 +232,7 @@ class Simulator:
 
             last_vehicle_id = vid
 
-    def run(self, max_step):
+    def run(self, max_step: int):
         """Run the simulation with the specified parameters"""
 
         # write some general information about the simulation

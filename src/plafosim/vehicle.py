@@ -16,6 +16,7 @@
 #
 from enum import Enum
 from .message import Message, PlatoonAdvertisement
+# from .simulator import Simulator # TODO fix circular import
 
 
 class VehicleType:
@@ -50,9 +51,9 @@ class Vehicle:
 
     def __init__(
             self,
-            simulator,
+            simulator,  # TODO add type hint
             vid: int,
-            vehicle_type,
+            vehicle_type: VehicleType,
             depart_position: int,
             arrival_position: int,
             desired_speed: int,
@@ -212,7 +213,7 @@ class Vehicle:
             print("error transmit")
             exit(1)
 
-    def receive(self, message):
+    def receive(self, message) -> bool:
         if self._simulator.step < self._depart_time:
             # we cannot receive anything since we did not start yet
             return False
@@ -243,15 +244,15 @@ class PlatooningVehicle(Vehicle):
 
     def __init__(
             self,
-            simulator,
+            simulator,  # TODO add type hint
             vid: int,
-            vehicle_type,
+            vehicle_type: VehicleType,
             depart_position: int,
             arrival_position: int,
             desired_speed: int,
             depart_lane: int,
             depart_speed: int,
-            depart_time):
+            depart_time: int):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          desired_speed, depart_time)
 
