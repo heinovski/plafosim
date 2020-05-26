@@ -99,19 +99,9 @@ class Simulator:
     def step(self) -> int:
         return self._step
 
-    def record_stats(self):
+    def call_actions(self):
         for vehicle in self._vehicles:
-            if vehicle.depart_time > self._step:
-                # vehicle did not start yet
-                continue
-            elif vehicle.depart_time == self._step:
-                vehicle.start()
-            elif self._debug is True:
-                # the current status of the vehicle
-                print(vehicle)
-
-            # log periodic statistics
-            vehicle.statistics()
+            vehicle.action()
 
     # kraus - multi lane traffic
     # lane-change
@@ -253,8 +243,8 @@ class Simulator:
                 self.finish()
                 exit(0)  # do we really want to exit here?
 
-            # stats
-            self.record_stats()
+            # call regular actions on vehicles
+            self.call_actions()
 
             # perform lane changes (for all vehicles)
             self.change_lanes()

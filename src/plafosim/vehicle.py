@@ -63,6 +63,7 @@ class Vehicle:
         '''Initialize a vehicle'''
 
         self._simulator = simulator  # the simulator
+        self._started = False  # flag indicating whether the vehicles has actually started
 
         self._vid = vid  # the id of the vehicle
         self._vehicle_type = vehicle_type  # the vehicle type of the vehicle
@@ -149,9 +150,31 @@ class Vehicle:
     def travel_time(self) -> int:
         return self._simulator.step - self._depart_time
 
-    def start(self):
-        """Start a vehicle's logic"""
+    def action(self):
+        if self._simulator.step < self.depart_time:
+            # we did not start yet
+            pass
+        elif self._simulator.step == self.depart_time:
+            # we started right now
+            self._start()
+        else:
+            # we skipped the exact start time
+            if self._started is False:
+                self._start()
 
+            # What has to be triggered periodically?
+            self._action()
+
+            # log periodic statistics
+            self._statistics()
+
+        self._last_action_step = self._simulator.step
+
+    def _action(self):
+        pass
+
+    def _start(self):
+        self._started = True
         self.info()
 
     def info(self):
@@ -160,11 +183,11 @@ class Vehicle:
         print(self._simulator.step, ":", self._vid, "at", self._position, self._lane, "with", self._speed,
               "takes", e_remaining_travel_time)
 
-    def statistics(self):
+    def _statistics(self):
         """Write continoius statistics"""
 
         # TODO write proper statistics
-        return
+        pass
 
     def finish(self):
         """Clean up the instance of the vehicle"""
@@ -265,8 +288,8 @@ class PlatooningVehicle(Vehicle):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          desired_speed, depart_time)
 
-    def start(self):
-        super().start()
+    def _action(self):
+        super()._action()
 
         # TODO start sending regular advertisements
         self.advertise()
