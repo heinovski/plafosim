@@ -217,6 +217,7 @@ class Simulator:
             depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
 
+            # choose vehicle "type" depending on the penetration rate
             if random() < penetration_rate:
                 vehicle = PlatooningVehicle(
                     self,
