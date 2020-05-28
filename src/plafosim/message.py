@@ -70,7 +70,7 @@ class ManeuverMessage(Message):
         super().__init__(origin, destination, MessageType.MANEUVER)
         self._maneuver_type = maneuver_type  # ManeuverType of this message
         self._platoon_id = platoon_id  # id of the platoon the message corresponds to
-        self._leder_id = leader_id  # id of the leader of the corresponding platoon
+        self._leader_id = leader_id  # id of the leader of the corresponding platoon
 
     @property
     def platoon_id(self) -> int:
