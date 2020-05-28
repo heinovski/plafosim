@@ -50,6 +50,7 @@ class Message:
         return self._data
 
     def __str__(self) -> str:
+        """Get a string representation of the message"""
         return "%d -> %d (%s): %s" % (self._origin, self._destination, self._message_type, self._data)
 
 
@@ -64,9 +65,11 @@ class ManeuverType(Enum):
 
 
 class ManeuverMessage(Message):
-    """A collection of general data for an arbitrary maneuver"""
+    """A collection of general data for an arbitrary maneuver maessage"""
 
     def __init__(self, origin: int, destination: int, maneuver_type, platoon_id: int, leader_id: int):
+        """Initialize a maneuver message instance"""
+
         super().__init__(origin, destination, MessageType.MANEUVER)
         self._maneuver_type = maneuver_type  # ManeuverType of this message
         self._platoon_id = platoon_id  # id of the platoon the message corresponds to
@@ -154,6 +157,7 @@ class AbortManeuver(ManeuverMessage):
 
 
 class PlatoonAdvertisement(Message):
+    """A collection of general data for a platoon advertsiement maessage"""
 
     def __init__(
             self,
@@ -166,6 +170,8 @@ class PlatoonAdvertisement(Message):
             platoon_formation: list,
             platoon_position_front: int,
             platoon_position_back: int):
+        """Initialize a platoon advertisement instance"""
+
         super().__init__(origin, destination, MessageType.PLATOON_ADVERTISEMENT, platoon_id, leader_id)
         self._platoon_speed = platoon_speed  # current speed of the advertised platoon
         self._platoon_lane = platoon_lane  # current lane of the advertised platoon
