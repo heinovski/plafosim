@@ -261,6 +261,12 @@ class Vehicle:
             print("error receive")
             exit(1)
 
+    def _receive_Message(self, message: Message):
+        """Handle a message of concrete type Message"""
+
+        # TODO
+        print(message)
+
     def _handle_message(self, message: Message):
         """Handle a message of arbitrary type Message"""
 
@@ -316,6 +322,12 @@ class PlatooningVehicle(Vehicle):
                 self.position,
                 self.position + self.length
             ))
+
+    def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
+        """Handle a message of concrete type PlatoonAdvertisement"""
+
+        # TODO
+        print("foo")
 
     def _handle_message(self, message: Message):
         """Handle a message of arbitrary type Message"""
