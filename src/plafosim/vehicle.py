@@ -270,7 +270,8 @@ class Vehicle:
     def _handle_message(self, message: Message):
         """Handle a message of arbitrary type Message"""
 
-        func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__, lambda v, m: print("cannot handle message", m))
+        func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__,
+                                           lambda v, m: print("cannot handle message", m))
         return func(self, message)
 
 
@@ -339,5 +340,7 @@ class PlatooningVehicle(Vehicle):
     def _handle_message(self, message: Message):
         """Handle a message of arbitrary type Message"""
 
-        func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__, super().__dict__.get('_handle_message'))
+        func = self.__class__.__dict__.get(
+            '_receive_' + message.__class__.__name__,
+            super().__dict__.get('_handle_message'))
         return func(self, message)
