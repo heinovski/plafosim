@@ -80,7 +80,7 @@ class Simulator:
         self._number_of_lanes = number_of_lanes  # the number of lanes
 
         # vehicle properties
-        self._vehicles = []  # the list of vehicles within the simulation
+        self._vehicles = []  # the list of vehicles in the simulation
         self._collisions = collisions  # whether to check for collisions
 
         # simulation properties
