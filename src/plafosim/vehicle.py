@@ -300,16 +300,23 @@ class PlatooningVehicle(Vehicle):
             depart_time: int):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          desired_speed, depart_time)
+        # initialize timer
+        self._last_advertisement_step = None
 
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
 
         super()._action()
 
-        # TODO start sending regular advertisements
-        self.advertise()
+        # transmit regular platoon advertisements
+        advertisement_interval = 600  # in s # TODO make parameter
+        if self._last_advertisement_step is None or self._last_advertisement_step + advertisement_interval <= self._simulator.step:
+            self._advertise()
+            self._last_advertisement_step = self._simulator.step
 
-    def advertise(self):
+    def _advertise(self):
+        """Transmit a broadcast to advertise as platoon"""
+
         for vehicle in self._simulator._vehicles:
             self._transmit(-1, PlatoonAdvertisement(
                 self.vid,
