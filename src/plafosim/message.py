@@ -172,7 +172,9 @@ class PlatoonAdvertisement(Message):
             platoon_position_back: int):
         """Initialize a platoon advertisement instance"""
 
-        super().__init__(origin, destination, MessageType.PLATOON_ADVERTISEMENT, platoon_id, leader_id)
+        super().__init__(origin, destination, MessageType.PLATOON_ADVERTISEMENT)
+        self._platoon_id = platoon_id  # id of the platoon the message corresponds to
+        self._leader_id = leader_id  # id of the leader of the corresponding platoon
         self._platoon_speed = platoon_speed  # current speed of the advertised platoon
         self._platoon_lane = platoon_lane  # current lane of the advertised platoon
         self._platoon_formation = platoon_formation  # current formation of the advertised platoon
