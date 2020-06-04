@@ -231,19 +231,16 @@ class Vehicle:
         """Transmit a message of type Message"""
 
         if isinstance(message, Message):
-            # TODO use threading?
             if destination_vid == -1:
-                # TODO make proper
+                # TODO do we really want access the private field of the vehicles here (i.e., within this class)?
                 for vehicle in self._simulator._vehicles:
                     vehicle.receive(message)
             else:
-                # TODO make proper
-                self._simulator._vehicles[destination_vid].receive(message)
-            return True
-        else:
-            # TODO raise exception
-            print("error transmit")
-            exit(1)
+                # TODO do we really want access the private field of the vehicles here (i.e., within this class)?
+                self._simulator._vehicles[destination_vid].receive(message)  # FIXME this does not work since vehicles is a list
+
+            return True  # this should always be true, at least currently
+        raise RuntimeError("Message is not an instance of type Message")
 
     def receive(self, message) -> bool:
         """Receive a message of arbitrary type"""
@@ -256,16 +253,7 @@ class Vehicle:
                 self._handle_message(message)
             # we cannot receive this message since it was not for us
             return False
-        else:
-            # TODO raise exception
-            print("error receive")
-            exit(1)
-
-    def _receive_Message(self, message: Message):
-        """Handle a message of concrete type Message"""
-
-        # TODO
-        print(message)
+        raise RuntimeError("Message is not an instance of type Message")
 
     def _handle_message(self, message: Message):
         """Handle a message of arbitrary type Message"""
@@ -273,6 +261,11 @@ class Vehicle:
         func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__,
                                            lambda v, m: print("cannot handle message", m))
         return func(self, message)
+
+    def _receive_Message(self, message: Message):
+        """Handle a message of concrete type Message"""
+
+        print("Received non-sense message", message)
 
 
 class PlatoonRole(Enum):
@@ -331,12 +324,6 @@ class PlatooningVehicle(Vehicle):
                 self.position + self.length
             ))
 
-    def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
-        """Handle a message of concrete type PlatoonAdvertisement"""
-
-        # TODO
-        print("foo")
-
     def _handle_message(self, message: Message):
         """Handle a message of arbitrary type Message"""
 
@@ -344,3 +331,9 @@ class PlatooningVehicle(Vehicle):
             '_receive_' + message.__class__.__name__,
             super().__dict__.get('_handle_message'))
         return func(self, message)
+
+    def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
+        """Handle a message of concrete type PlatoonAdvertisement"""
+
+        # TODO add contents to the neighbor table
+        print("advertisement from", advertisement.origin)
