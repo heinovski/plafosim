@@ -191,10 +191,13 @@ class Vehicle:
               "takes", e_remaining_travel_time)
 
     def _statistics(self):
-        """Write continoius statistics"""
+        """Write continuous statistics"""
 
-        # TODO write proper statistics
-        pass
+        # TODO use better format
+        with open(self._simulator._result_file, 'a') as f:
+            statistic = "id=%d step=%d position=%d lane=%d speed=%d duration=%d routeLength=%d" % (self._vid, self._simulator.step, self._position, self._lane, self._speed, self.travel_time, self.travel_distance)
+            f.write(statistic)
+            f.write("\n")
 
     def finish(self):
         """Clean up the instance of the vehicle"""
@@ -209,7 +212,7 @@ class Vehicle:
         print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed,
               "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio)
 
-        # TODO write proper statistics
+        # TODO use better format
         trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d" % (
             self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step,
             self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss)
