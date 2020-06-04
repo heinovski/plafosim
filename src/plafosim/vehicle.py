@@ -303,12 +303,17 @@ class PlatooningVehicle(Vehicle):
         super()._action()
 
         # transmit regular platoon advertisements
-        advertisement_interval = 600  # in s # TODO make parameter
-        if self._last_advertisement_step is None or self._last_advertisement_step + advertisement_interval <= self._simulator.step:
-            self._advertise()
-            self._last_advertisement_step = self._simulator.step
+        self._advertise()
 
     def _advertise(self):
+        """Maintain regular sendind of platoon advertisements"""
+
+        advertisement_interval = 600  # in s # TODO make parameter
+        if self._last_advertisement_step is None or self._last_advertisement_step + advertisement_interval <= self._simulator.step:
+            self._send_advertisements()
+            self._last_advertisement_step = self._simulator.step
+
+    def _send_advertisements(self):
         """Transmit a broadcast to advertise as platoon"""
 
         for vehicle in self._simulator._vehicles:
