@@ -47,7 +47,11 @@ class VehicleType:
 
 
 class Vehicle:
-    """A collection of state information for a vehicle in the simulation"""
+    """A collection of state information for a vehicle in the simulation
+
+    A vehicle can really be anything that can move and can be defined by a vehicle type.
+    It does not necessarily be driven by a computer (i.e., autonomous).
+    However, by default it does have V2X functionality."""
 
     def __init__(
             self,
