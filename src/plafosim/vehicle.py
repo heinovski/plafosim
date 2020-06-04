@@ -74,7 +74,7 @@ class Vehicle:
         # trip details
         self._depart_position = depart_position  # the departure position of the vehicle
         self._arrival_position = arrival_position  # the arrival position of the vehicle
-        self._desired_speed = desired_speed  # the desired dirving speed of the vehicle
+        self._desired_speed = desired_speed  # the desired driving speed of the vehicle
         self._depart_lane = depart_lane  # the departure lane of the vehicle
         self._depart_speed = depart_speed  # the departure speed of the vehicle
         self._depart_time = depart_time  # the departure time of the vehicle
@@ -280,7 +280,7 @@ class PlatoonRole(Enum):
 
     NONE = 0  # corresponds to driving individually
     LEADER = 1  # corresponds to being the leader of a platoon
-    FOLLOWER = 2  # corresponds to being a followr of a platoon
+    FOLLOWER = 2  # corresponds to being a follow of a platoon
     JOINER = 3  # corresponds to be in the process of joining a platoon
     LEAVER = 4  # corresponds to be in the process of leaving a platoon
 
