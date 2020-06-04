@@ -301,9 +301,30 @@ class PlatooningVehicle(Vehicle):
             depart_time: int):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          desired_speed, depart_time)
+
+        self._platoon_role = PlatoonRole.NONE
+        self._platoon_id = self.vid
+        self._leader_id = self.vid
+        self._formation = [self.vid]
+
         # initialize timer
         self._last_advertisement_step = None
 
+    @property
+    def platoon_role(self) -> PlatoonRole:
+        return self._platoon_role
+
+    @property
+    def platoon_id(self) -> int:
+        return self._platoon_id
+
+    @property
+    def leader_id(self) -> int:
+        return self._leader_id
+
+    @property
+    def formation(self) -> list:
+        return self._formation
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
 
