@@ -8,7 +8,7 @@ A simple simulator for platoon formation.
 
 ```./plafosim.py```
 
-### Advanced Simulation
+### Advanced Simulation Control
 
 You can use a variety of different parameters to customize your simulation.
 E.g., use the parameter `vehicles` to configure the number of vehicles in the simulation
