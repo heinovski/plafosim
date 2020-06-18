@@ -59,7 +59,7 @@ def main():
     parser.add_argument('--step', type=int, default=1, help="The step length in s")
     parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h")
     parser.add_argument('--debug', type=bool, default=False, help="Enable debug output")
-    parser.add_argument('--result-file', type=str, default='results.out', help="The name of the result file")
+    parser.add_argument('--result-base-filename', type=str, default='results', help="The base filename of the result files")
 
     args = parser.parse_args()
     simulator = Simulator(
@@ -68,7 +68,7 @@ def main():
         args.collisions,
         args.step,
         args.debug,
-        args.result_file)
+        args.result_base_filename)
     max_step = args.limit * 60 * 60
     simulator.generate_vehicles(
         max_step,

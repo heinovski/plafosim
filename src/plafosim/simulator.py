@@ -72,7 +72,7 @@ class Simulator:
             collisions: bool,
             step_length: int,
             debug: bool,
-            result_file: str):
+            result_base_filename: str):
         """Initialize a simulator instance"""
 
         # road network properties
@@ -87,7 +87,7 @@ class Simulator:
         self._step = 0  # the current simulation steo in s
         self._step_length = step_length  # the lengh of a simulation step
         self._debug = debug  # whether debugging is enabled
-        self._result_file = result_file  # file name of the output file
+        self._result_base_filename = result_base_filename  # the base filename of the result files
 
     @property
     def road_length(self) -> int:
@@ -241,11 +241,13 @@ class Simulator:
         """Run the simulation with the specified parameters"""
 
         # write some general information about the simulation
-        with open(self._result_file, 'w') as f:
-            f.write("---HEAD---\n")
+        with open(self._result_base_filename + '_general.out', 'w') as f:
             f.write("simulation start: " + time.asctime(time.localtime(time.time())) + '\n')
             f.write("parameters" + str(self) + '\n')
-            f.write("...HEAD...\n")
+
+        # create output file for vehicle traces
+        with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
+            f.write("step,id,position,lane,speed,duration,routeLength\n")
 
         # let the simulator run
         while True:

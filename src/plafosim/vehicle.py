@@ -197,11 +197,11 @@ class Vehicle:
     def _statistics(self):
         """Write continuous statistics"""
 
-        # TODO use better format
-        with open(self._simulator._result_file, 'a') as f:
-            statistic = "id=%d step=%d position=%d lane=%d speed=%d duration=%d routeLength=%d" % (self._vid, self._simulator.step, self._position, self._lane, self._speed, self.travel_time, self.travel_distance)
-            f.write(statistic)
-            f.write("\n")
+        # mobility/trip statistics
+        with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
+            f.write("%d,%d,%d,%d,%d,%d,%d\n" % (self._simulator.step, self._vid, self._position, self._lane, self._speed, self.travel_time, self.travel_distance))
+
+        # TODO emission statistics?
 
     def finish(self):
         """Clean up the instance of the vehicle"""
@@ -217,17 +217,17 @@ class Vehicle:
               "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio)
 
         # TODO use better format
-        trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d" % (
+        with open(self._simulator._result_base_filename + '_vehicle_trips.out', 'a') as f:
+            trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d\n" % (
             self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step,
             self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss)
-        emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d" % (
-            self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel)
-
-        with open(self._simulator._result_file, 'a') as f:
             f.write(trip_info)
-            f.write("\n")
+
+        # TODO use better format
+        with open(self._simulator._result_base_filename + '_vehicle_emissions.out', 'a') as f:
+            emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d\n" % (
+            self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel)
             f.write(emissions)
-            f.write("\n")
 
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
