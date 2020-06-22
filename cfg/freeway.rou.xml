@@ -1,0 +1,4 @@
+<routes>
+	<vType id="vehicle" accel="2.5" decel="15.0" apparentDecel="15" sigma="0.5" length="4" minGap="0" maxSpeed="27.78" color="0,1,0" probability="1" speedFactor="1" carFollowModel="CC" tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5" />
+	<route id="route" edges="edge_0_0"/>
+</routes>
