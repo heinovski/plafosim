@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 import argparse
+from distutils.util import strtobool
 
 from src.plafosim.simulator import Simulator
 
@@ -52,14 +53,15 @@ def main():
                         help="The minimum desired driving speed im m/s")
     parser.add_argument('--max-speed', type=int, default=36,
                         help="The maximum possible driving speed in m/s")
-    parser.add_argument('--collisions', type=bool, default=True, help="Enable collision checks")
+    parser.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
+                        help="Enable collision checks")
     parser.add_argument('--penetration', type=float, default=1.0,
                         help="Penetration rate of vehicles with platooning capabilities")
     # simulation properties
     parser.add_argument('--step', type=int, default=1, help="The step length in s")
     parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h")
-    parser.add_argument('--debug', type=bool, default=False, help="Enable debug output")
-    parser.add_argument('--result-base-filename', type=str, default='results', help="The base filename of the result files")
+    parser.add_argument('--debug', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                        help="Enable debug output")
 
     args = parser.parse_args()
     simulator = Simulator(
