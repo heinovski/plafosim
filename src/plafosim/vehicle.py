@@ -218,15 +218,12 @@ class Vehicle:
 
         # TODO use better format
         with open(self._simulator._result_base_filename + '_vehicle_trips.out', 'a') as f:
-            trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d\n" % (
-            self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step,
-            self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss)
+            trip_info = "id=%d depart=%d departLane=%d departPos=%d departSpeed=%d arrival=%d arrivalLane=%d arrivalPos=%d arrivalSpeed=%d duration=%d routeLength=%d timeLoss=%d\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss)
             f.write(trip_info)
 
         # TODO use better format
         with open(self._simulator._result_base_filename + '_vehicle_emissions.out', 'a') as f:
-            emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d\n" % (
-            self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel)
+            emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d\n" % (self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel)
             f.write(emissions)
 
     def __str__(self) -> str:
