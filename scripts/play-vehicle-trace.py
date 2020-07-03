@@ -18,20 +18,35 @@
 import os
 import sys
 
-if 'SUMO_HOME' in os.environ:
-    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-    sys.path.append(tools)
-    sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-else:
+if 'SUMO_HOME' not in os.environ:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
+import argparse
+
+
+class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
+                      argparse.RawDescriptionHelpFormatter,
+                      argparse.MetavarTypeHelpFormatter):
+    """Metaclass combining multiple formatter classes for argparse"""
+    pass
+
+
+parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
+parser.add_argument('trace_file', type=str, help="The name of the vehicle trace file")
+parser.add_argument('sumo_config', type=str, help="The name of the SUMO config file")
+args = parser.parse_args()
+
+tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+sys.path.append(tools)
+
 import traci
-# TODO load via command line
-sumoCmd = [sumoBinary, "-c", "cfg/freeway.sumo.cfg"]
+
+sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
+sumoCmd = [sumoBinary, "-c", args.sumo_config]
 
 import pandas
-# TODO load via command line
-traces = pandas.read_csv("results_vehicle_traces.csv")
+
+traces = pandas.read_csv(args.trace_file)
 
 traci.start(sumoCmd)
 
