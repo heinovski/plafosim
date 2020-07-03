@@ -331,6 +331,14 @@ class PlatooningVehicle(Vehicle):
         # transmit regular platoon advertisements
         self._advertise()
 
+        # search for a platoon (depending on the strategy)
+        self._do_formation()
+
+    def _do_formation(self):
+        """Run platoon formation algorithms to search for a platooning opportunity and perform corresponding maneuvers"""
+
+        return # TODO
+
     def _advertise(self):
         """Maintain regular sendind of platoon advertisements"""
 
