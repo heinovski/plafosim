@@ -17,6 +17,7 @@
 from enum import Enum
 
 
+# TODO this is superfluous, since it is nowhere actually used
 class MessageType(Enum):
     """A collection of available message types"""
 
