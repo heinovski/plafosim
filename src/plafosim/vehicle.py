@@ -337,6 +337,8 @@ class PlatooningVehicle(Vehicle):
     def _advertise(self):
         """Maintain regular sendind of platoon advertisements"""
 
+        return  # TODO this is not necessary as a perfect communication guarantees information
+
         advertisement_interval = 600  # in s # TODO make parameter
         if self._last_advertisement_step is None or self._last_advertisement_step + advertisement_interval <= self._simulator.step:
             self._send_advertisements()
@@ -368,6 +370,9 @@ class PlatooningVehicle(Vehicle):
 
     def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
         """Handle a message of concrete type PlatoonAdvertisement"""
+
+        # TODO the whole neighbortable stuff is actually not necessary as well, since a perfect communication without any maximum distance is basically oracle knowledge
+        return
 
         # TODO add contents to the neighbor table
         print("advertisement from", advertisement.origin)
