@@ -325,6 +325,7 @@ class PlatooningVehicle(Vehicle):
     @property
     def formation(self) -> list:
         return self._formation
+
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
 
