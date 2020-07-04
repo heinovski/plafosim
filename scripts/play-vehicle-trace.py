@@ -60,6 +60,8 @@ while step <= traces.step.max():
         if str(vehicle.id) not in traci.vehicle.getIDList():
             traci.vehicle.add(str(vehicle.id), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
             traci.vehicle.setColor(str(vehicle.id), (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
+            traci.vehicle.setSpeedMode(str(vehicle.id), 0)
+            traci.vehicle.setLaneChangeMode(str(vehicle.id), 0)
         traci.vehicle.moveTo(vehID=str(vehicle.id), pos=vehicle.position, laneID='edge_0_0_0')
         # traci.vehicle.moveToXY(vehID=str(vehicle.id), x=vehicle.position, y=traci.vehicle.getPosition3D(str(vehicle.id))[1], lane=vehicle.lane, edgeID='')
     step += 1
