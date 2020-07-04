@@ -253,13 +253,9 @@ class Simulator:
         # let the simulator run
         while True:
             if self._step >= max_step:
-                print(self._step, ": reached step limit")
-                self.finish()
-                exit(0)
+                self.stop("reached step limit")
             if len(self._vehicles) == 0:
-                print(self._step, ": no more vehicles in the simulation")
-                self.finish()
-                exit(0)  # do we really want to exit here?
+                self.stop("no more vehicles in the simulation")  # do we really want to exit here?
 
             # call regular actions on vehicles
             self.call_actions()
@@ -278,6 +274,13 @@ class Simulator:
                 self.check_collisions()
 
             self._step += self._step_length
+
+    def stop(self, msg: str):
+        """Stop the simulation with the given message"""
+
+        print(self._step, ":", msg)
+        self.finish()
+        exit(0)
 
     def __str__(self) -> str:
         """Return a nice string representation of a simulator instance"""
