@@ -124,7 +124,7 @@ class Simulator:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
-            # TODO
+                # TODO decide upon and perform a lane change for this vehicle
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
