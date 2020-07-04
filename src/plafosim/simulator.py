@@ -36,7 +36,8 @@ from .vehicle import VehicleType, Vehicle, PlatooningVehicle
 # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
 # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
 # v(t + step_size) = max[0, v_des(t) - epsilon]
-def new_speed(current_speed: int, desired_speed: int, max_acceleration: int, max_deceleration: int) -> int:
+# TODO move to the vehicle??
+def new_speed(current_speed: int, desired_speed: int, max_speed: int, max_acceleration: int, max_deceleration: int, current_position: int, pred_rear_position: int) -> int:
     """Calcuate the new speed for a vehicle using the kraus model"""
 
     new_speed = -1
@@ -44,17 +45,20 @@ def new_speed(current_speed: int, desired_speed: int, max_acceleration: int, max
     diff_to_desired = desired_speed - current_speed
     if diff_to_desired > 0:
         # we need to accelerate
-        new_speed = current_speed + min(diff_to_desired, max_acceleration)
+        new_speed = min(current_speed + min(diff_to_desired, max_acceleration), max_speed)
     elif diff_to_desired < 0:
         # we need to decelerate
-        new_speed = current_speed - max(diff_to_desired, max_deceleration)
+        new_speed = max(current_speed - max(diff_to_desired, max_deceleration), 0)
     else:
         new_speed = current_speed
 
-    # TODO vsafe?
+    # TODO vsafe
+    # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predessor and the vehicle itself
+    safe_speed = (pred_rear_position - current_position)  # TODO / self._step_length # - desired_gap + pred_speed
+    new_speed = min(safe_speed, new_speed)
 
     # TODO dawdling?
-    # new_speed -= random() * max_
+    # new_speed -= random() * new_speed
 
     if (new_speed < 0):
         new_speed = 0
@@ -109,6 +113,25 @@ class Simulator:
         for vehicle in self._vehicles.values():
             vehicle.action()
 
+    def get_predecessor_id(self, vid: int) -> int:
+        position = self._vehicles[vid].position
+        lane = self._vehicles[vid].lane
+        predecessor_id = -1
+        for vehicle in self._vehicles.values():
+            if vehicle.vid is vid:
+                continue
+            if vehicle.lane is not lane:
+                continue
+            if vehicle.position < position:
+                continue
+            if vehicle.position is position:
+                # TODO throw error if the vehicles are "interleaved"
+                continue
+            if predecessor_id is -1 or vehicle.position < self._vehicles[predecessor_id].position:
+                predecessor_id = vehicle.vid
+            # TODO throw error if precessor and vehicle are "interleaved"
+        return predecessor_id
+
     # kraus - multi lane traffic
     # lane-change
     # congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
@@ -133,8 +156,16 @@ class Simulator:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
-            vehicle._speed = new_speed(vehicle.speed, vehicle.desired_speed,
-                                       vehicle.max_acceleration, vehicle.max_deceleration)
+
+            pid = self.get_predecessor_id(vehicle.vid)
+            if pid is -1:
+                pred_pos_rear = self._road_length
+            else:
+                pred_pos_rear = self._vehicles[pid].rear_position
+
+            vehicle._speed = new_speed(vehicle.speed, vehicle.desired_speed, vehicle.max_speed,
+                                       vehicle.max_acceleration, vehicle.max_deceleration, vehicle.position,
+                                       pred_pos_rear)
 
     # krauss - single lane traffic
     # adjust position (move)

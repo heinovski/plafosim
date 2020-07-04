@@ -139,6 +139,10 @@ class Vehicle:
         return self._position
 
     @property
+    def rear_position(self) -> int:
+        return self.position - self.length
+
+    @property
     def lane(self) -> int:
         return self._lane
 
