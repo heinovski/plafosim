@@ -72,6 +72,7 @@ class Simulator:
             collisions: bool,
             step_length: int,
             debug: bool,
+            gui: bool,
             result_base_filename: str):
         """Initialize a simulator instance"""
 
@@ -87,6 +88,7 @@ class Simulator:
         self._step = 0  # the current simulation steo in s
         self._step_length = step_length  # the lengh of a simulation step
         self._debug = debug  # whether debugging is enabled
+        self._gui = gui  # whether to show a live sumo-gui
         self._result_base_filename = result_base_filename  # the base filename of the result files
 
     @property
@@ -154,6 +156,9 @@ class Simulator:
                 vehicle._position = vehicle.arrival_position
                 vehicle.finish()
                 del self._vehicles[vid]
+                if self._gui:
+                    import traci
+                    traci.vehicle.remove(str(vid), 2)
                 continue
             else:
                 # TODO use proper method
@@ -250,12 +255,45 @@ class Simulator:
         with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
             f.write("step,id,position,lane,speed,duration,routeLength\n")
 
+        if self._gui:
+            import os
+            import sys
+
+            if 'SUMO_HOME' not in os.environ:
+                sys.exit("please declare environment variable 'SUMO_HOME'")
+
+            tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+            sys.path.append(tools)
+
+            import traci
+
+            sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
+            sumoCmd = [sumoBinary, "-c", "cfg/freeway.sumo.cfg"]
+
+            traci.start(sumoCmd)
+            traci.simulationStep(self._step)
+            from random import randrange
+
         # let the simulator run
         while True:
             if self._step >= max_step:
                 self.stop("reached step limit")
             if len(self._vehicles) == 0:
                 self.stop("no more vehicles in the simulation")  # do we really want to exit here?
+
+            if self._gui:
+                for vehicle in self._vehicles.values():
+                    if vehicle.depart_time > self._step:
+                        # vehicle did not start yet
+                        continue
+                    if str(vehicle.vid) not in traci.vehicle.getIDList():
+                        traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
+                        traci.vehicle.setColor(str(vehicle.vid), (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
+                        traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
+                        traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
+                    traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
+                    traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID='edge_0_0_0')
+                traci.simulationStep(self._step)
 
             # call regular actions on vehicles
             self.call_actions()
@@ -290,4 +328,7 @@ class Simulator:
     def finish(self):
         """Clean up the simulation"""
 
+        if self._gui:
+            import traci
+            traci.close(False)
         pass

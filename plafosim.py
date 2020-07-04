@@ -62,6 +62,8 @@ def main():
     parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h")
     parser.add_argument('--debug', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
                         help="Enable debug output")
+    parser.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                        help="Enable live sumo-gui")
     parser.add_argument('--result-base-filename', type=str, default='results',
                         help="The base filename of the result files")
 
@@ -72,6 +74,7 @@ def main():
         args.collisions,
         args.step,
         args.debug,
+        args.gui,
         args.result_base_filename)
     max_step = args.limit * 60 * 60
     simulator.generate_vehicles(
