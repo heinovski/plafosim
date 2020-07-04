@@ -237,11 +237,11 @@ class Vehicle:
         if isinstance(message, Message):
             if destination_vid == -1:
                 # TODO do we really want access the private field of the vehicles here (i.e., within this class)?
-                for vehicle in self._simulator._vehicles:
+                for vehicle in self._simulator._vehicles.values():
                     vehicle.receive(message)
             else:
                 # TODO do we really want access the private field of the vehicles here (i.e., within this class)?
-                self._simulator._vehicles[destination_vid].receive(message)  # FIXME this does not work since vehicles is a list
+                self._simulator._vehicles[destination_vid].receive(message)
 
             return True  # this should always be true, at least currently
         raise RuntimeError("Message is not an instance of type Message")
@@ -352,7 +352,7 @@ class PlatooningVehicle(Vehicle):
     def _send_advertisements(self):
         """Transmit a broadcast to advertise as platoon"""
 
-        for vehicle in self._simulator._vehicles:
+        for vehicle in self._simulator._vehicles.values():
             self._transmit(-1, PlatoonAdvertisement(
                 self.vid,
                 vehicle.vid,

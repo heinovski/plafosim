@@ -80,7 +80,7 @@ class Simulator:
         self._number_of_lanes = number_of_lanes  # the number of lanes
 
         # vehicle properties
-        self._vehicles = []  # the list of vehicles in the simulation
+        self._vehicles = {}  # the list (dict) of vehicles in the simulation
         self._collisions = collisions  # whether to check for collisions
 
         # simulation properties
@@ -104,7 +104,7 @@ class Simulator:
     def call_actions(self):
         """Trigger actions of all vehicles"""
 
-        for vehicle in self._vehicles:
+        for vehicle in self._vehicles.values():
             vehicle.action()
 
     # kraus - multi lane traffic
@@ -118,7 +118,7 @@ class Simulator:
     def change_lanes(self):
         """Do lane changes for all vehicles"""
 
-        for vehicle in self._vehicles:
+        for vehicle in self._vehicles.values():
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
@@ -127,7 +127,7 @@ class Simulator:
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
 
-        for vehicle in self._vehicles:
+        for vehicle in self._vehicles.values():
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
@@ -140,7 +140,8 @@ class Simulator:
     def move_vehicles(self):
         """Do postion updates for all vehicles"""
 
-        for vehicle in self._vehicles:
+        for vid in list(self._vehicles.keys()):
+            vehicle = self._vehicles[vid]
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
@@ -152,7 +153,7 @@ class Simulator:
                 # TODO use proper method
                 vehicle._position = vehicle.arrival_position
                 vehicle.finish()
-                self._vehicles.remove(vehicle)
+                del self._vehicles[vid]
                 continue
             else:
                 # TODO use proper method
@@ -163,12 +164,12 @@ class Simulator:
 
         # TODO we kind of do not want collisions at all
         # either the cf model shouldn't allow collisions or we should move this to the move part
-        for vehicle in self._vehicles:
+        for vehicle in self._vehicles.values():
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
             # check for crashes of this vehicle with any other vehicle
-            for other_vehicle in self._vehicles:
+            for other_vehicle in self._vehicles.values():
                 if vehicle is other_vehicle:
                     # we do not need to compare us to ourselves
                     continue
@@ -233,7 +234,7 @@ class Simulator:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
                                   desired_speed, depart_speed, depart_lane, depart_time)
 
-            self._vehicles.append(vehicle)
+            self._vehicles[vid] = vehicle
 
             last_vehicle_id = vid
 
