@@ -63,7 +63,7 @@ while step <= traces.step.max():
             traci.vehicle.setSpeedMode(str(vehicle.id), 0)
             traci.vehicle.setLaneChangeMode(str(vehicle.id), 0)
         traci.vehicle.setSpeed(str(vehicle.id), vehicle.speed)
-        traci.vehicle.moveTo(vehID=str(vehicle.id), pos=vehicle.position, laneID='edge_0_0_0')
+        traci.vehicle.moveTo(vehID=str(vehicle.id), pos=vehicle.position, laneID='edge_0_0_%d' % vehicle.lane)
         # traci.vehicle.moveToXY(vehID=str(vehicle.id), x=vehicle.position, y=traci.vehicle.getPosition3D(str(vehicle.id))[1], lane=vehicle.lane, edgeID='')
     # TODO remove vehicles that arrived
     step += 1
