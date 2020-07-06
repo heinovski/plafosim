@@ -89,7 +89,7 @@ class Simulator:
         self._collisions = collisions  # whether to check for collisions
 
         # simulation properties
-        self._step = 0  # the current simulation steo in s
+        self._step = 0  # the current simulation step in s
         self._step_length = step_length  # the lengh of a simulation step
         self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui
