@@ -227,6 +227,7 @@ class Simulator:
                     exit(1)
 
     # TODO move out of simulator class
+    # TODO generate while simulation is running
     def generate_vehicles(
             self,
             max_step: int,
@@ -255,7 +256,24 @@ class Simulator:
             depart_speed = randrange(0, desired_speed, 1)
             depart_speed = 0  # FIXME start with 0 speed for now
             arrival_position = randrange(position + 1, self._road_length, arrival_interval)
-            depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
+            arrival_position = self._road_length  # FIXME go to end for now
+            spawn_strategy = "interval"
+            if spawn_strategy is "interval":
+                depart_time_interval = 1
+                if last_vehicle_id is not -1:
+                    depart_time = self._vehicles[last_vehicle_id].depart_time + depart_time_interval
+                else:
+                    depart_time = 0
+            #elif spwan_strategy is "rate":
+                # TODO
+                # vehicles per hour
+                # max_step / 3600 --> # hours
+                # rate per hour / 3600 --> rate per second
+                # random > rate? spawn
+            #elif spawn_strategy is "probabilty":
+                # TODO
+            else:
+                depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
 
             # choose vehicle "type" depending on the penetration rate
