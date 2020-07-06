@@ -163,22 +163,16 @@ class Vehicle:
 
         if self._simulator.step < self.depart_time:
             # we did not start yet
-            pass
-        elif self._simulator.step == self.depart_time:
-            # we started right now
-            self._start()
+            return
         else:
-            # we skipped the exact start time
-            if self._started is False:
-                self._start()
+            # we started (right now)
+            self._start()
 
             # What has to be triggered periodically?
             self._action()
 
             # log periodic statistics
             self._statistics()
-
-        self._last_action_step = self._simulator.step
 
     def _action(self):
         """Trigger concrete actions of a Vehicle"""
@@ -188,8 +182,9 @@ class Vehicle:
     def _start(self):
         """Start this Vehicle"""
 
-        self._started = True
-        self.info()
+        if self._started is False:
+            self._started = True
+            self.info()
 
     def info(self):
         """Print info of a Vehicle"""
