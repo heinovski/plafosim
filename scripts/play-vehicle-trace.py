@@ -85,10 +85,13 @@ def use_read():
                 step = int(lstep)
                 if step % 600 == 0:
                     print("Current step:", step)
+
+            # simulate vehicles from trace file
             if vid not in traci.vehicle.getIDList():
                 add_vehicle(vid, position, speed, lane)
             move_vehicle(vid, position, speed, lane)
-        # TODO remove vehicles that arrived
+
+            # TODO remove vehicles that arrived
 
 
 def use_pandas():
