@@ -18,3 +18,20 @@ E.g., use the parameter `vehicles` to configure the number of vehicles in the si
 You can see the complete list of available parameters by running
 
 ```./plafosim.py -h```
+
+### Live GUI
+
+You can get a very simple live GUI based on SUMO by using the parameter `gui`
+
+```./plafosim.py --gui true```
+
+## Re-Playing a Simulation Run
+
+The simulation writes a trace for every simulated vehicle to a trace file (default `results_vehicle_traces.csv`).
+You can view it by using a corresponding script that is shipped within this repository
+
+```./scripts/play-vehicle-trace.py results_vehicle_traces.csv cfg/freeway.sumo.cfg```
+
+To see all options of this script, run
+
+```./scripts/play-vehicle-trace.py -h```
