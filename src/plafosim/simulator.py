@@ -327,7 +327,7 @@ class Simulator:
                         traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
                         traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
                     traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
-                    traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID='edge_0_0_0')
+                    traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID='edge_0_0_%d' % vehicle.lane)
                 traci.simulationStep(self._step)
 
             # call regular actions on vehicles
