@@ -316,6 +316,9 @@ class Simulator:
             if len(self._vehicles) == 0:
                 self.stop("no more vehicles in the simulation")  # do we really want to exit here?
 
+            if self._step % 600 == 0:
+                print("Current step:", self._step)
+
             if self._gui:
                 for vehicle in self._vehicles.values():
                     if vehicle.depart_time > self._step:
