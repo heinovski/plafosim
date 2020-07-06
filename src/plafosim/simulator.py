@@ -241,9 +241,9 @@ class Simulator:
 
         last_vehicle_id = -1
         # vehicle properties
-        length = randrange(4, 5 + 1, 1)
-        max_acceleration = 3  # m/s
-        max_deceleration = -5  # m/s
+        length = 4
+        max_acceleration = 2.5# m/s
+        max_deceleration = 15 # m/s
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
         for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
