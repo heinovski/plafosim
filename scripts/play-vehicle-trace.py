@@ -50,6 +50,7 @@ traci.start(sumoCmd)
 
 
 def add_vehicle(vid: str, position: str, speed: str, lane: str):
+    print("adding", vid)
     traci.vehicle.add(vid, 'route', departPos=float(position), departSpeed=speed, departLane=lane, typeID='vehicle')
     traci.vehicle.setColor(vid, (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
     traci.vehicle.setSpeedMode(vid, 0)
@@ -60,6 +61,11 @@ def move_vehicle(vid: str, position: str, speed: str, lane: str):
     traci.vehicle.setSpeed(vid, float(speed))
     traci.vehicle.moveTo(vid, pos=float(position), laneID='edge_0_0_%s' % lane)
     # traci.vehicle.moveToXY(vehID=str(vid), x=position, y=traci.vehicle.getPosition3D(str(vid))[1], lane=lane, edgeID='')
+
+
+def remove_vehicle(vid: str):
+    print("removing", vid)
+    traci.vehicle.remove(vid, 2)
 
 
 def use_read():
@@ -95,13 +101,21 @@ def use_pandas():
     while step <= traces.step.max():
         if step % 600 == 0:
             print("Current step:", step)
+
+        # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
             if str(vehicle.id) not in traci.vehicle.getIDList():
                 add_vehicle(str(vehicle.id), str(vehicle.position), str(vehicle.speed), str(vehicle.lane))
             move_vehicle(str(vehicle.id), str(vehicle.position), str(vehicle.speed), str(vehicle.lane))
-        # TODO remove vehicles that arrived
-        step += 1
+
         traci.simulationStep(step)
+
+        # remove vehicles not in trace file
+        for vid in traci.vehicle.getIDList():
+            if int(vid) not in list(traces.loc[traces.step == step]['id']):
+                remove_vehicle(vid)
+
+        step += 1
 
 
 if args.method == "read":
