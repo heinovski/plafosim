@@ -68,32 +68,6 @@ def remove_vehicle(vid: str):
     traci.vehicle.remove(vid, 2)
 
 
-def use_read():
-    step = 0
-
-    with open(args.trace_file, 'r') as file:
-        for line in file:
-            lstep, vid, position, lane, speed, duration, routeLength = line.strip(' ').split(',')
-            if lstep == "step":
-                continue
-            if int(lstep) < step:
-                print("not increasing step number")
-                exit(1)
-            elif int(lstep) > step:
-                # next step
-                traci.simulationStep(step)
-                step = int(lstep)
-                if step % 600 == 0:
-                    print("Current step:", step)
-
-            # simulate vehicles from trace file
-            if vid not in traci.vehicle.getIDList():
-                add_vehicle(vid, position, speed, lane)
-            move_vehicle(vid, position, speed, lane)
-
-            # TODO remove vehicles that arrived
-
-
 def use_pandas():
     import pandas
     traces = pandas.read_csv(args.trace_file)
@@ -121,9 +95,35 @@ def use_pandas():
         step += 1
 
 
-if args.method == "read":
-    use_read()
-else:
+def use_read():
+    step = 0
+
+    with open(args.trace_file, 'r') as file:
+        for line in file:
+            lstep, vid, position, lane, speed, duration, routeLength = line.strip(' ').split(',')
+            if lstep == "step":
+                continue
+            if int(lstep) < step:
+                print("not increasing step number")
+                exit(1)
+            elif int(lstep) > step:
+                # next step
+                traci.simulationStep(step)
+                step = int(lstep)
+                if step % 600 == 0:
+                    print("Current step:", step)
+
+            # simulate vehicles from trace file
+            if vid not in traci.vehicle.getIDList():
+                add_vehicle(vid, position, speed, lane)
+            move_vehicle(vid, position, speed, lane)
+
+            # TODO remove vehicles that arrived
+
+
+if args.method == "pandas":
     use_pandas()
+else:
+    use_read()
 
 traci.close(False)
