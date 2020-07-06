@@ -126,4 +126,7 @@ if args.method == "pandas":
 else:
     use_read()
 
+# end of file
+print("Reached end of trace file")
+
 traci.close(False)
