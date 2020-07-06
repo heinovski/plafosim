@@ -5,10 +5,10 @@
     <location netOffset="0.00,254.00" convBoundary="0.00,254.00,9400.00,254.00" origBoundary="0.00,-254.00,50000.00,0.00" projParameter="!"/>
 
     <edge id="edge_0_0" from="node_0_0" to="node_0_1" priority="7" length="1000000.00">
-        <lane id="edge_0_0_0" index="0" speed="90.11" length="1000000.00" shape="0.00,242.80 1000000.00,242.80"/>
-        <lane id="edge_0_0_1" index="1" speed="90.11" length="1000000.00" shape="0.00,246.00 1000000.00,246.00"/>
-        <lane id="edge_0_0_2" index="2" speed="90.11" length="1000000.00" shape="0.00,249.20 1000000.00,249.20"/>
-        <lane id="edge_0_0_3" index="3" speed="90.11" length="1000000.00" shape="0.00,252.40 1000000.00,252.40"/>
+        <lane id="edge_0_0_0" index="0" speed="36.11" length="1000000.00" shape="0.00,242.80 1000000.00,242.80"/>
+        <lane id="edge_0_0_1" index="1" speed="36.11" length="1000000.00" shape="0.00,246.00 1000000.00,246.00"/>
+        <lane id="edge_0_0_2" index="2" speed="36.11" length="1000000.00" shape="0.00,249.20 1000000.00,249.20"/>
+        <lane id="edge_0_0_3" index="3" speed="36.11" length="1000000.00" shape="0.00,252.40 1000000.00,252.40"/>
     </edge>
 
     <junction id="node_0_0" type="dead_end" x="0.00" y="254.00" incLanes="" intLanes="" shape="0.00,254.00 0.00,241.20"/>
