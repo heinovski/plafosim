@@ -393,7 +393,8 @@ class Simulator:
     def __str__(self) -> str:
         """Return a nice string representation of a simulator instance"""
 
-        return str(self.__dict__)
+        import funcy  # TODO get rid of this dependency
+        return str(funcy.omit(self.__dict__, '_vehicles'))
 
     def finish(self):
         """Clean up the simulation"""
