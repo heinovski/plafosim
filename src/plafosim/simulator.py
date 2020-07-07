@@ -235,9 +235,10 @@ class Simulator:
             penetration_rate: float,
             depart_interval: int,
             arrival_interval: int,
+            max_speed: int,
+            random_desired_speed: bool,
             min_desired_speed: int,
-            max_desired_speed: int,
-            max_speed: int):
+            max_desired_speed: int):
         """Generate vehicles for the simulation"""
 
         last_vehicle_id = -1
@@ -253,7 +254,10 @@ class Simulator:
             depart_position = 0  # FIXME start from beginning for now
             depart_lane = 0
             depart_lane = randrange(0, self._number_of_lanes, 1)  # FIXME start on random lane for now
-            desired_speed = randrange(min_desired_speed, max_desired_speed, 1)
+            if random_desired_speed:
+                desired_speed = randrange(min_desired_speed, max_desired_speed, 1)
+            else:
+                desired_speed = max_speed
             depart_speed = randrange(0, desired_speed, 1)
             depart_speed = 0  # FIXME start with 0 speed for now
             arrival_position = randrange(position + 1, self._road_length, arrival_interval)

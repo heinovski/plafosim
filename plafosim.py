@@ -47,12 +47,14 @@ def main():
                         help="The distance between arrival positions (off-ramps) in m")
     # vehicle properties
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
+    parser.add_argument('--max-speed', type=int, default=36,
+                        help="The maximum possible driving speed in m/s")
+    parser.add_argument('--random-desired-speed', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
+                        help="Whether to pick a random desired driving speed instead of using max speed")
     parser.add_argument('--min-desired-speed', type=int, default=22,
                         help="The minimum desired driving speed im m/s")
     parser.add_argument('--max-desired-speed', type=int, default=28,
                         help="The minimum desired driving speed im m/s")
-    parser.add_argument('--max-speed', type=int, default=36,
-                        help="The maximum possible driving speed in m/s")
     parser.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
                         help="Whether to enable collision checks")
     parser.add_argument('--penetration', type=float, default=1.0,
@@ -83,9 +85,10 @@ def main():
         args.penetration,
         args.depart_interval,
         args.arrival_interval,
+        args.max_speed,
+        args.random_desired_speed,
         args.min_desired_speed,
-        args.max_desired_speed,
-        args.max_speed)
+        args.max_desired_speed)
     # TODO log generation parameters
     simulator.run(max_step)
 
