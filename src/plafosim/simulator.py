@@ -340,6 +340,8 @@ class Simulator:
             traci.simulationStep(self._step)
             from random import randrange
 
+        print("Starting simulation", flush=True)
+
         # let the simulator run
         while True:
             if self._step >= max_step:
@@ -384,7 +386,7 @@ class Simulator:
     def stop(self, msg: str):
         """Stop the simulation with the given message"""
 
-        print(self._step, ":", msg, flush=True)
+        print("\n", self._step, ":", msg, flush=True)
         self.finish()
         exit(0)
 
