@@ -54,7 +54,7 @@ def main():
     parser.add_argument('--max-speed', type=int, default=36,
                         help="The maximum possible driving speed in m/s")
     parser.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
-                        help="Enable collision checks")
+                        help="Whether to enable collision checks")
     parser.add_argument('--penetration', type=float, default=1.0,
                         help="Penetration rate of vehicles with platooning capabilities")
     # simulation properties
