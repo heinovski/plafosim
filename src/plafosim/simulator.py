@@ -313,6 +313,10 @@ class Simulator:
         with open(self._result_base_filename + '_vehicle_trips.csv', 'w') as f:
             f.write("id,depart,departLane,departPos,departSpeed,arrival,arrivalLane,arrivalPos,arrivalSpeed,duration,routeLength,timeLoss\n")
 
+        # create output file for vehicle emissions
+        with open(self._result_base_filename + '_vehicle_emissions.csv', 'w') as f:
+            f.write("id,CO,CO2,HC,PMx,NOx,fuel\n")
+
         # create output file for vehicle traces
         with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
             f.write("step,id,position,lane,speed,duration,routeLength\n")

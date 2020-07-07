@@ -220,10 +220,15 @@ class Vehicle:
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
             f.write("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss))
 
-        # TODO use better format
-        with open(self._simulator._result_base_filename + '_vehicle_emissions.out', 'a') as f:
-            emissions = "id=%d CO_abs=%d CO2_abs=%d HC_abs=%d PMx_abs=%d NOx_abs=%d fuel_abs=%d\n" % (self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel)
-            f.write(emissions)
+        with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
+            # TODO emissions model not yet implemented
+            self._co = -1
+            self._co2 = -1
+            self._hc = -1
+            self._pmx = -1
+            self._npx = -1
+            self._fuel = -1
+            f.write("%d,%d,%d,%d,%d,%d,%d\n" % (self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel))
 
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
