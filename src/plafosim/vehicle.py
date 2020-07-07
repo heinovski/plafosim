@@ -168,6 +168,9 @@ class Vehicle:
             # we started (right now)
             self._start()
 
+            if self._simulator._debug:
+                self.info()
+
             # What has to be triggered periodically?
             self._action()
 
@@ -184,7 +187,6 @@ class Vehicle:
 
         if self._started is False:
             self._started = True
-            self.info()
 
     def info(self):
         """Print info of a Vehicle"""
