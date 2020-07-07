@@ -214,8 +214,8 @@ class Vehicle:
         time_loss = self.travel_time - round(e_travel_time)
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
 
-        print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed,
-              "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
+        if self._simulator._debug:
+            print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
 
         # TODO use better format
         with open(self._simulator._result_base_filename + '_vehicle_trips.out', 'a') as f:
