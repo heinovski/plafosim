@@ -193,7 +193,7 @@ class Vehicle:
 
         e_remaining_travel_time = round((self._arrival_position - self._position) / self._desired_speed)
         print(self._simulator.step, ":", self._vid, "at", self._position, self._lane, "with", self._speed,
-              "takes", e_remaining_travel_time)
+              "takes", e_remaining_travel_time, flush=True)
 
     def _statistics(self):
         """Write continuous statistics"""
@@ -215,7 +215,7 @@ class Vehicle:
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
 
         print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed,
-              "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio)
+              "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
 
         # TODO use better format
         with open(self._simulator._result_base_filename + '_vehicle_trips.out', 'a') as f:
