@@ -309,6 +309,10 @@ class Simulator:
             f.write("simulation start: " + time.asctime(time.localtime(time.time())) + '\n')
             f.write("parameters" + str(self) + '\n')
 
+        # create output file for vehicle trips
+        with open(self._result_base_filename + '_vehicle_trips.csv', 'w') as f:
+            f.write("id,depart,departLane,departPos,departSpeed,arrival,arrivalLane,arrivalPos,arrivalSpeed,duration,routeLength,timeLoss\n")
+
         # create output file for vehicle traces
         with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
             f.write("step,id,position,lane,speed,duration,routeLength\n")
