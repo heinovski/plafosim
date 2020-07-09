@@ -389,7 +389,7 @@ class Simulator:
     def stop(self, msg: str):
         """Stop the simulation with the given message"""
 
-        print("\n", self._step, ":", msg, flush=True)
+        print("\n", msg, flush=True)
         self.finish()
         exit(0)
 
