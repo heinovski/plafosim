@@ -208,6 +208,7 @@ class Vehicle:
         """Clean up the instance of the vehicle"""
 
         if (self._position < self._arrival_position):
+            print("Finish was called even though we did not arrive yet!")
             return
 
         e_travel_time = (self._arrival_position - self._depart_position) / self._desired_speed
