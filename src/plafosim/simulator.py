@@ -54,8 +54,9 @@ def new_speed(current_speed: int, desired_speed: int, max_speed: int, max_accele
 
     # TODO vsafe
     # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predessor and the vehicle itself
-    safe_speed = (pred_rear_position - current_position)  # TODO / self._step_length # - desired_gap + pred_speed
-    new_speed = min(safe_speed, new_speed)
+    if pred_rear_position != -1:
+        safe_speed = (pred_rear_position - current_position)  # TODO / self._step_length # - desired_gap + pred_speed
+        new_speed = min(safe_speed, new_speed)
 
     # TODO dawdling?
     # new_speed -= random() * new_speed
@@ -164,6 +165,7 @@ class Simulator:
             pid = self.get_predecessor_id(vehicle.vid)
             if pid is -1:
                 pred_pos_rear = self._road_length
+                pred_pos_rear = -1
             else:
                 pred_pos_rear = self._vehicles[pid].rear_position
 
