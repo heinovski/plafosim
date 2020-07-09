@@ -171,11 +171,11 @@ class Vehicle:
             if self._simulator._debug:
                 self.info()
 
-            # What has to be triggered periodically?
-            self._action()
-
             # log periodic statistics
             self._statistics()
+
+            # What has to be triggered periodically?
+            self._action()
 
     def _action(self):
         """Trigger concrete actions of a Vehicle"""
