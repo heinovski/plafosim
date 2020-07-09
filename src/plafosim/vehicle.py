@@ -217,6 +217,10 @@ class Vehicle:
         if self._simulator._debug:
             print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
 
+        # log statistics (e.g., traces) again
+        # TODO check whether this is actually useful/correct
+        self._statistics()
+
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
             f.write("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss))
 
