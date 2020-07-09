@@ -291,12 +291,12 @@ class Simulator:
                     depart_position,
                     arrival_position,
                     desired_speed,
-                    depart_speed,
                     depart_lane,
+                    depart_speed,
                     depart_time)
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
-                                  desired_speed, depart_speed, depart_lane, depart_time)
+                                  desired_speed, depart_lane, depart_speed, depart_time)
 
             self._vehicles[vid] = vehicle
 

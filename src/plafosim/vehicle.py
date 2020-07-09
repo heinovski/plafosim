@@ -301,7 +301,7 @@ class PlatooningVehicle(Vehicle):
             depart_speed: int,
             depart_time: int):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
-                         desired_speed, depart_time)
+                         depart_speed, depart_time)
 
         self._platoon_role = PlatoonRole.NONE
         self._platoon_id = self.vid
