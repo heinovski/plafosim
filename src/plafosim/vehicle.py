@@ -223,7 +223,7 @@ class Vehicle:
         self._statistics()
 
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss))
+            f.write("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
 
         with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
             # TODO emissions model not yet implemented
