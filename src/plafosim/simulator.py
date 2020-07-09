@@ -337,7 +337,7 @@ class Simulator:
             import traci
 
             sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-            sumoCmd = [sumoBinary, "-c", "cfg/freeway.sumo.cfg"]
+            sumoCmd = [sumoBinary, "-Q", "-c", "cfg/freeway.sumo.cfg"]
 
             traci.start(sumoCmd)
             traci.simulationStep(self._step)
