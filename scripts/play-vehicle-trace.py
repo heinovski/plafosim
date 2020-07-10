@@ -127,4 +127,8 @@ else:
 # end of file
 print("Reached end of trace file")
 
+# remove all vehicles
+for vid in traci.vehicle.getIDList():
+    remove_vehicle(vid)
+
 traci.close(False)
