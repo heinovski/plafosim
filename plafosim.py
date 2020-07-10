@@ -17,6 +17,7 @@
 #
 import argparse
 from distutils.util import strtobool
+from timeit import default_timer as timer
 
 from src.plafosim.simulator import Simulator
 
@@ -29,6 +30,9 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 def main():
+
+    start_time = timer()
+
     # parse some parameters
     parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="""
     Platoon Formation Simulator (PlaFoSim) -- A simple simulator for platoon formation.
@@ -91,6 +95,9 @@ def main():
         args.max_desired_speed)
     # TODO log generation parameters
     simulator.run(max_step)
+
+    end_time = timer()
+    print("The simulation took %.4f seconds" % (end_time - start_time), flush=True)
 
 
 if __name__ == "__main__":
