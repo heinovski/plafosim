@@ -92,6 +92,7 @@ class Simulator:
         # simulation properties
         self._step = 0  # the current simulation step in s
         self._step_length = step_length  # the lengh of a simulation step
+        self._running = False  # whether the simulation is running
         self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui
         self._result_base_filename = result_base_filename  # the base filename of the result files
@@ -307,6 +308,12 @@ class Simulator:
     def run(self, max_step: int):
         """Run the simulation with the specified parameters"""
 
+        if not self._running:
+            self._running = True
+        else:
+            print("Simulation is already running!")
+            exit(1)
+
         # write some general information about the simulation
         with open(self._result_base_filename + '_general.out', 'w') as f:
             f.write("simulation start: " + time.asctime(time.localtime(time.time())) + '\n')
@@ -346,7 +353,7 @@ class Simulator:
         print("Starting simulation", flush=True)
 
         # let the simulator run
-        while True:
+        while self._running:
             if self._step >= max_step:
                 self.stop("Reached step limit")
             if len(self._vehicles) == 0:
@@ -389,9 +396,9 @@ class Simulator:
     def stop(self, msg: str):
         """Stop the simulation with the given message"""
 
+        self._running = False
         print("\n%s" % msg, flush=True)
         self.finish()
-        exit(0)
 
     def __str__(self) -> str:
         """Return a nice string representation of a simulator instance"""
