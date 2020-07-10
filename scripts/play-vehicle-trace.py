@@ -50,7 +50,7 @@ traci.start(sumoCmd)
 
 
 def add_vehicle(vid: str, position: str, speed: str, lane: str):
-    print("adding", vid)
+    print("adding %s" % vid, flush=True)
     traci.vehicle.add(vid, 'route', departPos=float(position), departSpeed=speed, departLane=lane, typeID='vehicle')
     traci.vehicle.setColor(vid, (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
     traci.vehicle.setSpeedMode(vid, 0)
@@ -64,7 +64,7 @@ def move_vehicle(vid: str, position: str, speed: str, lane: str):
 
 
 def remove_vehicle(vid: str):
-    print("removing", vid)
+    print("removing %s" % vid, flush=True)
     traci.vehicle.remove(vid, 2)
 
 
@@ -76,8 +76,7 @@ def use_pandas():
     traci.simulationStep(step)
 
     while step <= traces.step.max():
-        if step % 600 == 0:
-            print("Current step:", step)
+        print("\rCurrent step: %d" % step, sep=' ', end='', flush=True)
 
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
@@ -104,14 +103,13 @@ def use_read():
             if lstep == "step":
                 continue
             if int(lstep) < step:
-                print("not increasing step number")
+                print("Step number is not increasing!")
                 exit(1)
             elif int(lstep) > step:
                 # next step
                 traci.simulationStep(step)
                 step = int(lstep)
-                if step % 600 == 0:
-                    print("Current step:", step)
+                print("\rCurrent step: %d" % step, sep=' ', end='', flush=True)
 
             # simulate vehicles from trace file
             if vid not in traci.vehicle.getIDList():
