@@ -348,9 +348,9 @@ class Simulator:
         # let the simulator run
         while True:
             if self._step >= max_step:
-                self.stop("reached step limit")
+                self.stop("Reached step limit")
             if len(self._vehicles) == 0:
-                self.stop("no more vehicles in the simulation")  # do we really want to exit here?
+                self.stop("No more vehicles in the simulation")  # do we really want to exit here?
 
             print("\rCurrent step: %d" % self._step, sep=' ', end='', flush=True)
 
@@ -389,7 +389,7 @@ class Simulator:
     def stop(self, msg: str):
         """Stop the simulation with the given message"""
 
-        print("\n", msg, flush=True)
+        print("\n%s" % msg, flush=True)
         self.finish()
         exit(0)
 
