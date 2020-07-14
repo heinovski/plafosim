@@ -241,7 +241,8 @@ class Simulator:
             max_speed: int,
             random_desired_speed: bool,
             min_desired_speed: int,
-            max_desired_speed: int):
+            max_desired_speed: int,
+            depart_time_interval: int):
         """Generate vehicles for the simulation"""
 
         last_vehicle_id = -1
@@ -268,7 +269,6 @@ class Simulator:
             arrival_position = self._road_length  # FIXME go to end for now
             spawn_strategy = "interval"
             if spawn_strategy is "interval":
-                depart_time_interval = 1
                 if last_vehicle_id is not -1:
                     depart_time = self._vehicles[last_vehicle_id].depart_time + depart_time_interval
                 else:

@@ -59,6 +59,8 @@ def main():
                         help="The minimum desired driving speed im m/s")
     parser.add_argument('--max-desired-speed', type=int, default=28,
                         help="The minimum desired driving speed im m/s")
+    parser.add_argument('--depart-time-interval', type=int, default=1,
+                        help="The interval between two vehicle departures in s")
     parser.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
                         help="Whether to enable collision checks")
     parser.add_argument('--penetration', type=float, default=1.0,
@@ -92,7 +94,8 @@ def main():
         args.max_speed,
         args.random_desired_speed,
         args.min_desired_speed,
-        args.max_desired_speed)
+        args.max_desired_speed,
+        args.depart_time_interval)
     # TODO log generation parameters
     simulator.run(max_step)
 
