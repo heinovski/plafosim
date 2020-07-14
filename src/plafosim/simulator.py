@@ -441,5 +441,8 @@ class Simulator:
 
         if self._gui:
             import traci
+            # remove all vehicles
+            for vid in traci.vehicle.getIDList():
+                traci.vehicle.remove(vid, 2)
             traci.close(False)
         pass
