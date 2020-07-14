@@ -180,7 +180,7 @@ class Vehicle:
     def _action(self):
         """Trigger concrete actions of a Vehicle"""
 
-        pass
+        pass  # this vehicle has no application running
 
     def _start(self):
         """Start this Vehicle"""
