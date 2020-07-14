@@ -379,8 +379,10 @@ class Simulator:
         while self._running:
             if self._step >= max_step:
                 self.stop("Reached step limit")
+                continue
             if len(self._vehicles) == 0:
                 self.stop("No more vehicles in the simulation")  # do we really want to exit here?
+                continue
 
             print("\rCurrent step: %d" % self._step, sep=' ', end='...', flush=True)
 
