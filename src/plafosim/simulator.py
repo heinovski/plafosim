@@ -387,17 +387,22 @@ class Simulator:
             print("\rCurrent step: %d" % self._step, sep=' ', end='...', flush=True)
 
             if self._gui:
+
+                # simulate vehicles from trace file
                 for vehicle in self._vehicles.values():
                     if vehicle.depart_time > self._step:
                         # vehicle did not start yet
                         continue
+                    # add vehicles
                     if str(vehicle.vid) not in traci.vehicle.getIDList():
                         traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
                         traci.vehicle.setColor(str(vehicle.vid), (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
                         traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
                         traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
+                    # update vehicles
                     traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
                     traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID='edge_0_0_%d' % vehicle.lane)
+
                 traci.simulationStep(self._step)
 
                 # remove vehicles not in simulator
