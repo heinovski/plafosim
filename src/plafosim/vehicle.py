@@ -94,18 +94,27 @@ class Vehicle:
     def vid(self) -> int:
         return self._vid
 
+    # TODO remove superfluous method?
+    @property
+    def vehicle_type(self) -> VehicleType:
+        return self._vehicle_type
+
+    # TODO remove superfluous method?
     @property
     def length(self) -> int:
         return self._vehicle_type.length
 
+    # TODO remove superfluous method?
     @property
     def max_speed(self) -> int:
         return self._vehicle_type.max_speed
 
+    # TODO remove superfluous method?
     @property
     def max_acceleration(self) -> int:
         return self._vehicle_type.max_acceleration
 
+    # TODO remove superfluous method?
     @property
     def max_deceleration(self) -> int:
         return self._vehicle_type.max_deceleration
