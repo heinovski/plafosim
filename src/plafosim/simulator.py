@@ -216,18 +216,41 @@ class Simulator:
                 if vehicle is other_vehicle:
                     # we do not need to compare us to ourselves
                     continue
-                if other_vehicle.depart_time > self._step:
-                    # other vehicle did not start yet
-                    continue
                 if vehicle.lane != other_vehicle.lane:
                     # we do not care about other lanes
                     continue
-                if vehicle.position >= (other_vehicle.position - other_vehicle.length) and \
-                        other_vehicle.position >= (vehicle.position - vehicle.length):
-                    # vehicle is within the back of other_vehicle
-                    print(self._step, ": crash", vehicle.vid, vehicle.position, vehicle.length,
-                          other_vehicle.vid, other_vehicle.position, other_vehicle.length)
+                if other_vehicle.depart_time > self._step:
+                    # other vehicle did not start yet
+                    continue
+                if self.has_collision(vehicle.vid, vehicle.position, vehicle.rear_position, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position):
+                    print("%s (%d-%d)" % (vehicle.vid, vehicle.position, vehicle.rear_position))
+                    print("%s (%d-%d)" % (other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position))
                     exit(1)
+
+    def has_collision(self, vid1: int, pos1: int, rear_pos1: int, vid2: int, pos2: int, rear_pos2: int) -> bool:
+
+        # front bumper of followr is within back of leader
+        if (pos1 < pos2 and rear_pos1 < pos2 and rear_pos1 < rear_pos2 and pos1 == rear_pos2) or (pos2 < pos1 and rear_pos2 < pos1 and rear_pos2 < rear_pos1 and pos2 == rear_pos1):
+            print(self._step, "crash (same position)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
+            return True
+
+        # follower is (partly) in leader
+        if (pos1 <= pos2 and rear_pos1 < pos2 and pos1 >= rear_pos2 and rear_pos1 <= rear_pos2) or (pos2 <= pos1 and rear_pos2 < pos1 and pos2>= rear_pos1 and rear_pos2 <= rear_pos1):
+            print(self._step, "crash (regular)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
+            return True
+
+        # follower is completly within leader
+        if (pos1 >= pos2 and rear_pos1 <= rear_pos2 and rear_pos1 < pos2 and pos1 > pos2) or (pos2 >= pos1 and rear_pos2 <= rear_pos1 and rear_pos2 < pos1 and pos2 > pos1):
+            print(self._step, "crash (within)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
+            return True
+
+        # no collision!
+        assert(
+        (pos1 < rear_pos2 and rear_pos1 < rear_pos2 and pos1 < pos2 and rear_pos1 < pos2) or
+        (pos2 < rear_pos1 and rear_pos2 < rear_pos1 and pos2 < pos1 and rear_pos2 < pos1)
+            )
+
+        return False
 
     # TODO move out of simulator class
     # TODO generate while simulation is running
