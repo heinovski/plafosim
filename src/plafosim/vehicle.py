@@ -26,8 +26,8 @@ class VehicleType:
         self._name = name  # the name of a vehicle type
         self._length = length  # the length of a vehicle type
         self._max_speed = max_speed  # the maximum speed of a vehicle type
-        self._max_acceleration = max_acceleration  # the maximum acceleration of a vehicle type
-        self._max_deceleration = max_deceleration  # the maximum deceleration of a vehicle type
+        self._max_acceleration = max_acceleration  # the maximum acceleration of the vehicle type
+        self._max_deceleration = max_deceleration  # the maximum deceleration of the vehicle type
 
     @property
     def length(self) -> int:
