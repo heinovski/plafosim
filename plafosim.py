@@ -72,6 +72,8 @@ def main():
                         help="Enable debug output")
     parser.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
                         help="Enable live sumo-gui")
+    parser.add_argument('--gui-delay', type=int, default=0,
+                        help="The delay used in every simulation step to visualize the current network state in ms")
     parser.add_argument('--result-base-filename', type=str, default='results',
                         help="The base filename of the result files")
 
@@ -83,6 +85,7 @@ def main():
         args.step,
         args.debug,
         args.gui,
+        args.gui_delay / 1000,
         args.result_base_filename)
     max_step = args.limit * 60 * 60
     simulator.generate_vehicles(

@@ -18,6 +18,7 @@
 import argparse
 import os
 import sys
+import time
 
 from random import randrange
 
@@ -36,6 +37,8 @@ parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description=""
 parser.add_argument('trace_file', type=str, help="The name of the vehicle trace file")
 parser.add_argument('sumo_config', type=str, help="The name of the SUMO config file")
 parser.add_argument('--method', type=str, default='pandas', choices=('pandas, read'), help="The method to use for reading the trace file")
+parser.add_argument('--gui-delay', type=int, default=0,
+                    help="The delay used in every simulation step to visualize the current network state in ms")
 args = parser.parse_args()
 
 tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -90,6 +93,9 @@ def use_pandas():
         for vid in traci.vehicle.getIDList():
             if int(vid) not in list(traces.loc[traces.step == step]['id']):
                 remove_vehicle(vid)
+
+        # sleep for visualization
+        time.sleep(args.gui_delay / 1000)
 
         step += 1
 

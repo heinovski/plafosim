@@ -78,6 +78,7 @@ class Simulator:
             step_length: int,
             debug: bool,
             gui: bool,
+            gui_delay: int,
             result_base_filename: str):
         """Initialize a simulator instance"""
 
@@ -95,6 +96,7 @@ class Simulator:
         self._running = False  # whether the simulation is running
         self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui
+        self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._result_base_filename = result_base_filename  # the base filename of the result files
 
     @property
@@ -409,6 +411,9 @@ class Simulator:
                 for vid in traci.vehicle.getIDList():
                     if int(vid) not in self._vehicles.keys():
                         traci.vehicle.remove(vid, 2)
+
+                # sleep for visualization
+                time.sleep(self._gui_delay)
 
             # call regular actions on vehicles
             self.call_actions()
