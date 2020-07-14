@@ -185,8 +185,10 @@ class Vehicle:
     def _start(self):
         """Start this Vehicle"""
 
-        if self._started is False:
-            self._started = True
+        if self._started:
+            return
+
+        self._started = True
 
     def info(self):
         """Print info of a Vehicle"""
