@@ -398,8 +398,5 @@ class PlatooningVehicle(Vehicle):
     def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
         """Handle a message of concrete type PlatoonAdvertisement"""
 
-        # TODO the whole neighbortable stuff is actually not necessary as well, since a perfect communication without any maximum distance is basically oracle knowledge
-        return
-
         # TODO add contents to the neighbor table
         print("advertisement from", advertisement.origin)
