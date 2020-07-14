@@ -382,7 +382,7 @@ class Simulator:
             if len(self._vehicles) == 0:
                 self.stop("No more vehicles in the simulation")  # do we really want to exit here?
 
-            print("\rCurrent step: %d" % self._step, sep=' ', end='', flush=True)
+            print("\rCurrent step: %d" % self._step, sep=' ', end='...', flush=True)
 
             if self._gui:
                 for vehicle in self._vehicles.values():
