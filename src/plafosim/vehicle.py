@@ -313,6 +313,73 @@ class PlatoonRole(Enum):
     LEAVER = 4  # corresponds to be in the process of leaving a platoon
 
 
+class Platoon:
+    """A collection of parameters for a concrete platoon"""
+
+    def __init__(
+            self,
+            pid: int,
+            lid: int,
+            formation: list,
+            speed: int,
+            lane: int,
+            desired_gap: float,
+            desired_time_gap: float,
+            max_speed: int,
+            max_acceleration: float,
+            max_deceleration: float):
+        self._pid = pid  # the id of the platoon
+        self._lid = lid  # the current leader id of the platoon
+        self._formation = formation  # the current formation of the platoon
+        self._speed = speed  # the current (desired) speed of the platoon
+        self._lane = lane  # the current (desired) lane of the platoon
+        self._desired_gap = desired_gap  # the current (desired) gap for platoon followers
+        self._desired_time_gap = desired_time_gap  # the current (desired) time gap for platoon followers
+        self._max_speed = max_speed  # the current maximum speed of the platoon
+        self._max_acceleration = max_acceleration  # the current maximum acceleration of the platoon
+        self._max_deceleration = max_deceleration  # the current maximum deceleration of the platoon
+
+    @property
+    def pid(self) -> int:
+        self._pid
+
+    @property
+    def lid(self) -> int:
+        return self._lid
+
+    @property
+    def formation(self) -> list:
+        return self._formation
+
+    @property
+    def speed(self) -> int:
+        return self._speed
+
+    @property
+    def lane(self) -> int:
+        return self._lane
+
+    @property
+    def desired_gap(self) -> float:
+        return self._desired_gap
+
+    @property
+    def desired_time_gap(self) -> float:
+        return self._desired_time_gap
+
+    @property
+    def max_speed(self) -> int:
+        return self._max_speed
+
+    @property
+    def max_acceleration(self) -> float:
+        return self._max_acceleration
+
+    @property
+    def max_deceleration(self) -> float:
+        return self._max_deceleration
+
+
 class PlatooningVehicle(Vehicle):
     """A vehicle that has platooning functionality enabled"""
 
