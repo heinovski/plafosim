@@ -44,7 +44,7 @@ def main():
 
     # road network properties
     parser.add_argument('--road-length', type=int, default=100, help="The length of the road in km")
-    parser.add_argument('--lanes', type=int, default=4, help="The number of lanes")
+    parser.add_argument('--lanes', type=int, default=1, help="The number of lanes")
     parser.add_argument('--depart-interval', type=int, default=1000,
                         help="The distance between departure positions (on-ramps) in m")
     parser.add_argument('--arrival-interval', type=int, default=1000,
