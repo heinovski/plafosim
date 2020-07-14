@@ -192,7 +192,7 @@ class Vehicle:
         """Print info of a Vehicle"""
 
         e_remaining_travel_time = round((self._arrival_position - self._position) / self._desired_speed)
-        print(self._simulator.step, ":", self._vid, "at", self._position, self._lane, "with", self._speed,
+        print(self._simulator.step, ":", self._vid, "at", self._position, self.rear_position, self._lane, "with", self._speed,
               "takes", e_remaining_travel_time, flush=True)
 
     def _statistics(self):
