@@ -400,6 +400,11 @@ class Simulator:
                     traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID='edge_0_0_%d' % vehicle.lane)
                 traci.simulationStep(self._step)
 
+                # remove vehicles not in simulator
+                for vid in traci.vehicle.getIDList():
+                    if int(vid) not in self._vehicles.keys():
+                        traci.vehicle.remove(vid, 2)
+
             # call regular actions on vehicles
             self.call_actions()
 
