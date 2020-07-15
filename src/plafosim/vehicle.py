@@ -397,10 +397,8 @@ class PlatooningVehicle(Vehicle):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
 
-        self._platoon_role = PlatoonRole.NONE
-        self._platoon_id = self.vid
-        self._leader_id = self.vid
-        self._formation = [self.vid]
+        self._platoon_role = PlatoonRole.NONE  # the current platoon role
+        self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.desired_gap, self.desired_time_gap, self.max_speed, self.max_acceleration, self.max_deceleration)
 
         # initialize timer
         self._last_advertisement_step = None
@@ -410,16 +408,8 @@ class PlatooningVehicle(Vehicle):
         return self._platoon_role
 
     @property
-    def platoon_id(self) -> int:
-        return self._platoon_id
-
-    @property
-    def leader_id(self) -> int:
-        return self._leader_id
-
-    @property
-    def formation(self) -> list:
-        return self._formation
+    def platoon(self) -> Platoon:
+        return self._platoon
 
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
