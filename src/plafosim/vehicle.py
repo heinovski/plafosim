@@ -22,7 +22,7 @@ from .message import Message, PlatoonAdvertisement
 class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
-    def __init__(self, name: str, length: int, max_speed: int, max_acceleration: int, max_deceleration: int):
+    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float):
         self._name = name  # the name of a vehicle type
         self._length = length  # the length of a vehicle type
         self._max_speed = max_speed  # the maximum speed of a vehicle type
@@ -38,11 +38,11 @@ class VehicleType:
         return self._max_speed
 
     @property
-    def max_acceleration(self) -> int:
+    def max_acceleration(self) -> float:
         return self._max_acceleration
 
     @property
-    def max_deceleration(self) -> int:
+    def max_deceleration(self) -> float:
         return self._max_deceleration
 
 
@@ -111,12 +111,12 @@ class Vehicle:
 
     # TODO remove superfluous method?
     @property
-    def max_acceleration(self) -> int:
+    def max_acceleration(self) -> float:
         return self._vehicle_type.max_acceleration
 
     # TODO remove superfluous method?
     @property
-    def max_deceleration(self) -> int:
+    def max_deceleration(self) -> float:
         return self._vehicle_type.max_deceleration
 
     @property
