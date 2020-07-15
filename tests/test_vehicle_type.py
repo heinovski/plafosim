@@ -1,9 +1,6 @@
 import pytest
 
-import sys
-sys.path.append("..")
-
-from src.plafosim.vehicle import VehicleType
+from plafosim.vehicle import VehicleType
 
 
 def test_creation():
