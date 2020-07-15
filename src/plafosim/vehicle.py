@@ -30,6 +30,10 @@ class VehicleType:
         self._max_deceleration = max_deceleration  # the maximum deceleration of the vehicle type
 
     @property
+    def name(self) -> str:
+        return self._name
+
+    @property
     def length(self) -> int:
         return self._length
 
