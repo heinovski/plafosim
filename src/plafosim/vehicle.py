@@ -327,8 +327,6 @@ class Platoon:
             formation: list,
             speed: int,
             lane: int,
-            desired_gap: float,
-            desired_time_gap: float,
             max_speed: int,
             max_acceleration: float,
             max_deceleration: float):
@@ -337,8 +335,6 @@ class Platoon:
         self._formation = formation  # the current formation of the platoon
         self._speed = speed  # the current (desired) speed of the platoon
         self._lane = lane  # the current (desired) lane of the platoon
-        self._desired_gap = desired_gap  # the current (desired) gap for platoon followers
-        self._desired_time_gap = desired_time_gap  # the current (desired) time gap for platoon followers
         self._max_speed = max_speed  # the current maximum speed of the platoon
         self._max_acceleration = max_acceleration  # the current maximum acceleration of the platoon
         self._max_deceleration = max_deceleration  # the current maximum deceleration of the platoon
@@ -362,14 +358,6 @@ class Platoon:
     @property
     def lane(self) -> int:
         return self._lane
-
-    @property
-    def desired_gap(self) -> float:
-        return self._desired_gap
-
-    @property
-    def desired_time_gap(self) -> float:
-        return self._desired_time_gap
 
     @property
     def max_speed(self) -> int:
@@ -402,7 +390,7 @@ class PlatooningVehicle(Vehicle):
                          depart_speed, depart_time)
 
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
-        self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.desired_gap, self.desired_time_gap, self.max_speed, self.max_acceleration, self.max_deceleration)
+        self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
 
         # initialize timer
         self._last_advertisement_step = None
