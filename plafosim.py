@@ -51,7 +51,7 @@ def main():
                         help="The distance between arrival positions (off-ramps) in m")
     # vehicle properties
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
-    parser.add_argument('--max-speed', type=int, default=36,
+    parser.add_argument('--max-speed', type=int, default=55,
                         help="The maximum possible driving speed in m/s")
     parser.add_argument('--random-desired-speed', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
                         help="Whether to pick a random desired driving speed instead of using max speed")
