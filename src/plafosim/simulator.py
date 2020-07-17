@@ -452,10 +452,13 @@ class Simulator:
     def finish(self):
         """Clean up the simulation"""
 
+        # write some general information about the simulation
+        with open(self._result_base_filename + '_general.out', 'w') as f:
+            f.write("simulation end: " + time.asctime(time.localtime(time.time())) + '\n')
+
         if self._gui:
             import traci
             # remove all vehicles
             for vid in traci.vehicle.getIDList():
                 traci.vehicle.remove(vid, 2)
             traci.close(False)
-        pass
