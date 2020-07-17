@@ -153,11 +153,14 @@ class Simulator:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
-                # TODO decide upon and perform a lane change for this vehicle
-                # check diff to desired speed
-                # check distance to previous
-                # determine whether it is useful to overtake
-                # check adjacent lane is free
+
+            # TODO decide upon and perform a lane change for this vehicle
+            # check diff to desired speed
+            # check distance to previous
+            # determine whether it is useful to overtake
+            # consider driving at the rightmost lane
+            # check adjacent lane is free
+            # switch to adjacent lane
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
