@@ -53,11 +53,15 @@ def main():
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
     parser.add_argument('--max-speed', type=int, default=55,
                         help="The maximum possible driving speed in m/s")
+    parser.add_argument('--desired-speed', type=int, default=36,
+                        help="The desired driving speed im m/s")
     parser.add_argument('--random-desired-speed', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
-                        help="Whether to pick a random desired driving speed instead of using max speed")
+                        help="Whether to pick a random (normally distributed) desired driving speed")
+    parser.add_argument('--speed-variation', type=float, default=0.1,
+                        help="The devation from the desired driving speed in ratio")
     parser.add_argument('--min-desired-speed', type=int, default=22,
                         help="The minimum desired driving speed im m/s")
-    parser.add_argument('--max-desired-speed', type=int, default=28,
+    parser.add_argument('--max-desired-speed', type=int, default=50,
                         help="The minimum desired driving speed im m/s")
     parser.add_argument('--depart-method', type=str, choices=('interval', 'pobability'), default='interval',
                         help="The departure method of vehicles")
@@ -97,7 +101,9 @@ def main():
         args.depart_interval,
         args.arrival_interval,
         args.max_speed,
+        args.desired_speed,
         args.random_desired_speed,
+        args.speed_variation,
         args.min_desired_speed,
         args.max_desired_speed,
         args.depart_method,

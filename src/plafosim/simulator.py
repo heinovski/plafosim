@@ -16,7 +16,7 @@
 #
 import time
 
-from random import randrange, random
+from random import normalvariate, randrange, random
 from .vehicle import VehicleType, Vehicle, PlatooningVehicle
 
 # assumptions
@@ -267,7 +267,9 @@ class Simulator:
             depart_interval: int,
             arrival_interval: int,
             max_speed: int,
+            desired_speed: int,
             random_desired_speed: bool,
+            speed_variation: float,
             min_desired_speed: int,
             max_desired_speed: int,
             depart_method: str,
@@ -289,10 +291,13 @@ class Simulator:
             depart_lane = 0
             depart_lane = randrange(0, self._number_of_lanes, 1)  # FIXME start on random lane for now
             if random_desired_speed:
-                desired_speed = randrange(min_desired_speed, max_desired_speed, 1)
+                # normal distribution
+                speed = desired_speed * normalvariate(1.0, speed_variation)
+                speed = max(speed, min_desired_speed)
+                speed = min(speed, max_desired_speed)
             else:
-                desired_speed = max_speed
-            depart_speed = randrange(0, desired_speed, 1)
+                speed = desired_speed
+            #depart_speed = randrange(0, desired_speed, 1)
             depart_speed = 0  # FIXME start with 0 speed for now
             arrival_position = randrange(position + 1, self._road_length, arrival_interval)
             arrival_position = self._road_length  # FIXME go to end for now
@@ -321,13 +326,13 @@ class Simulator:
                     vtype,
                     depart_position,
                     arrival_position,
-                    desired_speed,
+                    speed,
                     depart_lane,
                     depart_speed,
                     depart_time)
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
-                                  desired_speed, depart_lane, depart_speed, depart_time)
+                                  speed, depart_lane, depart_speed, depart_time)
 
             self._vehicles[vid] = vehicle
 
