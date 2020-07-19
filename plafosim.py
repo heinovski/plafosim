@@ -72,7 +72,7 @@ def main():
     parser.add_argument('--penetration', type=float, default=1.0,
                         help="Penetration rate of vehicles with platooning capabilities")
     # simulation properties
-    parser.add_argument('--step', type=int, default=1, help="The step length in s")
+    parser.add_argument('--step-length', type=int, default=1, help="The step length in s")
     parser.add_argument('--time-limit', type=int, default=100, help="The simulation limit in h")
     parser.add_argument('--debug', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
                         help="Enable debug output")
@@ -88,7 +88,7 @@ def main():
         args.road_length * 1000,
         args.lanes,
         args.collisions,
-        args.step,
+        args.step_length,
         args.debug,
         args.gui,
         args.gui_delay / 1000,
