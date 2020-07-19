@@ -53,6 +53,11 @@ def main():
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
     parser.add_argument('--max-speed', type=int, default=55,
                         help="The maximum possible driving speed in m/s")
+    # trip properties
+    parser.add_argument('--random-depart-position', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                        help="Whether to use a random depart position for every vehicle instead of 0 m")
+    parser.add_argument('--random-depart-lane', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                        help="Whether to use a random depart lane for every vehicle instead of lane 0")
     parser.add_argument('--desired-speed', type=int, default=36,
                         help="The desired driving speed im m/s")
     parser.add_argument('--random-desired-speed', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
@@ -63,10 +68,17 @@ def main():
                         help="The minimum desired driving speed im m/s")
     parser.add_argument('--max-desired-speed', type=int, default=50,
                         help="The minimum desired driving speed im m/s")
+    parser.add_argument('--random-depart-speed', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                        help="Whether to use a random depart speed for every vehicle instead of 0 m/s")
+    parser.add_argument('--depart-desired', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                        help="Whether the vehicle should depart with its desired speed. Overrides random-depart-speed")
     parser.add_argument('--depart-method', type=str, choices=('interval', 'pobability'), default='interval',
                         help="The departure method of vehicles")
     parser.add_argument('--depart-time-interval', type=int, default=3,
                         help="The interval between two vehicle departures in s")
+    parser.add_argument('--random-arrival-position', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                        help="Whether to use a random arrival position for every vehicle instead of the end of the road")
+    # mobility/application properties
     parser.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True, choices=(True, False),
                         help="Whether to enable collision checks")
     parser.add_argument('--penetration', type=float, default=1.0,
@@ -101,13 +113,18 @@ def main():
         args.depart_interval,
         args.arrival_interval,
         args.max_speed,
+        args.random_depart_position,
+        args.random_depart_lane,
         args.desired_speed,
         args.random_desired_speed,
         args.speed_variation,
         args.min_desired_speed,
         args.max_desired_speed,
+        args.random_depart_speed,
+        args.depart_desired,
         args.depart_method,
-        args.depart_time_interval)
+        args.depart_time_interval,
+        args.random_arrival_position)
     # TODO log generation parameters
     simulator.run(max_step)
 

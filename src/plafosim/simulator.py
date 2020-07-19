@@ -267,29 +267,43 @@ class Simulator:
             depart_interval: int,
             arrival_interval: int,
             max_speed: int,
+            random_depart_position: bool,
+            random_depart_lane: bool,
             desired_speed: int,
             random_desired_speed: bool,
             speed_variation: float,
             min_desired_speed: int,
             max_desired_speed: int,
+            random_depart_speed: bool,
+            depart_desired: bool,
             depart_method: str,
-            depart_time_interval: int):
+            depart_time_interval: int,
+            random_arrival_position: bool):
         """Generate vehicles for the simulation"""
 
         last_vehicle_id = -1
+
         # vehicle properties
         length = 4
         max_acceleration = 2.5 # m/s
         max_deceleration = 15  # m/s
         imperfection = 0.5  # sigma
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
+
         for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
-            depart_position = position = randrange(0, self._road_length, depart_interval)
-            depart_position = 0  # FIXME start from beginning for now
+
+            if random_depart_position:
+                depart_position = position = randrange(0, self._road_length, depart_interval)
+            else:
+                depart_position = 0
             depart_position = depart_position + length  # equal to departPos="base"
-            depart_lane = 0
-            depart_lane = randrange(0, self._number_of_lanes, 1)  # FIXME start on random lane for now
+
+            if random_depart_lane:
+                depart_lane = randrange(0, self._number_of_lanes, 1)
+            else:
+                depart_lane = 0
+
             if random_desired_speed:
                 # normal distribution
                 speed = desired_speed * normalvariate(1.0, speed_variation)
@@ -297,10 +311,15 @@ class Simulator:
                 speed = min(speed, max_desired_speed)
             else:
                 speed = desired_speed
-            #depart_speed = randrange(0, desired_speed, 1)
-            depart_speed = 0  # FIXME start with 0 speed for now
-            arrival_position = randrange(position + 1, self._road_length, arrival_interval)
-            arrival_position = self._road_length  # FIXME go to end for now
+
+            if random_depart_speed:
+                depart_speed = randrange(0, desired_speed, 1)
+            else:
+                depart_speed = 0
+
+            if depart_desired:
+                depart_speed = desired_speed
+
             if depart_method == "interval":
                 if last_vehicle_id is not -1:
                     depart_time = self._vehicles[last_vehicle_id].depart_time + depart_time_interval
@@ -317,6 +336,11 @@ class Simulator:
             else:
                 depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
             # safety_gap = 0  # m
+
+            if random_arrival_position:
+                arrival_position = randrange(position + 1, self._road_length, arrival_interval)
+            else:
+                arrival_position = self._road_length
 
             # choose vehicle "type" depending on the penetration rate
             if random() < penetration_rate:
