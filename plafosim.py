@@ -75,9 +75,9 @@ def main():
     parser.add_argument('--step-length', type=int, default=1, help="The step length in s")
     parser.add_argument('--time-limit', type=int, default=100, help="The simulation limit in h")
     parser.add_argument('--debug', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
-                        help="Enable debug output")
+                        help="Whether to enable debug output")
     parser.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
-                        help="Enable live sumo-gui")
+                        help="Whether to enable a live sumo gui")
     parser.add_argument('--gui-delay', type=int, default=0,
                         help="The delay used in every simulation step to visualize the current network state in ms")
     parser.add_argument('--result-base-filename', type=str, default='results',
