@@ -73,7 +73,7 @@ def main():
                         help="Penetration rate of vehicles with platooning capabilities")
     # simulation properties
     parser.add_argument('--step', type=int, default=1, help="The step length in s")
-    parser.add_argument('--limit', type=int, default=100, help="The simulation limit in h")
+    parser.add_argument('--time-limit', type=int, default=100, help="The simulation limit in h")
     parser.add_argument('--debug', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
                         help="Enable debug output")
     parser.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
@@ -93,7 +93,7 @@ def main():
         args.gui,
         args.gui_delay / 1000,
         args.result_base_filename)
-    max_step = args.limit * 60 * 60
+    max_step = args.time_limit * 60 * 60
     simulator.generate_vehicles(
         max_step,
         args.vehicles,
