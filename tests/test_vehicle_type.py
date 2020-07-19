@@ -22,7 +22,7 @@ from plafosim.vehicle import VehicleType
 def test_creation():
     name = "vtype"
     length = 4
-    max_speed = 36
+    max_speed = 55
     max_acceleration = 2.5
     max_deceleration = 15
 
