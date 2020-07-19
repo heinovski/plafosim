@@ -210,8 +210,6 @@ class Simulator:
     def check_collisions(self):
         """Do collision checks for all vehicles"""
 
-        # TODO we kind of do not want collisions at all
-        # either the cf model shouldn't allow collisions or we should move this to the move part
         for vehicle in self._vehicles.values():
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
