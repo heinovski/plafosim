@@ -341,7 +341,7 @@ class Platoon:
 
     @property
     def pid(self) -> int:
-        self._pid
+        return self._pid
 
     @property
     def lid(self) -> int:
