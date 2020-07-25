@@ -58,7 +58,7 @@ class ManeuverType(Enum):
 class ManeuverMessage(Message):
     """A collection of general data for an arbitrary maneuver maessage"""
 
-    def __init__(self, origin: int, destination: int, maneuver_type, platoon_id: int, leader_id: int):
+    def __init__(self, origin: int, destination: int, maneuver_type: ManeuverType, platoon_id: int, leader_id: int):
         """Initialize a maneuver message instance"""
 
         super().__init__(origin, destination)
