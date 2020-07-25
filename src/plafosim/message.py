@@ -17,22 +17,12 @@
 from enum import Enum
 
 
-# TODO this is superfluous, since it is nowhere actually used
-class MessageType(Enum):
-    """A collection of available message types"""
-
-    CAM = 1  # corresponds to a regular beacon (e.g., ETSI CAM)
-    MANEUVER = 2  # corresponds to a maneuver message
-    PLATOON_ADVERTISEMENT = 3  # corresponds to a regular advertisement of a platoon
-
-
 class Message:
     """A collection of general data for an arbitrary message"""
 
-    def __init__(self, origin: int, destination: int, message_type, *data):
+    def __init__(self, origin: int, destination: int, *data):
         self._origin = origin  # id of the originiator of this message
         self._destination = destination  # id of the destination of this message
-        self._message_type = message_type  # MessageType of this message
         self._data = data  # generic data of this message
 
     @property
@@ -52,7 +42,7 @@ class Message:
 
     def __str__(self) -> str:
         """Get a string representation of the message"""
-        return "%d -> %d (%s): %s" % (self._origin, self._destination, self._message_type, self._data)
+        return "%d -> %d (%s): %s" % (self._origin, self._destination, self.__class__.__name__, self._data)
 
 
 class ManeuverType(Enum):
@@ -71,7 +61,7 @@ class ManeuverMessage(Message):
     def __init__(self, origin: int, destination: int, maneuver_type, platoon_id: int, leader_id: int):
         """Initialize a maneuver message instance"""
 
-        super().__init__(origin, destination, MessageType.MANEUVER)
+        super().__init__(origin, destination)
         self._maneuver_type = maneuver_type  # ManeuverType of this message
         self._platoon_id = platoon_id  # id of the platoon the message corresponds to
         self._leader_id = leader_id  # id of the leader of the corresponding platoon
@@ -173,7 +163,7 @@ class PlatoonAdvertisement(Message):
             platoon_position_back: int):
         """Initialize a platoon advertisement instance"""
 
-        super().__init__(origin, destination, MessageType.PLATOON_ADVERTISEMENT)
+        super().__init__(origin, destination)
         self._platoon_id = platoon_id  # id of the platoon the message corresponds to
         self._leader_id = leader_id  # id of the leader of the corresponding platoon
         self._platoon_speed = platoon_speed  # current speed of the advertised platoon
