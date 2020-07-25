@@ -20,7 +20,7 @@ from enum import Enum
 class Message:
     """A collection of general data for an arbitrary message"""
 
-    def __init__(self, origin: int, destination: int, *data):
+    def __init__(self, origin: int, destination: int, data=None):
         self._origin = origin  # id of the originiator of this message
         self._destination = destination  # id of the destination of this message
         self._data = data  # generic data of this message
