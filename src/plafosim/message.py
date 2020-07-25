@@ -80,6 +80,10 @@ class ManeuverMessage(Message):
     def maneuver_type(self) -> ManeuverType:
         return self._maneuver_type
 
+    def __str__(self) -> str:
+        # TODO include maneuver message specific data
+        return super().__str__()
+
 
 # TODO
 class JoinPlatoonRequest(ManeuverMessage):
@@ -207,3 +211,7 @@ class PlatoonAdvertisement(Message):
     @property
     def platoon_position_back(self) -> int:
         return self._platoon_position_back
+
+    def __str__(self) -> str:
+        # TODO include maneuver message specific data
+        return super().__str__()
