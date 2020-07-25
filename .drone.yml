@@ -9,4 +9,4 @@ steps:
   commands:
     - pip install pytest
     - export PYTHONPATH=$(pwd)/src
-    - pytest
+    - pytest -v
