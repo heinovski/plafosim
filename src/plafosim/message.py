@@ -175,6 +175,16 @@ class PlatoonAdvertisement(Message):
         self._platoon_position_back = platoon_position_back
 
     @property
+    def platoon_id(self) -> int:
+        """Get the platoon id the message corresponds to"""
+        return self._platoon_id
+
+    @property
+    def leader_id(self) -> int:
+        """Get the leader id of the platoon the message corresponds to"""
+        return self._leader_id
+
+    @property
     def platoon_speed(self) -> int:
         return self._platoon_speed
 
