@@ -76,6 +76,10 @@ class ManeuverMessage(Message):
         """Get the leader id of the platoon the message corresponds to"""
         return self._leader_id
 
+    @property
+    def maneuver_type(self) -> ManeuverType:
+        return self._maneuver_type
+
 
 # TODO
 class JoinPlatoonRequest(ManeuverMessage):
