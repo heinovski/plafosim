@@ -8,5 +8,6 @@ steps:
   image: python
   commands:
     - pip install pytest
+    - pip install pytest-cov
     - export PYTHONPATH=$(pwd)/src
-    - pytest -v
+    - pytest -v --cov=plafosim
