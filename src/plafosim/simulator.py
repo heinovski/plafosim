@@ -76,9 +76,10 @@ class Simulator:
         for vehicle in self._vehicles.values():
             vehicle.action()
 
-    def get_predecessor_id(self, vid: int) -> int:
+    def _get_predecessor_id(self, vid: int, lane: int = -1) -> int:
         position = self._vehicles[vid].position
-        lane = self._vehicles[vid].lane
+        if lane == -1:
+            lane = self._vehicles[vid].lane
         predecessor_id = -1
         for vehicle in self._vehicles.values():
             if vehicle.vid is vid:
@@ -94,6 +95,13 @@ class Simulator:
                 predecessor_id = vehicle.vid
             # TODO throw error if precessor and vehicle are "interleaved"
         return predecessor_id
+
+    def _get_predecessor_rear_position(self, vid: int, lane: int = -1) -> int:
+        pid = self._get_predecessor_id(vid, lane)
+        if pid == -1:
+            return -1
+        else:
+            return self._vehicles[pid].rear_position
 
     # kraus - multi lane traffic
     # lane-change
@@ -127,14 +135,7 @@ class Simulator:
                 # vehicle did not start yet
                 continue
 
-            pid = self.get_predecessor_id(vehicle.vid)
-            if pid == -1:
-                pred_pos_rear = self._road_length
-                pred_pos_rear = -1
-            else:
-                pred_pos_rear = self._vehicles[pid].rear_position
-
-            vehicle._speed = vehicle.new_speed(pred_pos_rear)
+            vehicle._speed = vehicle.new_speed(self._get_predecessor_rear_position(vehicle.vid))
 
     # krauss - single lane traffic
     # adjust position (move)
