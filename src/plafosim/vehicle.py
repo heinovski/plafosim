@@ -171,6 +171,48 @@ class Vehicle:
     def travel_time(self) -> int:
         return self._simulator.step - self._depart_time
 
+    # krauss - single lane traffic
+    # adjust speed
+    # v_max, desired speed
+    # epsilon, dawdling of drives
+    # g_des = tau*v_lead
+    # tau, reaction time of drivers
+    # tau_b = v/b
+    # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
+    # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
+    # v(t + step_size) = max[0, v_des(t) - epsilon]
+    def new_speed(self, pred_rear_position: int) -> int:
+        """Calcuate the new speed for a vehicle using the kraus model"""
+
+        new_speed = -1
+        # do we need to adjust our speed?
+        diff_to_desired = self.desired_speed - self.speed
+        if diff_to_desired > 0:
+            # we need to accelerate
+            new_speed = min(self.speed + min(diff_to_desired, self.max_acceleration), self.max_speed)
+        elif diff_to_desired < 0:
+            # we need to decelerate
+            new_speed = max(self.speed - max(diff_to_desired, self.max_deceleration), 0)
+        else:
+            new_speed = self.speed
+
+        # vsafe
+        # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predessor and the vehicle itself
+        if pred_rear_position != -1:
+            gap_to_predecessor = pred_rear_position - self.position
+            safe_speed = gap_to_predecessor  # TODO / self._step_length # - desired_gap + pred_speed
+            if safe_speed < new_speed:
+                print("blocked by slow vehicle!")
+                new_speed = safe_speed
+
+        # TODO dawdling?
+        # new_speed -= random() * new_speed
+
+        if (new_speed < 0):
+            new_speed = 0
+
+        return new_speed
+
     def action(self):
         """Trigger actions of a Vehicle"""
 

@@ -26,50 +26,6 @@ from .vehicle import VehicleType, Vehicle, PlatooningVehicle
 # crash detection does not work with steps greater than 1
 
 
-# krauss - single lane traffic
-# adjust speed
-# v_max, desired speed
-# epsilon, dawdling of drives
-# g_des = tau*v_lead
-# tau, reaction time of drivers
-# tau_b = v/b
-# v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
-# v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
-# v(t + step_size) = max[0, v_des(t) - epsilon]
-# TODO move to the vehicle??
-def new_speed(current_speed: int, desired_speed: int, max_speed: int, max_acceleration: int, max_deceleration: int, current_position: int, pred_rear_position: int) -> int:
-    """Calcuate the new speed for a vehicle using the kraus model"""
-
-    new_speed = -1
-    # do we need to adjust our speed?
-    diff_to_desired = desired_speed - current_speed
-    if diff_to_desired > 0:
-        # we need to accelerate
-        new_speed = min(current_speed + min(diff_to_desired, max_acceleration), max_speed)
-    elif diff_to_desired < 0:
-        # we need to decelerate
-        new_speed = max(current_speed - max(diff_to_desired, max_deceleration), 0)
-    else:
-        new_speed = current_speed
-
-    # vsafe
-    # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predessor and the vehicle itself
-    if pred_rear_position != -1:
-        gap_to_predecessor = pred_rear_position - current_position
-        safe_speed = gap_to_predecessor  # TODO / self._step_length # - desired_gap + pred_speed
-        if safe_speed < new_speed:
-            print("blocked by slow vehicle!")
-            new_speed = safe_speed
-
-    # TODO dawdling?
-    # new_speed -= random() * new_speed
-
-    if (new_speed < 0):
-        new_speed = 0
-
-    return new_speed
-
-
 class Simulator:
     """A collection of paramaters and information of the simulator"""
 
@@ -178,9 +134,7 @@ class Simulator:
             else:
                 pred_pos_rear = self._vehicles[pid].rear_position
 
-            vehicle._speed = new_speed(vehicle.speed, vehicle.desired_speed, vehicle.max_speed,
-                                       vehicle.max_acceleration, vehicle.max_deceleration, vehicle.position,
-                                       pred_pos_rear)
+            vehicle._speed = vehicle.new_speed(pred_pos_rear)
 
     # krauss - single lane traffic
     # adjust position (move)
