@@ -56,7 +56,6 @@ def new_speed(current_speed: int, desired_speed: int, max_speed: int, max_accele
     # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predessor and the vehicle itself
     if pred_rear_position != -1:
         safe_speed = (pred_rear_position - current_position)  # TODO / self._step_length # - desired_gap + pred_speed
-        new_speed = min(safe_speed, new_speed)
         if safe_speed < new_speed:
             print("blocked by slow vehicle!")
             new_speed = safe_speed
