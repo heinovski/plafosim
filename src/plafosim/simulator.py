@@ -110,7 +110,7 @@ class Simulator:
         predecessor_position_on_target_lane = self._get_predecessor_rear_position(vid, lane)
         if predecessor_position_on_target_lane != -1:
             gap_to_predecessor_on_target_lane = predecessor_position_on_target_lane - self._vehicles[vid].position
-            if self._vehicles[vid].speed > gap_to_predecessor_on_target_lane:  # / self.step_length
+            if self._vehicles[vid].speed > (gap_to_predecessor_on_target_lane / self._step_length):
                 return False
             # TODO check distance to successor
         return True

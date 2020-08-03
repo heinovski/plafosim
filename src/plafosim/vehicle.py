@@ -205,7 +205,7 @@ class Vehicle:
         # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
         if pred_rear_position != -1:
             gap_to_predecessor = pred_rear_position - self.position
-            safe_speed = gap_to_predecessor  # TODO / self._step_length # - desired_gap + pred_speed
+            safe_speed = (gap_to_predecessor / self._simulator._step_length) # - desired_gap + pred_speed
             if safe_speed < new_speed:
                 print("%d blocked by slow vehicle!" % self.vid, flush=True)
                 self._blocked_front = True
