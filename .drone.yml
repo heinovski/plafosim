@@ -24,6 +24,23 @@ steps:
     - export PYTHONPATH=$(pwd)/src
     - pytest -v --cov=plafosim tests/unit_tests
 
+- name: coverage badge
+  image: python
+  environment:
+    HOST:
+      from_secret: WWW_FTP_HOST
+    USERNAME:
+      from_secret: WWW_FTP_USER
+    PASSWORD:
+      from_secret: WWW_FTP_PASSWORD
+  commands:
+    - pip3 install coverage
+    - pip3 install coverage-badge
+    - coverage-badge -o coverage.svg
+    - apt update
+    - apt install lftp
+    - lftp -c "set ftp:ssl-allow no; open -u $USERNAME,$PASSWORD $HOST; put coverage.svg;"
+
 ---
 kind: pipeline
 type: docker
