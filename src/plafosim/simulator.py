@@ -238,7 +238,7 @@ class Simulator:
             return True
 
         # follower is (partly) in leader
-        if (pos1 <= pos2 and rear_pos1 < pos2 and pos1 >= rear_pos2 and rear_pos1 <= rear_pos2) or (pos2 <= pos1 and rear_pos2 < pos1 and pos2>= rear_pos1 and rear_pos2 <= rear_pos1):
+        if (pos1 <= pos2 and rear_pos1 < pos2 and pos1 >= rear_pos2 and rear_pos1 <= rear_pos2) or (pos2 <= pos1 and rear_pos2 < pos1 and pos2 >= rear_pos1 and rear_pos2 <= rear_pos1):
             print(self._step, "crash (regular)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
             return True
 
