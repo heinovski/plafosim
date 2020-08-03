@@ -4,9 +4,28 @@ A simple simulator for platoon formation.
 
 [![Build Status](https://drone.tkn.tu-berlin.de/api/badges/CCS/plafosim/status.svg)](https://drone.tkn.tu-berlin.de/CCS/plafosim)
 
+### Quickstart
+
+```./plafosim.py```
+
+## Installation
+
+- install the dependencies listed below
+- clone the repository
+
+### Dependencies
+
+- Python3 (tested with 3.6.9)
+- opt. SUMO (tested with >= 1.2.0)
+
 ## Running a Simulation
 
-### Quickstart
+You can use the simulator as module as well as from the command-line.
+Currently, only command-line is available though.
+
+### Command-line
+
+Use the following script to run a simulation
 
 ```./plafosim.py```
 
