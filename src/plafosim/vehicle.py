@@ -86,6 +86,7 @@ class Vehicle:
         self._position = self._depart_position  # the current position of the vehicle
         self._lane = self._depart_lane  # the current lane of the vehicle
         self._speed = self._depart_speed  # the current speed of the vehicle
+        self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
         # statistics
         self._co = 0  # the total co emission in g
         self._co2 = 0  # the total co2 emission in g
@@ -171,6 +172,10 @@ class Vehicle:
     def travel_time(self) -> int:
         return self._simulator.step - self._depart_time
 
+    @property
+    def blocked_front(self) -> bool:
+        return self._blocked_front
+
     # krauss - single lane traffic
     # adjust speed
     # v_max, desired speed
@@ -203,7 +208,12 @@ class Vehicle:
             safe_speed = gap_to_predecessor  # TODO / self._step_length # - desired_gap + pred_speed
             if safe_speed < new_speed:
                 print("%d blocked by slow vehicle!" % self.vid, flush=True)
+                self._blocked_front = True
                 new_speed = safe_speed
+            else:
+                self._blocked_front = False
+        else:
+            self._blocked_front = False
 
         # TODO dawdling?
         # new_speed -= random() * new_speed
