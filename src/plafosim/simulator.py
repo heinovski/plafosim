@@ -134,7 +134,7 @@ class Simulator:
             if vehicle.position is position:
                 # TODO throw error if the vehicles are "interleaved"
                 continue
-            if predecessor_id is -1 or vehicle.position < self._vehicles[predecessor_id].position:
+            if predecessor_id == -1 or vehicle.position < self._vehicles[predecessor_id].position:
                 predecessor_id = vehicle.vid
             # TODO throw error if precessor and vehicle are "interleaved"
         return predecessor_id
@@ -169,7 +169,7 @@ class Simulator:
                 continue
 
             pid = self.get_predecessor_id(vehicle.vid)
-            if pid is -1:
+            if pid == -1:
                 pred_pos_rear = self._road_length
                 pred_pos_rear = -1
             else:
@@ -319,7 +319,7 @@ class Simulator:
                 depart_speed = desired_speed
 
             if depart_method == "interval":
-                if last_vehicle_id is not -1:
+                if last_vehicle_id != -1:
                     depart_time = self._vehicles[last_vehicle_id].depart_time + depart_time_interval
                 else:
                     depart_time = 0
