@@ -51,7 +51,7 @@ You can get a very simple live GUI based on SUMO by using the parameter `gui`
 The simulation writes a trace for every simulated vehicle to a trace file (default `results_vehicle_traces.csv`).
 You can view it by using a corresponding script that is shipped within this repository
 
-```./scripts/play-vehicle-trace.py results_vehicle_traces.csv cfg/freeway.sumo.cfg```
+```./scripts/play-vehicle-trace.py results_vehicle_traces.csv sumocfg/freeway.sumo.cfg```
 
 To see all options of this script, run
 

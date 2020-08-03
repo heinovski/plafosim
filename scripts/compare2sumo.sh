@@ -27,7 +27,7 @@ echo "tool,real,user,sys" > runtimes.csv
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes.csv --append \
     sumo \
-    -c cfg/freeway-static.sumo.cfg \
+    -c sumocfg/freeway-static.sumo.cfg \
     --fcd-output static-traces.xml \
     --device.fcd.deterministic \
     --tripinfo-output static-trips.xml \
