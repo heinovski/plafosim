@@ -33,6 +33,7 @@ class Simulator:
             self,
             road_length: int,
             number_of_lanes: int,
+            lane_changes: bool,
             collisions: bool,
             step_length: int,
             debug: bool,
@@ -47,6 +48,7 @@ class Simulator:
 
         # vehicle properties
         self._vehicles = {}  # the list (dict) of vehicles in the simulation
+        self._lane_changes = lane_changes  # whether to enable lane changes
         self._collisions = collisions  # whether to check for collisions
 
         # simulation properties
@@ -459,7 +461,8 @@ class Simulator:
             self.call_actions()
 
             # perform lane changes (for all vehicles)
-            self.change_lanes()
+            if self._lane_changes:
+                self.change_lanes()
 
             # adjust speed (of all vehicles)
             self.adjust_speeds()

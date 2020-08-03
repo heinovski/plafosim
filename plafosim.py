@@ -56,6 +56,8 @@ def main():
     vehicle.add_argument('--max-speed', type=int, default=55, help="The maximum possible driving speed in m/s")
     vehicle.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to enable collision checks")
+    vehicle.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to enable lane changes")
     vehicle.add_argument('--penetration', type=float, default=1.0,
                          help="Penetration rate of vehicles with platooning capabilities")
     # trip properties
@@ -128,6 +130,7 @@ def main():
     simulator = Simulator(
         args.road_length * 1000,
         args.lanes,
+        args.lane_changes,
         args.collisions,
         args.step_length,
         args.debug,
