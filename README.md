@@ -1,6 +1,6 @@
 # Platoon Formation Simulator (PlaFoSim)
 
-A simple simulator for platoon formation.
+[PlaFoSim](https://www.plafosim.de) - A simple simulator for platoon formation.
 
 [![Build Status](https://drone.tkn.tu-berlin.de/api/badges/CCS/plafosim/status.svg)](https://drone.tkn.tu-berlin.de/CCS/plafosim)
 
