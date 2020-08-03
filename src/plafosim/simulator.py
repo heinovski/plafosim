@@ -96,6 +96,26 @@ class Simulator:
             # TODO throw error if predecessor and vehicle are "interleaved"
         return predecessor_id
 
+    def _get_successor_id(self, vid: int, lane: int = -1) -> int:
+        position = self._vehicles[vid].position
+        if lane == -1:
+            lane = self._vehicles[vid].lane
+        successor_id = -1
+        for vehicle in self._vehicles.values():
+            if vehicle.vid is vid:
+                continue
+            if vehicle.lane is not lane:
+                continue
+            if vehicle.position > position:
+                continue
+            if vehicle.position is position:
+                # TODO throw error if the vehicles are "interleaved"
+                continue
+            if successor_id == -1 or vehicle.position > self._vehicles[successor_id].position:
+                successor_id = vehicle.vid
+            # TODO throw error if successor and vehicle are "interleaved"
+        return successor_id
+
     def _get_predecessor_rear_position(self, vid: int, lane: int = -1) -> int:
         pid = self._get_predecessor_id(vid, lane)
         if pid == -1:
@@ -103,16 +123,25 @@ class Simulator:
         else:
             return self._vehicles[pid].rear_position
 
-    def is_lane_change_safe(self, vid: int, lane: int) -> bool:
-        assert(vid >= 0)
-        assert(self._vehicles[vid].lane != lane)
+    def is_lane_change_safe(self, vid: int, target_lane: int) -> bool:
+        if self._vehicles[vid].lane is target_lane:
+            return True
 
-        predecessor_position_on_target_lane = self._get_predecessor_rear_position(vid, lane)
+        # check predecessor on target lane
+        predecessor_position_on_target_lane = self._get_predecessor_rear_position(vid, target_lane)
         if predecessor_position_on_target_lane != -1:
             gap_to_predecessor_on_target_lane = predecessor_position_on_target_lane - self._vehicles[vid].position
             if self._vehicles[vid].speed > (gap_to_predecessor_on_target_lane / self._step_length):
                 return False
-            # TODO check distance to successor
+
+        # check successor on target lane
+        successor_on_target_lane = self._get_successor_id(vid, target_lane)
+        if successor_on_target_lane != -1:
+            gap_to_successor_on_target_lane = self._vehicles[vid].rear_position - self._vehicles[successor_on_target_lane].position
+            if self._vehicles[successor_on_target_lane].speed > (gap_to_successor_on_target_lane / self._step_length):
+                return False
+
+        # safe
         return True
 
     def _change_lane(self, vid: int, target_lane: int):
