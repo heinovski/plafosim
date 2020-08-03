@@ -187,7 +187,7 @@ class Vehicle:
     # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
     # v(t + step_size) = max[0, v_des(t) - epsilon]
     def new_speed(self, pred_rear_position: int) -> int:
-        """Calcuate the new speed for a vehicle using the kraus model"""
+        """Calculate the new speed for a vehicle using the kraus model"""
 
         new_speed = -1
         # do we need to adjust our speed?
@@ -202,7 +202,7 @@ class Vehicle:
             new_speed = self.speed
 
         # vsafe
-        # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predessor and the vehicle itself
+        # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
         if pred_rear_position != -1:
             gap_to_predecessor = pred_rear_position - self.position
             safe_speed = gap_to_predecessor  # TODO / self._step_length # - desired_gap + pred_speed
@@ -472,7 +472,7 @@ class PlatooningVehicle(Vehicle):
         return # TODO
 
     def _advertise(self):
-        """Maintain regular sendind of platoon advertisements"""
+        """Maintain regular sending of platoon advertisements"""
 
         return  # TODO this is not necessary as a perfect communication guarantees information
 

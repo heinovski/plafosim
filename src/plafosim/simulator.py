@@ -27,7 +27,7 @@ from .vehicle import VehicleType, Vehicle, PlatooningVehicle
 
 
 class Simulator:
-    """A collection of paramaters and information of the simulator"""
+    """A collection of parameters and information of the simulator"""
 
     def __init__(
             self,
@@ -51,7 +51,7 @@ class Simulator:
 
         # simulation properties
         self._step = 0  # the current simulation step in s
-        self._step_length = step_length  # the lengh of a simulation step
+        self._step_length = step_length  # the length of a simulation step
         self._running = False  # whether the simulation is running
         self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui
@@ -93,7 +93,7 @@ class Simulator:
                 continue
             if predecessor_id == -1 or vehicle.position < self._vehicles[predecessor_id].position:
                 predecessor_id = vehicle.vid
-            # TODO throw error if precessor and vehicle are "interleaved"
+            # TODO throw error if predecessor and vehicle are "interleaved"
         return predecessor_id
 
     def _get_predecessor_rear_position(self, vid: int, lane: int = -1) -> int:
@@ -162,7 +162,7 @@ class Simulator:
     # adjust position (move)
     # x(t + step_size) = x(t) + v(t)*step_size
     def move_vehicles(self):
-        """Do postion updates for all vehicles"""
+        """Do position updates for all vehicles"""
 
         for vid in list(self._vehicles.keys()):
             vehicle = self._vehicles[vid]
@@ -211,7 +211,7 @@ class Simulator:
 
     def has_collision(self, vid1: int, pos1: int, rear_pos1: int, vid2: int, pos2: int, rear_pos2: int) -> bool:
 
-        # front bumper of followr is within back of leader
+        # front bumper of follower is within back of leader
         if (pos1 < pos2 and rear_pos1 < pos2 and rear_pos1 < rear_pos2 and pos1 == rear_pos2) or (pos2 < pos1 and rear_pos2 < pos1 and rear_pos2 < rear_pos1 and pos2 == rear_pos1):
             print(self._step, "crash (same position)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
             return True
@@ -221,7 +221,7 @@ class Simulator:
             print(self._step, "crash (regular)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
             return True
 
-        # follower is completly within leader
+        # follower is completely within leader
         if (pos1 >= pos2 and rear_pos1 <= rear_pos2 and rear_pos1 < pos2 and pos1 > pos2) or (pos2 >= pos1 and rear_pos2 <= rear_pos1 and rear_pos2 < pos1 and pos2 > pos1):
             print(self._step, "crash (within)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
             return True
@@ -302,13 +302,13 @@ class Simulator:
                     depart_time = self._vehicles[last_vehicle_id].depart_time + depart_time_interval
                 else:
                     depart_time = 0
-            #elif spwan_strategy is "rate":
+            #elif spawn_strategy is "rate":
                 # TODO
                 # vehicles per hour
                 # max_step / 3600 --> # hours
                 # rate per hour / 3600 --> rate per second
                 # random > rate? spawn
-            #elif spawn_strategy is "probabilty":
+            #elif spawn_strategy is "probability":
                 # TODO
             else:
                 depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
