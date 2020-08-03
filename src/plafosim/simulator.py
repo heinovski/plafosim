@@ -114,6 +114,13 @@ class Simulator:
                 return False
         return True
 
+    def _change_lane(self, vid: int, target_lane: int):
+        # check adjacent lane is free
+        if self.is_lane_change_safe(vid, target_lane):
+            # switch to adjacent lane
+            print("%d switching lanes" % vid, flush=True)
+            self._vehicles[vid]._lane = target_lane
+
     # kraus - multi lane traffic
     # lane-change
     # congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
@@ -135,19 +142,11 @@ class Simulator:
                 if vehicle.lane < self.number_of_lanes - 1:
                     target_lane = vehicle.lane + 1
                     # TODO determine whether it is useful to overtake
-                    # check adjacent lane is free
-                    if self.is_lane_change_safe(vehicle.vid, target_lane):
-                        # switch to adjacent lane
-                        print("%d switching lanes" % vehicle.vid, flush=True)
-                        vehicle._lane = target_lane
+                    self._change_lane(vehicle.vid, target_lane)
             else:
                 if vehicle.lane > 0:
                     target_lane = vehicle.lane - 1
-                    # check adjacent lane is free
-                    if self.is_lane_change_safe(vehicle.vid, target_lane):
-                        # switch to adjacent lane
-                        print("%d switching lanes" % vehicle.vid, flush=True)
-                        vehicle._lane = target_lane
+                    self._change_lane(vehicle.vid, target_lane)
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
