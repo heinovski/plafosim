@@ -103,6 +103,17 @@ class Simulator:
         else:
             return self._vehicles[pid].rear_position
 
+    def is_lane_change_safe(self, vid: int, lane: int) -> bool:
+        assert(vid >= 0)
+        assert(self._vehicles[vid].lane != lane)
+
+        predecessor_position_on_target_lane = self._get_predecessor_rear_position(vid, lane)
+        if predecessor_position_on_target_lane != -1:
+            gap_to_predecessor_on_target_lane = predecessor_position_on_target_lane - self._vehicles[vid].position
+            if self._vehicles[vid].speed > gap_to_predecessor_on_target_lane:  # / self.step_length
+                return False
+        return True
+
     # kraus - multi lane traffic
     # lane-change
     # congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
@@ -119,13 +130,24 @@ class Simulator:
                 # vehicle did not start yet
                 continue
 
-            # TODO decide upon and perform a lane change for this vehicle
-            # check diff to desired speed
-            # check distance to previous
-            # determine whether it is useful to overtake
-            # consider driving at the rightmost lane
-            # check adjacent lane is free
-            # switch to adjacent lane
+            # decide upon and perform a lane change for this vehicle
+            if vehicle.blocked_front:
+                if vehicle.lane < self.number_of_lanes - 1:
+                    target_lane = vehicle.lane + 1
+                    # TODO determine whether it is useful to overtake
+                    # check adjacent lane is free
+                    if self.is_lane_change_safe(vehicle.vid, target_lane):
+                        # switch to adjacent lane
+                        print("%d switching lanes" % vehicle.vid, flush=True)
+                        vehicle._lane = target_lane
+            else:
+                if vehicle.lane > 0:
+                    target_lane = vehicle.lane - 1
+                    # check adjacent lane is free
+                    if self.is_lane_change_safe(vehicle.vid, target_lane):
+                        # switch to adjacent lane
+                        print("%d switching lanes" % vehicle.vid, flush=True)
+                        vehicle._lane = target_lane
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
