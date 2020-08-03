@@ -202,7 +202,7 @@ class Vehicle:
             gap_to_predecessor = pred_rear_position - self.position
             safe_speed = gap_to_predecessor  # TODO / self._step_length # - desired_gap + pred_speed
             if safe_speed < new_speed:
-                print("blocked by slow vehicle!")
+                print("%d blocked by slow vehicle!" % self.vid, flush=True)
                 new_speed = safe_speed
 
         # TODO dawdling?
