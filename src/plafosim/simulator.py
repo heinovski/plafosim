@@ -119,7 +119,7 @@ class Simulator:
         # check adjacent lane is free
         if self.is_lane_change_safe(vid, target_lane):
             # switch to adjacent lane
-            print("%d switching lanes" % vid, flush=True)
+            print("%d switching lanes %d -> %d" % (vid, self._vehicles[vid].lane, target_lane), flush=True)
             self._vehicles[vid]._lane = target_lane
 
     # kraus - multi lane traffic
