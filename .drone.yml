@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: default
+name: testing
 
 steps:
 - name: run pytest
