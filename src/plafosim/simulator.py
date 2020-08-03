@@ -112,6 +112,7 @@ class Simulator:
             gap_to_predecessor_on_target_lane = predecessor_position_on_target_lane - self._vehicles[vid].position
             if self._vehicles[vid].speed > gap_to_predecessor_on_target_lane:  # / self.step_length
                 return False
+            # TODO check distance to successor
         return True
 
     def _change_lane(self, vid: int, target_lane: int):
