@@ -6,39 +6,11 @@ import re
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from statistics import mean
 
-## Evalute runtime
-
-n_vehicles = 100  # TODO read from output (see below)
-
-print("Evaluating runtime...")
-
-runtimes = pandas.read_csv('runtimes.csv')
-runtimes = runtimes.astype({'tool': str})
-
-print("Plotting runtime...")
-
-pl.figure()
-pl.title("Runtime for %d Vehicles" % n_vehicles)
-data = runtimes.loc[runtimes.tool == "sumo", runtimes.columns != "tool"].values.flatten()
-
-pl.scatter(range(0, len(data), 1), data, label="sumo", color="black")
-data = runtimes.loc[runtimes.tool == "plafosim", runtimes.columns != "tool"].values.flatten()
-pl.scatter(range(0, len(data), 1), data, label="plafosim", color="blue")
-
-pl.ylabel("time [s]")
-pl.xticks(range(0, len(data), 1), runtimes.loc[:, runtimes.columns != "tool"])
-pl.xlabel("kind")
-pl.legend()
-pl.savefig('runtime.png')
-
-## Evaluate trips/emissions/traces/changes
-
-print("Evaluating trips/emissions/traces/changes...")
 
 desiredSpeed = 36  # TODO read from output
 arrivalPosition = 100000
 
-### Read trips/emissions
+## Read trips/emissions
 
 sumo_trips = pandas.read_csv('static-trips.csv')
 
@@ -83,7 +55,7 @@ pl.xlabel("kind")
 pl.legend()
 pl.savefig('runtime.png')
 
-### Read traces
+## Read traces
 
 sumo_traces = pandas.read_csv('static-traces.csv', usecols=['timestep_time', 'vehicle_id', 'vehicle_lane', 'vehicle_pos', 'vehicle_speed'])
 sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
@@ -100,10 +72,9 @@ sumo_traces.sort_values(by='step', inplace=True)
 plafosim_traces = pandas.read_csv('results_vehicle_traces.csv', usecols=['step', 'id', 'position', 'lane', 'speed'])
 plafosim_traces.sort_values(by='step', inplace=True)
 
-### Read lane-changes
+## Read lane-changes
 
 sumo_changes = pandas.read_csv('static-changes.csv', skip_blank_lines=True)
-
 
 ## Evaluate trips/emissions/traces
 
