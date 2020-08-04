@@ -175,19 +175,21 @@ class Simulator:
             # decide upon and perform a lane change for this vehicle
             if vehicle.blocked_front:
                 if vehicle.lane < self.number_of_lanes - 1:
-                    target_lane = vehicle.lane + 1
+                    source_lane = vehicle.lane
+                    target_lane = source_lane + 1
                     # TODO determine whether it is useful to overtake
                     if self._change_lane(vehicle.vid, target_lane):
                         # log lane change
                         with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                            f.write("%d,%d,%d,%d,%d,%d,%s\n" % (self.step, vehicle.vid, vehicle.position, vehicle.lane, target_lane, vehicle.speed, "speedGain"))
+                            f.write("%d,%d,%d,%d,%d,%d,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "speedGain"))
             else:
                 if vehicle.lane > 0:
-                    target_lane = vehicle.lane - 1
+                    source_lane = vehicle.lane
+                    target_lane = source_lane - 1
                     if self._change_lane(vehicle.vid, target_lane):
                         # log lane change
                         with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                            f.write("%d,%d,%d,%d,%d,%d,%s\n" % (self.step, vehicle.vid, vehicle.position, vehicle.lane, target_lane, vehicle.speed, "keepRight"))
+                            f.write("%d,%d,%d,%d,%d,%d,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "keepRight"))
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
