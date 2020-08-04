@@ -89,6 +89,8 @@ sumo_changes.sort_values(by='step', inplace=True)
 plafosim_changes = pandas.read_csv('results_vehicle_changes.csv')
 plafosim_changes.sort_values(by='step', inplace=True)
 
+## Evaluate trips/emissions/traces/lane changes
+
 print("Evaluating trips/emissions/traces/changes...")
 
 ### Evaluate for every vehicle
