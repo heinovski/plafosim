@@ -146,13 +146,15 @@ class Simulator:
         # safe
         return True
 
-    def _change_lane(self, vid: int, target_lane: int):
+    def _change_lane(self, vid: int, target_lane: int) -> bool:
         # check adjacent lane is free
         if self.is_lane_change_safe(vid, target_lane):
             # switch to adjacent lane
             if self._debug:
                 print("%d switching lanes %d -> %d" % (vid, self._vehicles[vid].lane, target_lane), flush=True)
             self._vehicles[vid]._lane = target_lane
+            return True
+        return False
 
     # kraus - multi lane traffic
     # lane-change
@@ -175,11 +177,17 @@ class Simulator:
                 if vehicle.lane < self.number_of_lanes - 1:
                     target_lane = vehicle.lane + 1
                     # TODO determine whether it is useful to overtake
-                    self._change_lane(vehicle.vid, target_lane)
+                    if self._change_lane(vehicle.vid, target_lane):
+                        # log lane change
+                        with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
+                            f.write("%d,%d,%d,%d,%d,%d,%s\n" % (self.step, vehicle.vid, vehicle.position, vehicle.lane, target_lane, vehicle.speed, "speedGain"))
             else:
                 if vehicle.lane > 0:
                     target_lane = vehicle.lane - 1
-                    self._change_lane(vehicle.vid, target_lane)
+                    if self._change_lane(vehicle.vid, target_lane):
+                        # log lane change
+                        with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
+                            f.write("%d,%d,%d,%d,%d,%d,%s\n" % (self.step, vehicle.vid, vehicle.position, vehicle.lane, target_lane, vehicle.speed, "keepRight"))
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
@@ -397,6 +405,10 @@ class Simulator:
         # create output file for vehicle traces
         with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
             f.write("step,id,position,lane,speed,duration,routeLength\n")
+
+        # crieate output file for vehicle lane changes
+        with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
+            f.write("step,id,position,from,to,speed,reason\n")
 
         if self._gui:
             import os
