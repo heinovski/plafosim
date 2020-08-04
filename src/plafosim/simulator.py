@@ -270,10 +270,8 @@ class Simulator:
             return True
 
         # no collision!
-        assert(
-        (pos1 < rear_pos2 and rear_pos1 < rear_pos2 and pos1 < pos2 and rear_pos1 < pos2) or
-        (pos2 < rear_pos1 and rear_pos2 < rear_pos1 and pos2 < pos1 and rear_pos2 < pos1)
-            )
+        assert((pos1 < rear_pos2 and rear_pos1 < rear_pos2 and pos1 < pos2 and rear_pos1 < pos2) or
+               (pos2 < rear_pos1 and rear_pos2 < rear_pos1 and pos2 < pos1 and rear_pos2 < pos1))
 
         return False
 
