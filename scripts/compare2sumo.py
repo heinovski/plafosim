@@ -37,7 +37,6 @@ print("Evaluating trips/emissions/traces/changes...")
 
 desiredSpeed = 36  # TODO read from output
 arrivalPosition = 100000
-laneChanges = True
 
 ### Read trips/emissions
 
@@ -105,9 +104,6 @@ plafosim_traces.sort_values(by='step', inplace=True)
 
 sumo_changes = pandas.read_csv('static-changes.csv', skip_blank_lines=True)
 
-if not laneChanges and len(sumo_changes) > 0:
-    print("Sumo did some lane changes even though we do not allow them!")
-    exit(1)
 
 ## Evaluate trips/emissions/traces
 
