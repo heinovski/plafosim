@@ -305,7 +305,7 @@ class Simulator:
 
         # vehicle properties
         length = 4
-        max_acceleration = 2.5 # m/s
+        max_acceleration = 2.5  # m/s
         max_deceleration = 15  # m/s
         imperfection = 0.5  # sigma
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
