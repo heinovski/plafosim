@@ -103,12 +103,11 @@ plafosim_traces.sort_values(by='step', inplace=True)
 
 ### Read lane-changes
 
-if len(open('static-changes.csv').readlines()) > 1:
-    sumo_changes = pandas.read_csv('static-changes.csv', skip_blank_lines=True)
+sumo_changes = pandas.read_csv('static-changes.csv', skip_blank_lines=True)
 
-    if not laneChanges and len(sumo_changes) > 0:
-        print("Sumo did some lane changes even though we do not allow them!")
-        exit(1)
+if not laneChanges and len(sumo_changes) > 0:
+    print("Sumo did some lane changes even though we do not allow them!")
+    exit(1)
 
 ## Evaluate trips/emissions/traces
 
