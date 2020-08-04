@@ -74,9 +74,20 @@ plafosim_traces.sort_values(by='step', inplace=True)
 
 ## Read lane-changes
 
-sumo_changes = pandas.read_csv('static-changes.csv')
+sumo_changes = pandas.read_csv('static-changes.csv', usecols=['change_from', 'change_id', 'change_pos', 'change_reason', 'change_speed', 'change_time', 'change_to'])
+sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
 
-## Evaluate trips/emissions/traces
+sumo_changes.dropna(inplace=True)
+
+sumo_changes.replace('static\.', '', regex=True, inplace=True)
+sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
+
+sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
+
+sumo_changes.sort_values(by='step', inplace=True)
+
+plafosim_changes = pandas.read_csv('results_vehicle_changes.csv')
+plafosim_changes.sort_values(by='step', inplace=True)
 
 print("Evaluating trips/emissions/traces/changes...")
 
