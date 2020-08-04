@@ -74,7 +74,7 @@ plafosim_traces.sort_values(by='step', inplace=True)
 
 ## Read lane-changes
 
-sumo_changes = pandas.read_csv('static-changes.csv', skip_blank_lines=True)
+sumo_changes = pandas.read_csv('static-changes.csv')
 
 ## Evaluate trips/emissions/traces
 
