@@ -516,7 +516,7 @@ y = [mean([vehicle[step] for vehicle in diff_positions_lifetime.values() if step
 pl.boxplot(y, showmeans=True)
 
 pl.ylabel("diff in position [m]")
-pl.savefig('diff_pos_box.png')
+pl.savefig('diff_position_box.png')
 
 ### devation to sumo in position (line)
 
@@ -527,4 +527,4 @@ pl.plot(x, y)
 
 pl.xlabel("trip duration [s]")
 pl.ylabel("diff in position [m]")
-pl.savefig('diff_pos_line.png')
+pl.savefig('diff_position_line.png')
