@@ -257,7 +257,7 @@ class Simulator:
                     print("%d (%f-%f)" % (other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position))
                     exit(1)
 
-    def has_collision(self, vid1: int, pos1: int, rear_pos1: int, vid2: int, pos2: int, rear_pos2: int) -> bool:
+    def has_collision(self, vid1: float, pos1: float, rear_pos1: float, vid2: float, pos2: float, rear_pos2: float) -> bool:
 
         # front bumper of follower is within back of leader
         if (pos1 < pos2 and rear_pos1 < pos2 and rear_pos1 < rear_pos2 and pos1 == rear_pos2) or (pos2 < pos1 and rear_pos2 < pos1 and rear_pos2 < rear_pos1 and pos2 == rear_pos1):
