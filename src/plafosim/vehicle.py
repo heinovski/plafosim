@@ -200,22 +200,36 @@ class Vehicle:
         if diff_to_desired > 0:
             # we need to accelerate
             new_speed = min(self.speed + min(diff_to_desired, self.max_acceleration), self.max_speed)
+            if self._simulator._debug:
+                print("%d we need to accelerate %f" % (self.vid, new_speed), flush=True)
         elif diff_to_desired < 0:
             # we need to decelerate
             new_speed = max(self.speed - max(diff_to_desired, self.max_deceleration), 0)
+            if self._simulator._debug:
+                print("%d we need to decelerate %f" % (self.vid, new_speed), flush=True)
         else:
+            if self._simulator._debug:
+                print("%d we keep the speed %f" % (self.vid, new_speed), flush=True)
             new_speed = self.speed
 
         # vsafe
         if predecessor_rear_position >= 0:
             # we have a predecessor
             gap_to_predecessor = predecessor_rear_position - self.position
+            if self._simulator._debug:
+                print("%d my front gap %f" % (self.vid, gap_to_predecessor))
             safe_speed = self._safe_speed(gap_to_predecessor)
+            if self._simulator._debug:
+                print("%d my safe speed %f" % (self.vid, safe_speed))
+
             if safe_speed < new_speed:
                 if self._simulator._debug:
                     print("%d blocked by slow vehicle!" % self.vid, flush=True)
                 self._blocked_front = True
+
                 new_speed = max(safe_speed, self.speed - self.max_deceleration)  # we cannot brake stronger than we actually can
+                if self._simulator._debug:
+                    print("%d new speed after safe speed %f" % (self.vid, new_speed))
             else:
                 self._blocked_front = False
         else:
@@ -226,6 +240,9 @@ class Vehicle:
 
         if (new_speed < 0):
             new_speed = 0
+
+        if self._simulator._debug:
+           print("%d new speed %f" % (self.vid, new_speed))
 
         return new_speed
 
