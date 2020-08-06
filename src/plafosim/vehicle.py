@@ -22,12 +22,13 @@ from .message import Message, PlatoonAdvertisement
 class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
-    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float):
+    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float, min_gap: int):
         self._name = name  # the name of a vehicle type
         self._length = length  # the length of a vehicle type
         self._max_speed = max_speed  # the maximum speed of a vehicle type
         self._max_acceleration = max_acceleration  # the maximum acceleration of the vehicle type
         self._max_deceleration = max_deceleration  # the maximum deceleration of the vehicle type
+        self._min_gap = min_gap  # the minimum gap to the vehicle in front
 
     @property
     def name(self) -> str:
@@ -48,6 +49,10 @@ class VehicleType:
     @property
     def max_deceleration(self) -> float:
         return self._max_deceleration
+
+    @property
+    def min_gap(self) -> int:
+        return self._min_gap
 
 
 class Vehicle:
@@ -125,6 +130,10 @@ class Vehicle:
         return self._vehicle_type.max_deceleration
 
     @property
+    def min_gap(self) -> int:
+        return self._vehicle_type.min_gap
+
+    @property
     def depart_position(self) -> int:
         return self._depart_position
 
@@ -179,8 +188,8 @@ class Vehicle:
     # krauss - single lane traffic
     # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
-    def _safe_speed(self, gap_to_predecessor: int, desired_gap: int = 0) -> int:
-        return ((gap_to_predecessor - desired_gap) / self._simulator._step_length)
+    def _safe_speed(self, gap_to_predecessor: int, desired_gap: int = 0, min_gap: int = 0) -> int:
+        return ((gap_to_predecessor - max(desired_gap, min_gap)) / self._simulator._step_length)
 
     # krauss - single lane traffic
     # adjust speed
@@ -218,7 +227,7 @@ class Vehicle:
             gap_to_predecessor = predecessor_rear_position - self.position
             if self._simulator._debug:
                 print("%d my front gap %f" % (self.vid, gap_to_predecessor))
-            safe_speed = self._safe_speed(gap_to_predecessor, desired_gap)
+            safe_speed = self._safe_speed(gap_to_predecessor, desired_gap, self.min_gap)
             if self._simulator._debug:
                 print("%d my safe speed %f" % (self.vid, safe_speed))
 

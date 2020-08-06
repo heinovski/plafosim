@@ -23,8 +23,9 @@ def test_creation():
     max_speed = 55
     max_acceleration = 2.5
     max_deceleration = 15
+    min_gap = 1
 
-    vtype = VehicleType(name, length, max_speed, max_acceleration, max_deceleration)
+    vtype = VehicleType(name, length, max_speed, max_acceleration, max_deceleration, min_gap)
 
     assert(vtype is not None)
     assert(vtype.name is name)
@@ -32,3 +33,4 @@ def test_creation():
     assert(vtype.max_speed is max_speed)
     assert(vtype.max_acceleration is max_acceleration)
     assert(vtype.max_deceleration is max_deceleration)
+    assert(vtype.min_gap is min_gap)

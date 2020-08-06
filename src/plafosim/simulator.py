@@ -318,7 +318,8 @@ class Simulator:
         max_acceleration = 2.5  # m/s
         max_deceleration = 15  # m/s
         imperfection = 0.5  # sigma
-        vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration)  # TODO multiple vtypes
+        min_gap = 0  # m
+        vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap)  # TODO multiple vtypes
 
         for num in range(0, number_of_vehicles):
             vid = last_vehicle_id + 1
