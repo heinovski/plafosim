@@ -125,6 +125,13 @@ class Simulator:
         else:
             return self._vehicles[pid].rear_position
 
+    def _get_predecessor_speed(self, vid: int, lane: int = -1) -> int:
+        pid = self._get_predecessor_id(vid, lane)
+        if pid == -1:
+            return -1
+        else:
+            return self._vehicles[pid].speed
+
     def is_lane_change_safe(self, vid: int, target_lane: int) -> bool:
         if self._vehicles[vid].lane is target_lane:
             return True
