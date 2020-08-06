@@ -110,6 +110,7 @@ diff_desired_lifetime['plafosim'] = {}
 
 diff_speeds_lifetime = {}
 diff_positions_lifetime = {}
+diff_lanes_lifetime = {}
 
 # TODO use multi-threading to parallelize execution
 
@@ -129,6 +130,7 @@ for vid in list(ids):
 
     diff_speeds_lifetime[vid] = {}
     diff_positions_lifetime[vid] = {}
+    diff_lanes_lifetime[vid] = {}
 
     trips_sumo = sumo_trips.loc[sumo_trips.id == vid].reset_index(drop=True)
     trips_plafosim = plafosim_trips[plafosim_trips.id == vid].reset_index(drop=True)
@@ -255,6 +257,7 @@ for vid in list(ids):
         if len(step_sumo) is len(step_plafosim) is 1:
             diff_speeds_lifetime[vid][life_time] = float(step_plafosim.speed - step_sumo.speed)
             diff_positions_lifetime[vid][life_time] = float(step_plafosim.position - step_sumo.position)
+            diff_lanes_lifetime[vid][life_time] = int(step_plafosim.lane - step_sumo.lane)
 
 ### Plotting
 
@@ -528,3 +531,27 @@ pl.plot(x, y)
 pl.xlabel("trip duration [s]")
 pl.ylabel("diff in position [m]")
 pl.savefig('diff_position_line.png')
+
+### deviation to sumo in lane (box)
+
+pl.figure()
+pl.title("Average Deviation to Sumo in Lane in Lifetime for %d Vehicles" % len(ids))
+
+x = sorted(set([step for vehicle in diff_lanes_lifetime.values() for step in vehicle.keys()]))
+y = [mean([vehicle[step] for vehicle in diff_lanes_lifetime.values() if step in vehicle]) for step in x]
+
+pl.boxplot(y, showmeans=True)
+
+pl.ylabel("diff in lane")
+pl.savefig('diff_lane_box.png')
+
+### devation to sumo in lane (line)
+
+pl.figure()
+pl.title("Average Deviation to Sumo in lane for %d Vehicles" % len(ids))
+
+pl.plot(x, y)
+
+pl.xlabel("trip duration [s]")
+pl.ylabel("diff in lane")
+pl.savefig('diff_lane_line.png')
