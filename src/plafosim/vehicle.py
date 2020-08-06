@@ -456,6 +456,9 @@ class PlatooningVehicle(Vehicle):
     def platoon(self) -> Platoon:
         return self._platoon
 
+    def is_in_platoon(self) -> bool:
+        return self.platoon_role is not PlatoonRole.NONE
+
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
 

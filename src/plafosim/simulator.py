@@ -172,6 +172,11 @@ class Simulator:
                 # vehicle did not start yet
                 continue
 
+            # TODO add special behavior for platoons
+            if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon():
+                print("Lane change for platoons not yet implemented!")
+                continue
+
             # decide upon and perform a lane change for this vehicle
             if vehicle.blocked_front:
                 if vehicle.lane < self.number_of_lanes - 1:
