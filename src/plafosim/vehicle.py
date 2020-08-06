@@ -179,8 +179,8 @@ class Vehicle:
     # krauss - single lane traffic
     # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
-    def _safe_speed(self, gap_to_predecessor: int) -> int:
-        return (gap_to_predecessor / self._simulator._step_length)
+    def _safe_speed(self, gap_to_predecessor: int, desired_gap: int = 0) -> int:
+        return ((gap_to_predecessor - desired_gap) / self._simulator._step_length)
 
     # krauss - single lane traffic
     # adjust speed
@@ -191,7 +191,7 @@ class Vehicle:
     # tau_b = v/b
     # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
     # v(t + step_size) = max[0, v_des(t) - epsilon]
-    def new_speed(self, predecessor_rear_position: int) -> int:
+    def new_speed(self, predecessor_rear_position: int, desired_gap: int = 0) -> int:
         """Calculate the new speed for a vehicle using the kraus model"""
 
         new_speed = -1
@@ -218,7 +218,7 @@ class Vehicle:
             gap_to_predecessor = predecessor_rear_position - self.position
             if self._simulator._debug:
                 print("%d my front gap %f" % (self.vid, gap_to_predecessor))
-            safe_speed = self._safe_speed(gap_to_predecessor)
+            safe_speed = self._safe_speed(gap_to_predecessor, desired_gap)
             if self._simulator._debug:
                 print("%d my safe speed %f" % (self.vid, safe_speed))
 
