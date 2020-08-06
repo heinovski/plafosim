@@ -177,16 +177,21 @@ class Vehicle:
         return self._blocked_front
 
     # krauss - single lane traffic
+    # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
+    # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
+    def _safe_speed(self, gap_to_predecessor: int) -> int:
+        return (gap_to_predecessor / self._simulator._step_length)
+
+    # krauss - single lane traffic
     # adjust speed
     # v_max, desired speed
     # epsilon, dawdling of drives
     # g_des = tau*v_lead
     # tau, reaction time of drivers
     # tau_b = v/b
-    # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
     # v(t + step_size) = max[0, v_des(t) - epsilon]
-    def new_speed(self, pred_rear_position: int) -> int:
+    def new_speed(self, predecessor_rear_position: int) -> int:
         """Calculate the new speed for a vehicle using the kraus model"""
 
         new_speed = -1
@@ -202,10 +207,10 @@ class Vehicle:
             new_speed = self.speed
 
         # vsafe
-        # TODO this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
-        if pred_rear_position != -1:
-            gap_to_predecessor = pred_rear_position - self.position
-            safe_speed = (gap_to_predecessor / self._simulator._step_length)  # - desired_gap + pred_speed
+        if predecessor_rear_position >= 0:
+            # we have a predecessor
+            gap_to_predecessor = predecessor_rear_position - self.position
+            safe_speed = self._safe_speed(gap_to_predecessor)
             if safe_speed < new_speed:
                 if self._simulator._debug:
                     print("%d blocked by slow vehicle!" % self.vid, flush=True)
