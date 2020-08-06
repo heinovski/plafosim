@@ -210,7 +210,7 @@ class Vehicle:
                 if self._simulator._debug:
                     print("%d blocked by slow vehicle!" % self.vid, flush=True)
                 self._blocked_front = True
-                new_speed = safe_speed
+                new_speed = max(safe_speed, self.speed - self.max_deceleration)  # we cannot brake stronger than we actually can
             else:
                 self._blocked_front = False
         else:
