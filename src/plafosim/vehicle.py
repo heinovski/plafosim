@@ -233,6 +233,7 @@ class Vehicle:
             else:
                 self._blocked_front = False
         else:
+            # we have no predecessor
             self._blocked_front = False
 
         # TODO dawdling?
