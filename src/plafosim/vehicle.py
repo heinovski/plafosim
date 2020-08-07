@@ -184,7 +184,7 @@ class Vehicle:
     # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
     def _safe_speed(self, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
-        return ((gap_to_predecessor - max(desired_gap, min_gap)) / self._simulator._step_length)
+        return self._simulator.distance2speed(gap_to_predecessor - max(desired_gap, min_gap), self._simulator._step_length)
 
     # krauss - single lane traffic
     # adjust speed
@@ -203,12 +203,12 @@ class Vehicle:
         diff_to_desired = self.desired_speed - self.speed
         if diff_to_desired > 0:
             # we need to accelerate
-            new_speed = min(self.speed + min(diff_to_desired, self.max_acceleration), self.max_speed)
+            new_speed = min(self.speed + min(diff_to_desired, self._simulator.acceleration2speed(self.max_acceleration, self._simulator._step_length)), self.max_speed)
             if self._simulator._debug:
                 print("%d we need to accelerate %f" % (self.vid, new_speed), flush=True)
         elif diff_to_desired < 0:
             # we need to decelerate
-            new_speed = max(self.speed - max(diff_to_desired, self.max_deceleration), 0)
+            new_speed = max(self.speed - max(diff_to_desired, self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length)), 0)
             if self._simulator._debug:
                 print("%d we need to decelerate %f" % (self.vid, new_speed), flush=True)
         else:
@@ -231,7 +231,7 @@ class Vehicle:
                     print("%d blocked by slow vehicle!" % self.vid, flush=True)
                 self._blocked_front = True
 
-                new_speed = max(safe_speed, self.speed - self.max_deceleration)  # we cannot brake stronger than we actually can
+                new_speed = max(safe_speed, self.speed - self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length))  # we cannot brake stronger than we actually can
                 if self._simulator._debug:
                     print("%d new speed after safe speed %f" % (self.vid, new_speed))
             else:

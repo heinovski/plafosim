@@ -78,6 +78,18 @@ class Simulator:
         for vehicle in self._vehicles.values():
             vehicle.action()
 
+    def speed2distance(self, speed: float, time_interval: float = 1) -> float:
+        return speed * time_interval
+
+    def distance2speed(self, distance: float, time_interval: float = 1) -> float:
+        return distance / time_interval
+
+    def acceleration2speed(self, acceleration: float, time_interval: float = 1) -> float:
+        return acceleration * time_interval
+
+    def speed2acceleration(self, speed_from: float, speed_to: float, time_inverval: float = 1) -> float:
+        return (speed_to - speed_from) / time_interval
+
     def _get_predecessor_id(self, vid: int, lane: int = -1) -> int:
         position = self._vehicles[vid].position
         if lane == -1:
@@ -225,7 +237,7 @@ class Simulator:
                 # vehicle did not start yet
                 continue
             # increase position according to speed
-            position_difference = vehicle.speed * self._step_length
+            position_difference = self.speed2distance(vehicle.speed, self._step_length)
             # TODO add emissions/fuel statistics
             # arrival_position reached?
             if vehicle.position + position_difference >= vehicle.arrival_position:
