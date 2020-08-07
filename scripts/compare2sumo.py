@@ -4,7 +4,7 @@ import matplotlib.pyplot as pl
 import pandas
 import re
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from statistics import mean
+from statistics import mean, median
 
 
 desiredSpeed = 36  # TODO read from output
@@ -281,6 +281,9 @@ pl.boxplot(data, showmeans=True)
 pl.ylabel("speed [m/s]")
 pl.savefig('diff_desired_box.png')
 
+assert(abs(mean(data)) < 1)  # 0.5
+assert(abs(median(data)) < 1)  # 0.5
+
 # devation to sumo in arrival time
 data = [diff_trips[x]['arrival'] for x in diff_trips.keys()]
 pl.figure()
@@ -288,6 +291,9 @@ pl.title("Deviation to Sumo in Arrival Time for %d Vehicles" % len(ids))
 pl.boxplot(data, showmeans=True)
 pl.ylabel("time [s]")
 pl.savefig('diff_arrival_box.png')
+
+assert(abs(mean(data)) < 100)  # 25
+assert(abs(median(data)) < 100)  # 25
 
 # devation to sumo in arrival lane
 data = [diff_trips[x]['arrivalLane'] for x in diff_trips.keys()]
@@ -298,6 +304,9 @@ pl.xlabel("Deviation to SUMO in arrival lane")
 pl.ylabel("lane")
 pl.savefig('diff_arrivalLane_box.png')
 
+assert(abs(mean(data)) < 0.5)  # 0,5
+assert(abs(median(data)) < 0.5)  # 0.5
+
 # deviation to sumo in arrival speed
 data = [diff_trips[x]['arrivalSpeed'] for x in diff_trips.keys()]
 pl.figure()
@@ -306,6 +315,9 @@ pl.boxplot(data, showmeans=True)
 pl.ylabel("speed [m/s]")
 pl.savefig('diff_arrivalSpeed_box.png')
 
+assert(abs(mean(data)) < 2)  # 0.5
+assert(abs(median(data)) < 2)  # 0.5
+
 # deviation to sumo in trip duration
 data = [diff_trips[x]['duration'] for x in diff_trips.keys()]
 pl.figure()
@@ -313,6 +325,9 @@ pl.title("Deviation to Sumo in Trip Duration for %d Vehicles" % len(ids))
 pl.boxplot(data, showmeans=True)
 pl.ylabel("time [s]")
 pl.savefig('diff_duration_box.png')
+
+assert(abs(mean(data)) < 600)  # 25
+assert(abs(median(data)) < 600)  # 25
 
 # devation to sumo in time loss
 ## TODO no time departure delay in plafosim (yet)
@@ -508,6 +523,9 @@ pl.xlabel("trip duration [s]")
 pl.ylabel("diff in speed [m/s]")
 pl.savefig('diff_speed_line.png')
 
+assert(abs(mean(y)) < 1)  # 0.5
+assert(abs(median(y)) < 1)  # 0.5
+
 ### deviation to sumo in position (box)
 
 pl.figure()
@@ -532,6 +550,9 @@ pl.xlabel("trip duration [s]")
 pl.ylabel("diff in position [m]")
 pl.savefig('diff_position_line.png')
 
+assert(abs(mean(y)) < 1500)  # 300
+assert(abs(median(y)) < 1500)  # 300
+
 ### deviation to sumo in lane (box)
 
 pl.figure()
@@ -555,3 +576,6 @@ pl.plot(x, y)
 pl.xlabel("trip duration [s]")
 pl.ylabel("diff in lane")
 pl.savefig('diff_lane_line.png')
+
+assert(abs(mean(y)) < 0.5)  # 0.1
+assert(abs(median(y)) < 0.5)  # 0.1
