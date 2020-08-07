@@ -35,3 +35,20 @@ steps:
     commands:
       - pip3 install funcy
       - ./plafosim.py
+
+---
+kind: pipeline
+type: docker
+name: correctness
+
+steps:
+- name: statistical tests
+  image: dbuse/sumo-python:3.8-buster-1_1_0
+  commands:
+    - apt update
+    - apt install time
+    - pip3 install funcy
+    - pip3 install matplotlib
+    - pip3 install pandas
+    - pip3 install statistics
+    - ./scripts/compare2sumo.sh
