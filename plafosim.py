@@ -53,7 +53,7 @@ def main():
     # vehicle properties
     vehicle = parser.add_argument_group('vehicle properties')
     vehicle.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
-    vehicle.add_argument('--max-speed', type=int, default=55, help="The maximum possible driving speed in m/s")
+    vehicle.add_argument('--max-speed', type=float, default=55, help="The maximum possible driving speed in m/s")
     vehicle.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to enable collision checks")
     vehicle.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
@@ -83,8 +83,8 @@ def main():
         help="Whether to pick a random (normally distributed) desired driving speed")
     trip.add_argument('--speed-variation', type=float, default=0.1,
                       help="The devation from the desired driving speed in ratio")
-    trip.add_argument('--min-desired-speed', type=int, default=22, help="The minimum desired driving speed im m/s")
-    trip.add_argument('--max-desired-speed', type=int, default=50, help="The minimum desired driving speed im m/s")
+    trip.add_argument('--min-desired-speed', type=float, default=22, help="The minimum desired driving speed im m/s")
+    trip.add_argument('--max-desired-speed', type=float, default=50, help="The minimum desired driving speed im m/s")
     trip.add_argument(
         '--random-depart-speed',
         type=lambda x: bool(strtobool(x)),

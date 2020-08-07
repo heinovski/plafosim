@@ -24,7 +24,7 @@ class NeighborData:
                  originator_id: int,
                  platoon_id: int,
                  leader_id: int,
-                 platoon_speed: int,
+                 platoon_speed: float,
                  platoon_lane: int,
                  platoon_formation: list,
                  platoon_position_front: int,
@@ -64,7 +64,7 @@ class NeighborData:
         return self._leader_id
 
     @property
-    def platoon_speed(self) -> int:
+    def platoon_speed(self) -> float:
         return self._platoon_speed
 
     @property

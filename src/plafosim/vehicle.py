@@ -39,7 +39,7 @@ class VehicleType:
         return self._length
 
     @property
-    def max_speed(self) -> int:
+    def max_speed(self) -> float:
         return self._max_speed
 
     @property
@@ -69,9 +69,9 @@ class Vehicle:
             vehicle_type: VehicleType,
             depart_position: int,
             arrival_position: int,
-            desired_speed: int,
+            desired_speed: float,
             depart_lane: int,
-            depart_speed: int,
+            depart_speed: float,
             depart_time: int):
         """Initialize a vehicle instance"""
 
@@ -113,7 +113,7 @@ class Vehicle:
         return self._vehicle_type.length
 
     @property
-    def max_speed(self) -> int:
+    def max_speed(self) -> float:
         return self._vehicle_type.max_speed
 
     @property
@@ -137,7 +137,7 @@ class Vehicle:
         return self._arrival_position
 
     @property
-    def desired_speed(self) -> int:
+    def desired_speed(self) -> float:
         return self._desired_speed
 
     @property
@@ -145,7 +145,7 @@ class Vehicle:
         return self._depart_lane
 
     @property
-    def depart_speed(self) -> int:
+    def depart_speed(self) -> float:
         return self._depart_speed
 
     @property
@@ -165,7 +165,7 @@ class Vehicle:
         return self._lane
 
     @property
-    def speed(self) -> int:
+    def speed(self) -> float:
         return self._speed
 
     @property
@@ -183,7 +183,7 @@ class Vehicle:
     # krauss - single lane traffic
     # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
-    def _safe_speed(self, gap_to_predecessor: int, desired_gap: int = 0, min_gap: int = 0) -> int:
+    def _safe_speed(self, gap_to_predecessor: int, desired_gap: int = 0, min_gap: int = 0) -> float:
         return ((gap_to_predecessor - max(desired_gap, min_gap)) / self._simulator._step_length)
 
     # krauss - single lane traffic
@@ -195,7 +195,7 @@ class Vehicle:
     # tau_b = v/b
     # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
     # v(t + step_size) = max[0, v_des(t) - epsilon]
-    def new_speed(self, predecessor_rear_position: int, desired_gap: int = 0) -> int:
+    def new_speed(self, predecessor_rear_position: int, desired_gap: int = 0) -> float:
         """Calculate the new speed for a vehicle using the kraus model"""
 
         new_speed = -1
@@ -310,7 +310,7 @@ class Vehicle:
 
         # mobility/trip statistics
         with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%d,%d,%d\n" % (self._simulator.step, self._vid, self._position, self._lane, self._speed, self.travel_time, self.travel_distance))
+            f.write("%d,%d,%d,%d,%f,%d,%d\n" % (self._simulator.step, self._vid, self._position, self._lane, self._speed, self.travel_time, self.travel_distance))
 
         # TODO emission statistics?
 
@@ -329,7 +329,7 @@ class Vehicle:
             print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
 
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
+            f.write("%d,%d,%d,%d,%f,%d,%d,%d,%f,%d,%d,%d,%f\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
 
         with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
             # TODO emissions model not yet implemented
@@ -405,9 +405,9 @@ class Platoon:
             pid: int,
             lid: int,
             formation: list,
-            speed: int,
+            speed: float,
             lane: int,
-            max_speed: int,
+            max_speed: float,
             max_acceleration: float,
             max_deceleration: float):
         self._pid = pid  # the id of the platoon
@@ -432,7 +432,7 @@ class Platoon:
         return self._formation
 
     @property
-    def speed(self) -> int:
+    def speed(self) -> float:
         return self._speed
 
     @property
@@ -440,7 +440,7 @@ class Platoon:
         return self._lane
 
     @property
-    def max_speed(self) -> int:
+    def max_speed(self) -> float:
         return self._max_speed
 
     @property
@@ -462,9 +462,9 @@ class PlatooningVehicle(Vehicle):
             vehicle_type: VehicleType,
             depart_position: int,
             arrival_position: int,
-            desired_speed: int,
+            desired_speed: float,
             depart_lane: int,
-            depart_speed: int,
+            depart_speed: float,
             depart_time: int):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
