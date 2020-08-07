@@ -173,7 +173,7 @@ class Vehicle:
         return self._position - self._depart_position
 
     @property
-    def travel_time(self) -> int:
+    def travel_time(self) -> float:
         return self._simulator.step - self._depart_time
 
     @property
@@ -329,7 +329,7 @@ class Vehicle:
             print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
 
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%f,%d,%d,%f,%f,%d,%f,%d,%f\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
+            f.write("%d,%d,%d,%d,%f,%d,%d,%f,%f,%d,%f,%f,%f\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
 
         with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
             # TODO emissions model not yet implemented
