@@ -4,4 +4,4 @@ ROOT=$(pwd)/$(dirname $0)/../
 
 export PYTHONPATH=${ROOT}/src
 
-pytest -v ${ROOT}/tests
+pytest -v ${ROOT}/tests/unit_tests
