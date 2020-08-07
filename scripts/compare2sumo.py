@@ -146,38 +146,38 @@ for vid in list(ids):
     # depart time
     # should not be different
     if int(trips_sumo.depart) != int(trips_plafosim.depart):
-        print("depart time is not the same", int(trips_sumo.depart), int(trips_plafosim.depart))
+        print("depart time is not the same %d vs. %d" % (trips_sumo.depart, trips_plafosim.depart))
         exit(1)
 
     # depart lane
     # should not be different
     if round(float(trips_sumo.departLane)) != int(trips_plafosim.departLane):
-        print("depart lane is not the same", int(trips_sumo.departLane), int(trips_plafosim.departLane))
+        print("depart lane is not the same %d vs. %d" % (trips_sumo.departLane, trips_plafosim.departLane))
         exit(1)
 
     # depart position
     # should not be different
     # currently, there is a diff of 10 cm which we ignore
-    if int(trips_sumo.departPos) != int(trips_plafosim.departPos):
-        print("depart pos is not the same", float(trips_sumo.departPos), float(trips_plafosim.departPos))
+    if float(trips_sumo.departPos) != float(trips_plafosim.departPos):
+        print("depart pos is not the same %f vs. %f" % (trips_sumo.departPos, trips_plafosim.departPos))
 
     # depart speed
     # should not be different
     if float(trips_sumo.departSpeed) != float(trips_plafosim.departSpeed):
-        print("depart speed is not the same", float(trips_sumo.departSpeed), float(trips_plafosim.departSpeed))
+        print("depart speed is not the same %f vs. %f" % (trips_sumo.departSpeed, trips_plafosim.departSpeed))
         exit(1)
 
     # arrival position
     # should not be different
     if float(trips_sumo.arrivalPos) != float(trips_plafosim.arrivalPos):
-        print("arrival pos it not the same", float(trips_sumo.arrivalPos), float(trips_plafosim.arrivalPos))
+        print("arrival pos it not the same %f vs. %f" % (trips_sumo.arrivalPos, trips_plafosim.arrivalPos))
         exit(1)
 
     # route length
     # should not be different
     # currently, there is a diff of 10 cm which we ignore
-    if round(float(trips_sumo.routeLength)) != int(trips_plafosim.routeLength):
-        print("route length is not the same", float(trips_sumo.routeLength), float(trips_plafosim.routeLength))
+    if round(float(trips_sumo.routeLength)) != float(trips_plafosim.routeLength):
+        print("route length is not the same %f vs. %f" % (trips_sumo.routeLength, trips_plafosim.routeLength))
         exit(1)
 
     # speed factor aka desired drving speed
