@@ -193,7 +193,7 @@ class Simulator:
                     if self._change_lane(vehicle.vid, target_lane):
                         # log lane change
                         with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                            f.write("%d,%d,%d,%d,%d,%f,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "speedGain"))
+                            f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "speedGain"))
             else:
                 if vehicle.lane > 0:
                     source_lane = vehicle.lane
@@ -201,7 +201,7 @@ class Simulator:
                     if self._change_lane(vehicle.vid, target_lane):
                         # log lane change
                         with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                            f.write("%d,%d,%d,%d,%d,%f,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "keepRight"))
+                            f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "keepRight"))
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""

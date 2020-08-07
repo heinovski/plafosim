@@ -27,8 +27,8 @@ class NeighborData:
                  platoon_speed: float,
                  platoon_lane: int,
                  platoon_formation: list,
-                 platoon_position_front: int,
-                 platoon_position_back: int,
+                 platoon_position_front: float,
+                 platoon_position_back: float,
                  timestamp: int,
                  valid: bool = True):
         """Initialize a neighrbor data instance"""
@@ -76,11 +76,11 @@ class NeighborData:
         return self._platoon_formation
 
     @property
-    def platoon_position_front(self) -> int:
+    def platoon_position_front(self) -> float:
         return self._platoon_position_front
 
     @property
-    def platoon_position_back(self) -> int:
+    def platoon_position_back(self) -> float:
         return self._platoon_position_back
 
     @property

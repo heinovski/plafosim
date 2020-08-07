@@ -22,7 +22,7 @@ from .message import Message, PlatoonAdvertisement
 class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
-    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float, min_gap: int):
+    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float, min_gap: float):
         self._name = name  # the name of a vehicle type
         self._length = length  # the length of a vehicle type
         self._max_speed = max_speed  # the maximum speed of a vehicle type
@@ -51,7 +51,7 @@ class VehicleType:
         return self._max_deceleration
 
     @property
-    def min_gap(self) -> int:
+    def min_gap(self) -> float:
         return self._min_gap
 
 
@@ -125,7 +125,7 @@ class Vehicle:
         return self._vehicle_type.max_deceleration
 
     @property
-    def min_gap(self) -> int:
+    def min_gap(self) -> float:
         return self._vehicle_type.min_gap
 
     @property
@@ -153,7 +153,7 @@ class Vehicle:
         return self._depart_time
 
     @property
-    def position(self) -> int:
+    def position(self) -> float:
         return self._position
 
     @property
@@ -169,7 +169,7 @@ class Vehicle:
         return self._speed
 
     @property
-    def travel_distance(self) -> int:
+    def travel_distance(self) -> float:
         return self._position - self._depart_position
 
     @property
@@ -183,7 +183,7 @@ class Vehicle:
     # krauss - single lane traffic
     # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
-    def _safe_speed(self, gap_to_predecessor: int, desired_gap: int = 0, min_gap: int = 0) -> float:
+    def _safe_speed(self, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
         return ((gap_to_predecessor - max(desired_gap, min_gap)) / self._simulator._step_length)
 
     # krauss - single lane traffic
@@ -195,7 +195,7 @@ class Vehicle:
     # tau_b = v/b
     # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
     # v(t + step_size) = max[0, v_des(t) - epsilon]
-    def new_speed(self, predecessor_rear_position: int, desired_gap: int = 0) -> float:
+    def new_speed(self, predecessor_rear_position: float, desired_gap: float = 0) -> float:
         """Calculate the new speed for a vehicle using the kraus model"""
 
         new_speed = -1
@@ -310,7 +310,7 @@ class Vehicle:
 
         # mobility/trip statistics
         with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%f,%d,%d\n" % (self._simulator.step, self._vid, self._position, self._lane, self._speed, self.travel_time, self.travel_distance))
+            f.write("%d,%d,%f,%d,%f,%d,%f\n" % (self._simulator.step, self._vid, self._position, self._lane, self._speed, self.travel_time, self.travel_distance))
 
         # TODO emission statistics?
 
@@ -329,7 +329,7 @@ class Vehicle:
             print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
 
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%f,%d,%d,%d,%f,%d,%d,%d,%f\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
+            f.write("%d,%d,%d,%d,%f,%d,%d,%f,%f,%d,%f,%d,%f\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
 
         with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
             # TODO emissions model not yet implemented
