@@ -26,7 +26,7 @@ echo "tool,real,user,sys" > runtimes.csv
     2>&1 | tee runlog_plafosim
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes.csv --append \
-    sumo \
+    $SUMO_HOME/bin/sumo \
     -c sumocfg/freeway-static.sumo.cfg \
     --fcd-output static-traces.xml \
     --device.fcd.deterministic \
@@ -37,9 +37,9 @@ echo "tool,real,user,sys" > runtimes.csv
     --step-length 1 \
     2>&1 | tee runlog_sumo
 
-~/src/software/sumo/tools/xml/xml2csv.py static-trips.xml -o static-trips.csv -s ','
-~/src/software/sumo/tools/xml/xml2csv.py static-emissions.xml -o static-emissions.csv -s ','
-~/src/software/sumo/tools/xml/xml2csv.py static-traces.xml -o static-traces.csv -s ','
-~/src/software/sumo/tools/xml/xml2csv.py static-changes.xml -o static-changes.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py static-trips.xml -o static-trips.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py static-emissions.xml -o static-emissions.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py static-traces.xml -o static-traces.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py static-changes.xml -o static-changes.csv -s ','
 
 ./scripts/compare2sumo.py
