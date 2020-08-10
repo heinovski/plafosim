@@ -16,7 +16,8 @@
 ### Dependencies
 
 - Python3 (tested with 3.6.9)
-- opt. SUMO (tested with >= 1.2.0)
+- funcy (python package)
+- opt. SUMO (tested with >= 1.1.0)
 
 ## Running a Simulation
 
