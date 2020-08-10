@@ -3,7 +3,7 @@
 [PlaFoSim](https://www.plafosim.de) - A simple simulator for platoon formation.
 
 [![Build Status](https://drone.tkn.tu-berlin.de/api/badges/CCS/plafosim/status.svg)](https://drone.tkn.tu-berlin.de/CCS/plafosim)
-[![Test Coverage](https://plafosim.de/coverage.svg)](https://plafosim.de/coverage.svg)
+[![Test Coverage](https://plafosim.de/coverage.svg)](https://drone.tkn.tu-berlin.de/CCS/plafosim)
 
 ### Quickstart
 
