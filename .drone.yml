@@ -8,7 +8,7 @@ steps:
   image: python
   commands:
     - pip3 install flake8
-    - flake8 --ignore=E265,E266,E402,E501
+    - flake8 --ignore=E265,E266,E402,E501  # comments, import order, line-length
 
 ---
 kind: pipeline
