@@ -87,7 +87,7 @@ class Simulator:
     def acceleration2speed(self, acceleration: float, time_interval: float = 1) -> float:
         return acceleration * time_interval
 
-    def speed2acceleration(self, speed_from: float, speed_to: float, time_inverval: float = 1) -> float:
+    def speed2acceleration(self, speed_from: float, speed_to: float, time_interval: float = 1) -> float:
         return (speed_to - speed_from) / time_interval
 
     def _get_predecessor_id(self, vid: int, lane: int = -1) -> int:
