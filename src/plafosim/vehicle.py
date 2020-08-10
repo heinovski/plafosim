@@ -183,8 +183,10 @@ class Vehicle:
     # krauss - single lane traffic
     # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
-    def _safe_speed(self, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
-        return self._simulator.distance2speed(gap_to_predecessor - max(desired_gap, min_gap), self._simulator._step_length)
+    def _safe_speed(self, speed_predecessor: float, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
+        speed_diff_to_use = speed_predecessor - self.speed  # use to drive the same speed
+        position_diff_to_use = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
+        return speed_diff_to_use + self._simulator.distance2speed(position_diff_to_use, self._simulator._step_length)
 
     # krauss - single lane traffic
     # adjust speed
@@ -195,7 +197,7 @@ class Vehicle:
     # tau_b = v/b
     # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
     # v(t + step_size) = max[0, v_des(t) - epsilon]
-    def new_speed(self, predecessor_rear_position: float, desired_gap: float = 0) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, desired_gap: float = 0) -> float:
         """Calculate the new speed for a vehicle using the kraus model"""
 
         new_speed = -1
@@ -217,12 +219,13 @@ class Vehicle:
                 print("%d we keep the speed %f" % (self.vid, new_speed), flush=True)
 
         # vsafe
-        if predecessor_rear_position >= 0:
+        if speed_predecessor >= 0 and predecessor_rear_position >= 0:
             # we have a predecessor
             gap_to_predecessor = predecessor_rear_position - self.position
             if self._simulator._debug:
                 print("%d my front gap %f" % (self.vid, gap_to_predecessor))
-            safe_speed = self._safe_speed(gap_to_predecessor, desired_gap, self.min_gap)
+                print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
+            safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, desired_gap, self.min_gap)
             if self._simulator._debug:
                 print("%d my safe speed %f" % (self.vid, safe_speed))
 
