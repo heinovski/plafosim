@@ -87,7 +87,6 @@ class NeighborData:
     def timestamp(self) -> int:
         return self._timestamp
 
-    @property
     def is_valid(self) -> bool:
         return self._valid
 
