@@ -247,7 +247,7 @@ class Vehicle:
             new_speed = 0
 
         if self._simulator._debug:
-           print("%d new speed %f" % (self.vid, new_speed))
+            print("%d new speed %f" % (self.vid, new_speed))
 
         return new_speed
 
