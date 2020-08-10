@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: testing
+name: test
 
 steps:
 - name: unit tests
@@ -15,7 +15,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: running
+name: run
 
 steps:
   - name: default values
