@@ -170,11 +170,11 @@ class Vehicle:
 
     @property
     def travel_distance(self) -> float:
-        return self._position - self._depart_position
+        return self.position - self.depart_position
 
     @property
     def travel_time(self) -> float:
-        return self._simulator.step - self._depart_time
+        return self._simulator.step - self.depart_time
 
     @property
     def blocked_front(self) -> bool:
@@ -301,8 +301,8 @@ class Vehicle:
     def info(self):
         """Print info of a Vehicle"""
 
-        e_remaining_travel_time = round((self._arrival_position - self._position) / self._desired_speed)
-        print(self._simulator.step, ":", self._vid, "at", self._position, self.rear_position, self._lane, "with", self._speed,
+        e_remaining_travel_time = round((self.arrival_position - self.position) / self.desired_speed)
+        print(self._simulator.step, ":", self.vid, "at", self.position, self.rear_position, self.lane, "with", self.speed,
               "takes", e_remaining_travel_time, flush=True)
 
     def _statistics(self):
@@ -310,26 +310,26 @@ class Vehicle:
 
         # mobility/trip statistics
         with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
-            f.write("%d,%d,%f,%d,%f,%d,%f\n" % (self._simulator.step, self._vid, self._position, self._lane, self._speed, self.travel_time, self.travel_distance))
+            f.write("%d,%d,%f,%d,%f,%d,%f\n" % (self._simulator.step, self.vid, self.position, self.lane, self.speed, self.travel_time, self.travel_distance))
 
         # TODO emission statistics?
 
     def finish(self):
         """Clean up the instance of the vehicle"""
 
-        if (self._position < self._arrival_position):
+        if (self.position < self.arrival_position):
             print("Finish was called even though we did not arrive yet!")
             return
 
-        e_travel_time = (self._arrival_position - self._depart_position) / self._desired_speed
+        e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
         time_loss = self.travel_time - round(e_travel_time)
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
 
         if self._simulator._debug:
-            print(self._simulator.step, ":", self._vid, "arrived", self._position, self._lane, "with", self._speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
+            print(self._simulator.step, ":", self.vid, "arrived", self.position, self.lane, "with", self.speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
 
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%f,%d,%d,%f,%f,%d,%f,%f,%f\n" % (self._vid, self._depart_time, self._depart_lane, self._depart_position, self._depart_speed, self._simulator.step, self._lane, self._position, self._speed, self.travel_time, self.travel_distance, time_loss, self._desired_speed))
+            f.write("%d,%d,%d,%d,%f,%d,%d,%f,%f,%d,%f,%f,%f\n" % (self.vid, self.depart_time, self.depart_lane, self.depart_position, self.depart_speed, self._simulator.step, self.lane, self.position, self.speed, self.travel_time, self.travel_distance, time_loss, self.desired_speed))
 
         with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
             # TODO emissions model not yet implemented
@@ -339,7 +339,7 @@ class Vehicle:
             self._pmx = -1
             self._npx = -1
             self._fuel = -1
-            f.write("%d,%d,%d,%d,%d,%d,%d\n" % (self._vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel))
+            f.write("%d,%d,%d,%d,%d,%d,%d\n" % (self.vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel))
 
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
@@ -364,11 +364,11 @@ class Vehicle:
     def receive(self, message) -> bool:
         """Receive a message of arbitrary type"""
 
-        if self._simulator.step < self._depart_time:
+        if self._simulator.step < self.depart_time:
             # we cannot receive anything since we did not start yet
             return False
         if isinstance(message, Message):
-            if message.destination == self._vid or message.destination == -1:
+            if message.destination == self.vid or message.destination == -1:
                 self._handle_message(message)
             # we cannot receive this message since it was not for us
             return False
