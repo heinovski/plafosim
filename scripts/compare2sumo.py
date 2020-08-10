@@ -244,17 +244,17 @@ for vid in list(ids):
         # caluclate lifetime
         life_time = step - min_step
 
-        if len(step_sumo) is 1:
+        if len(step_sumo) == 1:
             speeds_lifetime['sumo'][vid][life_time] = float(step_sumo.speed)
             positions_lifetime['sumo'][vid][life_time] = float(step_sumo.position)
             diff_desired_lifetime['sumo'][vid][life_time] = float(step_sumo.speed) - desired_speed_sumo
 
-        if len(step_plafosim) is 1:
+        if len(step_plafosim) == 1:
             speeds_lifetime['plafosim'][vid][life_time] = float(step_plafosim.speed)
             positions_lifetime['plafosim'][vid][life_time] = float(step_plafosim.position)
             diff_desired_lifetime['plafosim'][vid][life_time] = float(step_plafosim.speed) - desired_speed_plafosim
 
-        if len(step_sumo) is len(step_plafosim) is 1:
+        if len(step_sumo) == len(step_plafosim) == 1:
             diff_speeds_lifetime[vid][life_time] = float(step_plafosim.speed - step_sumo.speed)
             diff_positions_lifetime[vid][life_time] = float(step_plafosim.position - step_sumo.position)
             diff_lanes_lifetime[vid][life_time] = int(step_plafosim.lane - step_sumo.lane)
