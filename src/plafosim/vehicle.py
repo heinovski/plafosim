@@ -322,6 +322,9 @@ class Vehicle:
 
         # TODO emission statistics?
 
+        # TODO write statistic about minimum gap between vehicles
+        # or rather integrate this into the lane statistic as well
+
     def finish(self):
         """Clean up the instance of the vehicle"""
 
@@ -460,6 +463,13 @@ class Platoon:
         return self._max_deceleration
 
 
+class CF_Mode(Enum):
+
+    CC = 0  # safe speed; aka human
+    ACC = 1  # fixed time gap
+    CACC = 2  # small fixed distance
+
+
 class PlatooningVehicle(Vehicle):
     """A vehicle that has platooning functionality enabled"""
 
@@ -477,11 +487,16 @@ class PlatooningVehicle(Vehicle):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
 
+        self._cf_mode = CF_Mode.ACC
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
 
         # initialize timer
         self._last_advertisement_step = None
+
+    @property
+    def cf_mode(self) -> CF_Mode:
+        return self._cf_mode
 
     @property
     def platoon_role(self) -> PlatoonRole:
@@ -493,6 +508,59 @@ class PlatooningVehicle(Vehicle):
 
     def is_in_platoon(self) -> bool:
         return self.platoon_role is not PlatoonRole.NONE
+
+    def get_front_gap(self) -> float:
+        return self._simulator._get_predecessor_rear_position(self.vid) - self.position
+
+    def get_front_speed(self) -> float:
+        return self._simulator._get_predecessor_speed(self.vid)
+
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
+        if self._cf_mode is CF_Mode.ACC:
+            # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different modes
+            if speed_predecessor >= 0 and predecessor_rear_position >= 0:
+                gap_to_predecessor = predecessor_rear_position - self.position
+                if self._simulator._debug:
+                    print("%d my front gap %f" % (self.vid, gap_to_predecessor))
+                    print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
+
+                headway_time = 1  # TODO add parameter
+                la = 0.1  # TODO add parameter
+
+                assert(headway_time >= 1)  # values lower 1.0 have been shown to produced crashes
+
+                # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
+                u = -1.0 / headway_time * (self.speed - speed_predecessor + la * (-gap_to_predecessor + headway_time * self.speed))
+
+                if self._simulator._debug:
+                    print("%d ACC safe speed %f" % (self.vid, self.speed + u))
+
+                u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
+                u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
+
+                new_speed = self.speed + u
+                new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
+                if self._simulator._debug:
+                    print("%d ACC possible speed %f" % (self.vid, new_speed))
+
+                new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
+                if self._simulator._debug:
+                    print("%d ACC desired speed %f" % (self.vid, new_speed))
+
+                if new_speed < self.desired_speed and u <= 0:
+                    if self._simulator._debug:
+                        print("%d blocked by slow vehicle!" % self.vid, flush=True)
+                    self._blocked_front = True
+                else:
+                    self._blocked_front = False
+
+                if self._simulator._debug:
+                    print("%d ACC new speed %f" % (self.vid, new_speed))
+
+                return new_speed
+
+        # default: drive freely
+        return super().new_speed(speed_predecessor, predecessor_rear_position)
 
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
