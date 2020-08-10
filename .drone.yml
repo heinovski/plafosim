@@ -11,3 +11,15 @@ steps:
     - pip3 install pytest-cov
     - export PYTHONPATH=$(pwd)/src
     - pytest -v --cov=plafosim tests/unit_tests
+
+---
+kind: pipeline
+type: docker
+name: running
+
+steps:
+  - name: default values
+    image: python
+    commands:
+      - pip3 install funcy
+      - ./plafosim.py
