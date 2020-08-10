@@ -1,6 +1,18 @@
 ---
 kind: pipeline
 type: docker
+name: syntax
+
+steps:
+- name: run flake8
+  image: python
+  commands:
+    - pip3 install flake8
+    - flake8 --ignore=E265,E266,E402,E501
+
+---
+kind: pipeline
+type: docker
 name: test
 
 steps:

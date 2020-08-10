@@ -279,23 +279,26 @@ class Simulator:
     def has_collision(self, vid1: float, pos1: float, rear_pos1: float, vid2: float, pos2: float, rear_pos2: float) -> bool:
 
         # front bumper of follower is within back of leader
-        if (pos1 < pos2 and rear_pos1 < pos2 and rear_pos1 < rear_pos2 and pos1 == rear_pos2) or (pos2 < pos1 and rear_pos2 < pos1 and rear_pos2 < rear_pos1 and pos2 == rear_pos1):
+        if (pos1 < pos2 and rear_pos1 < pos2 and rear_pos1 < rear_pos2 and pos1 == rear_pos2) or (
+                pos2 < pos1 and rear_pos2 < pos1 and rear_pos2 < rear_pos1 and pos2 == rear_pos1):
             print(self._step, "crash (same position)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
             return True
 
         # follower is (partly) in leader
-        if (pos1 <= pos2 and rear_pos1 < pos2 and pos1 >= rear_pos2 and rear_pos1 <= rear_pos2) or (pos2 <= pos1 and rear_pos2 < pos1 and pos2 >= rear_pos1 and rear_pos2 <= rear_pos1):
+        if (pos1 <= pos2 and rear_pos1 < pos2 and pos1 >= rear_pos2 and rear_pos1 <= rear_pos2) or (
+                pos2 <= pos1 and rear_pos2 < pos1 and pos2 >= rear_pos1 and rear_pos2 <= rear_pos1):
             print(self._step, "crash (regular)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
             return True
 
         # follower is completely within leader
-        if (pos1 >= pos2 and rear_pos1 <= rear_pos2 and rear_pos1 < pos2 and pos1 > pos2) or (pos2 >= pos1 and rear_pos2 <= rear_pos1 and rear_pos2 < pos1 and pos2 > pos1):
+        if (pos1 >= pos2 and rear_pos1 <= rear_pos2 and rear_pos1 < pos2 and pos1 > pos2) or (
+                pos2 >= pos1 and rear_pos2 <= rear_pos1 and rear_pos2 < pos1 and pos2 > pos1):
             print(self._step, "crash (within)", vid1, pos1, rear_pos1, vid2, pos2, rear_pos2, flush=True)
             return True
 
         # no collision!
-        assert((pos1 < rear_pos2 and rear_pos1 < rear_pos2 and pos1 < pos2 and rear_pos1 < pos2) or
-               (pos2 < rear_pos1 and rear_pos2 < rear_pos1 and pos2 < pos1 and rear_pos2 < pos1))
+        assert((pos1 < rear_pos2 and rear_pos1 < rear_pos2 and pos1 < pos2 and rear_pos1 < pos2) or (
+            pos2 < rear_pos1 and rear_pos2 < rear_pos1 and pos2 < pos1 and rear_pos2 < pos1))
 
         return False
 
@@ -329,7 +332,7 @@ class Simulator:
         length = 4
         max_acceleration = 2.5  # m/s
         max_deceleration = 15  # m/s
-        imperfection = 0.5  # sigma
+        # imperfection = 0.5  # sigma
         min_gap = 0  # m
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap)  # TODO multiple vtypes
 

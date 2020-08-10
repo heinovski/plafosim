@@ -17,7 +17,7 @@ sumo_trips = pandas.read_csv('static-trips.csv')
 sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x), inplace=True)
 sumo_trips.rename(columns=lambda x: re.sub('emissions_', '', x), inplace=True)
 
-sumo_trips.replace('static\.', '', regex=True, inplace=True)
+sumo_trips.replace(r'static\.', '', regex=True, inplace=True)
 sumo_trips.replace('edge_0_0_', '', regex=True, inplace=True)
 
 sumo_trips = sumo_trips.astype({'arrivalLane': int, 'departLane': int, 'id': int, 'vType': str})
@@ -62,7 +62,7 @@ sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
 
 sumo_traces.dropna(inplace=True)
 
-sumo_traces.replace('static\.', '', regex=True, inplace=True)
+sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
 sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
 
 sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
@@ -79,7 +79,7 @@ sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to
 
 sumo_changes.dropna(inplace=True)
 
-sumo_changes.replace('static\.', '', regex=True, inplace=True)
+sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
 sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
 
 sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
@@ -470,7 +470,7 @@ fig = pl.figure()
 pl.title("Average Deviation to Desired Driving Speed for %d Vehicles" % len(ids))
 xlim = max(int(sumo_traces.step.max()), int(plafosim_traces.step.max()))
 pl.hlines(0, 0, xlim, color="red", label="desired")
-pl.ylim(-desiredSpeed-5, 5)
+pl.ylim(-desiredSpeed - 5, 5)
 pl.ylabel("speed [m/s]")
 pl.xlim(0, xlim)
 pl.xlabel("trip duration [s]")
