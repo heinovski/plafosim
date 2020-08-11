@@ -92,6 +92,7 @@ class Vehicle:
         self._lane = self._depart_lane  # the current lane of the vehicle
         self._speed = self._depart_speed  # the current speed of the vehicle
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
+        self._acceleration = 0  # the current acceleration of the vehicle
         # statistics
         self._co = 0  # the total co emission in g
         self._co2 = 0  # the total co2 emission in g
@@ -167,6 +168,10 @@ class Vehicle:
     @property
     def speed(self) -> float:
         return self._speed
+
+    @property
+    def acceleration(self) -> int:
+        return self._acceleration
 
     @property
     def travel_distance(self) -> float:

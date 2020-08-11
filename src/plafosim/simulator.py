@@ -223,7 +223,9 @@ class Simulator:
                 # vehicle did not start yet
                 continue
 
-            vehicle._speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid))
+            new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid))
+            vehicle._acceleration = new_speed - vehicle.speed
+            vehicle._speed = new_speed
 
     # krauss - single lane traffic
     # adjust position (move)
