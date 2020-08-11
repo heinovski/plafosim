@@ -12,7 +12,7 @@ arrivalPosition = 100000
 
 ## Read trips/emissions
 
-sumo_trips = pandas.read_csv('static-trips.csv')
+sumo_trips = pandas.read_csv('human-trips.csv')
 
 sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x), inplace=True)
 sumo_trips.rename(columns=lambda x: re.sub('emissions_', '', x), inplace=True)
@@ -24,10 +24,10 @@ sumo_trips = sumo_trips.astype({'arrivalLane': int, 'departLane': int, 'id': int
 
 sumo_trips.sort_values(by='id', inplace=True)
 
-plafosim_trips = pandas.read_csv('results_vehicle_trips.csv')
+plafosim_trips = pandas.read_csv('human_vehicle_trips.csv')
 plafosim_trips.sort_values(by='id', inplace=True)
 
-plafosim_emissions = pandas.read_csv('results_vehicle_emissions.csv')
+plafosim_emissions = pandas.read_csv('human_vehicle_emissions.csv')
 plafosim_emissions.sort_values(by='id', inplace=True)
 
 ids = frozenset(sumo_trips['id'].unique()).intersection(plafosim_trips['id'].unique())
@@ -57,7 +57,7 @@ pl.savefig('runtime.png')
 
 ## Read traces
 
-sumo_traces = pandas.read_csv('static-traces.csv', usecols=['timestep_time', 'vehicle_id', 'vehicle_lane', 'vehicle_pos', 'vehicle_speed'])
+sumo_traces = pandas.read_csv('human-traces.csv', usecols=['timestep_time', 'vehicle_id', 'vehicle_lane', 'vehicle_pos', 'vehicle_speed'])
 sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
 
 sumo_traces.dropna(inplace=True)
@@ -69,12 +69,12 @@ sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
 
 sumo_traces.sort_values(by='step', inplace=True)
 
-plafosim_traces = pandas.read_csv('results_vehicle_traces.csv', usecols=['step', 'id', 'position', 'lane', 'speed'])
+plafosim_traces = pandas.read_csv('human_vehicle_traces.csv', usecols=['step', 'id', 'position', 'lane', 'speed'])
 plafosim_traces.sort_values(by='step', inplace=True)
 
 ## Read lane-changes
 
-sumo_changes = pandas.read_csv('static-changes.csv', usecols=['change_from', 'change_id', 'change_pos', 'change_reason', 'change_speed', 'change_time', 'change_to'])
+sumo_changes = pandas.read_csv('human-changes.csv', usecols=['change_from', 'change_id', 'change_pos', 'change_reason', 'change_speed', 'change_time', 'change_to'])
 sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
 
 sumo_changes.dropna(inplace=True)
@@ -86,7 +86,7 @@ sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': i
 
 sumo_changes.sort_values(by='step', inplace=True)
 
-plafosim_changes = pandas.read_csv('results_vehicle_changes.csv')
+plafosim_changes = pandas.read_csv('human_vehicle_changes.csv')
 plafosim_changes.sort_values(by='step', inplace=True)
 
 ## Evaluate trips/emissions/traces/lane changes

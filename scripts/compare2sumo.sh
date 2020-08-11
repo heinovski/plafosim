@@ -23,23 +23,24 @@ echo "tool,real,user,sys" > runtimes.csv
     --depart-method interval \
     --depart-time-interval 3 \
     --step 1 \
+    --result-base-filename human \
     2>&1 | tee runlog_plafosim
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes.csv --append \
     $SUMO_HOME/bin/sumo \
     -c sumocfg/freeway-static.sumo.cfg \
-    --fcd-output static-traces.xml \
+    --fcd-output human-traces.xml \
     --device.fcd.deterministic \
-    --tripinfo-output static-trips.xml \
-    --emission-output static-emissions.xml \
+    --tripinfo-output human-trips.xml \
+    --emission-output human-emissions.xml \
     --device.emissions.deterministic \
-    --lanechange-output static-changes.xml \
+    --lanechange-output human-changes.xml \
     --step-length 1 \
     2>&1 | tee runlog_sumo
 
-$SUMO_HOME/tools/xml/xml2csv.py static-trips.xml -o static-trips.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py static-emissions.xml -o static-emissions.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py static-traces.xml -o static-traces.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py static-changes.xml -o static-changes.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py human-trips.xml -o human-trips.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py human-emissions.xml -o human-emissions.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py human-traces.xml -o human-traces.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py human-changes.xml -o human-changes.csv -s ','
 
 ./scripts/compare2sumo.py
