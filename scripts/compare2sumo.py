@@ -36,7 +36,7 @@ ids = frozenset(sumo_trips['id'].unique()).intersection(plafosim_trips['id'].uni
 
 print("Evaluating runtime...")
 
-runtimes = pandas.read_csv('runtimes.csv')
+runtimes = pandas.read_csv('runtimes_human.csv')
 runtimes = runtimes.astype({'tool': str})
 
 print("Plotting runtime...")

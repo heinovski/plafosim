@@ -2,9 +2,9 @@
 
 set -e
 
-echo "tool,real,user,sys" > runtimes.csv
+echo "tool,real,user,sys" > runtimes_human.csv
 
-/usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes.csv --append \
+/usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_human.csv --append \
     ./plafosim.py \
     --lanes 4 \
     --collision true \
@@ -26,7 +26,7 @@ echo "tool,real,user,sys" > runtimes.csv
     2>&1 | tee runlog_plafosim
 
 # also change routes file
-/usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes.csv --append \
+/usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_human.csv --append \
     $SUMO_HOME/bin/sumo \
     -c sumocfg/freeway-human.sumo.cfg \
     --fcd-output human-traces.xml \
