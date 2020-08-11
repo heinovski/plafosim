@@ -70,7 +70,7 @@ steps:
       from_secret: ARTIFACTS_PASSWORD
     BASE_DIR:
       from_secret: ARTIFACTS_PATH
-    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}
+    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
   commands:
     - apt update
     - apt install time
