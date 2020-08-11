@@ -51,7 +51,7 @@ steps:
     image: python
     commands:
       - pip3 install funcy
-      - ./plafosim.py
+      - ./plafosim.py --penetration 0.5  # test both vehicle types
 
 ---
 kind: pipeline
