@@ -212,9 +212,9 @@ class Vehicle:
             if self._simulator._debug:
                 print("%d we need to decelerate %f" % (self.vid, new_speed), flush=True)
         else:
+            new_speed = self.speed
             if self._simulator._debug:
                 print("%d we keep the speed %f" % (self.vid, new_speed), flush=True)
-            new_speed = self.speed
 
         # vsafe
         if predecessor_rear_position >= 0:
