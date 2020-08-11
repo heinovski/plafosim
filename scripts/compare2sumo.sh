@@ -2,7 +2,6 @@
 
 set -e
 
-# also change freeway-static.rou.xml
 echo "tool,real,user,sys" > runtimes.csv
 
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes.csv --append \
@@ -26,9 +25,10 @@ echo "tool,real,user,sys" > runtimes.csv
     --result-base-filename human \
     2>&1 | tee runlog_plafosim
 
+# also change routes file
 /usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes.csv --append \
     $SUMO_HOME/bin/sumo \
-    -c sumocfg/freeway-static.sumo.cfg \
+    -c sumocfg/freeway-human.sumo.cfg \
     --fcd-output human-traces.xml \
     --device.fcd.deterministic \
     --tripinfo-output human-trips.xml \
