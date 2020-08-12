@@ -2,9 +2,13 @@
 
 set -e
 
-echo "tool,real,user,sys" > runtimes_human.csv
+### Human
 
-/usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_human.csv --append \
+experiment=human
+
+echo "tool,real,user,sys" > runtimes_$experiment.csv
+
+/usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_$experiment.csv --append \
     ./plafosim.py \
     --lanes 4 \
     --collision true \
@@ -22,25 +26,25 @@ echo "tool,real,user,sys" > runtimes_human.csv
     --depart-method interval \
     --depart-time-interval 3 \
     --step 1 \
-    --result-base-filename human \
+    --result-base-filename $experiment \
     2>&1 | tee runlog_plafosim
 
 # also change routes file
-/usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_human.csv --append \
+/usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_$experiment.csv --append \
     $SUMO_HOME/bin/sumo \
-    -c sumocfg/freeway-human.sumo.cfg \
-    --fcd-output human-traces.xml \
+    -c sumocfg/freeway-$experiment.sumo.cfg \
+    --fcd-output $experiment-traces.xml \
     --device.fcd.deterministic \
-    --tripinfo-output human-trips.xml \
-    --emission-output human-emissions.xml \
+    --tripinfo-output $experiment-trips.xml \
+    --emission-output $experiment-emissions.xml \
     --device.emissions.deterministic \
-    --lanechange-output human-changes.xml \
+    --lanechange-output $experiment-changes.xml \
     --step-length 1 \
     2>&1 | tee runlog_sumo
 
-$SUMO_HOME/tools/xml/xml2csv.py human-trips.xml -o human-trips.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py human-emissions.xml -o human-emissions.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py human-traces.xml -o human-traces.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py human-changes.xml -o human-changes.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissions.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-traces.xml -o $experiment-traces.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-changes.xml -o $experiment-changes.csv -s ','
 
-./scripts/compare2sumo.py --experiment human --desired-speed 36 --arrival-position 100000
+./scripts/compare2sumo.py --experiment $experiment --desired-speed 36 --arrival-position 100000
