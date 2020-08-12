@@ -17,9 +17,9 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
 parser.add_argument('--experiment', type=str, default='human', help="The name of the experiment to use for all result files")
+parser.add_argument('--desired-speed', type=float, default=36, help="The desired speed to use for the comparison")
 args = parser.parse_args()
 
-desiredSpeed = 36  # TODO read from output
 arrivalPosition = 100000
 
 ## Read trips/emissions
@@ -193,7 +193,7 @@ for vid in list(ids):
         exit(1)
 
     # speed factor aka desired drving speed
-    desired_speed_sumo = float(trips_sumo.speedFactor) * desiredSpeed
+    desired_speed_sumo = float(trips_sumo.speedFactor) * args.desired_speed
     desired_speed_plafosim = float(trips_plafosim.desiredSpeed)
     diff_trips[vid]['desiredSpeed'] = desired_speed_plafosim - desired_speed_sumo
 
@@ -276,7 +276,7 @@ for vid in list(ids):
 print("Plotting trips/emissions/traces...")
 
 # boxplot with sumo and plafosim showing the picked desired driving speed
-data_sumo = [float(speedFactor) * desiredSpeed for speedFactor in sumo_trips.speedFactor.values]
+data_sumo = [float(speedFactor) * args.desired_speed for speedFactor in sumo_trips.speedFactor.values]
 data_plafosim = plafosim_trips.desiredSpeed.values
 
 pl.figure()
@@ -410,8 +410,8 @@ assert(abs(median(data)) < 600)  # 25
 fig = pl.figure()
 pl.title("Average Driving Speed for %d Vehicles" % len(ids))
 xlim = max(int(sumo_traces.step.max()), int(plafosim_traces.step.max()))
-pl.hlines(desiredSpeed, 0, xlim, color="red", label="desired")
-pl.ylim(0, desiredSpeed + 5)
+pl.hlines(args.desired_speed, 0, xlim, color="red", label="desired")
+pl.ylim(0, args.desired_speed + 5)
 pl.ylabel("speed [m/s]")
 pl.xlim(0, xlim)
 pl.xlabel("trip duration [s]")
@@ -429,8 +429,8 @@ pl.legend(loc='lower right')
 ax = fig.add_subplot(111)
 ia = inset_axes(ax, width="50%", height=1., loc=5)
 xlim = 60
-pl.hlines(desiredSpeed, 0, xlim, color="red", label="desired")
-pl.ylim(desiredSpeed - 5, desiredSpeed + 2)
+pl.hlines(args.desired_speed, 0, xlim, color="red", label="desired")
+pl.ylim(args.desired_speed - 5, args.desired_speed + 2)
 pl.ylabel("speed [m/s]")
 pl.xlim(0, xlim)
 #pl.xlabel("trip duration [s]")
@@ -482,7 +482,7 @@ fig = pl.figure()
 pl.title("Average Deviation to Desired Driving Speed for %d Vehicles" % len(ids))
 xlim = max(int(sumo_traces.step.max()), int(plafosim_traces.step.max()))
 pl.hlines(0, 0, xlim, color="red", label="desired")
-pl.ylim(-desiredSpeed - 5, 5)
+pl.ylim(-args.desired_speed - 5, 5)
 pl.ylabel("speed [m/s]")
 pl.xlim(0, xlim)
 pl.xlabel("trip duration [s]")
