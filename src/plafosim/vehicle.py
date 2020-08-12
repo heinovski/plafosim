@@ -210,7 +210,7 @@ class Vehicle:
                 print("%d we need to accelerate %f" % (self.vid, new_speed), flush=True)
         elif diff_to_desired < 0:
             # we need to decelerate
-            new_speed = max(self.speed - max(diff_to_desired, self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length)), 0)
+            new_speed = max(self.speed + max(diff_to_desired, -self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length)), 0)
             if self._simulator._debug:
                 print("%d we need to decelerate %f" % (self.vid, new_speed), flush=True)
         else:
