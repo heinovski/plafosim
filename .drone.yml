@@ -61,6 +61,17 @@ name: correctness
 steps:
 - name: statistical tests
   image: dbuse/sumo-python:3.8-buster-1_1_0
+  commands:
+    - apt update
+    - apt install time
+    - pip3 install funcy
+    - pip3 install matplotlib
+    - pip3 install pandas
+    - pip3 install statistics
+    - ./scripts/compare2sumo.sh
+
+- name: copy artifacts
+  image: dbuse/sumo-python:3.8-buster-1_1_0
   environment:
     HOST:
       from_secret: ARTIFACTS_HOST
@@ -73,12 +84,6 @@ steps:
     DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
   commands:
     - apt update
-    - apt install time
-    - pip3 install funcy
-    - pip3 install matplotlib
-    - pip3 install pandas
-    - pip3 install statistics
-    - ./scripts/compare2sumo.sh
     - apt install lftp
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -p $DIR; mput -O $DIR *.csv *.png"
 
