@@ -223,8 +223,15 @@ class Simulator:
                 # vehicle did not start yet
                 continue
 
+            if self._debug:
+                print("%d current speed %f" % (vehicle.vid, vehicle.speed))
+
             new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid))
             vehicle._acceleration = new_speed - vehicle.speed
+
+            if self._debug:
+                print("%d current acceleration %f" % (vehicle.vid, vehicle.acceleration))
+
             vehicle._speed = new_speed
 
     # krauss - single lane traffic
