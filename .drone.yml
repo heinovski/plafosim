@@ -57,7 +57,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: correctness
+name: correctnessHuman
 
 steps:
 - name: statistical tests
@@ -71,7 +71,48 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
-    - ./scripts/compare2sumo.sh
+    - ./scripts/test-human-driving.sh
+
+- name: copy artifacts
+  image: dbuse/sumo-python:3.8-buster-1_1_0
+  environment:
+    HOST:
+      from_secret: ARTIFACTS_HOST
+    USERNAME:
+      from_secret: ARTIFACTS_USER
+    PASSWORD:
+      from_secret: ARTIFACTS_PASSWORD
+    BASE_DIR:
+      from_secret: ARTIFACTS_PATH
+    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
+  commands:
+    - apt update
+    - apt install lftp
+    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -p $DIR; mput -O $DIR *.csv *.png"
+
+trigger:
+  branch:
+    - master
+    - develop
+
+---
+kind: pipeline
+type: docker
+name: correctnessACC
+
+steps:
+- name: statistical tests
+  image: dbuse/sumo-python:3.8-buster-1_1_0
+  commands:
+    - apt update
+    - apt install time
+    - pip3 install --upgrade funcy
+    - pip3 install --upgrade tqdm
+    - pip3 install --upgrade matplotlib
+    - pip3 install --upgrade pandas
+    - pip3 install --upgrade seaborn
+    - pip3 install --upgrade statsmodels
+    - ./scripts/test-acc-driving.sh
 
 - name: copy artifacts
   image: dbuse/sumo-python:3.8-buster-1_1_0
