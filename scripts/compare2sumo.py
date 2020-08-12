@@ -64,7 +64,7 @@ pl.ylabel("time [s]")
 pl.xticks(range(0, len(data), 1), runtimes.loc[:, runtimes.columns != "tool"])
 pl.xlabel("kind")
 pl.legend()
-pl.savefig('runtime.png')
+pl.savefig('%s_runtime.png' % args.experiment)
 
 ## Read traces
 
@@ -282,7 +282,7 @@ pl.figure()
 pl.title("Desired Driving Speed for %d Vehicles" % len(ids))
 pl.boxplot([data_sumo, data_plafosim], showmeans=True, labels=['sumo', 'plasfosim'])
 pl.ylabel("speed [m/s]")
-pl.savefig('desired_speed.png')
+pl.savefig('%s_desired_speed.png' % args.experiment)
 
 # devation to sumo in desired speed
 data = [diff_trips[x]['desiredSpeed'] for x in diff_trips.keys()]
@@ -290,7 +290,7 @@ pl.figure()
 pl.title("Deviation to Sumo in Desired Speed for %d Vehicles" % len(ids))
 pl.boxplot(data, showmeans=True)
 pl.ylabel("speed [m/s]")
-pl.savefig('diff_desired_box.png')
+pl.savefig('%s_diff_desired_box.png' % args.experiment)
 
 assert(abs(mean(data)) < 1)  # 0.5
 assert(abs(median(data)) < 1)  # 0.5
@@ -301,7 +301,7 @@ pl.figure()
 pl.title("Deviation to Sumo in Arrival Time for %d Vehicles" % len(ids))
 pl.boxplot(data, showmeans=True)
 pl.ylabel("time [s]")
-pl.savefig('diff_arrival_box.png')
+pl.savefig('%s_diff_arrival_box.png' % args.experiment)
 
 assert(abs(mean(data)) < 100)  # 25
 assert(abs(median(data)) < 100)  # 25
@@ -313,7 +313,7 @@ pl.title("Deviation to Sumo in Arrival Lane for %d Vehicles" % len(ids))
 pl.boxplot(data, showmeans=True)
 pl.xlabel("Deviation to SUMO in arrival lane")
 pl.ylabel("lane")
-pl.savefig('diff_arrivalLane_box.png')
+pl.savefig('%s_diff_arrivalLane_box.png' % args.experiment)
 
 assert(abs(mean(data)) < 0.5)  # 0,5
 assert(abs(median(data)) < 0.5)  # 0.5
@@ -324,7 +324,7 @@ pl.figure()
 pl.title("Deviation to Sumo in Arrival Speed for %d Vehicles" % len(ids))
 pl.boxplot(data, showmeans=True)
 pl.ylabel("speed [m/s]")
-pl.savefig('diff_arrivalSpeed_box.png')
+pl.savefig('%s_diff_arrivalSpeed_box.png' % args.experiment)
 
 assert(abs(mean(data)) < 2)  # 0.5
 assert(abs(median(data)) < 2)  # 0.5
@@ -335,7 +335,7 @@ pl.figure()
 pl.title("Deviation to Sumo in Trip Duration for %d Vehicles" % len(ids))
 pl.boxplot(data, showmeans=True)
 pl.ylabel("time [s]")
-pl.savefig('diff_duration_box.png')
+pl.savefig('%s_diff_duration_box.png' % args.experiment)
 
 assert(abs(mean(data)) < 600)  # 25
 assert(abs(median(data)) < 600)  # 25
@@ -347,7 +347,7 @@ assert(abs(median(data)) < 600)  # 25
 #pl.boxplot(data, showmeans=True)
 #pl.xlabel("Deviation to SUMO in time loss")
 #pl.ylabel("time [s]")
-#pl.savefig('diff_timeLoss_box.png')
+#pl.savefig('%s_diff_timeLoss_box.png' % args.experiment)
 #
 # devation to sumo in co
 ## TODO no fuel model yet
@@ -356,7 +356,7 @@ assert(abs(median(data)) < 600)  # 25
 #pl.boxplot(data, showmeans=True)
 #pl.xlabel("Deviation to SUMO in co")
 #pl.ylabel("mg")
-#pl.savefig('diff_co_box.png')
+#pl.savefig('%s_diff_co_box.png' % args.experiment)
 #
 # devation to sumo in co2
 ## TODO no fuel model yet
@@ -365,7 +365,7 @@ assert(abs(median(data)) < 600)  # 25
 #pl.boxplot(data, showmeans=True)
 #pl.xlabel("Deviation to SUMO in co2")
 #pl.ylabel("mg")
-#pl.savefig('diff_co2_box.png')
+#pl.savefig('%s_diff_co2_box.png' % args.experiment)
 #
 # devation to sumo in hc
 ## TODO no fuel model yet
@@ -374,7 +374,7 @@ assert(abs(median(data)) < 600)  # 25
 #pl.boxplot(data, showmeans=True)
 #pl.xlabel("Deviation to SUMO in hc")
 #pl.ylabel("mg")
-#pl.savefig('diff_hc_box.png')
+#pl.savefig('%s_diff_hc_box.png' % args.experiment)
 #
 # devation to sumo in pmx
 ## TODO no fuel model yet
@@ -383,7 +383,7 @@ assert(abs(median(data)) < 600)  # 25
 #pl.boxplot(data, showmeans=True)
 #pl.xlabel("Deviation to SUMO in pmx")
 #pl.ylabel("mg")
-#pl.savefig('diff_pmx_box.png')
+#pl.savefig('%s_diff_pmx_box.png' % args.experiment)
 #
 # devation to sumo in nox
 ## TODO no fuel model yet
@@ -392,7 +392,7 @@ assert(abs(median(data)) < 600)  # 25
 #pl.boxplot(data, showmeans=True)
 #pl.xlabel("Deviation to SUMO in nox")
 #pl.ylabel("mg")
-#pl.savefig('diff_nox_box.png')
+#pl.savefig('%s_diff_nox_box.png' % args.experiment)
 #
 # devation to sumo in fuel
 ## TODO no fuel model yet
@@ -401,7 +401,7 @@ assert(abs(median(data)) < 600)  # 25
 #pl.boxplot(data, showmeans=True)
 #pl.xlabel("Deviation to SUMO in fuel")
 #pl.ylabel("ml")
-#pl.savefig('diff_fuel_box.png')
+#pl.savefig('%s_diff_fuel_box.png' % args.experiment)
 
 ### Speed in lifetime
 
@@ -437,7 +437,7 @@ pl.xlim(0, xlim)
 pl.plot(x_sumo, y_sumo, color="black", label="sumo")
 pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
 
-pl.savefig('speed_line.png')
+pl.savefig('%s_speed_line.png' % args.experiment)
 
 ### Position in lifetime
 
@@ -472,7 +472,7 @@ pl.xlim(xlim - 100, xlim + 5)
 pl.plot(x_sumo, y_sumo, color="black", label="sumo")
 pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
 
-pl.savefig('position_line.png')
+pl.savefig('%s_position_line.png' % args.experiment)
 
 ### Diff desired Speed in lifetime
 
@@ -508,7 +508,7 @@ pl.xlim(0, xlim)
 pl.plot(x_sumo, y_sumo, color="black", label="sumo")
 pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
 
-pl.savefig('diff_desired_speed_line.png')
+pl.savefig('%s_diff_desired_speed_line.png' % args.experiment)
 
 ### deviation to sumo in speed (box)
 
@@ -521,7 +521,7 @@ y = [mean([vehicle[step] for vehicle in diff_speeds_lifetime.values() if step in
 pl.boxplot(y, showmeans=True)
 
 pl.ylabel("diff in speed [m/s]")
-pl.savefig('diff_speed_box.png')
+pl.savefig('%s_diff_speed_box.png' % args.experiment)
 
 ### devation to sumo in speed (line)
 
@@ -532,7 +532,7 @@ pl.plot(x, y)
 
 pl.xlabel("trip duration [s]")
 pl.ylabel("diff in speed [m/s]")
-pl.savefig('diff_speed_line.png')
+pl.savefig('%s_diff_speed_line.png' % args.experiment)
 
 assert(abs(mean(y)) < 1)  # 0.5
 assert(abs(median(y)) < 1)  # 0.5
@@ -548,7 +548,7 @@ y = [mean([vehicle[step] for vehicle in diff_positions_lifetime.values() if step
 pl.boxplot(y, showmeans=True)
 
 pl.ylabel("diff in position [m]")
-pl.savefig('diff_position_box.png')
+pl.savefig('%s_diff_position_box.png' % args.experiment)
 
 ### devation to sumo in position (line)
 
@@ -559,7 +559,7 @@ pl.plot(x, y)
 
 pl.xlabel("trip duration [s]")
 pl.ylabel("diff in position [m]")
-pl.savefig('diff_position_line.png')
+pl.savefig('%s_diff_position_line.png' % args.experiment)
 
 assert(abs(mean(y)) < 1500)  # 300
 assert(abs(median(y)) < 1500)  # 300
@@ -575,7 +575,7 @@ y = [mean([vehicle[step] for vehicle in diff_lanes_lifetime.values() if step in 
 pl.boxplot(y, showmeans=True)
 
 pl.ylabel("diff in lane")
-pl.savefig('diff_lane_box.png')
+pl.savefig('%s_diff_lane_box.png' % args.experiment)
 
 ### devation to sumo in lane (line)
 
@@ -586,7 +586,7 @@ pl.plot(x, y)
 
 pl.xlabel("trip duration [s]")
 pl.ylabel("diff in lane")
-pl.savefig('diff_lane_line.png')
+pl.savefig('%s_diff_lane_line.png' % args.experiment)
 
 assert(abs(mean(y)) < 0.5)  # 0.1
 assert(abs(median(y)) < 0.5)  # 0.1
