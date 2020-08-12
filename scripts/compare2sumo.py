@@ -18,9 +18,8 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
 parser.add_argument('--experiment', type=str, default='human', help="The name of the experiment to use for all result files")
 parser.add_argument('--desired-speed', type=float, default=36, help="The desired speed to use for the comparison")
+parser.add_argument('--arrival-position', type=int, default=100000, help="The arrival position to use for the comparison")
 args = parser.parse_args()
-
-arrivalPosition = 100000
 
 ## Read trips/emissions
 
@@ -446,8 +445,8 @@ pl.savefig('speed_line.png')
 fig = pl.figure()
 pl.title("Average Position for %d Vehicles" % len(ids))
 xlim = max(int(sumo_traces.step.max()), int(plafosim_traces.step.max()))
-pl.hlines(arrivalPosition, 0, xlim, color="red", label="destination")
-pl.ylim(0, arrivalPosition + 5000)
+pl.hlines(args.arrival_position, 0, xlim, color="red", label="destination")
+pl.ylim(0, args.arrival_position + 5000)
 pl.ylabel("position [m]")
 pl.xlim(0, xlim)
 pl.xlabel("trip duration [s]")
@@ -464,8 +463,8 @@ pl.legend(loc='upper left')
 
 ax = fig.add_subplot(111)
 ia = inset_axes(ax, width="30%", height=1., loc=4)
-pl.hlines(arrivalPosition, 0, xlim + 5, color="red", label="destination")
-pl.ylim(arrivalPosition - 2500, arrivalPosition + 2500)
+pl.hlines(args.arrival_position, 0, xlim + 5, color="red", label="destination")
+pl.ylim(args.arrival_position - 2500, args.arrival_position + 2500)
 pl.ylabel("position [m/s]")
 pl.xlim(xlim - 100, xlim + 5)
 #pl.xlabel("trip duration [s]")
