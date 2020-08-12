@@ -43,4 +43,4 @@ $SUMO_HOME/tools/xml/xml2csv.py human-emissions.xml -o human-emissions.csv -s ',
 $SUMO_HOME/tools/xml/xml2csv.py human-traces.xml -o human-traces.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py human-changes.xml -o human-changes.csv -s ','
 
-./scripts/compare2sumo.py
+./scripts/compare2sumo.py --experiment human --desired-speed 36 --arrival-position 100000
