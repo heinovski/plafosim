@@ -292,8 +292,10 @@ pl.boxplot(data, showmeans=True)
 pl.ylabel("speed [m/s]")
 pl.savefig('%s_diff_desired_box.png' % args.experiment)
 
-assert(abs(mean(data)) < 1)  # 0.5
-assert(abs(median(data)) < 1)  # 0.5
+mean_value = mean(data)
+assert(abs(mean_value) < 1), "%f" % mean_value  # 0.5
+median_value = median(data)
+assert(abs(median_value) < 1), "%f" % median_value  # 0.5
 
 # devation to sumo in arrival time
 data = [diff_trips[x]['arrival'] for x in diff_trips.keys()]
@@ -303,8 +305,10 @@ pl.boxplot(data, showmeans=True)
 pl.ylabel("time [s]")
 pl.savefig('%s_diff_arrival_box.png' % args.experiment)
 
-assert(abs(mean(data)) < 100)  # 25
-assert(abs(median(data)) < 100)  # 25
+mean_value = mean(data)
+assert(abs(mean_value) < 100), "%f" % mean_value  # 25
+median_value = median(data)
+assert(abs(median_value) < 100), "%f" % median_value  # 25  # TODO produces errors
 
 # devation to sumo in arrival lane
 data = [diff_trips[x]['arrivalLane'] for x in diff_trips.keys()]
@@ -315,8 +319,10 @@ pl.xlabel("Deviation to SUMO in arrival lane")
 pl.ylabel("lane")
 pl.savefig('%s_diff_arrivalLane_box.png' % args.experiment)
 
-assert(abs(mean(data)) < 0.5)  # 0,5
-assert(abs(median(data)) < 0.5)  # 0.5
+mean_value = mean(data)
+assert(abs(mean_value) < 0.5), "%f" % mean_value  # 0,5
+median_value = median(data)
+assert(abs(median_value) < 0.5), "%f" % median_value  # 0.5
 
 # deviation to sumo in arrival speed
 data = [diff_trips[x]['arrivalSpeed'] for x in diff_trips.keys()]
@@ -326,8 +332,10 @@ pl.boxplot(data, showmeans=True)
 pl.ylabel("speed [m/s]")
 pl.savefig('%s_diff_arrivalSpeed_box.png' % args.experiment)
 
-assert(abs(mean(data)) < 2)  # 0.5
-assert(abs(median(data)) < 2)  # 0.5
+mean_value = mean(data)
+assert(abs(mean_value) < 2), "%f" % mean_value  # 0.5
+median_value = median(data)
+assert(abs(median_value) < 2), "%f" % median_value  # 0.5
 
 # deviation to sumo in trip duration
 data = [diff_trips[x]['duration'] for x in diff_trips.keys()]
@@ -337,8 +345,10 @@ pl.boxplot(data, showmeans=True)
 pl.ylabel("time [s]")
 pl.savefig('%s_diff_duration_box.png' % args.experiment)
 
-assert(abs(mean(data)) < 600)  # 25
-assert(abs(median(data)) < 600)  # 25
+mean_value = mean(data)
+assert(abs(mean_value) < 600), "%f" % mean_value  # 25
+median_value = median(data)
+assert(abs(median_value) < 600), "%f" % median_value  # 25
 
 # devation to sumo in time loss
 ## TODO no time departure delay in plafosim (yet)
@@ -534,8 +544,10 @@ pl.xlabel("trip duration [s]")
 pl.ylabel("diff in speed [m/s]")
 pl.savefig('%s_diff_speed_line.png' % args.experiment)
 
-assert(abs(mean(y)) < 1)  # 0.5
-assert(abs(median(y)) < 1)  # 0.5
+mean_value = mean(y)
+assert(abs(mean_value) < 1), "%f" % mean_value  # 0.5
+median_value = median(y)
+assert(abs(median_value) < 1), "%f" % median_value  # 0.5  # TODO produces errors
 
 ### deviation to sumo in position (box)
 
@@ -561,8 +573,10 @@ pl.xlabel("trip duration [s]")
 pl.ylabel("diff in position [m]")
 pl.savefig('%s_diff_position_line.png' % args.experiment)
 
-assert(abs(mean(y)) < 1500)  # 300
-assert(abs(median(y)) < 1500)  # 300
+mean_value = mean(y)
+assert(abs(mean_value) < 1500), "%f" % mean_value  # 300
+median_value = median(y)
+assert(abs(median_value) < 1500), "%f" % median_value  # 300
 
 ### deviation to sumo in lane (box)
 
@@ -588,5 +602,7 @@ pl.xlabel("trip duration [s]")
 pl.ylabel("diff in lane")
 pl.savefig('%s_diff_lane_line.png' % args.experiment)
 
-assert(abs(mean(y)) < 0.5)  # 0.1
-assert(abs(median(y)) < 0.5)  # 0.1
+mean_value = mean(y)
+assert(abs(mean_value) < 0.5), "%f" % mean_value  # 0.1
+median_value = median(y)
+assert(abs(median_value) < 0.5), "%f" % median_value  # 0.1
