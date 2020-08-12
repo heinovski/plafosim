@@ -56,6 +56,8 @@ def main():
     vehicle.add_argument('--max-speed', type=float, default=55, help="The maximum possible driving speed in m/s")
     vehicle.add_argument('--acc-headway-time', type=float, default=1.0,
                          help="The headway time to be used for the ACC in s")
+    vehicle.add_argument('--cacc-spacing', type=float, default=5.0,
+                         help="The constant spacing to be used for the CACC in m")
     vehicle.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to enable collision checks")
     vehicle.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
@@ -151,6 +153,7 @@ def main():
         args.arrival_interval,
         args.max_speed,
         args.acc_headway_time,
+        args.cacc_spacing,
         args.random_depart_position,
         args.random_depart_lane,
         args.desired_speed,

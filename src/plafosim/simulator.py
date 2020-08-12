@@ -314,6 +314,7 @@ class Simulator:
             arrival_interval: int,
             max_speed: float,
             acc_headway_time: float,
+            cacc_spacing: float,
             random_depart_position: bool,
             random_depart_lane: bool,
             desired_speed: float,
@@ -402,7 +403,8 @@ class Simulator:
                     depart_lane,
                     depart_speed,
                     depart_time,
-                    acc_headway_time)
+                    acc_headway_time,
+                    cacc_spacing)
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
                                   speed, depart_lane, depart_speed, depart_time)

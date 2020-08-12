@@ -496,7 +496,8 @@ class PlatooningVehicle(Vehicle):
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
-            acc_headway_time: float):
+            acc_headway_time: float,
+            cacc_spacing: float):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
 
@@ -504,6 +505,10 @@ class PlatooningVehicle(Vehicle):
         self._acc_headway_time = acc_headway_time
         if self.acc_headway_time < 1.0:
             print("Warning: values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
+        self._acc_lambda = 0.1  # see Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
+        self._cacc_spacing = cacc_spacing
+        if self.cacc_spacing < 5.0:
+            print("Warning: values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
 
@@ -519,8 +524,19 @@ class PlatooningVehicle(Vehicle):
         return self._acc_headway_time
 
     @property
+    def acc_lambda(self) -> float:
+        return self._acc_lambda
+
+    @property
+    def cacc_spacing(self) -> float:
+        return self._cacc_spacing
+
+    @property
     def desired_gap(self) -> float:
-        return self._acc_headway_time * self.speed
+        if self.cf_mode is CF_Mode.ACC:
+            return self.acc_headway_time * self.speed
+        else:
+            return self.cacc_spacing
 
     @property
     def platoon_role(self) -> PlatoonRole:
@@ -539,6 +555,12 @@ class PlatooningVehicle(Vehicle):
     def get_front_speed(self) -> float:
         return self._simulator._get_predecessor_speed(self.vid)
 
+    def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
+        """Helper method to calcucate the ACC acceleration based on the given parameters"""
+
+        # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
+        return -1.0 / self.acc_headway_time * (self.speed - desired_speed + self.acc_lambda * (-gap_to_predecessor + desired_gap))
+
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, desired_gap: float = 0) -> float:
         if self._cf_mode is CF_Mode.ACC:
             del desired_gap  # delete passed variable to avoid misuse
@@ -550,10 +572,7 @@ class PlatooningVehicle(Vehicle):
                     print("%d my desired gap %f" % (self.vid, self.desired_gap))
                     print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
 
-                la = 0.1  # TODO add parameter
-
-                # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
-                u = -1.0 / self.acc_headway_time * (self.speed - speed_predecessor + la * (-gap_to_predecessor + self.acc_headway_time * self.speed))
+                u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.acc_headway_time * self.speed)
 
                 if self._simulator._debug:
                     print("%d ACC safe speed %f" % (self.vid, self.speed + u))
@@ -581,6 +600,48 @@ class PlatooningVehicle(Vehicle):
                     print("%d ACC new speed %f" % (self.vid, new_speed))
 
                 return new_speed
+
+        elif self._cf_mode is CF_Mode.CACC:
+            assert(self.is_in_platoon())
+            assert(self.platoon_role is PlatoonRole.FOLLOWER)  # only followers can use CACC
+
+            # TODO make sure that the leader uses the platoon's parameters for ACC
+
+            # sanity checks for front vehicle in platoon
+            assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
+            assert(self.platoon.get_front_id(self.vid) == self._simulator._get_predecessor_id(self.vid))
+
+            gap_to_predecessor = predecessor_rear_position - self.position
+            if self._simulator._debug:
+                print("%d my front gap %f" % (self.vid, gap_to_predecessor))
+                print("%d my desired gap %f" % (self.vid, self.desired_gap))
+                print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
+
+            ### HACK FOR AVOIDING COMMUNICATION ###
+            # acceleration_predecessor = self._simulator._vehicles[self.platoon.get_front_id(self.vid)].acceleration
+            # acceleration_leader = self._simulator._vehicles[self.platoon.leader_id].acceleration
+            speed_leader = self._simulator._vehicles[self.platoon.leader_id].speed
+            #######################################
+
+            ### HACK FOR CACC ###
+            u = self._acc_acceleration(speed_leader, gap_to_predecessor, self.desired_gap)
+            #####################
+
+            if self._simulator._debug:
+                print("%d CACC safe speed %f" % (self.vid, self.speed + u))
+
+            u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
+            u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
+
+            new_speed = self.speed + u
+            new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
+            if self._simulator._debug:
+                print("%d CACC possible speed %f" % (self.vid, new_speed))
+
+            if self._simulator._debug:
+                print("%d CACC new speed %f" % (self.vid, new_speed))
+
+            return new_speed
 
         # default: drive freely
         return super().new_speed(speed_predecessor, predecessor_rear_position, super().desired_gap)
