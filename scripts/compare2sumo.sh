@@ -27,7 +27,7 @@ echo "tool,real,user,sys" > runtimes_$experiment.csv
     --depart-time-interval 3 \
     --step 1 \
     --result-base-filename $experiment \
-    2>&1 | tee runlog_plafosim
+    2>&1 | tee runlog_${experiment}_plafosim
 
 # also change routes file
 /usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_$experiment.csv --append \
@@ -40,7 +40,7 @@ echo "tool,real,user,sys" > runtimes_$experiment.csv
     --device.emissions.deterministic \
     --lanechange-output $experiment-changes.xml \
     --step-length 1 \
-    2>&1 | tee runlog_sumo
+    2>&1 | tee runlog_${experiment}_sumo
 
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissions.csv -s ','
