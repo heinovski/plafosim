@@ -4,9 +4,10 @@ import argparse
 import matplotlib.pyplot as pl
 import pandas
 import re
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from statistics import mean, median
+import seaborn
 
+
+## Read parameters
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter,
@@ -21,63 +22,39 @@ parser.add_argument('--desired-speed', type=float, default=36, help="The desired
 parser.add_argument('--arrival-position', type=int, default=100000, help="The arrival position to use for the comparison")
 args = parser.parse_args()
 
+## Read runtimes
+
+runtimes = pandas.read_csv('runtimes_%s.csv' % args.experiment)
+runtimes = runtimes.astype({'simulator': str})
+runtimes = runtimes.set_index('simulator')
+
 ## Read trips/emissions
 
 sumo_trips = pandas.read_csv('%s-trips.csv' % args.experiment)
-
-sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x), inplace=True)
-sumo_trips.rename(columns=lambda x: re.sub('emissions_', '', x), inplace=True)
-
-sumo_trips.replace(r'static\.', '', regex=True, inplace=True)
-sumo_trips.replace('edge_0_0_', '', regex=True, inplace=True)
-
+sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x))
+sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('emissions_', '', x))
+sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('_abs', '', x))
+sumo_trips = sumo_trips.replace(r'static\.', '', regex=True)
+sumo_trips = sumo_trips.replace('edge_0_0_', '', regex=True)
 sumo_trips = sumo_trips.astype({'arrivalLane': int, 'departLane': int, 'id': int, 'vType': str})
-
-sumo_trips.sort_values(by='id', inplace=True)
+# add desired speed to data frame
+sumo_trips = sumo_trips.assign(desiredSpeed=lambda x: x.speedFactor * args.desired_speed)
+sumo_trips = sumo_trips.set_index('id').sort_index()
 
 plafosim_trips = pandas.read_csv('%s_vehicle_trips.csv' % args.experiment)
-plafosim_trips.sort_values(by='id', inplace=True)
+plafosim_trips = plafosim_trips.set_index('id').sort_index()
 
 plafosim_emissions = pandas.read_csv('%s_vehicle_emissions.csv' % args.experiment)
-plafosim_emissions.sort_values(by='id', inplace=True)
-
-ids = frozenset(sumo_trips['id'].unique()).intersection(plafosim_trips['id'].unique())
-
-## Evalute runtime
-
-print("Evaluating runtime...")
-
-runtimes = pandas.read_csv('runtimes_%s.csv' % args.experiment)
-runtimes = runtimes.astype({'tool': str})
-
-print("Plotting runtime...")
-
-pl.figure()
-pl.title("Runtime for %d Vehicles" % len(ids))
-data = runtimes.loc[runtimes.tool == "sumo", runtimes.columns != "tool"].values.flatten()
-
-pl.scatter(range(0, len(data), 1), data, label="sumo", color="black")
-data = runtimes.loc[runtimes.tool == "plafosim", runtimes.columns != "tool"].values.flatten()
-pl.scatter(range(0, len(data), 1), data, label="plafosim", color="blue")
-
-pl.ylabel("time [s]")
-pl.xticks(range(0, len(data), 1), runtimes.loc[:, runtimes.columns != "tool"])
-pl.xlabel("kind")
-pl.legend()
-pl.savefig('%s_runtime.png' % args.experiment)
+plafosim_emissions = plafosim_emissions.set_index('id').sort_index()
 
 ## Read traces
 
 sumo_traces = pandas.read_csv('%s-traces.csv' % args.experiment, usecols=['timestep_time', 'vehicle_id', 'vehicle_lane', 'vehicle_pos', 'vehicle_speed'])
 sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
-
 sumo_traces.dropna(inplace=True)
-
 sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
 sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
-
 sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
-
 sumo_traces.sort_values(by='step', inplace=True)
 
 plafosim_traces = pandas.read_csv('%s_vehicle_traces.csv' % args.experiment, usecols=['step', 'id', 'position', 'lane', 'speed'])
@@ -89,520 +66,287 @@ sumo_changes = pandas.read_csv('%s-changes.csv' % args.experiment, usecols=['cha
 sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
 
 sumo_changes.dropna(inplace=True)
-
 sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
 sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
-
 sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
-
 sumo_changes.sort_values(by='step', inplace=True)
 
 plafosim_changes = pandas.read_csv('%s_vehicle_changes.csv' % args.experiment)
 plafosim_changes.sort_values(by='step', inplace=True)
 
-## Evaluate trips/emissions/traces/lane changes
+# get the number of (finished) vehicles
+ids = frozenset(sumo_trips.index).intersection(plafosim_trips.index)
+number_of_vehicles = len(ids)
+error = False
 
-print("Evaluating trips/emissions/traces/changes...")
+## Evalute runtime
 
-### Evaluate for every vehicle
+pl.figure()
+pl.title("Runtime for %d Vehicles" % number_of_vehicles)
+data = runtimes.reset_index().melt('simulator', var_name='kind').set_index('simulator')
+# does not work because of imcompatibility between matplotlib and seaborn
+#seaborn.scatterplot(data=data, x='kind', y='value', hue='simulator')
+pl.scatter(data=data.loc['sumo'], x='kind', y='value', label='sumo')
+pl.scatter(data=data.loc['plafosim'], x='kind', y='value', label='plafosim')
+pl.ylabel("time [s]")
+pl.legend()
+pl.savefig('%s_runtime.png' % args.experiment)
 
-# create empty dicts
-diff_trips = {}
+## Evaluate trips
 
-speeds_lifetime = {}
-speeds_lifetime['sumo'] = {}
-speeds_lifetime['plafosim'] = {}
-positions_lifetime = {}
-positions_lifetime['sumo'] = {}
-positions_lifetime['plafosim'] = {}
-diff_desired_lifetime = {}
-diff_desired_lifetime['sumo'] = {}
-diff_desired_lifetime['plafosim'] = {}
+# metrics which should not be different among the simulators
+trip_equal_labels = ['depart', 'departLane', 'departPos', 'departSpeed', 'arrivalPos', 'routeLength']
 
-diff_speeds_lifetime = {}
-diff_positions_lifetime = {}
-diff_lanes_lifetime = {}
+trip_equality = abs(plafosim_trips[trip_equal_labels] - sumo_trips[trip_equal_labels]) <= 0.01  # for floats
+failed_equality = trip_equality.mask(trip_equality).reset_index().melt('id').dropna()[['id', 'variable']]
 
-# TODO use multi-threading to parallelize execution
+if not failed_equality.empty:
+    print("Some metrics are not equal!")
+    failed_equality = failed_equality.set_index(['id', 'variable']).assign(
+        sumo=sumo_trips.reset_index().melt('id').set_index(['id', 'variable']),
+        plafosim=plafosim_trips.reset_index().melt('id').set_index(['id', 'variable'])
+    ).reset_index()
+    # TODO filter out small diff in departPos
+    print(failed_equality.values)
 
-for vid in list(ids):
+# metrics that can be different among the simulators
+trip_diff_labels = ['desiredSpeed', 'arrival', 'arrivalLane', 'arrivalSpeed', 'duration', 'timeLoss']
+diff_trips = plafosim_trips[trip_diff_labels] - sumo_trips[trip_diff_labels]
 
-    print("Current vehicle %d" % vid)
+## Evaluate emissions
 
-    # create empty sub-dicts for this vehicle
-    diff_trips[vid] = {}
+# TODO emissions
+#emission_labels =['co', 'co2', 'hc', 'pmx', 'nox', 'fuel']
+#print(sumo_trips.head())
+#diff_emissions = plafosim_emissions[emission_labels] - sumo_trips[emission_labels]
+#print(diff_emissions)
 
-    speeds_lifetime['sumo'][vid] = {}
-    speeds_lifetime['plafosim'][vid] = {}
-    positions_lifetime['sumo'][vid] = {}
-    positions_lifetime['plafosim'][vid] = {}
-    diff_desired_lifetime['sumo'][vid] = {}
-    diff_desired_lifetime['plafosim'][vid] = {}
+## Evaluate traces
 
-    diff_speeds_lifetime[vid] = {}
-    diff_positions_lifetime[vid] = {}
-    diff_lanes_lifetime[vid] = {}
+sumo_traces = sumo_traces.set_index(['id', 'step'], drop=False).sort_index()
+plafosim_traces = plafosim_traces.set_index(['id', 'step'], drop=False).sort_index()
 
-    trips_sumo = sumo_trips.loc[sumo_trips.id == vid].reset_index(drop=True)
-    trips_plafosim = plafosim_trips[plafosim_trips.id == vid].reset_index(drop=True)
-    ep = plafosim_emissions[plafosim_emissions.id == vid].reset_index(drop=True)
+plafosim_traces = plafosim_traces.assign(lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
+                                         diff_desired=lambda x: x.speed - plafosim_trips.desiredSpeed,
+                                         diff_sumo_speed=lambda x: x.speed - sumo_traces.speed,
+                                         diff_sumo_position=lambda x: x.position - sumo_traces.position,
+                                         diff_sumo_lane=lambda x: abs(x.lane - sumo_traces.lane)
+                                         ).reset_index(drop=True)
 
-    traces_sumo = sumo_traces.loc[sumo_traces.id == vid].reset_index(drop=True)
-    traces_plafosim = plafosim_traces[plafosim_traces.id == vid].reset_index(drop=True)
+sumo_traces = sumo_traces.assign(lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
+                                 diff_desired=lambda x: x.speed - sumo_trips.speedFactor * args.desired_speed).reset_index(drop=True)
 
-    if len(trips_sumo) != 1 or len(trips_plafosim) != 1 or len(ep) != 1:
-        print("Vehicle does not exist in all data sets")
-        exit(1)
+sumo_traces = sumo_traces.set_index(['id', 'lifetime']).sort_index()
+plafosim_traces = plafosim_traces.set_index(['id', 'lifetime']).sort_index()
 
-    # depart time
-    # should not be different
-    if int(trips_sumo.depart) != int(trips_plafosim.depart):
-        print("depart time is not the same %d vs. %d" % (trips_sumo.depart, trips_plafosim.depart))
-        exit(1)
+merged_traces = pandas.concat([sumo_traces, plafosim_traces], keys=['sumo', 'plafosim'], names=['simulator']).reset_index()
 
-    # depart lane
-    # should not be different
-    if round(float(trips_sumo.departLane)) != int(trips_plafosim.departLane):
-        print("depart lane is not the same %d vs. %d" % (trips_sumo.departLane, trips_plafosim.departLane))
-        exit(1)
-
-    # depart position
-    # should not be different
-    # currently, there is a diff of 10 cm which we ignore
-    if float(trips_sumo.departPos) != float(trips_plafosim.departPos):
-        print("depart pos is not the same %f vs. %f" % (trips_sumo.departPos, trips_plafosim.departPos))
-
-    # depart speed
-    # should not be different
-    if float(trips_sumo.departSpeed) != float(trips_plafosim.departSpeed):
-        print("depart speed is not the same %f vs. %f" % (trips_sumo.departSpeed, trips_plafosim.departSpeed))
-        exit(1)
-
-    # arrival position
-    # should not be different
-    if float(trips_sumo.arrivalPos) != float(trips_plafosim.arrivalPos):
-        print("arrival pos it not the same %f vs. %f" % (trips_sumo.arrivalPos, trips_plafosim.arrivalPos))
-        exit(1)
-
-    # route length
-    # should not be different
-    # currently, there is a diff of 10 cm which we ignore
-    if round(float(trips_sumo.routeLength)) != float(trips_plafosim.routeLength):
-        print("route length is not the same %f vs. %f" % (trips_sumo.routeLength, trips_plafosim.routeLength))
-        exit(1)
-
-    # speed factor aka desired drving speed
-    desired_speed_sumo = float(trips_sumo.speedFactor) * args.desired_speed
-    desired_speed_plafosim = float(trips_plafosim.desiredSpeed)
-    diff_trips[vid]['desiredSpeed'] = desired_speed_plafosim - desired_speed_sumo
-
-    # arrivel time
-    # can be different
-    diff_trips[vid]['arrival'] = float(trips_plafosim.arrival) - float(trips_sumo.arrival)
-
-    # arrival lane
-    # can be different
-    diff_trips[vid]['arrivalLane'] = int(trips_plafosim.arrivalLane) - int(trips_sumo.arrivalLane)
-
-    # arrival speed
-    # can be different
-    diff_trips[vid]['arrivalSpeed'] = float(trips_plafosim.arrivalSpeed) - float(trips_sumo.arrivalSpeed)
-
-    # trip duration
-    # can be different
-    diff_trips[vid]['duration'] = float(trips_plafosim.duration) - float(trips_sumo.duration)
-
-    # time loss
-    # can be different
-    diff_trips[vid]['timeLoss'] = float(trips_plafosim.timeLoss) - float(trips_sumo.timeLoss)
-
-    # co
-    # can be different
-    diff_trips[vid]['co'] = float(ep.CO) - float(trips_sumo.CO_abs)
-
-    # co2
-    # can be different
-    diff_trips[vid]['co2'] = float(ep.CO2) - float(trips_sumo.CO2_abs)
-
-    # hc
-    # can be different
-    diff_trips[vid]['hc'] = float(ep.HC) - float(trips_sumo.HC_abs)
-
-    # pmx
-    # can be different
-    diff_trips[vid]['pmx'] = float(ep.PMx) - float(trips_sumo.PMx_abs)
-
-    # nox
-    # can be different
-    diff_trips[vid]['nox'] = float(ep.NOx) - float(trips_sumo.NOx_abs)
-
-    # fuel
-    # can be different
-    diff_trips[vid]['fuel'] = float(ep.fuel) - float(trips_sumo.fuel_abs)
-
-    # determine data interval for this vehicle
-    min_step = int(min(traces_sumo.step.min(), traces_plafosim.step.min()))
-    assert(min_step == int(trips_sumo.depart))
-    max_step = int(max(traces_sumo.step.max(), traces_plafosim.step.max()))
-
-    # go trough lifetime of vehicle
-    for step in range(min_step, max_step, 1):
-
-        # get data for this vehicle in this step
-        step_sumo = traces_sumo.loc[traces_sumo.step == step].reset_index(drop=True)
-        step_plafosim = traces_plafosim.loc[traces_plafosim.step == step].reset_index(drop=True)
-
-        # caluclate lifetime
-        life_time = step - min_step
-
-        if len(step_sumo) == 1:
-            speeds_lifetime['sumo'][vid][life_time] = float(step_sumo.speed)
-            positions_lifetime['sumo'][vid][life_time] = float(step_sumo.position)
-            diff_desired_lifetime['sumo'][vid][life_time] = float(step_sumo.speed) - desired_speed_sumo
-
-        if len(step_plafosim) == 1:
-            speeds_lifetime['plafosim'][vid][life_time] = float(step_plafosim.speed)
-            positions_lifetime['plafosim'][vid][life_time] = float(step_plafosim.position)
-            diff_desired_lifetime['plafosim'][vid][life_time] = float(step_plafosim.speed) - desired_speed_plafosim
-
-        if len(step_sumo) == len(step_plafosim) == 1:
-            diff_speeds_lifetime[vid][life_time] = float(step_plafosim.speed - step_sumo.speed)
-            diff_positions_lifetime[vid][life_time] = float(step_plafosim.position - step_sumo.position)
-            diff_lanes_lifetime[vid][life_time] = int(step_plafosim.lane - step_sumo.lane)
-
-### Plotting
+## Plotting
 
 print("Plotting trips/emissions/traces...")
 
-# boxplot with sumo and plafosim showing the picked desired driving speed
-data_sumo = [float(speedFactor) * args.desired_speed for speedFactor in sumo_trips.speedFactor.values]
-data_plafosim = plafosim_trips.desiredSpeed.values
+# boxplot with desired driving speed
 
 pl.figure()
-pl.title("Desired Driving Speed for %d Vehicles" % len(ids))
-pl.boxplot([data_sumo, data_plafosim], showmeans=True, labels=['sumo', 'plasfosim'])
+pl.title("Desired Driving Speed for %d Vehicles" % number_of_vehicles)
+pl.boxplot([sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True, labels=['sumo', 'plasfosim'])
+#seaborn.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
+pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
 pl.savefig('%s_desired_speed.png' % args.experiment)
 
-# devation to sumo in desired speed
-data = [diff_trips[x]['desiredSpeed'] for x in diff_trips.keys()]
-pl.figure()
-pl.title("Deviation to Sumo in Desired Speed for %d Vehicles" % len(ids))
-pl.boxplot(data, showmeans=True)
-pl.ylabel("speed [m/s]")
-pl.savefig('%s_diff_desired_box.png' % args.experiment)
+# distplot with desired driving speed
 
-mean_value = mean(data)
-assert(abs(mean_value) < 1), "%f" % mean_value  # 0.5
-median_value = median(data)
-assert(abs(median_value) < 1), "%f" % median_value  # 0.5
+fig, ax = pl.subplots()
+pl.title("Desired Driving Speed for %d Vehicles" % number_of_vehicles)
+seaborn.distplot(
+    sumo_trips.desiredSpeed,
+    hist=False,
+    kde_kws={'cumulative': True},
+    label='sumo',
+    ax=ax
+)
+seaborn.distplot(
+    plafosim_trips.desiredSpeed,
+    hist=False,
+    kde_kws={'cumulative': True},
+    label='plafosim',
+    ax=ax
+)
+pl.legend(title="simulator")
+pl.xlabel("speed [m/s]")
+pl.savefig('%s_desired_speed_dist.png' % args.experiment)
 
-# devation to sumo in arrival time
-data = [diff_trips[x]['arrival'] for x in diff_trips.keys()]
-pl.figure()
-pl.title("Deviation to Sumo in Arrival Time for %d Vehicles" % len(ids))
-pl.boxplot(data, showmeans=True)
-pl.ylabel("time [s]")
-pl.savefig('%s_diff_arrival_box.png' % args.experiment)
+# diff labels
 
-mean_value = mean(data)
-assert(abs(mean_value) < 100), "%f" % mean_value  # 25
-median_value = median(data)
-assert(abs(median_value) < 100), "%f" % median_value  # 25  # TODO produces errors
+for label in trip_diff_labels:
 
-# devation to sumo in arrival lane
-data = [diff_trips[x]['arrivalLane'] for x in diff_trips.keys()]
-pl.figure()
-pl.title("Deviation to Sumo in Arrival Lane for %d Vehicles" % len(ids))
-pl.boxplot(data, showmeans=True)
-pl.xlabel("Deviation to SUMO in arrival lane")
-pl.ylabel("lane")
-pl.savefig('%s_diff_arrivalLane_box.png' % args.experiment)
+    data = diff_trips[label]
 
-mean_value = mean(data)
-assert(abs(mean_value) < 0.5), "%f" % mean_value  # 0,5
-median_value = median(data)
-assert(abs(median_value) < 0.5), "%f" % median_value  # 0.5
+    pl.figure()
+    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+    pl.boxplot(data, showmeans=True)
+    pl.savefig('%s_diff_%s_box.png' % (args.experiment, label))
 
-# deviation to sumo in arrival speed
-data = [diff_trips[x]['arrivalSpeed'] for x in diff_trips.keys()]
-pl.figure()
-pl.title("Deviation to Sumo in Arrival Speed for %d Vehicles" % len(ids))
-pl.boxplot(data, showmeans=True)
-pl.ylabel("speed [m/s]")
-pl.savefig('%s_diff_arrivalSpeed_box.png' % args.experiment)
+    pl.figure()
+    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+    seaborn.distplot(
+        data,
+        hist=False,
+        kde_kws={'cumulative': True},
+    )
+    pl.savefig('%s_diff_%s_dist.png' % (args.experiment, label))
 
-mean_value = mean(data)
-assert(abs(mean_value) < 2), "%f" % mean_value  # 0.5
-median_value = median(data)
-assert(abs(median_value) < 2), "%f" % median_value  # 0.5
+    # check limits for deviation to sumo
+    d = data.describe()
 
-# deviation to sumo in trip duration
-data = [diff_trips[x]['duration'] for x in diff_trips.keys()]
-pl.figure()
-pl.title("Deviation to Sumo in Trip Duration for %d Vehicles" % len(ids))
-pl.boxplot(data, showmeans=True)
-pl.ylabel("time [s]")
-pl.savefig('%s_diff_duration_box.png' % args.experiment)
+    if label == 'desiredSpeed':
+        l_min = -16
+        l_max = 16
+        l_mean = 0.5
+        l_median = 0.5
+    elif label == 'arrival':
+        l_min = -1200
+        l_max = 1500
+        l_mean = 10
+        l_median = 30
+    elif label == 'arrivalLane':
+        l_min = -1
+        l_max = 1
+        l_mean = 0.5
+        l_median = 0
+    elif label == 'arrivalSpeed':
+        l_min = -16
+        l_max = 16
+        l_mean = 1
+        l_median = 1
+    elif label == 'duration':
+        l_min = -1200
+        l_max = 1500
+        l_mean = 10
+        l_median = 30
+    elif label == 'timeLoss':
+        l_min = -90
+        l_max = 2
+        l_mean = -50
+        l_median = -50
 
-mean_value = mean(data)
-assert(abs(mean_value) < 600), "%f" % mean_value  # 25
-median_value = median(data)
-assert(abs(median_value) < 600), "%f" % median_value  # 25
+    if d['min'] < l_min or d['max'] > l_max or d['mean'] > l_mean or d['50%'] > l_median:
+        error = True
+        print("Deviation to Sumo in %s exceeded limits!" % label)
+        print(d)
 
-# devation to sumo in time loss
-## TODO no time departure delay in plafosim (yet)
-#data = [diff_trips[x]['timeLoss'] for x in diff_trips.keys()]
-#pl.figure()
-#pl.boxplot(data, showmeans=True)
-#pl.xlabel("Deviation to SUMO in time loss")
-#pl.ylabel("time [s]")
-#pl.savefig('%s_diff_timeLoss_box.png' % args.experiment)
+# TODO emissions
+
+#for label in emission_labels:
+#    idata = diff_emissions[label]
 #
-# devation to sumo in co
-## TODO no fuel model yet
-#data = [diff_trips[x]['co'] for x in diff_trips.keys()]
-#pl.figure()
-#pl.boxplot(data, showmeans=True)
-#pl.xlabel("Deviation to SUMO in co")
-#pl.ylabel("mg")
-#pl.savefig('%s_diff_co_box.png' % args.experiment)
+#    pl.figure()
+#    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+#    pl.boxplot(data, showmeans=True)
+#    pl.savefig('%s_diff_%s_box.png' % (args.experiment, label))
 #
-# devation to sumo in co2
-## TODO no fuel model yet
-#data = [diff_trips[x]['co2'] for x in diff_trips.keys()]
-#pl.figure()
-#pl.boxplot(data, showmeans=True)
-#pl.xlabel("Deviation to SUMO in co2")
-#pl.ylabel("mg")
-#pl.savefig('%s_diff_co2_box.png' % args.experiment)
-#
-# devation to sumo in hc
-## TODO no fuel model yet
-#data = [diff_trips[x]['hc'] for x in diff_trips.keys()]
-#pl.figure()
-#pl.boxplot(data, showmeans=True)
-#pl.xlabel("Deviation to SUMO in hc")
-#pl.ylabel("mg")
-#pl.savefig('%s_diff_hc_box.png' % args.experiment)
-#
-# devation to sumo in pmx
-## TODO no fuel model yet
-#data = [diff_trips[x]['pmx'] for x in diff_trips.keys()]
-#pl.figure()
-#pl.boxplot(data, showmeans=True)
-#pl.xlabel("Deviation to SUMO in pmx")
-#pl.ylabel("mg")
-#pl.savefig('%s_diff_pmx_box.png' % args.experiment)
-#
-# devation to sumo in nox
-## TODO no fuel model yet
-#data = [diff_trips[x]['nox'] for x in diff_trips.keys()]
-#pl.figure()
-#pl.boxplot(data, showmeans=True)
-#pl.xlabel("Deviation to SUMO in nox")
-#pl.ylabel("mg")
-#pl.savefig('%s_diff_nox_box.png' % args.experiment)
-#
-# devation to sumo in fuel
-## TODO no fuel model yet
-#data = [diff_trips[x]['fuel'] for x in diff_trips.keys()]
-#pl.figure()
-#pl.boxplot(data, showmeans=True)
-#pl.xlabel("Deviation to SUMO in fuel")
-#pl.ylabel("ml")
-#pl.savefig('%s_diff_fuel_box.png' % args.experiment)
+#    pl.figure()
+#    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+#    seaborn.distplot(
+#        data,
+#        hist=False,
+#        kde_kws={'cumulative': True},
+#    )
+#    pl.savefig('%s_diff_%s_dist.png' % (args.experiment, label))
 
-### Speed in lifetime
+# lifetime plots
 
-# plot about time step and speed, containing 3 lines: desired, sumo, plafosim
-fig = pl.figure()
-pl.title("Average Driving Speed for %d Vehicles" % len(ids))
-xlim = max(int(sumo_traces.step.max()), int(plafosim_traces.step.max()))
-pl.hlines(args.desired_speed, 0, xlim, color="red", label="desired")
-pl.ylim(0, args.desired_speed + 5)
-pl.ylabel("speed [m/s]")
-pl.xlim(0, xlim)
-pl.xlabel("trip duration [s]")
+lifetime_labels = ['speed', 'position', 'diff_desired', 'lane']
 
-x_sumo = sorted(set([step for vehicle in speeds_lifetime['sumo'].values() for step in vehicle.keys()]))
-y_sumo = [mean([vehicle[step] for vehicle in speeds_lifetime['sumo'].values() if step in vehicle]) for step in x_sumo]
-pl.plot(x_sumo, y_sumo, color="black", label="sumo")
+for label in lifetime_labels:
 
-x_plafosim = sorted(set([step for vehicle in speeds_lifetime['plafosim'].values() for step in vehicle.keys()]))
-y_plafosim = [mean([vehicle[step] for vehicle in speeds_lifetime['plafosim'].values() if step in vehicle]) for step in x_plafosim]
-pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
+    data = merged_traces[label]
 
-pl.legend(loc='lower right')
+    fig, ax = pl.subplots()
+    pl.title("Average %s for %d Vehicles" % (label, number_of_vehicles))
+    # TODO check ci or disable bootstrapping
+    seaborn.lineplot(
+        data=merged_traces,
+        x='lifetime',
+        y=label,
+        estimator='mean',
+        n_boot=1,
+        hue='simulator',
+        ax=ax
+    )
+    pl.xlabel("trip duration [s]")
 
-ax = fig.add_subplot(111)
-ia = inset_axes(ax, width="50%", height=1., loc=5)
-xlim = 60
-pl.hlines(args.desired_speed, 0, xlim, color="red", label="desired")
-pl.ylim(args.desired_speed - 5, args.desired_speed + 2)
-pl.ylabel("speed [m/s]")
-pl.xlim(0, xlim)
-#pl.xlabel("trip duration [s]")
+    if label == 'speed':
+        ax.hlines(args.desired_speed, 0, merged_traces.lifetime.max(), color='black', label='desired')
+    elif label == 'position':
+        seaborn.lineplot(
+            x=range(0, merged_traces.lifetime.max()),
+            y=[step * args.desired_speed if step <= args.arrival_position / args.desired_speed else None for step in range(0, merged_traces.lifetime.max())],
+            color='black',
+            ax=ax
+        )
+    elif label == 'diff_desired':
+        ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='desired')
 
-pl.plot(x_sumo, y_sumo, color="black", label="sumo")
-pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
+        # check limits for deviation in desired speed
+        d = data.describe()
+        if d['min'] < -46 or d['max'] > 1 or d['mean'] > 0 or d['50%'] > 0:
+            error = True
+            print("Deviation to Desired Speed exceeded limits!")
+            print(d)
+    elif label == 'lane':
+        ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='desired')
 
-pl.savefig('%s_speed_line.png' % args.experiment)
+    fig.savefig('%s_%s.png' % (args.experiment, label))
 
-### Position in lifetime
+lifetime_diff_labels = ['diff_sumo_speed', 'diff_sumo_position', 'diff_sumo_lane']
 
-# plot about time step and pos, containing 3 lines: desired, sumo, plafosim
-fig = pl.figure()
-pl.title("Average Position for %d Vehicles" % len(ids))
-xlim = max(int(sumo_traces.step.max()), int(plafosim_traces.step.max()))
-pl.hlines(args.arrival_position, 0, xlim, color="red", label="destination")
-pl.ylim(0, args.arrival_position + 5000)
-pl.ylabel("position [m]")
-pl.xlim(0, xlim)
-pl.xlabel("trip duration [s]")
+# diff lifetime plots
 
-x_sumo = sorted(set([step for vehicle in positions_lifetime['sumo'].values() for step in vehicle.keys()]))
-y_sumo = [mean([vehicle[step] for vehicle in positions_lifetime['sumo'].values() if step in vehicle]) for step in x_sumo]
-pl.plot(x_sumo, y_sumo, color="black", label="sumo")
+for label in lifetime_diff_labels:
 
-x_plafosim = sorted(set([step for vehicle in positions_lifetime['plafosim'].values() for step in vehicle.keys()]))
-y_plafosim = [mean([vehicle[step] for vehicle in positions_lifetime['plafosim'].values() if step in vehicle]) for step in x_plafosim]
-pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
+    data = merged_traces[label]
+    lal = re.sub('diff_sumo_', '', label)
 
-pl.legend(loc='upper left')
+    pl.figure()
+    pl.title("Average Deviation to Sumo in %s during Trip for %d Vehicles" % (lal, number_of_vehicles))
 
-ax = fig.add_subplot(111)
-ia = inset_axes(ax, width="30%", height=1., loc=4)
-pl.hlines(args.arrival_position, 0, xlim + 5, color="red", label="destination")
-pl.ylim(args.arrival_position - 2500, args.arrival_position + 2500)
-pl.ylabel("position [m/s]")
-pl.xlim(xlim - 100, xlim + 5)
-#pl.xlabel("trip duration [s]")
+    seaborn.lineplot(
+        data=merged_traces,
+        x='lifetime',
+        y=label,
+        estimator='mean',
+        n_boot=1
+    )
+    pl.xlabel("trip duration [s]")
 
-pl.plot(x_sumo, y_sumo, color="black", label="sumo")
-pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
+    pl.savefig('%s_diff_%s_line.png' % (args.experiment, lal))
 
-pl.savefig('%s_position_line.png' % args.experiment)
+    # check limits for deviation to sumo
+    d = data.describe()
 
-### Diff desired Speed in lifetime
+    if label == 'diff_sumo_speed':
+        l_min = -17
+        l_max = 16
+        l_mean = 1
+        l_median = 1
+    elif label == 'diff_sumo_position':
+        l_min = -36000
+        l_max = 30000
+        l_mean = 10000
+        l_median = 1000
+    elif label == 'diff_sumo_lane':
+        l_min = 0
+        l_max = 3
+        l_mean = 0.5
+        l_median = 0
 
-# plot about time step and speed, containing 3 lines: desired, sumo, plafosim
-fig = pl.figure()
-pl.title("Average Deviation to Desired Driving Speed for %d Vehicles" % len(ids))
-xlim = max(int(sumo_traces.step.max()), int(plafosim_traces.step.max()))
-pl.hlines(0, 0, xlim, color="red", label="desired")
-pl.ylim(-args.desired_speed - 5, 5)
-pl.ylabel("speed [m/s]")
-pl.xlim(0, xlim)
-pl.xlabel("trip duration [s]")
+    if d['min'] < l_min or d['max'] > l_max or d['mean'] > l_mean or d['50%'] > l_median:
+        error = True
+        print("Deviation to Sumo in %s exceeded limits!" % lal)
+        print(d)
 
-x_sumo = sorted(set([step for vehicle in diff_desired_lifetime['sumo'].values() for step in vehicle.keys()]))
-y_sumo = [mean([vehicle[step] for vehicle in diff_desired_lifetime['sumo'].values() if step in vehicle]) for step in x_sumo]
-pl.plot(x_sumo, y_sumo, color="black", label="sumo")
-
-x_plafosim = sorted(set([step for vehicle in diff_desired_lifetime['plafosim'].values() for step in vehicle.keys()]))
-y_plafosim = [mean([vehicle[step] for vehicle in diff_desired_lifetime['plafosim'].values() if step in vehicle]) for step in x_plafosim]
-pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
-
-pl.legend(loc='lower right')
-
-ax = fig.add_subplot(111)
-ia = inset_axes(ax, width="50%", height=1., loc=5)
-xlim = 60
-pl.hlines(0, 0, xlim, color="red", label="desired")
-pl.ylim(-5, 2)
-pl.ylabel("speed [m/s]")
-pl.xlim(0, xlim)
-#pl.xlabel("trip duration [s]")
-
-pl.plot(x_sumo, y_sumo, color="black", label="sumo")
-pl.plot(x_plafosim, y_plafosim, color="blue", label="plafosim")
-
-pl.savefig('%s_diff_desired_speed_line.png' % args.experiment)
-
-### deviation to sumo in speed (box)
-
-pl.figure()
-pl.title("Average Deviation to Sumo in Speed in Lifetime for %d Vehicles" % len(ids))
-
-x = sorted(set([step for vehicle in diff_speeds_lifetime.values() for step in vehicle.keys()]))
-y = [mean([vehicle[step] for vehicle in diff_speeds_lifetime.values() if step in vehicle]) for step in x]
-
-pl.boxplot(y, showmeans=True)
-
-pl.ylabel("diff in speed [m/s]")
-pl.savefig('%s_diff_speed_box.png' % args.experiment)
-
-### devation to sumo in speed (line)
-
-pl.figure()
-pl.title("Average Deviation to Sumo in Speed for %d Vehicles" % len(ids))
-
-pl.plot(x, y)
-
-pl.xlabel("trip duration [s]")
-pl.ylabel("diff in speed [m/s]")
-pl.savefig('%s_diff_speed_line.png' % args.experiment)
-
-mean_value = mean(y)
-assert(abs(mean_value) < 1), "%f" % mean_value  # 0.5
-median_value = median(y)
-assert(abs(median_value) < 1), "%f" % median_value  # 0.5  # TODO produces errors
-
-### deviation to sumo in position (box)
-
-pl.figure()
-pl.title("Average Deviation to Sumo in Position in Lifetime for %d Vehicles" % len(ids))
-
-x = sorted(set([step for vehicle in diff_positions_lifetime.values() for step in vehicle.keys()]))
-y = [mean([vehicle[step] for vehicle in diff_positions_lifetime.values() if step in vehicle]) for step in x]
-
-pl.boxplot(y, showmeans=True)
-
-pl.ylabel("diff in position [m]")
-pl.savefig('%s_diff_position_box.png' % args.experiment)
-
-### devation to sumo in position (line)
-
-pl.figure()
-pl.title("Average Deviation to Sumo in Position for %d Vehicles" % len(ids))
-
-pl.plot(x, y)
-
-pl.xlabel("trip duration [s]")
-pl.ylabel("diff in position [m]")
-pl.savefig('%s_diff_position_line.png' % args.experiment)
-
-mean_value = mean(y)
-assert(abs(mean_value) < 1500), "%f" % mean_value  # 300
-median_value = median(y)
-assert(abs(median_value) < 1500), "%f" % median_value  # 300
-
-### deviation to sumo in lane (box)
-
-pl.figure()
-pl.title("Average Deviation to Sumo in Lane in Lifetime for %d Vehicles" % len(ids))
-
-x = sorted(set([step for vehicle in diff_lanes_lifetime.values() for step in vehicle.keys()]))
-y = [mean([vehicle[step] for vehicle in diff_lanes_lifetime.values() if step in vehicle]) for step in x]
-
-pl.boxplot(y, showmeans=True)
-
-pl.ylabel("diff in lane")
-pl.savefig('%s_diff_lane_box.png' % args.experiment)
-
-### devation to sumo in lane (line)
-
-pl.figure()
-pl.title("Average Deviation to Sumo in lane for %d Vehicles" % len(ids))
-
-pl.plot(x, y)
-
-pl.xlabel("trip duration [s]")
-pl.ylabel("diff in lane")
-pl.savefig('%s_diff_lane_line.png' % args.experiment)
-
-mean_value = mean(y)
-assert(abs(mean_value) < 0.5), "%f" % mean_value  # 0.1
-median_value = median(y)
-assert(abs(median_value) < 0.5), "%f" % median_value  # 0.1
+if error:
+    print("There was at least one deviation error!")
+    exit(1)

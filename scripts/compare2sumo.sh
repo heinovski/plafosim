@@ -6,7 +6,7 @@ set -e
 
 experiment=human
 
-echo "tool,real,user,sys" > runtimes_$experiment.csv
+echo "simulator,real,user,sys" > runtimes_$experiment.csv
 
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_$experiment.csv --append \
     ./plafosim.py \

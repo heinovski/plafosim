@@ -67,7 +67,7 @@ steps:
     - pip3 install funcy
     - pip3 install matplotlib
     - pip3 install pandas
-    - pip3 install statistics
+    - pip3 install seaborn
     - ./scripts/compare2sumo.sh
 
 - name: copy artifacts
