@@ -7,7 +7,8 @@ steps:
 - name: flake8
   image: python
   commands:
-    - pip3 install flake8
+    - pip3 install --upgrade pip
+    - pip3 install --upgrade flake8
     - flake8 --ignore=E265,E266,E402,E501  # comments, import order, line-length
 
 ---
@@ -19,8 +20,8 @@ steps:
 - name: unittests
   image: python
   commands:
-    - pip3 install pytest
-    - pip3 install pytest-cov
+    - pip3 install --upgrade pytest
+    - pip3 install --upgrade pytest-cov
     - export PYTHONPATH=$(pwd)/src
     - pytest -v --cov=plafosim tests/unit_tests
 
@@ -34,8 +35,8 @@ steps:
     PASSWORD:
       from_secret: WWW_FTP_PASSWORD
   commands:
-    - pip3 install coverage
-    - pip3 install coverage-badge
+    - pip3 install --upgrade coverage
+    - pip3 install --upgrade coverage-badge
     - coverage-badge -o coverage.svg
     - apt update
     - apt install lftp
@@ -64,10 +65,10 @@ steps:
   commands:
     - apt update
     - apt install time
-    - pip3 install funcy
-    - pip3 install matplotlib
-    - pip3 install pandas
-    - pip3 install seaborn
+    - pip3 install --upgrade funcy
+    - pip3 install --upgrade matplotlib
+    - pip3 install --upgrade pandas
+    - pip3 install --upgrade seaborn
     - ./scripts/compare2sumo.sh
 
 - name: copy artifacts
