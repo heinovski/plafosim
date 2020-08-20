@@ -69,6 +69,7 @@ steps:
     - pip3 install --upgrade matplotlib
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
+    - pip3 install --upgrade statsmodels
     - ./scripts/compare2sumo.sh
 
 - name: copy artifacts
