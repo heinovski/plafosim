@@ -7,7 +7,6 @@ steps:
 - name: flake8
   image: python
   commands:
-    - pip3 install --upgrade pip
     - pip3 install --upgrade flake8
     - flake8 --ignore=E265,E266,E402,E501  # comments, import order, line-length
 
