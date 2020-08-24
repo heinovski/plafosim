@@ -203,8 +203,8 @@ for label in trip_diff_labels:
     if label == 'desiredSpeed':
         l_min = -16
         l_max = 16
-        l_mean = 0.5
-        l_median = 0.5
+        l_mean = 2
+        l_median = 2
     elif label == 'arrival':
         l_min = -1200
         l_max = 1500
@@ -218,8 +218,8 @@ for label in trip_diff_labels:
     elif label == 'arrivalSpeed':
         l_min = -16
         l_max = 16
-        l_mean = 1
-        l_median = 1
+        l_mean = 2
+        l_median = 2
     elif label == 'duration':
         l_min = -1200
         l_max = 1500
@@ -327,10 +327,10 @@ for label in lifetime_diff_labels:
     d = data.describe()
 
     if label == 'diff_sumo_speed':
-        l_min = -17
+        l_min = -19
         l_max = 16
-        l_mean = 1
-        l_median = 1
+        l_mean = 2
+        l_median = 2
     elif label == 'diff_sumo_position':
         l_min = -36000
         l_max = 30000
