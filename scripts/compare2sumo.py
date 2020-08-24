@@ -203,35 +203,35 @@ for label in trip_diff_labels:
     if label == 'desiredSpeed':
         l_min = -16
         l_max = 16
-        l_mean = 2
-        l_median = 2
+        al_mean = 1
+        al_median = 2
     elif label == 'arrival':
         l_min = -1200
         l_max = 1500
-        l_mean = 10
-        l_median = 30
+        al_mean = 36
+        al_median = 60
     elif label == 'arrivalLane':
         l_min = -1
-        l_max = 1
-        l_mean = 0.5
-        l_median = 0
+        l_max = 2
+        al_mean = 0.5
+        al_median = 0
     elif label == 'arrivalSpeed':
         l_min = -16
         l_max = 16
-        l_mean = 2
-        l_median = 2
+        al_mean = 1
+        al_median = 2
     elif label == 'duration':
         l_min = -1200
         l_max = 1500
-        l_mean = 10
-        l_median = 30
+        al_mean = 36
+        al_median = 60
     elif label == 'timeLoss':
         l_min = -90
         l_max = 2
-        l_mean = -50
-        l_median = -50
+        al_mean = 60
+        al_median = 60
 
-    if d['min'] < l_min or d['max'] > l_max or d['mean'] > l_mean or d['50%'] > l_median:
+    if d['min'] < l_min or d['max'] > l_max or abs(d['mean']) > al_mean or abs(d['50%']) > al_median:
         error = True
         print("Deviation to Sumo in %s exceeded limits!" % label)
         print(d)
@@ -327,10 +327,10 @@ for label in lifetime_diff_labels:
     d = data.describe()
 
     if label == 'diff_sumo_speed':
-        l_min = -19
+        l_min = -17
         l_max = 16
-        l_mean = 2
-        l_median = 2
+        l_mean = 1
+        l_median = 1
     elif label == 'diff_sumo_position':
         l_min = -36000
         l_max = 30000
