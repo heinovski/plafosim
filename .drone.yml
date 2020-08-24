@@ -138,3 +138,27 @@ trigger:
   branch:
     - master
     - develop
+
+---
+kind: pipeline
+type: docker
+name: correctnessCACC
+
+steps:
+- name: statistical tests
+  image: dbuse/sumo-python:3.8-buster-1_1_0
+  commands:
+    - apt update
+    - apt install time
+    - pip3 install --upgrade funcy
+    - pip3 install --upgrade tqdm
+    - pip3 install --upgrade matplotlib
+    - pip3 install --upgrade pandas
+    - pip3 install --upgrade seaborn
+    - pip3 install --upgrade statsmodels
+    - ./scripts/test-cacc-driving.sh 42
+
+trigger:
+  branch:
+    - master
+    - develop
