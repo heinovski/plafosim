@@ -84,7 +84,7 @@ def main():
     trip.add_argument('--speed-variation', type=float, default=0.1,
                       help="The devation from the desired driving speed in ratio")
     trip.add_argument('--min-desired-speed', type=float, default=22, help="The minimum desired driving speed im m/s")
-    trip.add_argument('--max-desired-speed', type=float, default=50, help="The minimum desired driving speed im m/s")
+    trip.add_argument('--max-desired-speed', type=float, default=50, help="The maximum desired driving speed im m/s")
     trip.add_argument(
         '--random-depart-speed',
         type=lambda x: bool(strtobool(x)),
