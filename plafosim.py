@@ -54,6 +54,8 @@ def main():
     vehicle = parser.add_argument_group('vehicle properties')
     vehicle.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
     vehicle.add_argument('--max-speed', type=float, default=55, help="The maximum possible driving speed in m/s")
+    vehicle.add_argument('--acc-headway-time', type=float, default=1.0,
+                         help="The headway time to be used for the ACC in s")
     vehicle.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to enable collision checks")
     vehicle.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
@@ -145,6 +147,7 @@ def main():
         args.depart_interval,
         args.arrival_interval,
         args.max_speed,
+        args.acc_headway_time,
         args.random_depart_position,
         args.random_depart_lane,
         args.desired_speed,

@@ -483,11 +483,13 @@ class PlatooningVehicle(Vehicle):
             desired_speed: float,
             depart_lane: int,
             depart_speed: float,
-            depart_time: int):
+            depart_time: int,
+            acc_headway_time: float):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
 
         self._cf_mode = CF_Mode.ACC
+        self._acc_headway_time = acc_headway_time
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
 
@@ -497,6 +499,10 @@ class PlatooningVehicle(Vehicle):
     @property
     def cf_mode(self) -> CF_Mode:
         return self._cf_mode
+
+    @property
+    def acc_headway_time(self) -> float:
+        return self._acc_headway_time
 
     @property
     def platoon_role(self) -> PlatoonRole:
@@ -524,13 +530,11 @@ class PlatooningVehicle(Vehicle):
                     print("%d my front gap %f" % (self.vid, gap_to_predecessor))
                     print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
 
-                headway_time = 1  # TODO add parameter
                 la = 0.1  # TODO add parameter
-
-                assert(headway_time >= 1)  # values lower 1.0 have been shown to produced crashes
+                assert(self.acc_headway_time >= 1.0)  # values lower 1.0 have been shown to produced crashes
 
                 # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
-                u = -1.0 / headway_time * (self.speed - speed_predecessor + la * (-gap_to_predecessor + headway_time * self.speed))
+                u = -1.0 / self.acc_headway_time * (self.speed - speed_predecessor + la * (-gap_to_predecessor + self.acc_headway_time * self.speed))
 
                 if self._simulator._debug:
                     print("%d ACC safe speed %f" % (self.vid, self.speed + u))

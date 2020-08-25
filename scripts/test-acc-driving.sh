@@ -17,6 +17,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --time-limit 100 \
     --road-length 100 \
     --max-speed 55 \
+    --acc-headway-time 1.0 \
     --penetration 1 \
     --desired-speed 36 \
     --random-desired-speed true \
