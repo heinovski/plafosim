@@ -391,6 +391,8 @@ class Simulator:
                                   speed, depart_lane, depart_speed, depart_time)
 
             self._vehicles[vid] = vehicle
+            if self._debug:
+                print("Generated vehicle", vehicle)
 
             last_vehicle_id = vid
 
