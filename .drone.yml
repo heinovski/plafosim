@@ -50,7 +50,7 @@ steps:
   - name: run
     image: python
     commands:
-      - pip3 install funcy
+      - pip3 install --upgrade funcy
       - ./plafosim.py --penetration 0.5  # test both vehicle types
 
 ---
