@@ -230,6 +230,8 @@ class Vehicle:
             if self._simulator._debug:
                 print("%d my front gap %f" % (self.vid, gap_to_predecessor))
                 print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
+                if desired_gap > 0:
+                    print("%d my desired gap %f" % (self.vid, desired_gap))
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, desired_gap, self.min_gap)
             if self._simulator._debug:
                 print("%d my safe speed %f" % (self.vid, safe_speed))
@@ -526,8 +528,10 @@ class PlatooningVehicle(Vehicle):
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different modes
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
+                desired_gap = self.acc_headway_time * self.speed
                 if self._simulator._debug:
                     print("%d my front gap %f" % (self.vid, gap_to_predecessor))
+                    print("%d my desired gap %f" % (self.vid, desired_gap))
                     print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
 
                 la = 0.1  # TODO add parameter
