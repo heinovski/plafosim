@@ -229,7 +229,8 @@ class Simulator:
                 continue
 
             if self._debug:
-                print("%d current speed %f" % (vehicle.vid, vehicle.speed))
+                print("%d my current speed %f" % (vehicle.vid, vehicle.speed))
+                print("%d my desired speed %f" % (vehicle.vid, vehicle.desired_speed))
 
             new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid))
             vehicle._acceleration = new_speed - vehicle.speed
