@@ -219,13 +219,13 @@ for label in trip_diff_labels:
         al_mean = 1
         al_std = 6
         al_median = 2
-        al_qrd = 4
+        al_qrd = 4.5
     elif label == 'arrival':
-        al_qst = 350
+        al_qst = 400
         al_mean = 120
         al_std = 460
         al_median = 120
-        al_qrd = 250
+        al_qrd = 260
     elif label == 'arrivalLane':
         al_qst = 0
         al_mean = 0.1
@@ -237,9 +237,9 @@ for label in trip_diff_labels:
         al_mean = 1.5
         al_std = 6
         al_median = 2
-        al_qrd = 4.5
+        al_qrd = 5
     elif label == 'duration':
-        al_qst = 350
+        al_qst = 400
         al_mean = 100
         al_std = 460
         al_median = 120
@@ -347,13 +347,13 @@ for label in lifetime_diff_labels:
     d = data.describe()
 
     if label == 'diff_sumo_speed':
-        al_qst = 3
+        al_qst = 3.5
         al_mean = 1.5
         al_std = 6
         al_median = 1.5
         al_qrd = 4.5
     elif label == 'diff_sumo_position':
-        al_qst = 2500
+        al_qst = 2800
         al_mean = 1500
         al_std = 7500
         al_median = 1000
