@@ -171,7 +171,7 @@ class Simulator:
         if self.is_lane_change_safe(vid, target_lane):
             # switch to adjacent lane
             if self._debug:
-                print("%d switching lanes %d -> %d" % (vid, self._vehicles[vid].lane, target_lane), flush=True)
+                print("%d switching lanes %d -> %d" % (vid, self._vehicles[vid].lane, target_lane))
             self._vehicles[vid]._lane = target_lane
             return True
         return False
@@ -446,7 +446,7 @@ class Simulator:
             traci.simulationStep(self._step)
             from random import randrange
 
-        print("Starting simulation", flush=True)
+        print("Starting simulation")
 
         progress_bar = tqdm(desc='Simulation progress', total=max_step, unit='steps')
         # let the simulator run
@@ -509,7 +509,7 @@ class Simulator:
         """Stop the simulation with the given message"""
 
         self._running = False
-        print("\n%s" % msg, flush=True)
+        print("\n%s" % msg)
         self.finish()
 
     def __str__(self) -> str:

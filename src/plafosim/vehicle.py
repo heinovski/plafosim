@@ -212,16 +212,16 @@ class Vehicle:
             # we need to accelerate
             new_speed = min(self.speed + min(diff_to_desired, self._simulator.acceleration2speed(self.max_acceleration, self._simulator._step_length)), self.max_speed)
             if self._simulator._debug:
-                print("%d we need to accelerate %f" % (self.vid, new_speed), flush=True)
+                print("%d we need to accelerate %f" % (self.vid, new_speed))
         elif diff_to_desired < 0:
             # we need to decelerate
             new_speed = max(self.speed + max(diff_to_desired, -self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length)), 0)
             if self._simulator._debug:
-                print("%d we need to decelerate %f" % (self.vid, new_speed), flush=True)
+                print("%d we need to decelerate %f" % (self.vid, new_speed))
         else:
             new_speed = self.speed
             if self._simulator._debug:
-                print("%d we keep the speed %f" % (self.vid, new_speed), flush=True)
+                print("%d we keep the speed %f" % (self.vid, new_speed))
 
         # vsafe
         if speed_predecessor >= 0 and predecessor_rear_position >= 0:
@@ -236,7 +236,7 @@ class Vehicle:
 
             if safe_speed < new_speed:
                 if self._simulator._debug:
-                    print("%d blocked by slow vehicle!" % self.vid, flush=True)
+                    print("%d blocked by slow vehicle!" % self.vid)
                 self._blocked_front = True
 
                 new_speed = max(safe_speed, self.speed - self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length))  # we cannot brake stronger than we actually can
@@ -311,7 +311,7 @@ class Vehicle:
 
         e_remaining_travel_time = round((self.arrival_position - self.position) / self.desired_speed)
         print(self._simulator.step, ":", self.vid, "at", self.position, self.rear_position, self.lane, "with", self.speed,
-              "takes", e_remaining_travel_time, flush=True)
+              "takes", e_remaining_travel_time)
 
     def _statistics(self):
         """Write continuous statistics"""
@@ -334,7 +334,7 @@ class Vehicle:
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
 
         if self._simulator._debug:
-            print(self._simulator.step, ":", self.vid, "arrived", self.position, self.lane, "with", self.speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio, flush=True)
+            print(self._simulator.step, ":", self.vid, "arrived", self.position, self.lane, "with", self.speed, "took", self.travel_time, self.travel_distance, time_loss, travel_time_ratio)
 
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
             f.write("%d,%d,%d,%d,%f,%d,%d,%f,%f,%d,%f,%f,%f\n" % (self.vid, self.depart_time, self.depart_lane, self.depart_position, self.depart_speed, self._simulator.step, self.lane, self.position, self.speed, self.travel_time, self.travel_distance, time_loss, self.desired_speed))

@@ -161,7 +161,7 @@ def main():
     simulator.run(max_step)
 
     end_time = timer()
-    print("The simulation took %.4f seconds" % (end_time - start_time), flush=True)
+    print("The simulation took %.4f seconds" % (end_time - start_time))
 
 
 if __name__ == "__main__":
