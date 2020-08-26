@@ -215,37 +215,43 @@ for label in trip_diff_labels:
     d = data.describe()
 
     if label == 'desiredSpeed':
-        l_min = -17
-        l_max = 17
+        al_qst = 4
         al_mean = 1
+        al_std = 6
         al_median = 2
+        al_qrd = 4
     elif label == 'arrival':
-        l_min = -1200
-        l_max = 1600
-        al_mean = 70
+        al_qst = 350
+        al_mean = 120
+        al_std = 460
         al_median = 120
+        al_qrd = 250
     elif label == 'arrivalLane':
-        l_min = -1
-        l_max = 2
-        al_mean = 0.5
+        al_qst = 0
+        al_mean = 0.1
+        al_std = 0.6
         al_median = 0
+        al_qrd = 0
     elif label == 'arrivalSpeed':
-        l_min = -16
-        l_max = 16
-        al_mean = 1
+        al_qst = 4
+        al_mean = 1.5
+        al_std = 6
         al_median = 2
+        al_qrd = 4.5
     elif label == 'duration':
-        l_min = -1200
-        l_max = 1600
-        al_mean = 70
+        al_qst = 350
+        al_mean = 100
+        al_std = 460
         al_median = 120
+        al_qrd = 300
     elif label == 'timeLoss':
-        l_min = -90
-        l_max = 60
+        al_qst = 60
         al_mean = 60
+        al_std = 15
         al_median = 60
+        al_qrd = 50
 
-    if d['min'] < l_min or d['max'] > l_max or abs(d['mean']) > al_mean or abs(d['50%']) > al_median:
+    if abs(d['25%']) > al_qst or abs(d['mean']) > al_mean or abs(d['std']) > al_std or abs(d['50%']) > al_median or abs(d['75%']) > al_qrd:
         error = True
         print("Deviation to Sumo in %s exceeded limits!" % label)
         print(d)
@@ -305,7 +311,7 @@ for label in lifetime_labels:
 
         # check limits for deviation in desired speed
         d = data.describe()
-        if d['min'] < -47 or d['max'] > 1 or d['mean'] > 0 or d['50%'] > 0:
+        if abs(d['25%']) > 47 or abs(d['mean']) > 0.5 or abs(d['std']) > 2 or abs(d['50%']) > 0 or abs(d['75%']) > 0:
             error = True
             print("Deviation to Desired Speed exceeded limits!")
             print(d)
@@ -341,22 +347,25 @@ for label in lifetime_diff_labels:
     d = data.describe()
 
     if label == 'diff_sumo_speed':
-        l_min = -24
-        l_max = 24
-        l_mean = 1
-        l_median = 1.5
+        al_qst = 3
+        al_mean = 1.5
+        al_std = 6
+        al_median = 1.5
+        al_qrd = 4.5
     elif label == 'diff_sumo_position':
-        l_min = -37000
-        l_max = 32000
-        l_mean = 1100
-        l_median = 1000
+        al_qst = 2500
+        al_mean = 1500
+        al_std = 7500
+        al_median = 1000
+        al_qrd = 4700
     elif label == 'diff_sumo_lane':
-        l_min = 0
-        l_max = 3
-        l_mean = 0.5
-        l_median = 0
+        al_qst = 0
+        al_mean = 0.5
+        al_std = 0.75
+        al_median = 0
+        al_qrd = 1
 
-    if d['min'] < l_min or d['max'] > l_max or d['mean'] > l_mean or d['50%'] > l_median:
+    if abs(d['25%']) > al_qst or abs(d['mean']) > al_mean or abs(d['std']) > al_std or abs(d['50%']) > al_median or abs(d['75%']) > al_qrd:
         error = True
         print("Deviation to Sumo in %s exceeded limits!" % lal)
         print(d)
