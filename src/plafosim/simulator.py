@@ -150,17 +150,18 @@ class Simulator:
             return True
 
         # check predecessor on target lane
-        predecessor_position_on_target_lane = self._get_predecessor_rear_position(vid, target_lane)
-        if predecessor_position_on_target_lane != -1:
-            gap_to_predecessor_on_target_lane = predecessor_position_on_target_lane - self._vehicles[vid].position
-            if self._vehicles[vid].speed > (gap_to_predecessor_on_target_lane / self._step_length):
+        predecessor_on_target_lane = self._get_predecessor_id(vid, target_lane)
+        if predecessor_on_target_lane != -1:
+            # TODO add desired gap
+            gap_to_predecessor_on_target_lane = self._vehicles[predecessor_on_target_lane].rear_position - self._vehicles[vid].position
+            if self._vehicles[vid].speed > self._vehicles[vid]._safe_speed(self._vehicles[predecessor_on_target_lane].speed, gap_to_predecessor_on_target_lane):
                 return False
 
         # check successor on target lane
         successor_on_target_lane = self._get_successor_id(vid, target_lane)
         if successor_on_target_lane != -1:
             gap_to_successor_on_target_lane = self._vehicles[vid].rear_position - self._vehicles[successor_on_target_lane].position
-            if self._vehicles[successor_on_target_lane].speed > (gap_to_successor_on_target_lane / self._step_length):
+            if self._vehicles[successor_on_target_lane].speed > self._vehicles[successor_on_target_lane]._safe_speed(self._vehicles[vid].speed, gap_to_successor_on_target_lane):
                 return False
 
         # safe
