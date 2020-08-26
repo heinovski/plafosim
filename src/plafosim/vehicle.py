@@ -142,6 +142,10 @@ class Vehicle:
         return self._desired_speed
 
     @property
+    def desired_gap(self) -> float:
+        return 0
+
+    @property
     def depart_lane(self) -> int:
         return self._depart_lane
 
@@ -509,6 +513,10 @@ class PlatooningVehicle(Vehicle):
         return self._acc_headway_time
 
     @property
+    def desired_gap(self) -> float:
+        return self._acc_headway_time * self.speed
+
+    @property
     def platoon_role(self) -> PlatoonRole:
         return self._platoon_role
 
@@ -525,15 +533,15 @@ class PlatooningVehicle(Vehicle):
     def get_front_speed(self) -> float:
         return self._simulator._get_predecessor_speed(self.vid)
 
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, desired_gap: float = 0) -> float:
         if self._cf_mode is CF_Mode.ACC:
+            del desired_gap  # delete passed variable to avoid misuse
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different modes
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
-                desired_gap = self.acc_headway_time * self.speed
                 if self._simulator._debug:
                     print("%d my front gap %f" % (self.vid, gap_to_predecessor))
-                    print("%d my desired gap %f" % (self.vid, desired_gap))
+                    print("%d my desired gap %f" % (self.vid, self.desired_gap))
                     print("%d my predecessor speed %f" % (self.vid, speed_predecessor))
 
                 la = 0.1  # TODO add parameter
@@ -569,7 +577,7 @@ class PlatooningVehicle(Vehicle):
                 return new_speed
 
         # default: drive freely
-        return super().new_speed(speed_predecessor, predecessor_rear_position)
+        return super().new_speed(speed_predecessor, predecessor_rear_position, super().desired_gap)
 
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""

@@ -146,22 +146,25 @@ class Simulator:
             return self._vehicles[pid].speed
 
     def is_lane_change_safe(self, vid: int, target_lane: int) -> bool:
-        if self._vehicles[vid].lane is target_lane:
+        v = self._vehicles[vid]
+
+        if v.lane == target_lane:
             return True
 
         # check predecessor on target lane
         predecessor_on_target_lane = self._get_predecessor_id(vid, target_lane)
         if predecessor_on_target_lane != -1:
-            # TODO add desired gap
-            gap_to_predecessor_on_target_lane = self._vehicles[predecessor_on_target_lane].rear_position - self._vehicles[vid].position
-            if self._vehicles[vid].speed > self._vehicles[vid]._safe_speed(self._vehicles[predecessor_on_target_lane].speed, gap_to_predecessor_on_target_lane):
+            p = self._vehicles[predecessor_on_target_lane]
+            gap_to_predecessor_on_target_lane = p.rear_position - v.position
+            if v.speed > v._safe_speed(p.speed, gap_to_predecessor_on_target_lane, v.desired_gap, v.vehicle_type.min_gap):
                 return False
 
         # check successor on target lane
         successor_on_target_lane = self._get_successor_id(vid, target_lane)
         if successor_on_target_lane != -1:
-            gap_to_successor_on_target_lane = self._vehicles[vid].rear_position - self._vehicles[successor_on_target_lane].position
-            if self._vehicles[successor_on_target_lane].speed > self._vehicles[successor_on_target_lane]._safe_speed(self._vehicles[vid].speed, gap_to_successor_on_target_lane):
+            s = self._vehicles[successor_on_target_lane]
+            gap_to_successor_on_target_lane = v.rear_position - s.position
+            if s.speed > s._safe_speed(v.speed, gap_to_successor_on_target_lane):
                 return False
 
         # safe
@@ -232,7 +235,7 @@ class Simulator:
                 print("%d my current speed %f" % (vehicle.vid, vehicle.speed))
                 print("%d my desired speed %f" % (vehicle.vid, vehicle.desired_speed))
 
-            new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid))
+            new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid), vehicle.desired_gap)
             vehicle._acceleration = new_speed - vehicle.speed
 
             if self._debug:
