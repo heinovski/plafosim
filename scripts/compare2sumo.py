@@ -246,8 +246,8 @@ for label in trip_diff_labels:
         al_qrd = 300
     elif label == 'timeLoss':
         al_qst = 60
-        al_mean = 60
-        al_std = 15
+        al_mean = 80
+        al_std = 120
         al_median = 60
         al_qrd = 50
 
@@ -353,7 +353,7 @@ for label in lifetime_diff_labels:
         al_median = 1.5
         al_qrd = 4.5
     elif label == 'diff_sumo_position':
-        al_qst = 2800
+        al_qst = 3000
         al_mean = 1500
         al_std = 7500
         al_median = 1000
