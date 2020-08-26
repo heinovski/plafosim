@@ -225,7 +225,7 @@ for label in trip_diff_labels:
         al_mean = 120
         al_std = 460
         al_median = 120
-        al_qrd = 260
+        al_qrd = 300
     elif label == 'arrivalLane':
         al_qst = 0
         al_mean = 0.1
@@ -353,7 +353,7 @@ for label in lifetime_diff_labels:
         al_median = 1.5
         al_qrd = 4.5
     elif label == 'diff_sumo_position':
-        al_qst = 3000
+        al_qst = 3500
         al_mean = 1500
         al_std = 7500
         al_median = 1000
