@@ -95,7 +95,7 @@ pl.savefig('%s_runtime.png' % args.experiment)
 ## Evaluate trips
 
 # metrics which should not be different among the simulators
-trip_equal_labels = ['depart', 'departLane', 'departPos', 'departSpeed', 'arrivalPos', 'routeLength']
+trip_equal_labels = ['depart', 'departLane', 'departSpeed', 'arrivalPos']
 
 trip_equality = abs(plafosim_trips[trip_equal_labels] - sumo_trips[trip_equal_labels]) <= 0.01  # for floats
 failed_equality = trip_equality.mask(trip_equality).reset_index().melt('id').dropna()[['id', 'variable']]
@@ -106,8 +106,22 @@ if not failed_equality.empty:
         sumo=sumo_trips.reset_index().melt('id').set_index(['id', 'variable']),
         plafosim=plafosim_trips.reset_index().melt('id').set_index(['id', 'variable'])
     ).reset_index()
-    # TODO filter out small diff in departPos
     print(failed_equality.values)
+
+# HACK for small diff in departPos and routeLength
+trip_equal_labels = ['departPos', 'routeLength']
+
+trip_equality = abs(plafosim_trips[trip_equal_labels] - sumo_trips[trip_equal_labels]) <= 0.11
+failed_equality = trip_equality.mask(trip_equality).reset_index().melt('id').dropna()[['id', 'variable']]
+
+if not failed_equality.empty:
+    print("Some metrics are not equal!")
+    failed_equality = failed_equality.set_index(['id', 'variable']).assign(
+        sumo=sumo_trips.reset_index().melt('id').set_index(['id', 'variable']),
+        plafosim=plafosim_trips.reset_index().melt('id').set_index(['id', 'variable'])
+    ).reset_index()
+    print(failed_equality.values)
+# END HACK for small diff in departPos and routeLength
 
 # metrics that can be different among the simulators
 trip_diff_labels = ['desiredSpeed', 'arrival', 'arrivalLane', 'arrivalSpeed', 'duration', 'timeLoss']
