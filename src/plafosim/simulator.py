@@ -17,6 +17,7 @@
 import time
 
 from random import normalvariate, randrange, random
+from tqdm import tqdm
 from .vehicle import VehicleType, Vehicle, PlatooningVehicle
 
 # assumptions
@@ -447,6 +448,7 @@ class Simulator:
 
         print("Starting simulation", flush=True)
 
+        progress_bar = tqdm(desc='Simulation progress', total=max_step, unit='steps')
         # let the simulator run
         while self._running:
             if self._step >= max_step:
@@ -455,8 +457,6 @@ class Simulator:
             if len(self._vehicles) == 0:
                 self.stop("No more vehicles in the simulation")  # do we really want to exit here?
                 continue
-
-            print("\rCurrent step: %d" % self._step, sep=' ', end='...', flush=True)
 
             if self._gui:
 
@@ -503,6 +503,7 @@ class Simulator:
                 self.check_collisions()
 
             self._step += self._step_length
+            progress_bar.update(self._step_length)
 
     def stop(self, msg: str):
         """Stop the simulation with the given message"""

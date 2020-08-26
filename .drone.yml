@@ -51,6 +51,7 @@ steps:
     image: python
     commands:
       - pip3 install --upgrade funcy
+      - pip3 install --upgrade tqdm
       - ./plafosim.py --penetration 0.5  # test both vehicle types
 
 ---
@@ -65,6 +66,7 @@ steps:
     - apt update
     - apt install time
     - pip3 install --upgrade funcy
+    - pip3 install --upgrade tqdm
     - pip3 install --upgrade matplotlib
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
