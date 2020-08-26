@@ -166,13 +166,22 @@ class Simulator:
         # safe
         return True
 
-    def _change_lane(self, vid: int, target_lane: int) -> bool:
+    def _change_lane(self, vid: int, target_lane: int, reason: str) -> bool:
         # check adjacent lane is free
         if self.is_lane_change_safe(vid, target_lane):
-            # switch to adjacent lane
+            v = self._vehicles[vid]
+            source_lane = v.lane
+
             if self._debug:
-                print("%d switching lanes %d -> %d" % (vid, self._vehicles[vid].lane, target_lane))
-            self._vehicles[vid]._lane = target_lane
+                print("%d switching lanes %d -> %d (%s)" % (vid, source_lane, target_lane, reason))
+
+            # switch to adjacent lane
+            v._lane = target_lane
+
+            # log lane change
+            with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
+                f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vid, v.position, source_lane, target_lane, v.speed, reason))
+
             return True
         return False
 
@@ -203,18 +212,12 @@ class Simulator:
                     source_lane = vehicle.lane
                     target_lane = source_lane + 1
                     # TODO determine whether it is useful to overtake
-                    if self._change_lane(vehicle.vid, target_lane):
-                        # log lane change
-                        with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                            f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "speedGain"))
+                    self._change_lane(vehicle.vid, target_lane, "speedGain")
             else:
                 if vehicle.lane > 0:
                     source_lane = vehicle.lane
                     target_lane = source_lane - 1
-                    if self._change_lane(vehicle.vid, target_lane):
-                        # log lane change
-                        with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                            f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vehicle.vid, vehicle.position, source_lane, target_lane, vehicle.speed, "keepRight"))
+                    self._change_lane(vehicle.vid, target_lane, "keepRight")
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
