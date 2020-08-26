@@ -17,7 +17,8 @@
 ### Dependencies
 
 - Python3 (tested with 3.6.9)
-- funcy (python package)
+- funcy (argument parsing)
+- tqdm (progress bar)
 - opt. SUMO (tested with >= 1.1.0)
 
 ## Running a Simulation
