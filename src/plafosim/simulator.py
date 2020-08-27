@@ -386,7 +386,7 @@ class Simulator:
             # safety_gap = 0  # m
 
             if random_arrival_position:
-                arrival_position = randrange(position + 1, self._road_length, arrival_interval)
+                arrival_position = randrange(position + arrival_interval, self._road_length, arrival_interval)
             else:
                 arrival_position = self._road_length
 
