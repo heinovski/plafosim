@@ -338,7 +338,7 @@ class Simulator:
         min_gap = 0  # m
         vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap)  # TODO multiple vtypes
 
-        for num in range(0, number_of_vehicles):
+        for num in tqdm(range(0, number_of_vehicles), desc="Generated vehicles"):
             vid = last_vehicle_id + 1
 
             if random_depart_position:
