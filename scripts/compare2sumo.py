@@ -215,39 +215,39 @@ for label in trip_diff_labels:
     d = data.describe()
 
     if label == 'desiredSpeed':
-        al_qst = 4
+        al_qst = 4.5
         al_mean = 1
         al_std = 6
         al_median = 2
         al_qrd = 4.5
     elif label == 'arrival':
         al_qst = 400
-        al_mean = 120
+        al_mean = 160
         al_std = 460
-        al_median = 120
+        al_median = 160
         al_qrd = 300
     elif label == 'arrivalLane':
         al_qst = 0
-        al_mean = 0.1
-        al_std = 0.6
+        al_mean = 0.2
+        al_std = 0.8
         al_median = 0
         al_qrd = 0
     elif label == 'arrivalSpeed':
-        al_qst = 4
+        al_qst = 4.5
         al_mean = 1.5
         al_std = 6
         al_median = 2
         al_qrd = 5
     elif label == 'duration':
         al_qst = 400
-        al_mean = 100
+        al_mean = 160
         al_std = 460
-        al_median = 120
+        al_median = 160
         al_qrd = 300
     elif label == 'timeLoss':
-        al_qst = 60
-        al_mean = 80
-        al_std = 120
+        al_qst = 120
+        al_mean = 90
+        al_std = 140
         al_median = 60
         al_qrd = 50
 
@@ -311,7 +311,7 @@ for label in lifetime_labels:
 
         # check limits for deviation in desired speed
         d = data.describe()
-        if abs(d['25%']) > 47 or abs(d['mean']) > 0.5 or abs(d['std']) > 2 or abs(d['50%']) > 0 or abs(d['75%']) > 0:
+        if abs(d['25%']) > 2 or abs(d['mean']) > 1 or abs(d['std']) > 3 or abs(d['50%']) > 0 or abs(d['75%']) > 0:
             error = True
             print("Deviation to Desired Speed exceeded limits!")
             print(d)
@@ -347,20 +347,20 @@ for label in lifetime_diff_labels:
     d = data.describe()
 
     if label == 'diff_sumo_speed':
-        al_qst = 3.5
+        al_qst = 4
         al_mean = 1.5
         al_std = 6
         al_median = 1.5
         al_qrd = 4.5
     elif label == 'diff_sumo_position':
-        al_qst = 3500
+        al_qst = 4000
         al_mean = 1500
         al_std = 7500
-        al_median = 1000
-        al_qrd = 4700
+        al_median = 1200
+        al_qrd = 5000
     elif label == 'diff_sumo_lane':
         al_qst = 0
-        al_mean = 0.5
+        al_mean = 0.6
         al_std = 0.75
         al_median = 0
         al_qrd = 1
