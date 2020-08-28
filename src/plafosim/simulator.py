@@ -57,6 +57,8 @@ class Simulator:
         self._step = 0  # the current simulation step in s
         self._step_length = step_length  # the length of a simulation step
         if random_seed >= 0:
+            if debug:
+                print("Using random seed %d" % random_seed)
             seed(random_seed)
         self._running = False  # whether the simulation is running
         self._debug = debug  # whether debugging is enabled
