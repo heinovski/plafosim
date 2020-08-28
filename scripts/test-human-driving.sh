@@ -2,6 +2,8 @@
 
 set -e
 
+seed="$1"
+
 ### Human
 
 experiment=human
@@ -26,7 +28,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --depart-method interval \
     --depart-time-interval 3 \
     --step 1 \
-    --random-seed -1 \
+    --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
     2>&1 | tee runlog_${experiment}_plafosim
 
@@ -41,7 +43,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --device.emissions.deterministic \
     --lanechange-output $experiment-changes.xml \
     --step-length 1 \
-    --random \
+    $(test -z "$seed" && echo --random || echo --seed $seed) \
     2>&1 | tee runlog_${experiment}_sumo
 
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
