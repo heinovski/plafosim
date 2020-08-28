@@ -60,6 +60,7 @@ class Simulator:
             if debug:
                 print("Using random seed %d" % random_seed)
             seed(random_seed)
+            self._random_seed = random_seed
         self._running = False  # whether the simulation is running
         self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui
