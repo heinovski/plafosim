@@ -462,7 +462,7 @@ class Simulator:
             traci.simulationStep(self._step)
             from random import randrange
 
-        progress_bar = tqdm(desc='Simulation progress', total=max_step, unit='steps')
+        progress_bar = tqdm(desc='Simulation progress', total=max_step, unit='step')
         # let the simulator run
         while self._running:
             if self._step >= max_step:
