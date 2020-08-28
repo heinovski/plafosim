@@ -49,10 +49,13 @@ name: execution
 steps:
   - name: run
     image: python
+    environment:
+      SEED: ${DRONE_BUILD_NUMBER}
     commands:
       - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
-      - ./plafosim.py --penetration 0.5  # test both vehicle types
+        # we are testing both vehicle types
+      - ./plafosim.py --penetration 0.5 --random-seed $SEED
 
 ---
 kind: pipeline
