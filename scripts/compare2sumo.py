@@ -228,7 +228,7 @@ for label in trip_diff_labels:
         al_qrd = 300
     elif label == 'arrivalLane':
         al_qst = 0
-        al_mean = 0.2
+        al_mean = 0.25
         al_std = 0.8
         al_median = 0
         al_qrd = 0
@@ -245,7 +245,7 @@ for label in trip_diff_labels:
         al_median = 160
         al_qrd = 300
     elif label == 'timeLoss':
-        al_qst = 120
+        al_qst = 150
         al_mean = 90
         al_std = 140
         al_median = 60
@@ -348,20 +348,20 @@ for label in lifetime_diff_labels:
 
     if label == 'diff_sumo_speed':
         al_qst = 4
-        al_mean = 1.5
+        al_mean = 2
         al_std = 6
         al_median = 1.5
         al_qrd = 4.5
     elif label == 'diff_sumo_position':
         al_qst = 4000
-        al_mean = 1500
-        al_std = 7500
+        al_mean = 2500
+        al_std = 7800
         al_median = 1200
-        al_qrd = 5000
+        al_qrd = 5100
     elif label == 'diff_sumo_lane':
         al_qst = 0
-        al_mean = 0.6
-        al_std = 0.75
+        al_mean = 0.7
+        al_std = 0.8
         al_median = 0
         al_qrd = 1
 
