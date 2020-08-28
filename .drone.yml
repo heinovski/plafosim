@@ -65,6 +65,8 @@ name: correctnessHuman
 steps:
 - name: statistical tests
   image: dbuse/sumo-python:3.8-buster-1_1_0
+  environment:
+    SEED: ${DRONE_BUILD_NUMBER}
   commands:
     - apt update
     - apt install time
@@ -74,7 +76,7 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
-    - ./scripts/test-human-driving.sh
+    - ./scripts/test-human-driving.sh $SEED
 
 - name: copy artifacts
   image: dbuse/sumo-python:3.8-buster-1_1_0
@@ -106,6 +108,8 @@ name: correctnessACC
 steps:
 - name: statistical tests
   image: dbuse/sumo-python:3.8-buster-1_1_0
+  environment:
+    SEED: ${DRONE_BUILD_NUMBER}
   commands:
     - apt update
     - apt install time
@@ -115,7 +119,7 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
-    - ./scripts/test-acc-driving.sh
+    - ./scripts/test-acc-driving.sh $SEED
 
 - name: copy artifacts
   image: dbuse/sumo-python:3.8-buster-1_1_0
