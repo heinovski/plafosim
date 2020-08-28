@@ -16,7 +16,7 @@
 #
 import time
 
-from random import normalvariate, randrange, random
+from random import normalvariate, randrange, random, seed
 from tqdm import tqdm
 from .vehicle import VehicleType, Vehicle, PlatooningVehicle
 
@@ -37,6 +37,7 @@ class Simulator:
             lane_changes: bool,
             collisions: bool,
             step_length: int,
+            random_seed: int,
             debug: bool,
             gui: bool,
             gui_delay: int,
@@ -55,6 +56,8 @@ class Simulator:
         # simulation properties
         self._step = 0  # the current simulation step in s
         self._step_length = step_length  # the length of a simulation step
+        if random_seed >= 0:
+            seed(random_seed)
         self._running = False  # whether the simulation is running
         self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui

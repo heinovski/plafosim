@@ -113,6 +113,8 @@ def main():
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
     simulation.add_argument('--time-limit', type=int, default=100, help="The simulation limit in h")
+    simulation.add_argument('--random-seed', type=int, default=-1,
+                            help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--debug', type=lambda x: bool(strtobool(x)), default=False,
                             choices=(True, False), help="Whether to enable debug output")
     simulation.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False,
@@ -135,6 +137,7 @@ def main():
         args.lane_changes,
         args.collisions,
         args.step_length,
+        args.random_seed,
         args.debug,
         args.gui,
         args.gui_delay / 1000,
