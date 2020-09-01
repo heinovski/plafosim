@@ -419,16 +419,16 @@ class Platoon:
 
     def __init__(
             self,
-            pid: int,
-            lid: int,
+            platoon_id: int,
+            leader_id: int,
             formation: list,
             speed: float,
             lane: int,
             max_speed: float,
             max_acceleration: float,
             max_deceleration: float):
-        self._pid = pid  # the id of the platoon
-        self._lid = lid  # the current leader id of the platoon
+        self._platoon_id = platoon_id  # the id of the platoon
+        self._leader_id = leader_id  # the current leader id of the platoon
         self._formation = formation  # the current formation of the platoon
         self._speed = speed  # the current (desired) speed of the platoon
         self._lane = lane  # the current (desired) lane of the platoon
@@ -437,12 +437,12 @@ class Platoon:
         self._max_deceleration = max_deceleration  # the current maximum deceleration of the platoon
 
     @property
-    def pid(self) -> int:
-        return self._pid
+    def platoon_id(self) -> int:
+        return self._platoon_id
 
     @property
-    def lid(self) -> int:
-        return self._lid
+    def leader_id(self) -> int:
+        return self._leader_id
 
     @property
     def formation(self) -> list:
