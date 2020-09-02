@@ -6,6 +6,7 @@ import pandas
 import re
 import seaborn
 
+from math import ceil
 
 
 # Read parameters
@@ -240,44 +241,116 @@ for label in trip_diff_labels:
     # check limits for deviation to sumo
     d = data.describe()
 
-    if label == 'desiredSpeed':
-        al_qst = 4.5
-        al_mean = 1
-        al_std = 6
-        al_median = 2
-        al_qrd = 4.5
-    elif label == 'arrival':
-        al_qst = 400
-        al_mean = 160
-        al_std = 460
-        al_median = 160
-        al_qrd = 300
-    elif label == 'arrivalLane':
-        al_qst = 0
-        al_mean = 0.25
-        al_std = 0.8
-        al_median = 0
-        al_qrd = 0
-    elif label == 'arrivalSpeed':
-        al_qst = 4.5
-        al_mean = 1.5
-        al_std = 6
-        al_median = 2
-        al_qrd = 5
-    elif label == 'duration':
-        al_qst = 400
-        al_mean = 160
-        al_std = 460
-        al_median = 160
-        al_qrd = 300
-    elif label == 'timeLoss':
-        al_qst = 150
-        al_mean = 90
-        al_std = 140
-        al_median = 60
-        al_qrd = 50
+    if args.experiment == "acc":
+        # limits were set for acc driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+        if label == 'desiredSpeed':
+            l_mean = 0.311689
+            l_std = 5.129675
+            l_min = -14.137094
+            l_25 = -3.869720
+            l_50 = 0.360809
+            l_75 = 4.116360
+            l_max = 11.989368
+        elif label == 'arrival':
+            l_mean = -125.050000
+            l_std = 339.510354
+            l_min = -1037.000000
+            l_25 = -349.000000
+            l_50 = -112.000000
+            l_75 = 97.750000
+            l_max = 696.000000
+        elif label == 'arrivalLane':
+            l_mean = -0.05
+            l_std = 0.50
+            l_min = -2.00
+            l_25 = 0.00
+            l_50 = 0.00
+            l_75 = 0.00
+            l_max = 1.00
+        elif label == 'arrivalSpeed':
+            l_mean = 0.193908
+            l_std = 5.151659
+            l_min = -14.367094
+            l_25 = -3.934720
+            l_50 = 0.350551
+            l_75 = 3.908860
+            l_max = 11.949368
+        elif label == 'duration':
+            l_mean = -125.050000
+            l_std = 339.510354
+            l_min = -1037.000000
+            l_25 = -349.000000
+            l_50 = -112.000000
+            l_75 = 97.750000
+            l_max = 696.000000
+        elif label == 'timeLoss':
+            l_mean = -97.581700
+            l_std = 114.687015
+            l_min = -439.840000
+            l_25 = -186.165000
+            l_50 = -36.635000
+            l_75 = -3.697500
+            l_max = 66.120000
+    else:
+        # limits were set for human driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+        assert(args.experiment == "human")
+        if label == 'desiredSpeed':
+            l_mean = 0.311689
+            l_std = 5.129675
+            l_min = -14.137094
+            l_25 = -3.869720
+            l_50 = 0.360809
+            l_75 = 4.116360
+            l_max = 11.989368
+        elif label == 'arrival':
+            l_mean = -78.730000
+            l_std = 415.648474
+            l_min = -1124.000000
+            l_25 = -367.250000
+            l_50 = -70.500000
+            l_75 = 269.250000
+            l_max = 1072.000000
+        elif label == 'arrivalLane':
+            l_mean = -0.040000
+            l_std = 0.469687
+            l_min = -1.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 0.000000
+            l_max = 1.000000
+        elif label == 'arrivalSpeed':
+            l_mean = 0.818389
+            l_std = 5.177411
+            l_min = -13.587094
+            l_25 = -3.498864
+            l_50 = 1.024928
+            l_75 = 4.331828
+            l_max = 12.209368
+        elif label == 'duration':
+            l_mean = -78.730000
+            l_std = 415.648474
+            l_min = -1124.000000
+            l_25 = -367.250000
+            l_50 = -70.500000
+            l_75 = 269.250000
+            l_max = 1072.000000
+        elif label == 'timeLoss':
+            l_mean = -51.320800
+            l_std = 12.604681
+            l_min = -91.710000
+            l_25 = -59.452500
+            l_50 = -49.500000
+            l_75 = -46.150000
+            l_max = 10.590000
 
-    if abs(d['25%']) > al_qst or abs(d['mean']) > al_mean or abs(d['std']) > al_std or abs(d['50%']) > al_median or abs(d['75%']) > al_qrd:
+    if \
+            abs(d['mean']) > ceil(abs(l_mean)) \
+            or abs(d['std']) > ceil(abs(l_std)) \
+            or abs(d['min']) > ceil(abs(l_min)) \
+            or abs(d['25%']) > ceil(abs(l_25)) \
+            or abs(d['50%']) > ceil(abs(l_50)) \
+            or abs(d['75%']) > ceil(abs(l_75)) \
+            or abs(d['max']) > ceil(abs(l_max)):
         error = True
         print("Deviation to Sumo in %s exceeded limits!" % label)
         print(d)
@@ -336,7 +409,34 @@ for label in lifetime_labels:
 
         # check limits for deviation in desired speed
         d = data.describe()
-        if abs(d['25%']) > 2 or abs(d['mean']) > 1 or abs(d['std']) > 3 or abs(d['50%']) > 0 or abs(d['75%']) > 0:
+
+        if args.experiment == "acc":
+            # limits were set for acc driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+            l_mean = -0.831217
+            l_std = 2.218281
+            l_min = -44.640000
+            l_25 = -0.610000
+            l_50 = 0.000000
+            l_75 = 0.000000
+            l_max = 0.300000
+        else:
+            # limits were set for human driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+            assert(args.experiment == "human")
+            l_mean = -0.424894
+            l_std = 1.789486
+            l_min = -44.640000
+            l_25 = -0.570000
+            l_50 = 0.000000
+            l_75 = 0.000000
+            l_max = 0.300000
+        if \
+                abs(d['mean']) > ceil(abs(l_mean)) \
+                or abs(d['std']) > ceil(abs(l_std)) \
+                or abs(d['min']) > ceil(abs(l_min)) \
+                or abs(d['25%']) > ceil(abs(l_25)) \
+                or abs(d['50%']) > ceil(abs(l_50)) \
+                or abs(d['75%']) > ceil(abs(l_75)) \
+                or abs(d['max']) > ceil(abs(l_max)):
             error = True
             print("Deviation to Desired Speed exceeded limits!")
             print(d)
@@ -371,26 +471,68 @@ for label in lifetime_diff_labels:
     # check limits for deviation to sumo
     d = data.describe()
 
-    if label == 'diff_sumo_speed':
-        al_qst = 4
-        al_mean = 2
-        al_std = 6
-        al_median = 1.5
-        al_qrd = 4.5
-    elif label == 'diff_sumo_position':
-        al_qst = 4000
-        al_mean = 2500
-        al_std = 7800
-        al_median = 1200
-        al_qrd = 5100
-    elif label == 'diff_sumo_lane':
-        al_qst = 0
-        al_mean = 0.7
-        al_std = 0.8
-        al_median = 0
-        al_qrd = 1
+    if args.experiment == "acc":
+        # limits were set for acc driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+        if label == 'diff_sumo_speed':
+            l_mean = 1.500986
+            l_std = 4.172065
+            l_min = -14.367094
+            l_25 = -1.222341
+            l_50 = 1.384935
+            l_75 = 4.213975
+            l_max = 30.532657
+        elif label == 'diff_sumo_position':
+            l_mean = 1922.106740
+            l_std = 6123.681019
+            l_min = -20514.177876
+            l_25 = -1308.425765
+            l_50 = 1137.371442
+            l_75 = 5073.995492
+            l_max = 28698.190713
+        elif label == 'diff_sumo_lane':
+            l_mean = 0.605153
+            l_std = 0.764974
+            l_min = 0.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 1.000000
+            l_max = 3.000000
+    else:
+        # limits were set for human driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+        assert(args.experiment == "human")
+        if label == 'diff_sumo_speed':
+            l_mean = 0.852827
+            l_std = 5.060980
+            l_min = -16.140497
+            l_25 = -3.240853
+            l_50 = 0.937156
+            l_75 = 4.533975
+            l_max = 18.938951
+        elif label == 'diff_sumo_position':
+            l_mean = 1207.078207
+            l_std = 7380.419336
+            l_min = -31596.550595
+            l_25 = -2555.896066
+            l_50 = 616.684392
+            l_75 = 5074.051315
+            l_max = 30403.278143
+        elif label == 'diff_sumo_lane':
+            l_mean = 0.323362
+            l_std = 0.527637
+            l_min = 0.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 1.000000
+            l_max = 3.000000
 
-    if abs(d['25%']) > al_qst or abs(d['mean']) > al_mean or abs(d['std']) > al_std or abs(d['50%']) > al_median or abs(d['75%']) > al_qrd:
+    if \
+            abs(d['mean']) > ceil(abs(l_mean)) \
+            or abs(d['std']) > ceil(abs(l_std)) \
+            or abs(d['min']) > ceil(abs(l_min)) \
+            or abs(d['25%']) > ceil(abs(l_25)) \
+            or abs(d['50%']) > ceil(abs(l_50)) \
+            or abs(d['75%']) > ceil(abs(l_75)) \
+            or abs(d['max']) > ceil(abs(l_max)):
         error = True
         print("Deviation to Sumo in %s exceeded limits!" % lal)
         print(d)
