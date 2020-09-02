@@ -646,6 +646,23 @@ class PlatooningVehicle(Vehicle):
         # default: drive freely
         return super().new_speed(speed_predecessor, predecessor_rear_position, super().desired_gap)
 
+    def finish(self):
+        # clean up platoon
+        if self.is_in_platoon():
+            ### FIXME HACK FOR DESTROYING THE PLATOON AT THE END OF THE TRIP ###
+            for v in self.platoon.formation:
+                if v == self.vid:
+                    continue
+                vehicle = self._simulator._vehicles[v]
+                if self.vid == self.platoon.leader_id:
+                    vehicle._platoon = Platoon(v, v, [v], vehicle.desired_speed, vehicle.lane, vehicle.max_speed, vehicle.max_acceleration, vehicle.max_deceleration)
+                    vehicle._cf_mode = CF_Mode.ACC
+                else:
+                    vehicle.platoon._formation.remove(self.vid)
+            ####################################################################
+
+        super().finish()
+
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
 
