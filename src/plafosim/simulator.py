@@ -177,6 +177,11 @@ class Simulator:
         return True
 
     def _change_lane(self, vid: int, target_lane: int, reason: str) -> bool:
+        # TODO add special behavior for platoons
+        if isinstance(self._vehicles[vid], PlatooningVehicle) and self._vehicles[vid].is_in_platoon():
+            print("Lane change for platoons not yet implemented!")
+            exit(1)
+
         # check adjacent lane is free
         if self.is_lane_change_safe(vid, target_lane):
             v = self._vehicles[vid]
@@ -209,11 +214,6 @@ class Simulator:
         for vehicle in self._vehicles.values():
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
-                continue
-
-            # TODO add special behavior for platoons
-            if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon():
-                print("Lane change for platoons not yet implemented!")
                 continue
 
             # decide upon and perform a lane change for this vehicle
