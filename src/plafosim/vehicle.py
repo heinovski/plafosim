@@ -497,7 +497,7 @@ class PlatooningVehicle(Vehicle):
         self._cf_mode = CF_Mode.ACC
         self._acc_headway_time = acc_headway_time
         if self.acc_headway_time < 1.0:
-            print("Warning: values for ACC headway time lower 1.0 have been shown to produce crashes!")
+            print("Warning: values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
 
