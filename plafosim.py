@@ -76,7 +76,7 @@ def main():
         default=False,
         choices=(True, False),
         help="Whether to use a random depart lane for every vehicle instead of lane 0")
-    trip.add_argument('--desired-speed', type=int, default=36, help="The desired driving speed im m/s")
+    trip.add_argument('--desired-speed', type=float, default=36.0, help="The desired driving speed im m/s")
     trip.add_argument(
         '--random-desired-speed',
         type=lambda x: bool(strtobool(x)),
