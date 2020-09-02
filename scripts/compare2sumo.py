@@ -7,7 +7,8 @@ import re
 import seaborn
 
 
-## Read parameters
+
+# Read parameters
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter,
@@ -17,18 +18,20 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
-parser.add_argument('--experiment', type=str, default='human', help="The name of the experiment to use for all result files")
+parser.add_argument('--experiment', type=str, default='human',
+                    help="The name of the experiment to use for all result files")
 parser.add_argument('--desired-speed', type=float, default=36.0, help="The desired speed to use for the comparison")
-parser.add_argument('--arrival-position', type=int, default=100000, help="The arrival position to use for the comparison")
+parser.add_argument('--arrival-position', type=int, default=100000,
+                    help="The arrival position to use for the comparison")
 args = parser.parse_args()
 
-## Read runtimes
+# Read runtimes
 
 runtimes = pandas.read_csv('runtimes_%s.csv' % args.experiment)
 runtimes = runtimes.astype({'simulator': str})
 runtimes = runtimes.set_index('simulator')
 
-## Read trips/emissions
+# Read trips/emissions
 
 sumo_trips = pandas.read_csv('%s-trips.csv' % args.experiment)
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x))
@@ -47,9 +50,17 @@ plafosim_trips = plafosim_trips.set_index('id').sort_index()
 plafosim_emissions = pandas.read_csv('%s_vehicle_emissions.csv' % args.experiment)
 plafosim_emissions = plafosim_emissions.set_index('id').sort_index()
 
-## Read traces
+# Read traces
 
-sumo_traces = pandas.read_csv('%s-traces.csv' % args.experiment, usecols=['timestep_time', 'vehicle_id', 'vehicle_lane', 'vehicle_pos', 'vehicle_speed'])
+sumo_traces = pandas.read_csv(
+    '%s-traces.csv' %
+    args.experiment,
+    usecols=[
+        'timestep_time',
+        'vehicle_id',
+        'vehicle_lane',
+        'vehicle_pos',
+        'vehicle_speed'])
 sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
 sumo_traces.dropna(inplace=True)
 sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
@@ -57,12 +68,25 @@ sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
 sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
 sumo_traces.sort_values(by='step', inplace=True)
 
-plafosim_traces = pandas.read_csv('%s_vehicle_traces.csv' % args.experiment, usecols=['step', 'id', 'position', 'lane', 'speed'])
+plafosim_traces = pandas.read_csv(
+    '%s_vehicle_traces.csv' %
+    args.experiment, usecols=[
+        'step', 'id', 'position', 'lane', 'speed'])
 plafosim_traces.sort_values(by='step', inplace=True)
 
-## Read lane-changes
+# Read lane-changes
 
-sumo_changes = pandas.read_csv('%s-changes.csv' % args.experiment, usecols=['change_from', 'change_id', 'change_pos', 'change_reason', 'change_speed', 'change_time', 'change_to'])
+sumo_changes = pandas.read_csv(
+    '%s-changes.csv' %
+    args.experiment,
+    usecols=[
+        'change_from',
+        'change_id',
+        'change_pos',
+        'change_reason',
+        'change_speed',
+        'change_time',
+        'change_to'])
 sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
 
 sumo_changes.dropna(inplace=True)
@@ -79,20 +103,20 @@ ids = frozenset(sumo_trips.index).intersection(plafosim_trips.index)
 number_of_vehicles = len(ids)
 error = False
 
-## Evalute runtime
+# Evalute runtime
 
 pl.figure()
 pl.title("Runtime for %d Vehicles" % number_of_vehicles)
 data = runtimes.reset_index().melt('simulator', var_name='kind').set_index('simulator')
 # does not work because of imcompatibility between matplotlib and seaborn
-#seaborn.scatterplot(data=data, x='kind', y='value', hue='simulator')
+# seaborn.scatterplot(data=data, x='kind', y='value', hue='simulator')
 pl.scatter(data=data.loc['sumo'], x='kind', y='value', label='sumo')
 pl.scatter(data=data.loc['plafosim'], x='kind', y='value', label='plafosim')
 pl.ylabel("time [s]")
 pl.legend()
 pl.savefig('%s_runtime.png' % args.experiment)
 
-## Evaluate trips
+# Evaluate trips
 
 # metrics which should not be different among the simulators
 trip_equal_labels = ['depart', 'departLane', 'departSpeed', 'arrivalPos']
@@ -127,15 +151,15 @@ if not failed_equality.empty:
 trip_diff_labels = ['desiredSpeed', 'arrival', 'arrivalLane', 'arrivalSpeed', 'duration', 'timeLoss']
 diff_trips = plafosim_trips[trip_diff_labels] - sumo_trips[trip_diff_labels]
 
-## Evaluate emissions
+# Evaluate emissions
 
 # TODO emissions
-#emission_labels =['co', 'co2', 'hc', 'pmx', 'nox', 'fuel']
-#print(sumo_trips.head())
-#diff_emissions = plafosim_emissions[emission_labels] - sumo_trips[emission_labels]
-#print(diff_emissions)
+# emission_labels =['co', 'co2', 'hc', 'pmx', 'nox', 'fuel']
+# print(sumo_trips.head())
+# diff_emissions = plafosim_emissions[emission_labels] - sumo_trips[emission_labels]
+# print(diff_emissions)
 
-## Evaluate traces
+# Evaluate traces
 
 sumo_traces = sumo_traces.set_index(['id', 'step'], drop=False).sort_index()
 plafosim_traces = plafosim_traces.set_index(['id', 'step'], drop=False).sort_index()
@@ -147,15 +171,17 @@ plafosim_traces = plafosim_traces.assign(lifetime=lambda x: x.step - x.groupby(l
                                          diff_sumo_lane=lambda x: abs(x.lane - sumo_traces.lane)
                                          ).reset_index(drop=True)
 
-sumo_traces = sumo_traces.assign(lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
-                                 diff_desired=lambda x: x.speed - sumo_trips.speedFactor * args.desired_speed).reset_index(drop=True)
+sumo_traces = sumo_traces.assign(
+    lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
+    diff_desired=lambda x: x.speed - sumo_trips.speedFactor * args.desired_speed).reset_index(drop=True)
 
 sumo_traces = sumo_traces.set_index(['id', 'lifetime']).sort_index()
 plafosim_traces = plafosim_traces.set_index(['id', 'lifetime']).sort_index()
 
-merged_traces = pandas.concat([sumo_traces, plafosim_traces], keys=['sumo', 'plafosim'], names=['simulator']).reset_index()
+merged_traces = pandas.concat([sumo_traces, plafosim_traces], keys=[
+                              'sumo', 'plafosim'], names=['simulator']).reset_index()
 
-## Plotting
+# Plotting
 
 print("Plotting trips/emissions/traces...")
 
@@ -164,7 +190,7 @@ print("Plotting trips/emissions/traces...")
 pl.figure()
 pl.title("Desired Driving Speed for %d Vehicles" % number_of_vehicles)
 pl.boxplot([sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True, labels=['sumo', 'plasfosim'])
-#seaborn.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
+# seaborn.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
 pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
 pl.savefig('%s_desired_speed.png' % args.experiment)
@@ -258,7 +284,7 @@ for label in trip_diff_labels:
 
 # TODO emissions
 
-#for label in emission_labels:
+# for label in emission_labels:
 #    idata = diff_emissions[label]
 #
 #    pl.figure()
@@ -304,8 +330,7 @@ for label in lifetime_labels:
             x=range(0, merged_traces.lifetime.max()),
             y=[step * args.desired_speed if step <= args.arrival_position / args.desired_speed else None for step in range(0, merged_traces.lifetime.max())],
             color='black',
-            ax=ax
-        )
+            ax=ax)
     elif label == 'diff_desired':
         ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='desired')
 
