@@ -18,7 +18,7 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
 parser.add_argument('--experiment', type=str, default='human', help="The name of the experiment to use for all result files")
-parser.add_argument('--desired-speed', type=float, default=36, help="The desired speed to use for the comparison")
+parser.add_argument('--desired-speed', type=float, default=36.0, help="The desired speed to use for the comparison")
 parser.add_argument('--arrival-position', type=int, default=100000, help="The arrival position to use for the comparison")
 args = parser.parse_args()
 
