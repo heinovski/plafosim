@@ -18,8 +18,8 @@ from plafosim.vehicle import Platoon
 
 
 def test_creation():
-    pid = 2
-    lid = 1
+    platoon_id = 2
+    leader_id = 1
     formation = [1, 2, 3]
     speed = 36
     lane = 0
@@ -27,11 +27,11 @@ def test_creation():
     max_acceleration = 2.5
     max_deceleration = 15
 
-    platoon = Platoon(pid, lid, formation, speed, lane, max_speed, max_acceleration, max_deceleration)
+    platoon = Platoon(platoon_id, leader_id, formation, speed, lane, max_speed, max_acceleration, max_deceleration)
 
     assert(platoon is not None)
-    assert(platoon.pid == pid)
-    assert(platoon.lid == lid)
+    assert(platoon.platoon_id == platoon_id)
+    assert(platoon.leader_id == leader_id)
     assert(platoon.formation == formation)
     assert(platoon.speed == speed)
     assert(platoon.lane == lane)
