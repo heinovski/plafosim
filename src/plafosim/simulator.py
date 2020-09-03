@@ -18,7 +18,7 @@ import time
 
 from random import normalvariate, randrange, random, seed
 from tqdm import tqdm
-from .vehicle import VehicleType, Vehicle, PlatooningVehicle
+from .vehicle import VehicleType, Vehicle, PlatooningVehicle, CF_Mode, PlatoonRole, Platoon
 
 # assumptions
 # you just reach your arrival_position
@@ -315,6 +315,7 @@ class Simulator:
             max_speed: float,
             acc_headway_time: float,
             cacc_spacing: float,
+            start_as_platoon: bool,
             random_depart_position: bool,
             random_depart_lane: bool,
             desired_speed: float,
@@ -343,12 +344,20 @@ class Simulator:
             vid = last_vehicle_id + 1
 
             if random_depart_position:
+                if start_as_platoon:
+                    print("Vehicles can not have random departure positions when starting as one platoon!")
+                    exit(1)
+
                 depart_position = position = randrange(0, self._road_length, depart_interval)
             else:
                 depart_position = 0
             depart_position = depart_position + length  # equal to departPos="base"
 
             if random_depart_lane:
+                if start_as_platoon:
+                    print("Vehicles can not have random departure lanes when starting as one platoon!")
+                    exit(1)
+
                 depart_lane = randrange(0, self._number_of_lanes, 1)
             else:
                 depart_lane = 0
@@ -405,6 +414,15 @@ class Simulator:
                     depart_time,
                     acc_headway_time,
                     cacc_spacing)
+                if start_as_platoon:
+                    if vid == 0:
+                        vehicle._cf_mode = CF_Mode.ACC
+                        vehicle._platoon_role = PlatoonRole.LEADER
+                    else:
+                        vehicle._cf_mode = CF_Mode.CACC
+                        vehicle._platoon_role = PlatoonRole.FOLLOWER
+                    vehicle._platoon = Platoon(0, 0, range(0, number_of_vehicles), vehicle.desired_speed, vehicle.depart_lane, vehicle.max_speed, vehicle.max_acceleration, vehicle.max_deceleration)
+
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
                                   speed, depart_lane, depart_speed, depart_time)
