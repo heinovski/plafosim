@@ -657,7 +657,7 @@ class PlatooningVehicle(Vehicle):
                     continue
                 vehicle = self._simulator._vehicles[v]
                 if self.vid == self.platoon.leader_id:
-                    vehicle._platoon = Platoon(v, v, [v], vehicle.desired_speed, vehicle.lane, vehicle.max_speed, vehicle.max_acceleration, vehicle.max_deceleration)
+                    vehicle._platoon = Platoon(v, [v], vehicle.desired_speed, vehicle.lane, vehicle.max_speed, vehicle.max_acceleration, vehicle.max_deceleration)
                     vehicle._cf_mode = CF_Mode.ACC
                 else:
                     vehicle.platoon._formation.remove(self.vid)
