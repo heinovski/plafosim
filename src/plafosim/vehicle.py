@@ -443,6 +443,10 @@ class Platoon:
         return self.formation[0]
 
     @property
+    def last_id(self) -> int:
+        return self.formation[-1:]
+
+    @property
     def formation(self) -> list:
         return self._formation
 
