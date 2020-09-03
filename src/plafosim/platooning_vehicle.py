@@ -306,6 +306,76 @@ class PlatooningVehicle(Vehicle):
 
         return  # TODO
 
+    def _join(self, platoon_id: int, leader_id: int, teleport: bool = True):
+        # just join, without any communication
+
+        assert(not self.is_in_platoon())
+
+        if self._simulator._debug:
+            print("%d trying to join platoon %d (leader %d)" % (self.vid, platoon_id, leader_id))
+
+        # TODO make sure to set all platoon speed related values
+        # TODO make sure to use them as your new defaults
+
+        leader = self._simulator._vehicles[leader_id]
+        assert(isinstance(leader, PlatooningVehicle))
+
+        # TODO joint at front
+        # TODO join at arbitrary positions
+        # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
+        assert(self.position <= self._simulator._vehicles[leader.platoon.last_id].rear_position)
+
+        # update the leader
+        leader._platoon_role = PlatoonRole.LEADER
+        if self._simulator._debug:
+            print("%d became a leader of platoon %d" % (leader_id, leader.platoon.platoon_id))
+
+        last = self._simulator._vehicles[leader.platoon.last_id]
+
+        # TODO we do not want to teleport the vehicle
+        if teleport:
+            current_position = self.position
+            self._position = last.rear_position - self.cacc_spacing
+            print("!!! %d teleported to %d (from %d) !!!" % (self.vid, self.position, current_position))
+            current_lane = self.lane
+            self._lane = leader.lane
+            print("!!! %d switched to lane %d (from %d) !!!" % (self.vid, self.lane, current_lane))
+            current_speed = self.speed
+            self._speed = last.speed
+            print("!!! %d changed speed to %f (from %f) !!!" % (self.vid, self.speed, current_speed))
+        else:
+            # start platooning mode
+            self._platoon_role = PlatoonRole.JOINER
+
+            # switch to correct lane
+            if not self._simulator._change_lane(self.vid, leader.platoon.lane, "joinManeuver"):
+                # TODO we are still not on the correct lane
+                # we probably need some state machine .......
+                print("what know???")
+                exit(1)
+
+            # TODO check whether someone else is between us
+            if self._simulator._get_predecessor_id(self.vid) != leader.platoon.last_id:
+                print("There is some one between us!!!!")
+                exit(1)
+
+        self._platoon_role = PlatoonRole.FOLLOWER
+
+        # update all members
+        leader.platoon._formation.append(self.vid)
+
+        for vehicle in leader.platoon.formation:
+            member = self._simulator._vehicles[vehicle]
+            # we copy all parameters from the platoon (for now)
+            # thus, the follower no drives as fast as the already existing platoon (i.e., only the leader in the worst case)
+            member._platoon = Platoon(leader.platoon.platoon_id, leader.platoon.formation.copy(), leader.platoon.speed, leader.platoon.lane, leader.platoon.max_speed, leader.platoon.max_acceleration, leader.platoon.max_deceleration)
+
+        # switch to CACC
+        self._cf_mode = CF_Mode.CACC
+
+        if self._simulator._debug:
+            print("%d joined platoon %d (leader: %d)" % (self.vid, platoon_id, leader_id))
+
     def _advertise(self):
         """Maintain regular sending of platoon advertisements"""
 
