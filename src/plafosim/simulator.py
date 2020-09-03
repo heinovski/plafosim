@@ -421,7 +421,7 @@ class Simulator:
                     else:
                         vehicle._cf_mode = CF_Mode.CACC
                         vehicle._platoon_role = PlatoonRole.FOLLOWER
-                    vehicle._platoon = Platoon(0, 0, range(0, number_of_vehicles), vehicle.desired_speed, vehicle.depart_lane, vehicle.max_speed, vehicle.max_acceleration, vehicle.max_deceleration)
+                    vehicle._platoon = Platoon(0, range(0, number_of_vehicles), vehicle.desired_speed, vehicle.depart_lane, vehicle.max_speed, vehicle.max_acceleration, vehicle.max_deceleration)
 
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,

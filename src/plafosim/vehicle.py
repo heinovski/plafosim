@@ -420,7 +420,6 @@ class Platoon:
     def __init__(
             self,
             platoon_id: int,
-            leader_id: int,
             formation: list,
             speed: float,
             lane: int,
@@ -428,7 +427,6 @@ class Platoon:
             max_acceleration: float,
             max_deceleration: float):
         self._platoon_id = platoon_id  # the id of the platoon
-        self._leader_id = leader_id  # the current leader id of the platoon
         self._formation = formation  # the current formation of the platoon
         self._speed = speed  # the current (desired) speed of the platoon
         self._lane = lane  # the current (desired) lane of the platoon
@@ -442,7 +440,7 @@ class Platoon:
 
     @property
     def leader_id(self) -> int:
-        return self._leader_id
+        return self.formation[0]
 
     @property
     def formation(self) -> list:
@@ -510,7 +508,7 @@ class PlatooningVehicle(Vehicle):
         if self.cacc_spacing < 5.0:
             print("Warning: values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
-        self._platoon = Platoon(self.vid, self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
+        self._platoon = Platoon(self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
 
         # initialize timer
         self._last_advertisement_step = None
