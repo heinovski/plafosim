@@ -134,7 +134,8 @@ class PlatooningVehicle(Vehicle):
             depart_speed: float,
             depart_time: int,
             acc_headway_time: float,
-            cacc_spacing: float):
+            cacc_spacing: float,
+            formation_strategy: str):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
 
@@ -149,9 +150,11 @@ class PlatooningVehicle(Vehicle):
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, [self], self.desired_speed)
         self._in_maneuver = False
+        self._formation_strategy = formation_strategy
 
-        # initialize timer
-        self._last_advertisement_step = None
+        if self.formation_strategy is not None:
+            # initialize timer
+            self._last_advertisement_step = None
 
     @property
     def cf_mode(self) -> CF_Mode:
@@ -204,6 +207,10 @@ class PlatooningVehicle(Vehicle):
             logging.warn("%d is are already in a meneuver" % self.vid)
             return
         self._in_maneuver = var
+
+    @property
+    def formation_strategy(self) -> str:
+        return self._formation_strategy
 
     def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
         """Helper method to calcucate the ACC acceleration based on the given parameters"""
@@ -299,16 +306,106 @@ class PlatooningVehicle(Vehicle):
 
         super()._action()
 
-        # transmit regular platoon advertisements
-        self._advertise()
+        if self.formation_strategy is not None:
+            # transmit regular platoon advertisements
+            self._advertise()
 
-        # search for a platoon (depending on the strategy)
-        self._do_formation()
+            # search for a platoon (depending on the strategy)
+            self._do_formation()
+
+    def _get_neighbors(self):
+        # HACK FOR AVOIDING MAINTAINING A NEIGHBORTABLE (for now)
+        neighbors = []
+        for vehicle in self._simulator._vehicles.values():
+
+            # filter out self
+            if vehicle == self:
+                continue
+
+            # filter vehicles that are technically not able to do platooning
+            if not isinstance(vehicle, PlatooningVehicle):
+                continue
+
+            # filter based on communication range
+            communication_range = self._simulator.road_length
+            if abs(vehicle.position - self.position) > communication_range:
+                continue
+
+            neighbors.append(vehicle)
+
+        return neighbors
+
+    def _ds(self, neighbor_speed: float):
+        return abs(self.desired_speed - neighbor_speed)
+
+    def _dp(self, neighbor_position: int):
+        if self.position > neighbor_position:
+            return float("inf")  # TODO hack for only joining at the back
+        else:
+            return abs(self.position - neighbor_position)
+
+    def _cost_speed_position(self, ds: float, dp: int, alpha: float, beta: float):
+        return (alpha * ds) + (beta * dp)
 
     def _do_formation(self):
         """Run platoon formation algorithms to search for a platooning opportunity and perform corresponding maneuvers"""
 
-        return  # TODO
+        if self.formation_strategy == "distributed":
+
+            # we can only run the algorithm if we are not yet in a platoon
+            if self.platoon_role != PlatoonRole.NONE:
+                return
+
+            found_candidates = []
+
+            alpha = 0.5  # TODO make paramter
+            beta = 1.0 - alpha
+            assert(alpha >= 0.0)
+            assert(beta >= 0.0)
+            assert(alpha + beta == 1.0)
+
+            # get all available vehicles from the neighbor table
+            for neighbor in self._get_neighbors():
+
+                # calculate deviation values
+                ds = self._ds(neighbor.speed)
+                dp = self._dp(neighbor.position)
+
+                speed_deviation_threshold = 0.1  # TODO make parameter
+                # remove neighbor if not in speed range
+                if ds > speed_deviation_threshold * self.desired_speed:
+                    logging.debug("%d' neighbor %d not applicable because of its speed difference" % (self.vid, neighbor.vid))
+                    continue
+
+                position_deviation_threshold = 300  # TODO make parameter
+                # remove neighbor if not in position range
+                if dp > position_deviation_threshold:
+                    logging.debug("%d's neighbor %d not applicable because of its position difference" % (self.vid, neighbor.vid))
+                    continue
+
+                # calculate deviation/cost
+                fx = self._cost_speed_position(ds, dp, alpha, beta)
+
+                # add neighbor to list
+                found_candidates.append((neighbor.vid, neighbor.platoon.platoon_id, neighbor.platoon.leader.vid, fx))
+                logging.info("%d found %d applicable candidates" % (self.vid, len(found_candidates)))
+
+            if len(found_candidates) == 0:
+                return
+
+            # find best candidate to join
+            # pick the neighbor with the lowest deviation
+            best = min(found_candidates, key=lambda x: x[3])
+
+            logging.info("%d' best candidate is %d from platoon %d (leader %d) with %d" % (self.vid, best[0], best[1], best[2], best[3]))
+
+            # perform a join maneuver with the candidate's platoon
+            # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
+            self._join(best[1], best[2])
+
+        else:
+            print("Unknown formation strategy!")
+            exit(1)
 
     def _join(self, platoon_id: int, leader_id: int, teleport: bool = True):
         # just join, without any communication

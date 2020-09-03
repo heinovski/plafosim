@@ -115,6 +115,10 @@ def main():
         default=False,
         choices=(True, False),
         help="Whether to use a random arrival position for every vehicle instead of the end of the road")
+    # platoon properties
+    platoon = parser.add_argument_group('platoon properties')
+    platoon.add_argument('--formation-strategy', type=str, default=None,
+                         choices=["distributed"], help="The formation strategy to use")
     # simulation properties
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
@@ -172,7 +176,8 @@ def main():
         args.depart_desired,
         args.depart_method,
         args.depart_time_interval,
-        args.random_arrival_position)
+        args.random_arrival_position,
+        args.formation_strategy)
     # TODO log generation parameters
     simulator.run(max_step)
 

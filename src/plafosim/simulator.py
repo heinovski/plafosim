@@ -379,7 +379,8 @@ class Simulator:
             depart_desired: bool,
             depart_method: str,
             depart_time_interval: int,
-            random_arrival_position: bool):
+            random_arrival_position: bool,
+            formation_strategy: str):
         """Generate vehicles for the simulation"""
 
         last_vehicle_id = -1
@@ -452,9 +453,13 @@ class Simulator:
             else:
                 arrival_position = self._road_length
 
-            if start_as_platoon and penetration_rate < 1.0:
-                logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
-                exit(1)
+            if start_as_platoon:
+                if penetration_rate < 1.0:
+                    logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                    exit(1)
+                if formation_strategy is not None:
+                    logging.warn("A formation strategy cannot be used when all starting as one platoon!")
+                    exit(1)
 
             # choose vehicle "type" depending on the penetration rate
             if random() < penetration_rate:
@@ -469,7 +474,8 @@ class Simulator:
                     depart_speed,
                     depart_time,
                     acc_headway_time,
-                    cacc_spacing)
+                    cacc_spacing,
+                    formation_strategy)
                 if start_as_platoon:
                     if vid == 0:
                         vehicle._cf_mode = CF_Mode.ACC
