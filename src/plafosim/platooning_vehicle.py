@@ -376,6 +376,51 @@ class PlatooningVehicle(Vehicle):
         if self._simulator._debug:
             print("%d joined platoon %d (leader: %d)" % (self.vid, platoon_id, leader_id))
 
+    def _leave(self):
+        assert(self.is_in_platoon())
+        if self.platoon.length == 1:
+            return
+
+        # just leave, without any communication
+
+        if self.vid == self.platoon.last_id:
+            # leave at back
+            # TODO check whether it is safe to leave
+            # TODO tell the leader (who needs to tell all other vehicles)
+            # TODO leave
+            print("Leave from back of a platoon is not yet implemented!")
+            exit(1)
+        elif self.vid == self.platoon.leader_id:
+            # leave at front
+
+            # tell the second vehicle in the platoon to become the new leader
+            new_leader = self._simulator._vehicles[self.platoon.formation[1]]
+            new_leader._platoon_role = PlatoonRole.LEADER
+            new_leader._cf_mode = CF_Mode.ACC
+
+            self.platoon._formation.remove(self.vid)
+
+            # update formation all members
+            for vehicle in self.platoon.formation:
+                member = self._simulator._vehicles[vehicle]
+                member._platoon = Platoon(self.platoon.platoon_id, self.platoon.formation.copy(), self.platoon.speed, self.platoon.lane, self.platoon.max_speed, self.platoon.max_acceleration, self.platoon.max_deceleration)
+
+            # leave
+            self._platoon_role = PlatoonRole.NONE  # the current platoon role
+            self._platoon = Platoon(self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
+
+            self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
+
+            if self._simulator._debug:
+                print("%d left platoon %d (new leader %d)" % (self.vid, new_leader.platoon.platoon_id, new_leader.vid))
+        else:
+            # leave in the middle
+            # TODO check wether is is safe to leave
+            # TODO tell the leader (who needs to tell all other vehicles and needs to tell them to make space)
+            # TODO leave
+            print("Leave from the middle of a platoon is not yet implemented!")
+            exit(1)
+
     def _advertise(self):
         """Maintain regular sending of platoon advertisements"""
 
