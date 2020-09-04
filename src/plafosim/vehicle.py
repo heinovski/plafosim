@@ -470,11 +470,11 @@ class Platoon:
     def max_deceleration(self) -> float:
         return self._max_deceleration
 
-    def get_follower_index(self, vid: int) -> int:
+    def get_member_index(self, vid: int) -> int:
         return self.formation.index(vid)
 
     def get_front_id(self, vid: int) -> int:
-        return self.formation[self.get_follower_index(vid) - 1]
+        return self.formation[self.get_member_index(vid) - 1]
 
 
 class CF_Mode(Enum):
