@@ -16,6 +16,7 @@
 #
 import time
 
+from math import copysign
 from random import normalvariate, randrange, random, seed
 from tqdm import tqdm
 from .vehicle import VehicleType, Vehicle
@@ -177,17 +178,26 @@ class Simulator:
         # safe
         return True
 
+    # TODO move to vehicle?
     def _change_lane(self, vid: int, target_lane: int, reason: str) -> bool:
+        v = self._vehicles[vid]
+        source_lane = v.lane
+
         # TODO add special behavior for platoons
-        if isinstance(self._vehicles[vid], PlatooningVehicle) and self._vehicles[vid].is_in_platoon():
+        if isinstance(v, PlatooningVehicle) and v.is_in_platoon() and v.cf_mode == CF_Mode.CACC:
             print("Lane change for platoons not yet implemented!")
             exit(1)
 
+        lane_diff = target_lane - source_lane
+        if abs(lane_diff) > 1:
+            print("Warning: Can only change to adjacent lane!")
+            old_target_lane = target_lane
+            target_lane = source_lane + copysign(1, lane_diff)
+            if self._debug:
+                print("Adjusted target lane to %d (from %d)" % (target_lane, old_target_lane))
+
         # check adjacent lane is free
         if self.is_lane_change_safe(vid, target_lane):
-            v = self._vehicles[vid]
-            source_lane = v.lane
-
             if self._debug:
                 print("%d switching lanes %d -> %d (%s)" % (vid, source_lane, target_lane, reason))
 
@@ -198,7 +208,7 @@ class Simulator:
             with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
                 f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vid, v.position, source_lane, target_lane, v.speed, reason))
 
-            return True
+            return abs(lane_diff) <= 1
         return False
 
     # kraus - multi lane traffic
