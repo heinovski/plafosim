@@ -18,7 +18,8 @@ import time
 
 from random import normalvariate, randrange, random, seed
 from tqdm import tqdm
-from .vehicle import VehicleType, Vehicle, PlatooningVehicle, CF_Mode, PlatoonRole, Platoon
+from .vehicle import VehicleType, Vehicle
+from .platooning_vehicle import PlatooningVehicle, CF_Mode, PlatoonRole, Platoon
 
 # assumptions
 # you just reach your arrival_position
