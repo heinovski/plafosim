@@ -17,9 +17,13 @@
 ### Dependencies
 
 - Python3 (tested with 3.6.9)
-- funcy (argument parsing)
-- tqdm (progress bar)
+- funcy (argument parsing, tested with 1.14)
+- tqdm (progress bar, tested with 4.48.2)
 - opt. SUMO (tested with >= 1.1.0)
+- opt. matplotlib (tested with 3.3.0)
+- opt. pandas (tested with 1.1.0)
+- opt. seaborn (tested with 0.10.1)
+- opt. statsmodels (tested with 0.11.1)
 
 ## Running a Simulation
 
