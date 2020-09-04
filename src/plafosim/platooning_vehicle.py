@@ -86,6 +86,10 @@ class Platoon:
     def max_deceleration(self) -> float:
         return self._max_deceleration
 
+    @property
+    def length(self) -> int:
+        return len(self.formation)
+
     def get_member_index(self, vid: int) -> int:
         return self.formation.index(vid)
 
