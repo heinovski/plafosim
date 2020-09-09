@@ -238,6 +238,9 @@ class Simulator:
                     # TODO determine whether it is useful to overtake
                     self._change_lane(vehicle.vid, target_lane, "speedGain")
             else:
+                if isinstance(vehicle, PlatooningVehicle) and vehicle.platoon_role == PlatoonRole.FOLLOWER:
+                    # followers are not allowed to change the lane on their own
+                    continue
                 if vehicle.lane > 0:
                     source_lane = vehicle.lane
                     target_lane = source_lane - 1
