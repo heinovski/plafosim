@@ -105,13 +105,16 @@ class Simulator:
             lane = self._vehicles[vid].lane
         predecessor_id = -1
         for vehicle in self._vehicles.values():
-            if vehicle.vid is vid:
+            if vehicle.vid == vid:
                 continue
-            if vehicle.lane is not lane:
+            if vehicle.depart_time > self._step:
+                # vehicle did not start yet
+                continue
+            if vehicle.lane != lane:
                 continue
             if vehicle.position < position:
                 continue
-            if vehicle.position is position:
+            if vehicle.position == position:
                 # TODO throw error if the vehicles are "interleaved"
                 continue
             if predecessor_id == -1 or vehicle.position < self._vehicles[predecessor_id].position:
