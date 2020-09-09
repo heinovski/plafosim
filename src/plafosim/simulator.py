@@ -185,6 +185,8 @@ class Simulator:
     def _change_lane(self, vid: int, target_lane: int, reason: str) -> bool:
         v = self._vehicles[vid]
         source_lane = v.lane
+        if source_lane == target_lane:
+            return True
         if self._debug:
             print("%d wants to chage from lane %d to lane %d" % (vid, source_lane, target_lane))
 
