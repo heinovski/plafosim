@@ -94,7 +94,10 @@ class Platoon:
         return self.formation.index(vid)
 
     def get_front_id(self, vid: int) -> int:
-        return self.formation[self.get_member_index(vid) - 1]
+        if vid != self.leader_id:
+            return self.formation[self.get_member_index(vid) - 1]
+        else:
+            return -1
 
 
 class CF_Mode(Enum):
