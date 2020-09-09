@@ -136,6 +136,7 @@ class PlatooningVehicle(Vehicle):
             print("Warning: values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, [self.vid], self.desired_speed, self.depart_lane, self.max_speed, self.max_acceleration, self.max_deceleration)
+        self._in_maneuver = False
 
         # initialize timer
         self._last_advertisement_step = None
@@ -179,6 +180,18 @@ class PlatooningVehicle(Vehicle):
 
     def get_front_speed(self) -> float:
         return self._simulator._get_predecessor_speed(self.vid)
+
+    @property
+    def in_maneuver(self) -> bool:
+        return self._in_maneuver
+
+    @in_maneuver.setter
+    def in_maneuver(self, var: bool):
+        if self._in_maneuver and var:
+            # we can only start a new maneuver if we are not already in one
+            print("%d we are already in a meneuver" % self.vid)
+            return
+        self._in_maneuver = var
 
     def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
         """Helper method to calcucate the ACC acceleration based on the given parameters"""
@@ -306,6 +319,8 @@ class PlatooningVehicle(Vehicle):
         # TODO make sure to set all platoon speed related values
         # TODO make sure to use them as your new defaults
 
+        self.in_maneuver = True
+
         leader = self._simulator._vehicles[leader_id]
         assert(isinstance(leader, PlatooningVehicle))
 
@@ -314,7 +329,13 @@ class PlatooningVehicle(Vehicle):
         # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
         assert(self.position <= self._simulator._vehicles[leader.platoon.last_id].rear_position)
 
+        if leader.in_maneuver:
+            print("the leader was already in a maneuver")
+            self.in_maneuver = False
+            return
+
         # update the leader
+        leader.in_maneuver = True
         leader._platoon_role = PlatoonRole.LEADER
         if self._simulator._debug:
             print("%d became a leader of platoon %d" % (leader_id, leader.platoon.platoon_id))
@@ -365,12 +386,20 @@ class PlatooningVehicle(Vehicle):
         if self._simulator._debug:
             print("%d joined platoon %d (leader: %d)" % (self.vid, platoon_id, leader_id))
 
+        self.in_maneuver = False
+        leader.in_maneuver = False
+
     def _leave(self):
+        # just leave, without any communication
+
         assert(self.is_in_platoon())
         if self.platoon.length == 1:
             return
 
-        # just leave, without any communication
+        if self._simulator._debug:
+            print("%d trying to leave platoon %d (leader %d)" % (self.vid, self.platoon.platoon_id, self.platoon.leader_id))
+
+        self.in_maneuver = True
 
         if self.vid == self.platoon.last_id:
             # leave at back
@@ -409,6 +438,8 @@ class PlatooningVehicle(Vehicle):
             # TODO leave
             print("Leave from the middle of a platoon is not yet implemented!")
             exit(1)
+
+        self.in_maneuver = False
 
     def _advertise(self):
         """Maintain regular sending of platoon advertisements"""
