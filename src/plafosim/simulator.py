@@ -190,11 +190,6 @@ class Simulator:
         if self._debug:
             print("%d wants to chage from lane %d to lane %d" % (vid, source_lane, target_lane))
 
-        # TODO add special behavior for platoons
-        if isinstance(v, PlatooningVehicle) and v.is_in_platoon() and v.cf_mode == CF_Mode.CACC:
-            print("Lane change for platoons not yet implemented!")
-            exit(1)
-
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
             print("Warning: Can only change to adjacent lane!")
@@ -202,6 +197,46 @@ class Simulator:
             target_lane = source_lane + copysign(1, lane_diff)
             if self._debug:
                 print("Adjusted target lane to %d (from %d)" % (target_lane, old_target_lane))
+
+        if isinstance(v, PlatooningVehicle) and v.is_in_platoon():
+            # followers are not allowed to change the lane on their one
+            assert(v.platoon_role != PlatoonRole.FOLLOWER)
+
+            # leaders are allowed to change the lane
+            if v.platoon_role == PlatoonRole.LEADER:
+                assert(reason == "speedGain" or reason == "keepRight")
+
+                if self._debug:
+                    print("%d I need to check all platoon members" % vid)
+
+                can_change = True
+                for member in v.platoon.formation:
+                    can_change = can_change and self.is_lane_change_safe(member, target_lane)
+                    if not can_change:
+                        if self._debug:
+                            print("lane change is not safe for %d")
+
+                if can_change:
+                    # perform lane change for all vehicles in this platoon
+                    for member in v.platoon.formation:
+                        m = self._vehicles[member]
+                        assert(m.lane == source_lane)
+                        if self._debug:
+                            print("%d switching lanes %d -> %d (%s)" % (member, source_lane, target_lane, reason))
+
+                        # switch to adjacent lane
+                        m._lane = target_lane
+
+                        # log lane change
+                        with open(self._result_base_filename + '_member_changes.csv', 'a') as f:
+                            f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, member, m.position, source_lane, target_lane, m.speed, reason))
+
+                    return abs(lane_diff) <= 1
+                return False
+
+            print(v.platoon_role)
+
+        # we are just a regular vehicle or we are not (yet) in a platoon
 
         # check adjacent lane is free
         if self.is_lane_change_safe(vid, target_lane):
