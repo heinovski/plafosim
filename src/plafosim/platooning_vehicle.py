@@ -227,6 +227,7 @@ class PlatooningVehicle(Vehicle):
 
             # sanity checks for front vehicle in platoon
             assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
+            # check whether there is a vehicle between us and our front vehicle
             assert(self.platoon.get_front_id(self.vid) == self._simulator._get_predecessor_id(self.vid))
 
             gap_to_predecessor = predecessor_rear_position - self.position
