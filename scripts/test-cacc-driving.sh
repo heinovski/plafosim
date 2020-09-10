@@ -44,6 +44,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --penetration 1 \
     --desired-speed 36 \
     --random-desired-speed false \
+    --depart-desired true \
     --depart-flow false \
     --depart-method interval \
     --depart-time-interval 3 \
@@ -57,3 +58,15 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --record-vehicle-traces true \
     --record-vehicle-changes true \
     2>&1 | tee run_${experiment}_plafosim.log
+
+/usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_$experiment.csv --append \
+    $ROOT/plexe/examples/autofeeddemo.py \
+    --sumo-config $ROOT/plexe/examples/cfg/freeway.sumo.cfg \
+    2>&1 | tee runlog_${experiment}_sumo.log
+
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissions.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-traces.xml -o $experiment-traces.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-changes.xml -o $experiment-changes.csv -s ','
+
+$ROOT/scripts/compare2sumo.py $experiment --vehicles 100 --desired-speed 36 --arrival-position 100000

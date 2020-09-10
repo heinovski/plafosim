@@ -98,6 +98,9 @@ kind: pipeline
 type: docker
 name: correctness
 
+image_pull_secrets:
+  - dockerconfig
+
 steps:
 - name: CC
   image: dbuse/sumo-python:3.8-buster-1_1_0
@@ -122,7 +125,7 @@ steps:
     - pip3 install --upgrade statsmodels
     - ./scripts/test-acc-driving.sh 1337
 - name: CACC
-  image: dbuse/sumo-python:3.8-buster-1_1_0
+  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
     - apt install time
@@ -131,6 +134,8 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
+    - git clone --branch heinovski/plafosim-comparison-cacc --single-branch "https://$DRONE_ASKPASS_USERNAME:$DRONE_ASKPASS_PASSWORD@webgit.ccs-labs.org/git/CCS/plexe-python.git" plexe
+    - pip3 install ./plexe
     - ./scripts/test-cacc-driving.sh 1337
 - name: copy artifacts
   image: dbuse/sumo-python:3.8-buster-1_1_0

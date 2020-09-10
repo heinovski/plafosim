@@ -60,6 +60,7 @@ sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x))
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('emissions_', '', x))
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('_abs', '', x))
 sumo_trips = sumo_trips.replace(r'static\.', '', regex=True)
+sumo_trips = sumo_trips.replace(r'v\.', '', regex=True)
 sumo_trips = sumo_trips.replace('edge_0_0_', '', regex=True)
 sumo_trips = sumo_trips.astype({'arrivalLane': int, 'departLane': int, 'id': int, 'vType': str})
 # add desired speed to data frame
@@ -96,7 +97,10 @@ sumo_traces = pandas.read_csv(
 sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
 sumo_traces.dropna(inplace=True)
 sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
+sumo_traces.replace(r'v\.', '', regex=True, inplace=True)
 sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
+# Remove trace values that do not correspond to plafosim (timestep of 1.0s)
+sumo_traces = sumo_traces[sumo_traces.step.mod(1.0) == 0.0]
 sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
 sumo_traces.sort_values(by='step', inplace=True)
 assert(len(sumo_traces.id.unique()) == args.vehicles)
@@ -126,6 +130,7 @@ try:
     sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
     sumo_changes.dropna(inplace=True)
     sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
+    sumo_changes.replace(r'v\.', '', regex=True, inplace=True)
     sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
     sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
     sumo_changes.sort_values(by='step', inplace=True)
@@ -322,7 +327,56 @@ for label in trip_diff_labels:
             l_50 = -17.430000
             l_75 = -3.927500
             l_max = 51.750000
-
+    elif args.experiment == "cacc":
+        # limits were set with seed 1337 on commit cf17215b5e6ece5d4c88cbc4f3199300879131f2
+        if label == 'desiredSpeed':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrival':
+            l_mean = -7.837
+            l_std = 7.57814
+            l_min = -25.0
+            l_25 = -13.35
+            l_50 = -4.9
+            l_75 = -1.1
+            l_max = -0.2
+        elif label == 'arrivalLane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrivalSpeed':
+            l_mean = 14.6977
+            l_std = 8.230113
+            l_min = 0.0
+            l_25 = 7.065
+            l_50 = 17.48
+            l_75 = 22.235
+            l_max = 23.3
+        elif label == 'duration':
+            l_mean = -7.837
+            l_std = 7.57814
+            l_min = -25.0
+            l_25 = -13.35
+            l_50 = -4.9
+            l_75 = -1.1
+            l_max = -0.2
+        elif label == 'timeLoss':
+            l_mean = -7.810167
+            l_std = 7.586818
+            l_min = -24.976667
+            l_25 = -13.324167
+            l_50 = -4.881667
+            l_75 = -1.089167
+            l_max = -0.166667
     else:
         # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         assert(args.experiment == "cc")
@@ -449,6 +503,15 @@ for label in lifetime_labels:
             l_50 = 0.000000
             l_75 = 0.000000
             l_max = 0.300000
+        elif args.experiment == "cacc":
+            # limits were set with seed 1337 on commit cf17215b5e6ece5d4c88cbc4f3199300879131f2
+            l_mean = -0.046928
+            l_std = 0.92154
+            l_min = -23.67
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
         else:
             # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
             assert(args.experiment == "cc")
@@ -528,6 +591,32 @@ for label in lifetime_diff_labels:
             l_50 = 0.000000
             l_75 = 1.000000
             l_max = 3.000000
+    elif args.experiment == "cacc":
+        # limits were set with seed 1337 on commit cf17215b5e6ece5d4c88cbc4f3199300879131f2
+        if label == 'diff_sumo_speed':
+            l_mean = 0.039139
+            l_std = 0.731613
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 20.99
+        elif label == 'diff_sumo_position':
+            l_mean = 0.241517
+            l_std = 5.77007
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 300.39
+        elif label == 'diff_sumo_lane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
     else:
         # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         assert(args.experiment == "cc")
