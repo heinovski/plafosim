@@ -313,8 +313,7 @@ class Simulator:
     def move_vehicles(self):
         """Do position updates for all vehicles"""
 
-        for vid in list(self._vehicles.keys()):
-            vehicle = self._vehicles[vid]
+        for vehicle in sorted(self._vehicles.values(), key=lambda x: x.position, reverse=True):
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
@@ -326,10 +325,10 @@ class Simulator:
                 # TODO use proper method
                 vehicle._position = vehicle.arrival_position
                 vehicle.finish()
-                del self._vehicles[vid]
                 if self._gui:
                     import traci
-                    traci.vehicle.remove(str(vid), 2)
+                    traci.vehicle.remove(str(vehicle.vid), 2)
+                del self._vehicles[vehicle.vid]
                 continue
             else:
                 # TODO use proper method
