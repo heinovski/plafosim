@@ -43,6 +43,7 @@ class Simulator:
             debug: bool,
             gui: bool,
             gui_delay: int,
+            gui_track_vehicle: int,
             result_base_filename: str):
         """Initialize a simulator instance"""
 
@@ -67,6 +68,7 @@ class Simulator:
         self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
+        self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._result_base_filename = result_base_filename  # the base filename of the result files
 
     @property
@@ -561,6 +563,10 @@ class Simulator:
                         traci.vehicle.setColor(str(vehicle.vid), (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
                         traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
                         traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
+                        # track vehicle
+                        if vehicle.vid == self._gui_track_vehicle:
+                            traci.gui.trackVehicle("View #0", str(vehicle.vid))
+                            traci.gui.setZoom("View #0", 1000000)
                     # update vehicles
                     traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
                     traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID='edge_0_0_%d' % vehicle.lane)

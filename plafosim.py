@@ -128,6 +128,7 @@ def main():
         type=int,
         default=0,
         help="The delay used in every simulation step to visualize the current network state in ms")
+    simulation.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
     simulation.add_argument(
         '--result-base-filename',
         type=str,
@@ -145,6 +146,7 @@ def main():
         args.debug,
         args.gui,
         args.gui_delay / 1000,
+        args.track_vehicle,
         args.result_base_filename)
     max_step = args.time_limit * 60 * 60
     simulator.generate_vehicles(
