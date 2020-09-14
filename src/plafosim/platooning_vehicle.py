@@ -327,7 +327,10 @@ class PlatooningVehicle(Vehicle):
         # TODO joint at front
         # TODO join at arbitrary positions
         # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
-        assert(self.position <= self._simulator._vehicles[leader.platoon.last_id].rear_position)
+        if self.position >= self._simulator._vehicles[leader.platoon.last_id].rear_position:
+            print("%d is in front of (at least) the last vehicle %d of the target platoon %d (leader %d)" % (self.vid, leader.platoon.last_id, platoon_id, leader_id))
+            self.in_maneuver = False
+            return
 
         if leader.in_maneuver:
             print("the leader %d was already in a maneuver" % leader_id)
