@@ -330,7 +330,7 @@ class PlatooningVehicle(Vehicle):
         assert(self.position <= self._simulator._vehicles[leader.platoon.last_id].rear_position)
 
         if leader.in_maneuver:
-            print("the leader was already in a maneuver")
+            print("the leader %d was already in a maneuver" % leader_id)
             self.in_maneuver = False
             return
 
