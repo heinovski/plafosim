@@ -373,6 +373,10 @@ class PlatooningVehicle(Vehicle):
                 ds = self._ds(neighbor.speed)
                 dp = self._dp(neighbor.position, neighbor.rear_position)
 
+                # TODO HACK for skipping vehicles in front of us
+                if self.position > neighbor.rear_position:
+                    logging.debug("%d's neighbor %d not applicable because of its absolute position" % (self.vid, neighbor.vid))
+                    continue
 
                 speed_deviation_threshold = 0.1  # TODO make parameter
                 # remove neighbor if not in speed range
