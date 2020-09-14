@@ -170,8 +170,43 @@ class PlatooningVehicle(Vehicle):
                 new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
                 logging.debug(f"{self.vid}'s ACC max possible speed {new_speed}")
 
-                new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
-                logging.debug(f"{self.vid}'s ACC desired speed {new_speed}")
+                if self.is_in_platoon():
+                    assert(self.platoon_role is PlatoonRole.LEADER)
+
+                    logging.debug(f"{self.vid}'s ACC new individual speed {new_speed}")
+
+                    # make sure that the leader uses the platoon's parameters for ACC
+
+                    # only accelerate as fast as the maximum acceleration of the individual platoon members
+                    new_speed = min(new_speed, self.platoon.speed + self.platoon.max_acceleration)
+
+                    # only decelerate as fast as the maximum deceleration of the individual platoon members
+                    new_speed = max(new_speed, self.platoon.speed - self.platoon.max_deceleration)
+
+                    # only drive as fast as the maximum speed of the individual platoon members
+                    new_speed = min(new_speed, self.platoon.max_speed)
+
+                    logging.debug(f"{self.vid}'s CACC possible speed {new_speed}")
+
+                    # only drive as fast as the platoon's desired speed
+                    new_speed = min(new_speed, self.platoon.desired_speed)
+                    logging.debug(f"{self.vid}'s CACC desired speed {new_speed}")
+
+                    logging.debug(f"{self.vid}'s CACC new speed {new_speed}")
+
+                    # HACK for avoiding communication for platoon management
+                    # update all my followers
+                    for follower in self.platoon.formation:
+                        if follower is self:
+                            continue
+
+                        logging.debug(f"{self.vid} is updating speed of its follower {follower}")
+                        follower._speed = new_speed
+                else:
+                    new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
+                    logging.debug(f"{self.vid}'s ACC desired speed {new_speed}")
+
+                    logging.debug(f"{self.vid}'s ACC new speed {new_speed}")
 
                 if new_speed < self.desired_speed and u <= 0:
                     logging.info(f"{self.vid} is blocked by slow vehicle!")
@@ -179,15 +214,11 @@ class PlatooningVehicle(Vehicle):
                 else:
                     self._blocked_front = False
 
-                logging.debug(f"{self.vid}'s ACC new speed {new_speed}")
-
                 return new_speed
 
         elif self._cf_mode is CF_Mode.CACC:
             assert(self.is_in_platoon())
-            assert(self.platoon_role is PlatoonRole.FOLLOWER)  # only followers can use CACC
-
-            # TODO make sure that the leader uses the platoon's parameters for ACC
+            assert(self.platoon_role is not PlatoonRole.LEADER)  # only followers can use CACC
 
             # sanity checks for front vehicle in platoon
             assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
