@@ -338,11 +338,13 @@ class PlatooningVehicle(Vehicle):
     def _ds(self, neighbor_speed: float):
         return abs(self.desired_speed - neighbor_speed)
 
-    def _dp(self, neighbor_position: int):
-        if self.position > neighbor_position:
-            return float("inf")  # TODO hack for only joining at the back
+    def _dp(self, neighbor_position: int, neighbor_rear_position: int):
+        if self.rear_position > neighbor_position:
+            # we are in front of the neighbor
+            return abs(self.rear_position - neighbor_position)
         else:
-            return abs(self.position - neighbor_position)
+            # we are behind the neighbor
+            return abs(neighbor_rear_position - self.position)
 
     def _cost_speed_position(self, ds: float, dp: int, alpha: float, beta: float):
         return (alpha * ds) + (beta * dp)
@@ -369,7 +371,8 @@ class PlatooningVehicle(Vehicle):
 
                 # calculate deviation values
                 ds = self._ds(neighbor.speed)
-                dp = self._dp(neighbor.position)
+                dp = self._dp(neighbor.position, neighbor.rear_position)
+
 
                 speed_deviation_threshold = 0.1  # TODO make parameter
                 # remove neighbor if not in speed range
