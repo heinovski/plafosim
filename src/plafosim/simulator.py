@@ -354,6 +354,7 @@ class Simulator:
                     # other vehicle did not start yet
                     continue
                 if self.has_collision(vehicle.vid, vehicle.position, vehicle.rear_position, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position):
+                    print("collision between %d and %d" % (vehicle.vid, other_vehicle.vid))
                     print("%d (%f-%f)" % (vehicle.vid, vehicle.position, vehicle.rear_position))
                     print("%d (%f-%f)" % (other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position))
                     exit(1)
