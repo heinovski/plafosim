@@ -22,6 +22,7 @@ class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
     def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float, min_gap: float):
+        """Initializes a vehicle type"""
         self._name = name  # the name of a vehicle type
         self._length = length  # the length of a vehicle type
         self._max_speed = max_speed  # the maximum speed of a vehicle type
@@ -31,26 +32,32 @@ class VehicleType:
 
     @property
     def name(self) -> str:
+        """Returns the name of a vehicle type"""
         return self._name
 
     @property
     def length(self) -> int:
+        """Returns the length of a vehicle type"""
         return self._length
 
     @property
     def max_speed(self) -> float:
+        """Returns the maximum speed of a vehicle type"""
         return self._max_speed
 
     @property
     def max_acceleration(self) -> float:
+        """Returns the maximum acceleration of a vehicle type"""
         return self._max_acceleration
 
     @property
     def max_deceleration(self) -> float:
+        """Returns the maximum deceleration of a vehicle type"""
         return self._max_deceleration
 
     @property
     def min_gap(self) -> float:
+        """Returns the minimum gap of a vehicle type"""
         return self._min_gap
 
 
