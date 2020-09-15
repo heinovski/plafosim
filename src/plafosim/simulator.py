@@ -80,6 +80,10 @@ class Simulator:
         return self._number_of_lanes
 
     @property
+    def step_length(self) -> int:
+        return self._step_length
+
+    @property
     def step(self) -> int:
         return self._step
 
