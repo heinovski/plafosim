@@ -244,8 +244,6 @@ class Simulator:
                     return abs(lane_diff) <= 1
                 return False
 
-            print(v.platoon_role)
-
         # we are just a regular vehicle or we are not (yet) in a platoon
 
         # check adjacent lane is free
