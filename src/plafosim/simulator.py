@@ -83,6 +83,10 @@ class Simulator:
     def step(self) -> int:
         return self._step
 
+    @property
+    def debug(self) -> bool:
+        return self._debug
+
     def call_actions(self):
         """Trigger actions of all vehicles"""
 
