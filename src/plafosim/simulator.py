@@ -475,11 +475,11 @@ class Simulator:
                     if vid == 0:
                         vehicle._cf_mode = CF_Mode.ACC
                         vehicle._platoon_role = PlatoonRole.LEADER
-                        vehicle._platoon = Platoon(0, list(range(0, number_of_vehicles)), desired_speed, 0, max_speed, max_acceleration, max_deceleration)
+                        vehicle._platoon = Platoon(vehicle, 0, list(range(0, number_of_vehicles)), desired_speed)
                     else:
                         vehicle._cf_mode = CF_Mode.CACC
                         vehicle._platoon_role = PlatoonRole.FOLLOWER
-                        vehicle._platoon = Platoon(0, list(range(0, number_of_vehicles)), self._vehicles[0].speed, 0, max_speed, max_acceleration, max_deceleration)
+                        vehicle._platoon = Platoon(vehicle, 0, list(range(0, number_of_vehicles)), self._vehicles[0].speed)
 
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,

@@ -40,17 +40,11 @@ class Platoon:
             owner: 'PlatooningVehicle',
             platoon_id: int,
             formation: list,
-            desired_speed: float,
-            max_speed: float,
-            max_acceleration: float,
-            max_deceleration: float):
+            desired_speed: float):
         self._owner = owner  # the instance of the platooning vehicle that owns this platoon instance
         self._platoon_id = platoon_id  # the id of the platoon
         self._formation = formation  # the current formation of the platoon
         self._desired_speed = desired_speed  # the current (desired) speed of the platoon
-        self._max_speed = max_speed  # the current maximum speed of the platoon
-        self._max_acceleration = max_acceleration  # the current maximum acceleration of the platoon
-        self._max_deceleration = max_deceleration  # the current maximum deceleration of the platoon
 
     @property
     def platoon_id(self) -> int:
@@ -84,19 +78,27 @@ class Platoon:
 
     @property
     def max_speed(self) -> float:
-        return self._max_speed
+        return min([self._owner._simulator._vehicles[vehicle].max_speed for vehicle in self.formation])
 
     @property
     def max_acceleration(self) -> float:
-        return self._max_acceleration
+        return min([self._owner._simulator._vehicles[vehicle].max_acceleration for vehicle in self.formation])
 
     @property
     def max_deceleration(self) -> float:
-        return self._max_deceleration
+        return min([self._owner._simulator._vehicles[vehicle].max_deceleration for vehicle in self.formation])
 
     @property
     def length(self) -> int:
         return len(self.formation)
+
+    @property
+    def position(self) -> int:
+        return self._owner._simulator._vehicles[self.leader_id].position
+
+    @property
+    def rear_position(self) -> int:
+        return self._owner._simulator._vehicles[self.last_id].rear_position
 
     def get_member_index(self, vid: int) -> int:
         return self.formation.index(vid)
@@ -143,7 +145,7 @@ class PlatooningVehicle(Vehicle):
         if self.cacc_spacing < 5.0:
             logging.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
-        self._platoon = Platoon(self, self.vid, [self.vid], self.desired_speed, self.max_speed, self.max_acceleration, self.max_deceleration)
+        self._platoon = Platoon(self, self.vid, [self.vid], self.desired_speed)
         self._in_maneuver = False
 
         # initialize timer
@@ -377,7 +379,7 @@ class PlatooningVehicle(Vehicle):
             member = self._simulator._vehicles[vehicle]
             # we copy all parameters from the platoon (for now)
             # thus, the follower no drives as fast as the already existing platoon (i.e., only the leader in the worst case)
-            member._platoon = Platoon(member, leader.platoon.platoon_id, leader.platoon.formation.copy(), leader.platoon.desired_speed, leader.platoon.max_speed, leader.platoon.max_acceleration, leader.platoon.max_deceleration)
+            member._platoon = Platoon(member, leader.platoon.platoon_id, leader.platoon.formation.copy(), leader.platoon.desired_speed)
 
         # switch to CACC
         self._cf_mode = CF_Mode.CACC
@@ -418,11 +420,11 @@ class PlatooningVehicle(Vehicle):
             # update formation all members
             for vehicle in self.platoon.formation:
                 member = self._simulator._vehicles[vehicle]
-                member._platoon = Platoon(member, self.platoon.platoon_id, self.platoon.formation.copy(), self.platoon.desired_speed, self.platoon.max_speed, self.platoon.max_acceleration, self.platoon.max_deceleration)
+                member._platoon = Platoon(member, self.platoon.platoon_id, self.platoon.formation.copy(), self.platoon.desired_speed)
 
             # leave
             self._platoon_role = PlatoonRole.NONE  # the current platoon role
-            self._platoon = Platoon(self, self.vid, [self.vid], self.desired_speed, self.max_speed, self.max_acceleration, self.max_deceleration)
+            self._platoon = Platoon(self, self.vid, [self.vid], self.desired_speed)
 
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
 
