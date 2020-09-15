@@ -70,7 +70,7 @@ class Vehicle:
 
     def __init__(
             self,
-            simulator,  # TODO add type hint
+            simulator: 'Simulator',
             vid: int,
             vehicle_type: VehicleType,
             depart_position: int,
