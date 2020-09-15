@@ -458,6 +458,10 @@ class Simulator:
             else:
                 arrival_position = self._road_length
 
+            if start_as_platoon and penetration_rate < 1.0:
+                print("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                exit(1)
+
             # choose vehicle "type" depending on the penetration rate
             if random() < penetration_rate:
                 vehicle = PlatooningVehicle(
