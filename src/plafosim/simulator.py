@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+import logging
 import time
 
 from math import copysign
@@ -40,12 +41,15 @@ class Simulator:
             collisions: bool,
             step_length: int,
             random_seed: int,
-            debug: bool,
+            log_level: int,
             gui: bool,
             gui_delay: int,
             gui_track_vehicle: int,
             result_base_filename: str):
         """Initialize a simulator instance"""
+
+        # TODO add custom filter that prepends the log entry with the step time
+        logging.basicConfig(level=log_level, format="%(levelname)s: %(message)s")
 
         # road network properties
         self._road_length = road_length  # the length of the road
@@ -60,12 +64,10 @@ class Simulator:
         self._step = 0  # the current simulation step in s
         self._step_length = step_length  # the length of a simulation step
         if random_seed >= 0:
-            if debug:
-                print("Using random seed %d" % random_seed)
+            logging.info("Using random seed %d" % random_seed)
             seed(random_seed)
             self._random_seed = random_seed
         self._running = False  # whether the simulation is running
-        self._debug = debug  # whether debugging is enabled
         self._gui = gui  # whether to show a live sumo-gui
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
@@ -86,10 +88,6 @@ class Simulator:
     @property
     def step(self) -> int:
         return self._step
-
-    @property
-    def debug(self) -> bool:
-        return self._debug
 
     def call_actions(self):
         """Trigger actions of all vehicles"""
@@ -197,16 +195,14 @@ class Simulator:
         source_lane = v.lane
         if source_lane == target_lane:
             return True
-        if self._debug:
-            print("%d wants to chage from lane %d to lane %d" % (vid, source_lane, target_lane))
+        logging.info("%d wants to chage from lane %d to lane %d" % (vid, source_lane, target_lane))
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
-            print("Warning: Can only change to adjacent lane!")
+            logging.warn("%d only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
-            if self._debug:
-                print("Adjusted target lane to %d (from %d)" % (target_lane, old_target_lane))
+            logging.info("Adjusted target lane to %d (from %d)" % (target_lane, old_target_lane))
 
         if isinstance(v, PlatooningVehicle) and v.is_in_platoon():
             # followers are not allowed to change the lane on their one
@@ -216,23 +212,20 @@ class Simulator:
             if v.platoon_role == PlatoonRole.LEADER:
                 assert(reason == "speedGain" or reason == "keepRight")
 
-                if self._debug:
-                    print("%d I need to check all platoon members" % vid)
+                logging.info("%d needs to check all platoon members" % vid)
 
                 can_change = True
                 for member in v.platoon.formation:
                     can_change = can_change and self.is_lane_change_safe(member, target_lane)
                     if not can_change:
-                        if self._debug:
-                            print("lane change is not safe for %d")
+                        logging.debug("lane change is not safe for %d")
 
                 if can_change:
                     # perform lane change for all vehicles in this platoon
                     for member in v.platoon.formation:
                         m = self._vehicles[member]
                         assert(m.lane == source_lane)
-                        if self._debug:
-                            print("%d switching lanes %d -> %d (%s)" % (member, source_lane, target_lane, reason))
+                        logging.info("%d is switching lanes: %d -> %d (%s)" % (member, source_lane, target_lane, reason))
 
                         # switch to adjacent lane
                         m._lane = target_lane
@@ -248,8 +241,7 @@ class Simulator:
 
         # check adjacent lane is free
         if self.is_lane_change_safe(vid, target_lane):
-            if self._debug:
-                print("%d switching lanes %d -> %d (%s)" % (vid, source_lane, target_lane, reason))
+            logging.info("%d is switching lanes: %d -> %d (%s)" % (vid, source_lane, target_lane, reason))
 
             # switch to adjacent lane
             v._lane = target_lane
@@ -301,15 +293,12 @@ class Simulator:
                 # vehicle did not start yet
                 continue
 
-            if self._debug:
-                print("%d my current speed %f" % (vehicle.vid, vehicle.speed))
-                print("%d my desired speed %f" % (vehicle.vid, vehicle.desired_speed))
+            logging.debug("%d's current speed %f" % (vehicle.vid, vehicle.speed))
 
             new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid), vehicle.desired_gap)
             vehicle._acceleration = new_speed - vehicle.speed
 
-            if self._debug:
-                print("%d current acceleration %f" % (vehicle.vid, vehicle.acceleration))
+            logging.debug("%d's current acceleration: %f" % (vehicle.vid, vehicle.acceleration))
 
             vehicle._speed = new_speed
 
@@ -359,9 +348,9 @@ class Simulator:
                     # other vehicle did not start yet
                     continue
                 if self.has_collision(vehicle.vid, vehicle.position, vehicle.rear_position, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position):
-                    print("collision between %d and %d" % (vehicle.vid, other_vehicle.vid))
-                    print("%d (%f-%f)" % (vehicle.vid, vehicle.position, vehicle.rear_position))
-                    print("%d (%f-%f)" % (other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position))
+                    logging.critical("collision between %d and %d" % (vehicle.vid, other_vehicle.vid))
+                    logging.debug("%d (%f-%f)" % (vehicle.vid, vehicle.position, vehicle.rear_position))
+                    logging.debug("%d (%f-%f)" % (other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position))
                     exit(1)
 
     def has_collision(self, vid1: float, pos1: float, rear_pos1: float, vid2: float, pos2: float, rear_pos2: float) -> bool:
@@ -409,7 +398,7 @@ class Simulator:
 
             if random_depart_position:
                 if start_as_platoon:
-                    print("Vehicles can not have random departure positions when starting as one platoon!")
+                    logging.warn("Vehicles can not have random departure positions when starting as one platoon!")
                     exit(1)
 
                 depart_position = position = randrange(0, self._road_length, depart_interval)
@@ -419,7 +408,7 @@ class Simulator:
 
             if random_depart_lane:
                 if start_as_platoon:
-                    print("Vehicles can not have random departure lanes when starting as one platoon!")
+                    logging.warn("Vehicles can not have random departure lanes when starting as one platoon!")
                     exit(1)
 
                 depart_lane = randrange(0, self._number_of_lanes, 1)
@@ -465,7 +454,7 @@ class Simulator:
                 arrival_position = self._road_length
 
             if start_as_platoon and penetration_rate < 1.0:
-                print("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
                 exit(1)
 
             # choose vehicle "type" depending on the penetration rate
@@ -497,8 +486,7 @@ class Simulator:
                                   speed, depart_lane, depart_speed, depart_time)
 
             self._vehicles[vid] = vehicle
-            if self._debug:
-                print("Generated vehicle", vehicle)
+            logging.info("Generated vehicle", vehicle)
 
             last_vehicle_id = vid
 
@@ -508,8 +496,7 @@ class Simulator:
         if not self._running:
             self._running = True
         else:
-            print("Simulation is already running!")
-            exit(1)
+            logging.warn("Simulation is already running!")
 
         # write some general information about the simulation
         with open(self._result_base_filename + '_general.out', 'w') as f:

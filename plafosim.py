@@ -16,6 +16,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 import argparse
+import logging
+
 from distutils.util import strtobool
 from timeit import default_timer as timer
 
@@ -119,8 +121,8 @@ def main():
     simulation.add_argument('--time-limit', type=int, default=100, help="The simulation limit in h")
     simulation.add_argument('--random-seed', type=int, default=-1,
                             help="The seed (>=0) for the random number generator instead of the current system time")
-    simulation.add_argument('--debug', type=lambda x: bool(strtobool(x)), default=False,
-                            choices=(True, False), help="Whether to enable debug output")
+    simulation.add_argument('--log-level', type=str, default="warn",
+                            choices=["warn", "info", "debug"], help="Whether to enable debug output")
     simulation.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False,
                             choices=(True, False), help="Whether to enable a live sumo gui")
     simulation.add_argument(
@@ -143,7 +145,7 @@ def main():
         args.collisions,
         args.step_length,
         args.random_seed,
-        args.debug,
+        getattr(logging, args.log_level.upper(), None),
         args.gui,
         args.gui_delay / 1000,
         args.track_vehicle,
