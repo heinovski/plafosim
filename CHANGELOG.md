@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.6.0, 2020-09-22
+- Updated traffic generation
+- Added simple join (at back) maneuver
+- Added an abstract base class for formation algorithms
+- Added simple distributed formation algorithm (speed & position)
+- Added simple leave (at front) maneuver
+- Added support for infrastructure
+- Updated platoon class
+- Added proper logging
+- Added functionality to track a vehicle in the gui
+
 ## v0.5.0, 2020-09-04
 - Added ACC car-following model
 - Added CACC car-following model
