@@ -390,7 +390,7 @@ class Simulator:
             depart_time_interval: int,
             random_arrival_position: bool,
             start_as_platoon: bool,
-            formation_strategy: str,
+            formation_algorithm: str,
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
@@ -470,8 +470,8 @@ class Simulator:
                 if penetration_rate < 1.0:
                     logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
                     exit(1)
-                if formation_strategy is not None:
-                    logging.warn("A formation strategy cannot be used when all starting as one platoon!")
+                if formation_algorithm is not None:
+                    logging.warn("A formation algorithm cannot be used when all starting as one platoon!")
                     exit(1)
 
             # choose vehicle "type" depending on the penetration rate
@@ -488,7 +488,7 @@ class Simulator:
                     depart_time,
                     acc_headway_time,
                     cacc_spacing,
-                    formation_strategy,
+                    formation_algorithm,
                     alpha,
                     speed_deviation_threshold,
                     position_deviation_threshold)

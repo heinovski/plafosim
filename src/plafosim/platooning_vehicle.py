@@ -136,7 +136,7 @@ class FormationAlgorithm(ABC):
         exit(1)
 
 
-class Distributed(FormationAlgorithm):
+class SpeedPosition(FormationAlgorithm):
     # TODO this should be changed to something general (e.g. object) to also support infastructure as well
     def __init__(self, owner: 'PlatooningVehicle',
                  alpha: float,
@@ -246,7 +246,7 @@ class PlatooningVehicle(Vehicle):
             depart_time: int,
             acc_headway_time: float,
             cacc_spacing: float,
-            formation_strategy: str,
+            formation_algorithm: str,
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
@@ -264,12 +264,13 @@ class PlatooningVehicle(Vehicle):
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, [self], self.desired_speed)
         self._in_maneuver = False
-        self._formation_strategy = formation_strategy
+        self._formation_algorithm = formation_algorithm
 
-        if self.formation_strategy is not None:
+        if self.formation_algorithm is not None:
             # initialize formation algorithm
-            if self.formation_strategy == "distributed":
-                self._formation_algorithm = Distributed(self, alpha, speed_deviation_threshold, position_deviation_threshold)
+            # TODO make enum
+            if self.formation_algorithm == "speedposition":
+                self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
                 logging.critical("Unkown formation algorithm!")
                 exit(1)
@@ -330,8 +331,8 @@ class PlatooningVehicle(Vehicle):
         self._in_maneuver = var
 
     @property
-    def formation_strategy(self) -> str:
-        return self._formation_strategy
+    def formation_algorithm(self) -> str:
+        return self._formation_algorithm
 
     def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
         """Helper method to calcucate the ACC acceleration based on the given parameters"""
@@ -427,11 +428,11 @@ class PlatooningVehicle(Vehicle):
 
         super()._action()
 
-        if self.formation_strategy is not None:
+        if self.formation_algorithm is not None:
             # transmit regular platoon advertisements
             self._advertise()
 
-            # search for a platoon (depending on the strategy)
+            # search for a platoon (depending on the algorithm)
             self._formation_algorithm.do_formation()
 
     def _get_neighbors(self):
