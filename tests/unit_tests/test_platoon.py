@@ -29,5 +29,16 @@ def test_creation():
     assert(platoon is not None)
     assert(platoon.platoon_id == platoon_id)
     assert(platoon.leader is v1)
+    assert(platoon.last is v3)
     assert(platoon.formation is formation)
     assert(platoon.desired_speed == v1.desired_speed)
+    assert(platoon.speed == 0)
+    assert(platoon.lane == 0)
+    # TODO max_acceleration
+    # TODO max_deceleration
+    assert(platoon.length == 3)
+    assert(platoon.position == 0)
+    # TODO rear_position
+    assert(platoon.get_members() == [1, 2, 3])
+    assert(platoon.get_member_index(v2) == 1)
+    assert(platoon.get_front(v3) is v2)
