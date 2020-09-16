@@ -14,24 +14,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-from plafosim.platooning_vehicle import Platoon
+from plafosim.platooning_vehicle import PlatooningVehicle, Platoon
 
 
 def test_creation():
-    platoon_id = 2
-    formation = [1, 2, 3]
-    desired_speed = 36
-    max_speed = 55
-    max_acceleration = 2.5
-    max_deceleration = 15
+    v1 = PlatooningVehicle(None, 1, None, 0, 1000, 36, 0, 0, 0, 1, 5)
+    v2 = PlatooningVehicle(None, 2, None, 0, 1000, 36, 0, 0, 1, 1, 5)
+    v3 = PlatooningVehicle(None, 3, None, 0, 1000, 36, 0, 0, 2, 1, 5)
 
-    platoon = Platoon(None, platoon_id, formation, desired_speed, max_speed, max_acceleration, max_deceleration)
+    platoon_id = 2
+    formation = [v1, v2, v3]
+    platoon = Platoon(platoon_id, formation, v1.desired_speed)
 
     assert(platoon is not None)
     assert(platoon.platoon_id == platoon_id)
-    assert(platoon.leader_id == formation[0])
-    assert(platoon.formation == formation)
-    assert(platoon.desired_speed == desired_speed)
-    assert(platoon.max_speed == max_speed)
-    assert(platoon.max_acceleration == max_acceleration)
-    assert(platoon.max_deceleration == max_deceleration)
+    assert(platoon.leader is v1)
+    assert(platoon.formation is formation)
+    assert(platoon.desired_speed == v1.desired_speed)
