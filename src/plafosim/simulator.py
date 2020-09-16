@@ -490,8 +490,9 @@ class Simulator:
             last_vehicle_id = vid
 
         if start_as_platoon:
+            platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
             for vehicle in self._vehicles.values():
-                vehicle._platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
+                vehicle._platoon = platoon
 
     def run(self, max_step: int):
         """Run the simulation with the specified parameters"""

@@ -380,7 +380,7 @@ class PlatooningVehicle(Vehicle):
         for vehicle in leader.platoon.formation:
             # we copy all parameters from the platoon (for now)
             # thus, the follower no drives as fast as the already existing platoon (i.e., only the leader in the worst case)
-            vehicle._platoon = Platoon(leader.platoon.platoon_id, leader.platoon.formation.copy(), leader.platoon.desired_speed)
+            vehicle._platoon = leader.platoon
 
         # switch to CACC
         self._cf_mode = CF_Mode.CACC
@@ -420,7 +420,7 @@ class PlatooningVehicle(Vehicle):
 
             # update formation all members
             for vehicle in self.platoon.formation:
-                vehicle._platoon = Platoon(self.platoon.platoon_id, self.platoon.formation.copy(), self.platoon.desired_speed)
+                vehicle._platoon = self.platoon
 
             # leave
             self._platoon_role = PlatoonRole.NONE  # the current platoon role
