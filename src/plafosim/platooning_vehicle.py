@@ -138,7 +138,7 @@ class PlatooningVehicle(Vehicle):
             formation_strategy: str,
             alpha: float,
             speed_deviation_threshold: float,
-            position_deviation_threshold: float):
+            position_deviation_threshold: int):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
 
