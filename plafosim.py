@@ -60,8 +60,6 @@ def main():
                          help="The headway time to be used for the ACC in s")
     vehicle.add_argument('--cacc-spacing', type=float, default=5.0,
                          help="The constant spacing to be used for the CACC in m")
-    vehicle.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
-                         choices=(True, False), help="Whether vehicles should automatically start as one platoon")
     vehicle.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to enable collision checks")
     vehicle.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
@@ -117,8 +115,18 @@ def main():
         help="Whether to use a random arrival position for every vehicle instead of the end of the road")
     # platoon properties
     platoon = parser.add_argument_group('platoon properties')
+    platoon.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
+                         choices=(True, False), help="Whether vehicles should automatically start as one platoon")
     platoon.add_argument('--formation-strategy', type=str, default=None,
                          choices=["distributed"], help="The formation strategy to use")
+    # formation properties
+    formation = parser.add_argument_group('formation properties')
+    formation.add_argument('--alpha', type=float, default=0.5,
+                           help="The weight of the speed deviation in comparison to the position deviation")
+    formation.add_argument('--speed-deviation-threshold', type=float, default=0.1,
+                           help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates")
+    formation.add_argument('--position-deviation-threshold', type=int, default=300,
+                           help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates")
     # simulation properties
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
@@ -164,7 +172,6 @@ def main():
         args.max_speed,
         args.acc_headway_time,
         args.cacc_spacing,
-        args.start_as_platoon,
         args.random_depart_position,
         args.random_depart_lane,
         args.desired_speed,
@@ -177,7 +184,11 @@ def main():
         args.depart_method,
         args.depart_time_interval,
         args.random_arrival_position,
-        args.formation_strategy)
+        args.start_as_platoon,
+        args.formation_strategy,
+        args.alpha,
+        args.speed_deviation_threshold,
+        args.position_deviation_threshold)
     # TODO log generation parameters
     simulator.run(max_step)
 

@@ -135,7 +135,10 @@ class PlatooningVehicle(Vehicle):
             depart_time: int,
             acc_headway_time: float,
             cacc_spacing: float,
-            formation_strategy: str):
+            formation_strategy: str,
+            alpha: float,
+            speed_deviation_threshold: float,
+            position_deviation_threshold: float):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time)
 
@@ -151,6 +154,14 @@ class PlatooningVehicle(Vehicle):
         self._platoon = Platoon(self.vid, [self], self.desired_speed)
         self._in_maneuver = False
         self._formation_strategy = formation_strategy
+
+        # TODO specific strategy parameter
+        assert(alpha >= 0 and alpha <= 1.0)
+        self._alpha = alpha
+        # TODO specific strategy parameter
+        self._speed_deviation_threshold = speed_deviation_threshold
+        # TODO specific strategy parameter
+        self._position_deviation_threshold = position_deviation_threshold
 
         if self.formation_strategy is not None:
             # initialize timer
@@ -360,12 +371,6 @@ class PlatooningVehicle(Vehicle):
 
             found_candidates = []
 
-            alpha = 0.5  # TODO make paramter
-            beta = 1.0 - alpha
-            assert(alpha >= 0.0)
-            assert(beta >= 0.0)
-            assert(alpha + beta == 1.0)
-
             # get all available vehicles from the neighbor table
             for neighbor in self._get_neighbors():
 
@@ -378,20 +383,18 @@ class PlatooningVehicle(Vehicle):
                     logging.debug("%d's neighbor %d not applicable because of its absolute position" % (self.vid, neighbor.vid))
                     continue
 
-                speed_deviation_threshold = 0.1  # TODO make parameter
                 # remove neighbor if not in speed range
-                if ds > speed_deviation_threshold * self.desired_speed:
+                if ds > self._speed_deviation_threshold * self.desired_speed:
                     logging.debug("%d' neighbor %d not applicable because of its speed difference" % (self.vid, neighbor.vid))
                     continue
 
-                position_deviation_threshold = 300  # TODO make parameter
                 # remove neighbor if not in position range
-                if dp > position_deviation_threshold:
+                if dp > self._position_deviation_threshold:
                     logging.debug("%d's neighbor %d not applicable because of its position difference" % (self.vid, neighbor.vid))
                     continue
 
                 # calculate deviation/cost
-                fx = self._cost_speed_position(ds, dp, alpha, beta)
+                fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
 
                 # add neighbor to list
                 found_candidates.append((neighbor.vid, neighbor.platoon.platoon_id, neighbor.platoon.leader.vid, fx))

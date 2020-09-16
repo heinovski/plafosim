@@ -367,7 +367,6 @@ class Simulator:
             max_speed: float,
             acc_headway_time: float,
             cacc_spacing: float,
-            start_as_platoon: bool,
             random_depart_position: bool,
             random_depart_lane: bool,
             desired_speed: float,
@@ -380,7 +379,11 @@ class Simulator:
             depart_method: str,
             depart_time_interval: int,
             random_arrival_position: bool,
-            formation_strategy: str):
+            start_as_platoon: bool,
+            formation_strategy: str,
+            alpha: float,
+            speed_deviation_threshold: float,
+            position_deviation_threshold: int):
         """Generate vehicles for the simulation"""
 
         last_vehicle_id = -1
@@ -475,7 +478,10 @@ class Simulator:
                     depart_time,
                     acc_headway_time,
                     cacc_spacing,
-                    formation_strategy)
+                    formation_strategy,
+                    alpha,
+                    speed_deviation_threshold,
+                    position_deviation_threshold)
                 if start_as_platoon:
                     if vid == 0:
                         vehicle._cf_mode = CF_Mode.ACC
