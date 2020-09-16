@@ -475,11 +475,10 @@ class Simulator:
                     if vid == 0:
                         vehicle._cf_mode = CF_Mode.ACC
                         vehicle._platoon_role = PlatoonRole.LEADER
-                        vehicle._platoon = Platoon(vehicle, 0, list(range(0, number_of_vehicles)), desired_speed)
                     else:
                         vehicle._cf_mode = CF_Mode.CACC
                         vehicle._platoon_role = PlatoonRole.FOLLOWER
-                        vehicle._platoon = Platoon(vehicle, 0, list(range(0, number_of_vehicles)), self._vehicles[0].speed)
+                    vehicle._platoon = Platoon(0, [vehicle], desired_speed)
 
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
@@ -489,6 +488,10 @@ class Simulator:
             logging.info("Generated vehicle", vehicle)
 
             last_vehicle_id = vid
+
+        if start_as_platoon:
+            for vehicle in self._vehicles.values():
+                vehicle._platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
 
     def run(self, max_step: int):
         """Run the simulation with the specified parameters"""

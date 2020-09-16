@@ -37,12 +37,11 @@ class Platoon:
 
     def __init__(
             self,
-            owner: 'PlatooningVehicle',
             platoon_id: int,
             formation: list,
             desired_speed: float):
-        self._owner = owner  # the instance of the platooning vehicle that owns this platoon instance
         self._platoon_id = platoon_id  # the id of the platoon
+        #TODO convert to dict?
         self._formation = formation  # the current formation of the platoon
         self._desired_speed = desired_speed  # the current (desired) speed of the platoon
 
@@ -51,11 +50,11 @@ class Platoon:
         return self._platoon_id
 
     @property
-    def leader_id(self) -> int:
+    def leader(self) -> 'PlatooningVehicle':
         return self.formation[0]
 
     @property
-    def last_id(self) -> int:
+    def last(self) -> 'PlatooningVehicle':
         return self.formation[-1]
 
     @property
@@ -69,24 +68,24 @@ class Platoon:
     @property
     def speed(self) -> float:
         # HACK for keeping the speed up to date
-        return self._owner._simulator._vehicles[self.leader_id].speed
+        return self.leader.speed
 
     @property
     def lane(self) -> int:
         # HACK for keeping the lane up to date
-        return self._owner._simulator._vehicles[self.leader_id].lane
+        return self.leader.lane
 
     @property
     def max_speed(self) -> float:
-        return min([self._owner._simulator._vehicles[vehicle].max_speed for vehicle in self.formation])
+        return min(self.formation, key=lambda x: x.max_speed)
 
     @property
     def max_acceleration(self) -> float:
-        return min([self._owner._simulator._vehicles[vehicle].max_acceleration for vehicle in self.formation])
+        return min(self.formation, key=lambda x: x.max_acceleration)
 
     @property
     def max_deceleration(self) -> float:
-        return min([self._owner._simulator._vehicles[vehicle].max_deceleration for vehicle in self.formation])
+        return min(self.formation, key=lambda x: x.max_deceleration)
 
     @property
     def length(self) -> int:
@@ -94,20 +93,23 @@ class Platoon:
 
     @property
     def position(self) -> int:
-        return self._owner._simulator._vehicles[self.leader_id].position
+        return self.leader.position
 
     @property
     def rear_position(self) -> int:
-        return self._owner._simulator._vehicles[self.last_id].rear_position
+        return self.last.rear_position
 
-    def get_member_index(self, vid: int) -> int:
-        return self.formation.index(vid)
+    def get_members(self) -> list:
+        return [vehicle.vid for vehicle in self.formation]
 
-    def get_front_id(self, vid: int) -> int:
-        if vid != self.leader_id:
-            return self.formation[self.get_member_index(vid) - 1]
+    def get_member_index(self, vehicle: 'PlatooningVehicle') -> int:
+        return self.formation.index(vehicle)
+
+    def get_front(self, vehicle: 'PlatooningVehicle') -> 'PlatooningVehicle':
+        if vehicle is not self.leader:
+            return self.formation[self.get_member_index(vehicle) - 1]
         else:
-            return -1
+            return None
 
 
 class CF_Mode(Enum):
@@ -145,7 +147,7 @@ class PlatooningVehicle(Vehicle):
         if self.cacc_spacing < 5.0:
             logging.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
-        self._platoon = Platoon(self, self.vid, [self.vid], self.desired_speed)
+        self._platoon = Platoon(self.vid, [self], self.desired_speed)
         self._in_maneuver = False
 
         # initialize timer
@@ -252,7 +254,7 @@ class PlatooningVehicle(Vehicle):
             # sanity checks for front vehicle in platoon
             assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
             # check whether there is a vehicle between us and our front vehicle
-            assert(self.platoon.get_front_id(self.vid) == self._simulator._get_predecessor_id(self.vid))
+            assert(self.platoon.get_front(self).vid == self._simulator._get_predecessor_id(self.vid))
 
             gap_to_predecessor = predecessor_rear_position - self.position
             logging.debug("%d's front gap %f" % (self.vid, gap_to_predecessor))
@@ -260,9 +262,9 @@ class PlatooningVehicle(Vehicle):
             logging.debug("%d's predecessor speed %f" % (self.vid, speed_predecessor))
 
             ### HACK FOR AVOIDING COMMUNICATION ###
-            # acceleration_predecessor = self._simulator._vehicles[self.platoon.get_front_id(self.vid)].acceleration
-            # acceleration_leader = self._simulator._vehicles[self.platoon.leader_id].acceleration
-            speed_leader = self._simulator._vehicles[self.platoon.leader_id].speed
+            # acceleration_predecessor = self.platoon.get_front(self).acceleration
+            # acceleration_leader = self.platoon.leader.acceleration
+            speed_leader = self.platoon.leader.speed
             #######################################
 
             ### HACK FOR CACC ###
@@ -326,8 +328,8 @@ class PlatooningVehicle(Vehicle):
         # TODO joint at front
         # TODO join at arbitrary positions
         # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
-        if self.position >= self._simulator._vehicles[leader.platoon.last_id].rear_position:
-            logging.warn("%d is in front of (at least) the last vehicle %d of the target platoon %d (leader %d)" % (self.vid, leader.platoon.last_id, platoon_id, leader_id))
+        if self.position >= leader.platoon.rear_position:
+            logging.warn("%d is in front of (at least) the last vehicle %d of the target platoon %d (leader %d)" % (self.vid, leader.platoon.last.vid, platoon_id, leader_id))
             self.in_maneuver = False
             return
 
@@ -341,7 +343,7 @@ class PlatooningVehicle(Vehicle):
         leader._platoon_role = PlatoonRole.LEADER
         logging.debug("%d became a leader of platoon %d" % (leader_id, leader.platoon.platoon_id))
 
-        last = self._simulator._vehicles[leader.platoon.last_id]
+        last = leader.platoon.last
 
         # TODO we do not want to teleport the vehicle
         if teleport:
@@ -366,20 +368,19 @@ class PlatooningVehicle(Vehicle):
                 exit(1)
 
             # TODO check whether someone else is between us
-            if self._simulator._get_predecessor_id(self.vid) != leader.platoon.last_id:
+            if self._simulator._get_predecessor_id(self.vid) != leader.platoon.last.vid:
                 print("There is some one between us!!!!")
                 exit(1)
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
         # update all members
-        leader.platoon._formation.append(self.vid)
+        leader.platoon._formation.append(self)
 
         for vehicle in leader.platoon.formation:
-            member = self._simulator._vehicles[vehicle]
             # we copy all parameters from the platoon (for now)
             # thus, the follower no drives as fast as the already existing platoon (i.e., only the leader in the worst case)
-            member._platoon = Platoon(member, leader.platoon.platoon_id, leader.platoon.formation.copy(), leader.platoon.desired_speed)
+            vehicle._platoon = Platoon(leader.platoon.platoon_id, leader.platoon.formation.copy(), leader.platoon.desired_speed)
 
         # switch to CACC
         self._cf_mode = CF_Mode.CACC
@@ -396,35 +397,34 @@ class PlatooningVehicle(Vehicle):
         if self.platoon.length == 1:
             return
 
-        logging.info("%d is trying to leave platoon %d (leader %d)" % (self.vid, self.platoon.platoon_id, self.platoon.leader_id))
+        logging.info("%d is trying to leave platoon %d (leader %d)" % (self.vid, self.platoon.platoon_id, self.platoon.leader.vid))
 
         self.in_maneuver = True
 
-        if self.vid == self.platoon.last_id:
+        if self is self.platoon.last:
             # leave at back
             # TODO check whether it is safe to leave
             # TODO tell the leader (who needs to tell all other vehicles)
             # TODO leave
             logging.warn("Leave from back of a platoon is not yet implemented!")
             exit(1)
-        elif self.vid == self.platoon.leader_id:
+        elif self is self.platoon.leader:
             # leave at front
 
             # tell the second vehicle in the platoon to become the new leader
-            new_leader = self._simulator._vehicles[self.platoon.formation[1]]
+            new_leader = self.platoon.formation[1]
             new_leader._platoon_role = PlatoonRole.LEADER
             new_leader._cf_mode = CF_Mode.ACC
 
-            self.platoon._formation.remove(self.vid)
+            self.platoon._formation.remove(self)
 
             # update formation all members
             for vehicle in self.platoon.formation:
-                member = self._simulator._vehicles[vehicle]
-                member._platoon = Platoon(member, self.platoon.platoon_id, self.platoon.formation.copy(), self.platoon.desired_speed)
+                vehicle._platoon = Platoon(self.platoon.platoon_id, self.platoon.formation.copy(), self.platoon.desired_speed)
 
             # leave
             self._platoon_role = PlatoonRole.NONE  # the current platoon role
-            self._platoon = Platoon(self, self.vid, [self.vid], self.desired_speed)
+            self._platoon = Platoon(self.vid, [self], self.desired_speed)
 
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
 
