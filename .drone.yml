@@ -58,6 +58,15 @@ steps:
       - pip3 install --upgrade tqdm
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --time-limit 1 --random-seed $SEED
+  - name: run with formation distributed
+    image: python
+    environment:
+      SEED: ${DRONE_BUILD_NUMBER}
+    commands:
+      - pip3 install --upgrade funcy
+      - pip3 install --upgrade tqdm
+        # we are testing both vehicle types
+      - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
 
 ---
 kind: pipeline
