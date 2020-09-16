@@ -216,23 +216,22 @@ class Simulator:
 
                 can_change = True
                 for member in v.platoon.formation:
-                    can_change = can_change and self.is_lane_change_safe(member, target_lane)
+                    can_change = can_change and self.is_lane_change_safe(member.vid, target_lane)
                     if not can_change:
                         logging.debug("lane change is not safe for %d")
 
                 if can_change:
                     # perform lane change for all vehicles in this platoon
                     for member in v.platoon.formation:
-                        m = self._vehicles[member]
-                        assert(m.lane == source_lane)
-                        logging.info("%d is switching lanes: %d -> %d (%s)" % (member, source_lane, target_lane, reason))
+                        assert(member.lane == source_lane)
+                        logging.info("%d is switching lanes: %d -> %d (%s)" % (member.vid, source_lane, target_lane, reason))
 
                         # switch to adjacent lane
-                        m._lane = target_lane
+                        member._lane = target_lane
 
                         # log lane change
                         with open(self._result_base_filename + '_member_changes.csv', 'a') as f:
-                            f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, member, m.position, source_lane, target_lane, m.speed, reason))
+                            f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, member.vid, member.position, source_lane, target_lane, member.speed, reason))
 
                     return abs(lane_diff) <= 1
                 return False
