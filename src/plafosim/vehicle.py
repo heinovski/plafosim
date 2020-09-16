@@ -203,7 +203,7 @@ class Vehicle:
     def _safe_speed(self, speed_predecessor: float, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
         speed_diff_to_use = speed_predecessor - self.speed  # use to drive the same speed
         position_diff_to_use = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
-        return speed_diff_to_use + self._simulator.distance2speed(position_diff_to_use, self._simulator._step_length)
+        return speed_diff_to_use + self._simulator.distance2speed(position_diff_to_use, self._simulator.step_length)
 
     # krauss - single lane traffic
     # adjust speed
@@ -224,11 +224,11 @@ class Vehicle:
         diff_to_desired = self.desired_speed - self.speed
         if diff_to_desired > 0:
             # we need to accelerate
-            new_speed = min(self.speed + min(diff_to_desired, self._simulator.acceleration2speed(self.max_acceleration, self._simulator._step_length)), self.max_speed)
+            new_speed = min(self.speed + min(diff_to_desired, self._simulator.acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
             logging.debug("%d wants to accelerate to %f" % (self.vid, new_speed))
         elif diff_to_desired < 0:
             # we need to decelerate
-            new_speed = max(self.speed + max(diff_to_desired, -self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length)), 0)
+            new_speed = max(self.speed + max(diff_to_desired, -self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
             logging.debug("%d wants to decelerate to %f" % (self.vid, new_speed))
         else:
             new_speed = self.speed
@@ -249,7 +249,7 @@ class Vehicle:
                 logging.info("%d is blocked by a slow vehicle!" % self.vid)
                 self._blocked_front = True
 
-                new_speed = max(safe_speed, self.speed - self._simulator.acceleration2speed(self.max_deceleration, self._simulator._step_length))  # we cannot brake stronger than we actually can
+                new_speed = max(safe_speed, self.speed - self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
                 logging.debug("%d's new speed after safe speed %f" % (self.vid, new_speed))
             else:
                 self._blocked_front = False
