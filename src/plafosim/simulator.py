@@ -496,7 +496,7 @@ class Simulator:
                                   speed, depart_lane, depart_speed, depart_time)
 
             self._vehicles[vid] = vehicle
-            logging.info("Generated vehicle", vehicle)
+            logging.info("Generated vehicle %s" % vehicle)
 
             last_vehicle_id = vid
 
