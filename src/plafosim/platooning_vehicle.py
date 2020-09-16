@@ -241,7 +241,7 @@ class PlatooningVehicle(Vehicle):
                 else:
                     self._blocked_front = False
 
-                logging.debug("%d ACC new speed %f" % (self.vid, new_speed))
+                logging.debug("%d's ACC new speed %f" % (self.vid, new_speed))
 
                 return new_speed
 
