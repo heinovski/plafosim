@@ -33,4 +33,4 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --step 1 \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
-    2>&1 | tee runlog_${experiment}_plafosim
+    2>&1 | tee run_${experiment}_plafosim.log

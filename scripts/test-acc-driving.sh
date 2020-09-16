@@ -31,7 +31,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --step 1 \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
-    2>&1 | tee runlog_${experiment}_plafosim
+    2>&1 | tee run_${experiment}_plafosim.log
 
 # also change routes file
 /usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_$experiment.csv --append \
@@ -45,7 +45,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --lanechange-output $experiment-changes.xml \
     --step-length 1 \
     $(test -z "$seed" && echo --random || echo --seed $seed) \
-    2>&1 | tee runlog_${experiment}_sumo
+    2>&1 | tee run_${experiment}_sumo.log
 
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissions.csv -s ','
