@@ -149,3 +149,8 @@ tags
 # Persistent undo
 [._]*.un~
 
+# --> Project
+*.csv
+*.log
+*.xml
+*.png
