@@ -268,7 +268,7 @@ class Vehicle:
         return new_speed
 
     def action(self):
-        """Trigger actions of a Vehicle"""
+        """Trigger actions of a vehicle"""
 
         if self._simulator.step < self.depart_time:
             # we did not start yet

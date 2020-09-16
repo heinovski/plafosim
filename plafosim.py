@@ -127,6 +127,9 @@ def main():
                            help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates")
     formation.add_argument('--position-deviation-threshold', type=int, default=300,
                            help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates")
+    # infrastructure properties
+    infrastructures = parser.add_argument_group('infrastructure properties')
+    infrastructures.add_argument('--infrastructures', type=int, default=0, help="The number of infrastructures")
     # simulation properties
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
@@ -190,6 +193,7 @@ def main():
         args.speed_deviation_threshold,
         args.position_deviation_threshold)
     # TODO log generation parameters
+    simulator.generate_infrastructure(args.infrastructures)
     simulator.run(max_step)
 
     end_time = timer()

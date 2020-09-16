@@ -21,6 +21,7 @@ from math import copysign
 from random import normalvariate, randrange, random, seed
 from tqdm import tqdm
 from .vehicle import VehicleType, Vehicle
+from .infrastructure import Infrastructure
 from .platooning_vehicle import PlatooningVehicle, CF_Mode, PlatoonRole, Platoon
 
 # assumptions
@@ -60,6 +61,9 @@ class Simulator:
         self._lane_changes = lane_changes  # whether to enable lane changes
         self._collisions = collisions  # whether to check for collisions
 
+        # infrastructure properties
+        self._infrastructures = {}  # the list (dict) of instrastructures in the simulation
+
         # simulation properties
         self._step = 0  # the current simulation step in s
         self._step_length = step_length  # the length of a simulation step
@@ -89,11 +93,17 @@ class Simulator:
     def step(self) -> int:
         return self._step
 
-    def call_actions(self):
+    def call_vehicle_actions(self):
         """Trigger actions of all vehicles"""
 
         for vehicle in self._vehicles.values():
             vehicle.action()
+
+    def call_infrastructure_actions(self):
+        """Trigger actions of all instrastructures"""
+
+        for instrastructure in self._infrastructures.values():
+            instrastructure.action()
 
     def speed2distance(self, speed: float, time_interval: float = 1) -> float:
         return speed * time_interval
@@ -505,6 +515,25 @@ class Simulator:
             for vehicle in self._vehicles.values():
                 vehicle._platoon = platoon
 
+    def generate_infrastructure(self, number_of_infrastructures: int):
+        """Generate infrastructures for the simulation"""
+
+        if number_of_infrastructures <= 0:
+            return
+
+        last_infrastructure_id = -1
+
+        placement_interval = self.road_length / number_of_infrastructures
+
+        for num in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures"):
+            iid = last_infrastructure_id + 1
+
+            infrastructure = Infrastructure(iid, iid * placement_interval)
+            self._infrastructures[iid] = infrastructure
+            logging.info("Generated infrastructure %s" % infrastructure)
+
+            last_infrastructure_id = iid
+
     def run(self, max_step: int):
         """Run the simulation with the specified parameters"""
 
@@ -595,7 +624,10 @@ class Simulator:
                 time.sleep(self._gui_delay)
 
             # call regular actions on vehicles
-            self.call_actions()
+            self.call_vehicle_actions()
+
+            # call regular actrions on infrastructure
+            self.call_infrastructure_actions()
 
             # perform lane changes (for all vehicles)
             if self._lane_changes:
