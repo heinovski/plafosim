@@ -404,7 +404,7 @@ class Simulator:
                     logging.warn("Vehicles can not have random departure positions when starting as one platoon!")
                     exit(1)
 
-                depart_position = position = randrange(0, self._road_length, depart_interval)
+                depart_position = position = randrange(0, self.road_length, depart_interval)
             else:
                 depart_position = 0
             depart_position = depart_position + length  # equal to departPos="base"
@@ -414,7 +414,7 @@ class Simulator:
                     logging.warn("Vehicles can not have random departure lanes when starting as one platoon!")
                     exit(1)
 
-                depart_lane = randrange(0, self._number_of_lanes, 1)
+                depart_lane = randrange(0, self.number_of_lanes, 1)
             else:
                 depart_lane = 0
 
