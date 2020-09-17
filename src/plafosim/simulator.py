@@ -205,7 +205,7 @@ class Simulator:
         source_lane = v.lane
         if source_lane == target_lane:
             return True
-        logging.info("%d wants to chage from lane %d to lane %d" % (vid, source_lane, target_lane))
+        logging.debug("%d wants to chage from lane %d to lane %d (%s)" % (vid, source_lane, target_lane, reason))
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
@@ -228,7 +228,7 @@ class Simulator:
                 for member in v.platoon.formation:
                     can_change = can_change and self.is_lane_change_safe(member.vid, target_lane)
                     if not can_change:
-                        logging.debug("lane change is not safe for %d")
+                        logging.debug("lane change is not safe for %d" % member.vid)
 
                 if can_change:
                     # perform lane change for all vehicles in this platoon
@@ -244,6 +244,7 @@ class Simulator:
                             f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, member.vid, member.position, source_lane, target_lane, member.speed, reason))
 
                     return abs(lane_diff) <= 1
+                logging.debug("%d's lane change is not safe" % vid)
                 return False
 
         # we are just a regular vehicle or we are not (yet) in a platoon
