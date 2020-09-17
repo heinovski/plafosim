@@ -532,6 +532,7 @@ class PlatooningVehicle(Vehicle):
 
         # switch to CACC
         self._cf_mode = CF_Mode.CACC
+        self._blocked_front = False
 
         logging.info("%d joined platoon %d (leader: %d)" % (self.vid, platoon_id, leader_id))
 
