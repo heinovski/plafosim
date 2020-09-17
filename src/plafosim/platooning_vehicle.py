@@ -348,6 +348,7 @@ class PlatooningVehicle(Vehicle):
                 gap_to_predecessor = predecessor_rear_position - self.position
                 logging.debug("%d's front gap %f" % (self.vid, gap_to_predecessor))
                 logging.debug("%d's desired gap %f" % (self.vid, self.desired_gap))
+                logging.debug("%d's desired speed %f" % (self.vid, self.desired_speed))
                 logging.debug("%d's predecessor speed %f" % (self.vid, speed_predecessor))
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.acc_headway_time * self.speed)
