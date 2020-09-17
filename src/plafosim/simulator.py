@@ -216,7 +216,7 @@ class Simulator:
 
         if isinstance(v, PlatooningVehicle) and v.is_in_platoon():
             # followers are not allowed to change the lane on their one
-            assert(v.platoon_role != PlatoonRole.FOLLOWER)
+            assert(v.platoon_role is not PlatoonRole.FOLLOWER)
 
             # leaders are allowed to change the lane
             if v.platoon_role == PlatoonRole.LEADER:
