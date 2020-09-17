@@ -201,7 +201,7 @@ class SpeedPosition(FormationAlgorithm):
 
             # remove neighbor if not in speed range
             if ds > self._speed_deviation_threshold * self._owner.desired_speed:
-                logging.debug("%d' neighbor %d not applicable because of its speed difference" % (self._owner.vid, neighbor.vid))
+                logging.debug("%d's neighbor %d not applicable because of its speed difference" % (self._owner.vid, neighbor.vid))
                 continue
 
             # remove neighbor if not in position range
