@@ -151,7 +151,7 @@ class Vehicle:
 
     @property
     def desired_gap(self) -> float:
-        return 0
+        return self.vehicle_type.min_gap
 
     @property
     def depart_lane(self) -> int:
