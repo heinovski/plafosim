@@ -14,7 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-from plafosim.platooning_vehicle import PlatooningVehicle, Platoon
+from plafosim.platooning_vehicle import PlatooningVehicle
+from plafosim.platoon import Platoon
 
 
 def test_creation():

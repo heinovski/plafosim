@@ -23,7 +23,8 @@ from tqdm import tqdm
 
 from .vehicle import VehicleType, Vehicle
 from .infrastructure import Infrastructure
-from .platooning_vehicle import PlatooningVehicle, CF_Mode, PlatoonRole, Platoon
+from .platooning_vehicle import PlatooningVehicle, CF_Mode, PlatoonRole
+from .platoon import Platoon
 
 # assumptions
 # you just reach your arrival_position
