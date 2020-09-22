@@ -737,8 +737,15 @@ class Simulator:
         for num in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures"):
             iid = last_infrastructure_id + 1
 
-            infrastructure = Infrastructure(iid, iid * placement_interval)
+            infrastructure = Infrastructure(self,
+                                            iid,
+                                            iid * placement_interval,
+                                            self._formation_algorithm if self._formation_strategy == "centralized" else None,
+                                            self._alpha,
+                                            self._speed_deviation_threshold,
+                                            self._position_deviation_threshold)
             self._infrastructures[iid] = infrastructure
+
             logging.info("Generated infrastructure %s" % infrastructure)
 
             last_infrastructure_id = iid

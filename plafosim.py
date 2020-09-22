@@ -141,7 +141,7 @@ def main():
     platoon.add_argument('--formation-algorithm', type=str, default=None,
                          choices=["speedposition"], help="The formation algorithm to use")
     platoon.add_argument('--formation-strategy', type=str, default="distributed",
-                         choices=["distributed"], help="The formation strategy to use")
+                         choices=["distributed", "centralized"], help="The formation strategy to use")
     # formation properties
     formation = parser.add_argument_group('formation properties')
     formation.add_argument('--alpha', type=float, default=0.5,

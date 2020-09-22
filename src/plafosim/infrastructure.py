@@ -16,12 +16,35 @@
 #
 import logging
 
+#from .simulator import Simulator  # TODO fix circular import
+from .platooning_vehicle import SpeedPosition, PlatooningVehicle
+
 
 class Infrastructure:
 
-    def __init__(self, iid: int, position: int):
+    def __init__(
+            self,
+            simulator,
+            iid: int,
+            position: int,
+            formation_algorithm: str,
+            alpha: float,
+            speed_deviation_threshold: float,
+            position_deviation_threshold: int):
+        self._simulator = simulator  # the simulator
         self._iid = iid  # the id of the infrastructure
         self._position = position  # the x position of the infrastructure
+
+        if formation_algorithm is not None:
+            # initialize formation algorithm
+            # TODO make enum
+            if formation_algorithm == "speedposition":
+                self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
+            else:
+                logging.critical("Unkown formation algorithm %s!" % self.formation_algorithm)
+                exit(1)
+        else:
+            self._formation_algorithm = None
 
     @property
     def iid(self) -> int:
@@ -37,4 +60,24 @@ class Infrastructure:
         """Trigger actions of a infrastructure"""
 
         logging.info("%d was triggered" % self.iid)
-        pass  # this infrastructure has no application running
+
+        if self._formation_algorithm is not None:
+            # search for a platoon (depending on the algorithm)
+            self._formation_algorithm.do_formation()
+
+    def _get_neighbors(self):
+        neighbors = []
+        for vehicle in self._simulator._vehicles.values():
+
+            # filter vehicles that are technically not able to do platooning
+            if not isinstance(vehicle, PlatooningVehicle):
+                continue
+
+            # filter based on communication range
+            communication_range = self._simulator.road_length
+            if abs(vehicle.position - self.position) > communication_range:
+                continue
+
+            neighbors.append(vehicle)
+
+        return neighbors
