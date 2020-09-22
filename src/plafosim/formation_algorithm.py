@@ -22,9 +22,10 @@ from .platoon_role import PlatoonRole
 
 
 class FormationAlgorithm(ABC):
-    # TODO this should be changed to something general (e.g. object) to also support infastructure as well
-    def __init__(self, name: str, owner: 'PlatooningVehicle'):
+    def __init__(self, name: str, owner):
         self._name = name  # the name of the formation algorithm
+        from .platooning_vehicle import PlatooningVehicle
+        assert(isinstance(owner, PlatooningVehicle))
         self._owner = owner  # the owning vehicle
 
     @property
@@ -38,8 +39,7 @@ class FormationAlgorithm(ABC):
 
 
 class SpeedPosition(FormationAlgorithm):
-    # TODO this should be changed to something general (e.g. object) to also support infastructure as well
-    def __init__(self, owner: 'PlatooningVehicle',
+    def __init__(self, owner,
                  alpha: float,
                  speed_deviation_threshold: float,
                  position_deviation_threshold: int):
