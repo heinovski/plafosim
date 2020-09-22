@@ -60,7 +60,7 @@ class SpeedPosition(FormationAlgorithm):
 
     @property
     def position_deviation_threshold(self) -> int:
-        return self.speed_deviation_threshold
+        return self.position_deviation_threshold
 
     def _ds(self, neighbor_speed: float):
         return abs(self._owner.desired_speed - neighbor_speed)
