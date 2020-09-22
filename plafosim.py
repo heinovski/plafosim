@@ -36,7 +36,7 @@ def main():
     start_time = timer()
 
     # parse some parameters
-    parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="""
+    parser = argparse.ArgumentParser(formatter_class=CustomFormatter, allow_abbrev=False, description="""
     Platoon Formation Simulator (PlaFoSim) -- A simple simulator for platoon formation.
 
     Copyright (c) 2020 Julian Heinovski <heinovski@ccs-labs.org>
