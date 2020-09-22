@@ -20,6 +20,7 @@ import time
 from math import copysign
 from random import normalvariate, randrange, random, seed
 from tqdm import tqdm
+
 from .vehicle import VehicleType, Vehicle
 from .infrastructure import Infrastructure
 from .platooning_vehicle import PlatooningVehicle, CF_Mode, PlatoonRole, Platoon
