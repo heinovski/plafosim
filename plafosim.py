@@ -140,6 +140,8 @@ def main():
                          choices=(True, False), help="Whether vehicles should automatically start as one platoon")
     platoon.add_argument('--formation-algorithm', type=str, default=None,
                          choices=["speedposition"], help="The formation algorithm to use")
+    platoon.add_argument('--formation-strategy', type=str, default="distributed",
+                         choices=["distributed"], help="The formation strategy to use")
     # formation properties
     formation = parser.add_argument_group('formation properties')
     formation.add_argument('--alpha', type=float, default=0.5,
@@ -206,6 +208,7 @@ def main():
         args.random_arrival_position,
         args.start_as_platoon,
         args.formation_algorithm,
+        args.formation_strategy,
         args.alpha,
         args.speed_deviation_threshold,
         args.position_deviation_threshold,

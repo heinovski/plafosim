@@ -79,6 +79,7 @@ class Simulator:
             random_arrival_position: bool,
             start_as_platoon: bool,
             formation_algorithm: str,
+            formation_strategy: str,
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int,
@@ -135,6 +136,7 @@ class Simulator:
         # platoon properties
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
+        self._formation_strategy = formation_strategy  # the formation strategy to use
 
         # formation properties
         # TODO find a different solution for algorithm specific parameters
@@ -536,7 +538,7 @@ class Simulator:
                     depart_time,
                     self._acc_headway_time,
                     self._cacc_spacing,
-                    self._formation_algorithm,
+                    self._formation_algorithm if self._formation_strategy == "distributed" else None,
                     self._alpha,
                     self._speed_deviation_threshold,
                     self._position_deviation_threshold)
@@ -695,7 +697,7 @@ class Simulator:
                 depart_time,
                 self._acc_headway_time,
                 self._cacc_spacing,
-                self._formation_algorithm,
+                self._formation_algorithm if self._formation_strategy == "distributed" else None,
                 self._alpha,
                 self._speed_deviation_threshold,
                 self._position_deviation_threshold)
