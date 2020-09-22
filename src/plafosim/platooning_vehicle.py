@@ -20,20 +20,11 @@ from enum import Enum
 
 from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
+from .platoon_role import PlatoonRole
 from .vehicle_type import VehicleType
 from .vehicle import Vehicle
 from .formation_algorithm import SpeedPosition
 # from .simulator import Simulator # TODO fix circular import
-
-
-class PlatoonRole(Enum):
-    """A collection of available platoon roles"""
-
-    NONE = 0  # corresponds to driving individually
-    LEADER = 1  # corresponds to being the leader of a platoon
-    FOLLOWER = 2  # corresponds to being a follow of a platoon
-    JOINER = 3  # corresponds to be in the process of joining a platoon
-    LEAVER = 4  # corresponds to be in the process of leaving a platoon
 
 
 class CF_Mode(Enum):

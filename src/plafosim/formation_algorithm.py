@@ -18,7 +18,7 @@ import logging
 
 from abc import ABC, abstractmethod
 
-from .platooning_vehicle import PlatoonRole
+from .platoon_role import PlatoonRole
 
 
 class FormationAlgorithm(ABC):
