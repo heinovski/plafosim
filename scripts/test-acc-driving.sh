@@ -13,7 +13,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_$experiment.csv --append \
     ./plafosim.py \
     --lanes 4 \
-    --collision true \
+    --collisions true \
     --lane-changes true \
     --vehicles 100 \
     --time-limit 100 \
