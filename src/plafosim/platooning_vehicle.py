@@ -349,18 +349,21 @@ class PlatooningVehicle(Vehicle):
                 logging.debug("%d's front gap %f" % (self.vid, gap_to_predecessor))
                 logging.debug("%d's desired gap %f" % (self.vid, self.desired_gap))
                 logging.debug("%d's desired speed %f" % (self.vid, self.desired_speed))
-                logging.debug("%d's predecessor speed %f" % (self.vid, speed_predecessor))
+                logging.debug("%d's predecessor (%d) speed %f" % (self.vid, self._simulator._get_predecessor_id(self.vid), speed_predecessor))
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.acc_headway_time * self.speed)
 
                 logging.debug("%d's ACC safe speed %f" % (self.vid, self.speed + u))
 
                 u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
+                logging.debug("%d's ACC max acceleration speed %f" % (self.vid, self.speed + u))
+
                 u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
+                logging.debug("%d's ACC max deceleration speed %f" % (self.vid, self.speed + u))
 
                 new_speed = self.speed + u
                 new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-                logging.debug("%d's ACC possible speed %f" % (self.vid, new_speed))
+                logging.debug("%d's ACC max possible speed %f" % (self.vid, new_speed))
 
                 new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
                 logging.debug("%d's ACC desired speed %f" % (self.vid, new_speed))
@@ -404,7 +407,10 @@ class PlatooningVehicle(Vehicle):
             logging.debug("%d's CACC safe speed %f" % (self.vid, self.speed + u))
 
             u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
+            logging.debug("%d's CACC max acceleration speed %f" % (self.vid, self.speed + u))
+
             u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
+            logging.debug("%d's CACC max deceleration speed %f" % (self.vid, self.speed + u))
 
             new_speed = self.speed + u
             new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible

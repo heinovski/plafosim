@@ -30,6 +30,14 @@ from .platooning_vehicle import PlatooningVehicle, CF_Mode, PlatoonRole, Platoon
 # a vehicle ends at position + length
 # crash detection does not work with steps greater than 1
 
+# vehicle properties
+length = 4  # m # TODO make parameter
+max_speed = 55  # m/s # TODO make parameter
+max_acceleration = 2.5  # m/s # TODO make parameter
+max_deceleration = 15  # m/s # TODO make parameter
+min_gap = 0  # m # TODO make parameter
+vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap)  # TODO support multiple vtypes
+
 
 class Simulator:
     """A collection of parameters and information of the simulator"""
@@ -38,9 +46,41 @@ class Simulator:
             self,
             road_length: int,
             number_of_lanes: int,
-            lane_changes: bool,
+            depart_interval: int,
+            arrival_interval: int,
+            pre_fill: bool,
+            number_of_vehicles: int,
+            vehicle_density: int,
+            max_speed: float,
+            acc_headway_time: float,
+            cacc_spacing: float,
             collisions: bool,
+            lane_changes: bool,
+            penetration_rate: float,
+            random_depart_position: bool,
+            random_depart_lane: bool,
+            desired_speed: float,
+            random_desired_speed: bool,
+            speed_variation: float,
+            min_desired_speed: float,
+            max_desired_speed: float,
+            random_depart_speed: bool,
+            depart_desired: bool,
+            depart_flow: bool,
+            depart_method: str,
+            depart_time_interval: int,
+            depart_probability: float,
+            depart_rate: int,
+            depart_fixed_time: int,
+            random_arrival_position: bool,
+            start_as_platoon: bool,
+            formation_algorithm: str,
+            alpha: float,
+            speed_deviation_threshold: float,
+            position_deviation_threshold: int,
+            number_of_infrastructures: int,
             step_length: int,
+            max_step: int,
             random_seed: int,
             log_level: int,
             gui: bool,
@@ -55,11 +95,48 @@ class Simulator:
         # road network properties
         self._road_length = road_length  # the length of the road
         self._number_of_lanes = number_of_lanes  # the number of lanes
+        self._depart_interval = depart_interval  # the distance between departure positions
+        self._arrival_interval = arrival_interval  # the distance between arrival positions
 
         # vehicle properties
         self._vehicles = {}  # the list (dict) of vehicles in the simulation
-        self._lane_changes = lane_changes  # whether to enable lane changes
+        self._last_vehicle_id = -1  # the id of the last vehicle generated
+        self._number_of_vehicles = number_of_vehicles  # the maximum number of vehicles
+        self._vehicle_density = vehicle_density  # the number of vehicles per km and lane
+        self._max_speed = max_speed  # the maximum drivig speed # FIXME not used
+        self._acc_headway_time = acc_headway_time  # the headway time fo ACC
+        self._cacc_spacing = cacc_spacing  # the constant spacing for CACC
         self._collisions = collisions  # whether to check for collisions
+        self._lane_changes = lane_changes  # whether to enable lane changes
+        self._penetration_rate = penetration_rate  # the peneration rate of platooning vehicles
+
+        # trip properties
+        self._random_depart_position = random_depart_position  # whether to use random depart positions
+        self._random_depart_lane = random_depart_lane  # whether to use random depart lanes
+        self._desired_speed = desired_speed  # the desired driving speed
+        self._random_desired_speed = random_desired_speed  # whether to use random desired driving speeds
+        self._speed_variation = speed_variation  # the deviation from the desired driving speed
+        self._min_desired_speed = min_desired_speed  # the minimum desired driving speed
+        self._max_desired_speed = max_desired_speed  # the maximum desired driving speed
+        self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
+        self._depart_desired = depart_desired  # whether to depart with the desired driving speed
+        self._depart_flow = depart_flow  # whether to spawn vehicles in a continous flow
+        self._depart_method = depart_method  # the departure method to use
+        self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
+        self._depart_probability = depart_probability  # the departure probability
+        self._depart_rate = depart_rate  # the departure rate
+        self._depart_fixed_time = depart_fixed_time  # the fixed departure time for all vehicles
+        self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
+
+        # platoon properties
+        self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
+        self._formation_algorithm = formation_algorithm  # the formation algorithm to use
+
+        # formation properties
+        # TODO find a different solution for algorithm specific parameters
+        self._alpha = alpha  # the weight of the speed deviation
+        self._speed_deviation_threshold = speed_deviation_threshold  # the maximum deviation from the desired drivng speed
+        self._position_deviation_threshold = position_deviation_threshold  # the maximum deviation from the current position
 
         # infrastructure properties
         self._infrastructures = {}  # the list (dict) of instrastructures in the simulation
@@ -67,15 +144,22 @@ class Simulator:
         # simulation properties
         self._step = 0  # the current simulation step in s
         self._step_length = step_length  # the length of a simulation step
+        self._max_step = max_step
+        self._running = False  # whether the simulation is running
         if random_seed >= 0:
+            self._random_seed = random_seed  # the seed to use for the RNG
             logging.info("Using random seed %d" % random_seed)
             seed(random_seed)
-            self._random_seed = random_seed
-        self._running = False  # whether the simulation is running
         self._gui = gui  # whether to show a live sumo-gui
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._result_base_filename = result_base_filename  # the base filename of the result files
+
+        # TODO log generation parameters
+        if pre_fill:
+            self._generate_vehicles()
+
+        self._generate_infrastructures(number_of_infrastructures)
 
     @property
     def road_length(self) -> int:
@@ -261,6 +345,7 @@ class Simulator:
                 f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vid, v.position, source_lane, target_lane, v.speed, reason))
 
             return abs(lane_diff) <= 1
+        logging.debug("%d's lane change is not safe" % vid)
         return False
 
     # kraus - multi lane traffic
@@ -357,166 +442,283 @@ class Simulator:
                 if other_vehicle.depart_time > self._step:
                     # other vehicle did not start yet
                     continue
-                if self.has_collision(vehicle.vid, vehicle.position, vehicle.rear_position, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position):
-                    logging.critical("collision between %d and %d" % (vehicle.vid, other_vehicle.vid))
-                    logging.debug("%d (%f-%f)" % (vehicle.vid, vehicle.position, vehicle.rear_position))
-                    logging.debug("%d (%f-%f)" % (other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position))
+                if self.has_collision(vehicle, other_vehicle):
+                    logging.critical("collision between %d (%f-%f,%d) and %d (%f-%f,%d)" % (vehicle.vid, vehicle.position, vehicle.rear_position, vehicle.lane, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane))
                     exit(1)
 
-    def has_collision(self, vid1: float, pos1: float, rear_pos1: float, vid2: float, pos2: float, rear_pos2: float) -> bool:
-        return min(pos1, pos2) - max(rear_pos1, rear_pos2) >= 0
+    def has_collision(self, vehicle1: Vehicle, vehicle2: Vehicle) -> bool:
+        assert(vehicle1 is not vehicle2)
+        assert(vehicle1.lane == vehicle2.lane)
+        return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
 
-    # TODO move out of simulator class
-    # TODO generate while simulation is running
-    def generate_vehicles(
-            self,
-            max_step: int,
-            number_of_vehicles: int,
-            penetration_rate: float,
-            depart_interval: int,
-            arrival_interval: int,
-            max_speed: float,
-            acc_headway_time: float,
-            cacc_spacing: float,
-            random_depart_position: bool,
-            random_depart_lane: bool,
-            desired_speed: float,
-            random_desired_speed: bool,
-            speed_variation: float,
-            min_desired_speed: float,
-            max_desired_speed: float,
-            random_depart_speed: bool,
-            depart_desired: bool,
-            depart_method: str,
-            depart_time_interval: int,
-            random_arrival_position: bool,
-            start_as_platoon: bool,
-            formation_algorithm: str,
-            alpha: float,
-            speed_deviation_threshold: float,
-            position_deviation_threshold: int):
-        """Generate vehicles for the simulation"""
+    # TODO remove duplicated code
+    def _generate_vehicles(self):
 
-        last_vehicle_id = -1
+        if self._vehicle_density > 0:
+            number_of_vehicles = self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes
+        else:
+            number_of_vehicles = self._number_of_vehicles
 
-        # vehicle properties
-        length = 4
-        max_acceleration = 2.5  # m/s
-        max_deceleration = 15  # m/s
-        # imperfection = 0.5  # sigma
-        min_gap = 0  # m
-        vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap)  # TODO multiple vtypes
+        logging.info("Pre-filling the road network with %d vehicles" % number_of_vehicles)
+
+        # low density 5C/km/l
+        # medium density 7C/km/l
+        # high density 10C/km/l
+
+        # normal flows, 62C/min, 21C/min, 11C/min + 8T/min, 3T/min, 1T/min
+        # use these values to calculate the total number of vehicles from the road length and number of lanes
+        # or overwrite with another number
 
         for num in tqdm(range(0, number_of_vehicles), desc="Generated vehicles"):
-            vid = last_vehicle_id + 1
 
-            if random_depart_position:
-                if start_as_platoon:
-                    logging.warn("Vehicles can not have random departure positions when starting as one platoon!")
-                    exit(1)
+            vid = self._last_vehicle_id + 1
+            depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
 
-                depart_position = position = randrange(0, self.road_length, depart_interval)
-            else:
-                depart_position = 0
-            depart_position = depart_position + length  # equal to departPos="base"
-
-            if random_depart_lane:
-                if start_as_platoon:
-                    logging.warn("Vehicles can not have random departure lanes when starting as one platoon!")
-                    exit(1)
-
+            collision = True
+            while collision:
+                # actual calculation of position and lane
+                # always use random position for pre-filled vehicle
+                depart_position = randrange(length, self.road_length, length + min_gap)
+                # always use random lane for pre-filled vehicle
                 depart_lane = randrange(0, self.number_of_lanes, 1)
-            else:
-                depart_lane = 0
 
-            if random_desired_speed:
+                logging.debug("Generated random depart position (%d,%d) for vehicle %d" % (depart_position, depart_lane, vid))
+
+                # avoid a collision with an existing vehicle
+                collision = False
+                for other_vehicle in self._vehicles.values():
+                    if other_vehicle.lane != depart_lane:
+                        # we do not care about other lanes
+                        continue
+                    # TODO HACK for using collision check
+                    vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time)
+                    collision = collision or self.has_collision(vehicle, other_vehicle)
+
+            if self._random_desired_speed:
                 # normal distribution
-                speed = desired_speed * normalvariate(1.0, speed_variation)
-                speed = max(speed, min_desired_speed)
-                speed = min(speed, max_desired_speed)
+                desired_speed = self._desired_speed * normalvariate(1.0, self._speed_variation)
+                desired_speed = max(desired_speed, self._min_desired_speed)
+                desired_speed = min(desired_speed, self._max_desired_speed)
             else:
-                speed = desired_speed
+                desired_speed = self._desired_speed
 
-            if random_depart_speed:
-                depart_speed = randrange(0, desired_speed, 1)
-            else:
-                depart_speed = 0
+            # always use desired speed for pre-fill vehicles
+            depart_speed = desired_speed
 
-            if depart_desired:
-                depart_speed = desired_speed
-
-            if depart_method == "interval":
-                if last_vehicle_id != -1:
-                    depart_time = self._vehicles[last_vehicle_id].depart_time + depart_time_interval
-                else:
-                    depart_time = 0
-            #elif spawn_strategy is "rate":
-                # TODO
-                # vehicles per hour
-                # max_step / 3600 --> # hours
-                # rate per hour / 3600 --> rate per second
-                # random > rate? spawn
-            #elif spawn_strategy is "probability":
-                # TODO
-            else:
-                depart_time = randrange(0, max_step, 1 * 60)  # in which minute to start
-            # safety_gap = 0  # m
-
-            if random_arrival_position:
-                arrival_position = randrange(position + arrival_interval, self._road_length, arrival_interval)
+            if self._random_arrival_position:
+                arrival_position = randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
             else:
                 arrival_position = self._road_length
 
-            if start_as_platoon:
-                if penetration_rate < 1.0:
+            if self._start_as_platoon:
+                if self._penetration_rate < 1.0:
                     logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
                     exit(1)
-                if formation_algorithm is not None:
+                if self._formation_algorithm is not None:
                     logging.warn("A formation algorithm cannot be used when all starting as one platoon!")
                     exit(1)
 
             # choose vehicle "type" depending on the penetration rate
-            if random() < penetration_rate:
+            if random() <= self._penetration_rate:
                 vehicle = PlatooningVehicle(
                     self,
                     vid,
                     vtype,
                     depart_position,
                     arrival_position,
-                    speed,
+                    desired_speed,
                     depart_lane,
                     depart_speed,
                     depart_time,
-                    acc_headway_time,
-                    cacc_spacing,
-                    formation_algorithm,
-                    alpha,
-                    speed_deviation_threshold,
-                    position_deviation_threshold)
-                if start_as_platoon:
+                    self._acc_headway_time,
+                    self._cacc_spacing,
+                    self._formation_algorithm,
+                    self._alpha,
+                    self._speed_deviation_threshold,
+                    self._position_deviation_threshold)
+                if self._start_as_platoon:
                     if vid == 0:
                         vehicle._cf_mode = CF_Mode.ACC
                         vehicle._platoon_role = PlatoonRole.LEADER
                     else:
                         vehicle._cf_mode = CF_Mode.CACC
                         vehicle._platoon_role = PlatoonRole.FOLLOWER
-                    vehicle._platoon = Platoon(0, [vehicle], desired_speed)
+                    vehicle._platoon = Platoon(0, [vehicle], vehicle.desired_speed)
 
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
-                                  speed, depart_lane, depart_speed, depart_time)
+                                  desired_speed, depart_lane, depart_speed, depart_time)
 
             self._vehicles[vid] = vehicle
-            logging.info("Generated vehicle %s" % vehicle)
+            self._last_vehicle_id = vid
 
-            last_vehicle_id = vid
+            if self._start_as_platoon:
+                platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
+                for vehicle in self._vehicles.values():
+                    vehicle._platoon = platoon
 
-        if start_as_platoon:
+            logging.debug("Spawned vehicle %s" % vid)
+
+    # TODO remove duplicated code
+    def _spawn_vehicle(self):
+
+        if self._vehicle_density > 0:
+            number_of_vehicles = self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes
+        else:
+            number_of_vehicles = self._number_of_vehicles
+
+        if len(self._vehicles) >= number_of_vehicles:
+            logging.info("Number of vehicles %d is reached already" % number_of_vehicles)
+            return
+
+        if not self._depart_flow and self._last_vehicle_id >= number_of_vehicles:
+            logging.info("All %d vehicles have been spawned already" % number_of_vehicles)
+            return
+
+        logging.debug("Spawning a vehicle...")
+
+        vid = self._last_vehicle_id + 1
+
+        spawn = False  # should we spawn a new vehicle in this timestep?
+        if self._depart_method == "interval":
+            # spawn interval
+            spawn = self.step % self._depart_time_interval == 0
+        elif self._depart_method == "probability":
+            # spawn probability per time step
+            spawn = random() <= self._depart_probability
+        elif self._depart_method == "rate":
+            # spawn #vehicles per hour
+            spawn_interval = 3600 / self.step_length / self._depart_rate
+            spawn = self.step % round(spawn_interval) == 0
+        elif self._depart_method == "fixed" and self.step == self._depart_fixed_time:
+            # we create all of the vehicles now
+            print("depart method fixed is not yet implemented!")
+            exit(1)
+        else:
+            logging.critical("Unknown depart method!")
+            exit(1)
+
+        if spawn:
+            depart_time = self.step
+        else:
+            # we do not spawn a vehicle in this timestep
+            return
+
+        logging.debug("We will spawn a vehicle in this time step")
+
+        if self._random_depart_lane:
+            if self._start_as_platoon:
+                logging.warn("Vehicles can not have random departure lanes when starting as one platoon!")
+                exit(1)
+
+            depart_lane = randrange(0, self.number_of_lanes, 1)
+        else:
+            depart_lane = 0
+
+        if self._random_depart_position:
+            if self._start_as_platoon:
+                logging.warn("Vehicles can not have random departure positions when starting as one platoon!")
+                exit(1)
+            if not self._depart_desired:
+                logging.warn("random-depart-position is only possible in conjuction with depart-desired!")
+                exit(1)
+
+            depart_position = randrange(length, self.road_length, self._depart_interval + length)
+        else:
+            depart_position = length  # equal to departPos="base"
+
+        # check whether the can actually be inserted
+        collision = True  # assume we have a collision to check at least once
+        while collision:
+            collision = False  # so far we do not have a collision
+            # check all vehicles
+            for other_vehicle in self._vehicles.values():
+                if other_vehicle.lane != depart_lane:
+                    # we do not care about other lanes
+                    continue
+                # do we have a collision?
+                # TODO HACK for using collision check
+                vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time)
+                collision = collision or self.has_collision(vehicle, other_vehicle)
+            # can we avoid the collision by switching the departure lane?
+            if collision:
+                if depart_lane < self.number_of_lanes:
+                    depart_lane = depart_lane + 1
+                else:
+                    logging.critical("%d crashed at start into %d" % (vid, vehicle.vid))
+                    exit(1)
+
+        if self._random_desired_speed:
+            # normal distribution
+            desired_speed = self._desired_speed * normalvariate(1.0, self._speed_variation)
+            desired_speed = max(desired_speed, self._min_desired_speed)
+            desired_speed = min(desired_speed, self._max_desired_speed)
+        else:
+            desired_speed = self._desired_speed
+
+        if self._random_depart_speed:
+            depart_speed = randrange(0, self._desired_speed, 1)
+        else:
+            depart_speed = 0
+
+        if self._depart_desired:
+            depart_speed = desired_speed
+
+        if self._random_arrival_position:
+            arrival_position = randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
+        else:
+            arrival_position = self._road_length
+
+        if self._start_as_platoon:
+            if self._penetration_rate < 1.0:
+                logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                exit(1)
+            if self._formation_algorithm is not None:
+                logging.warn("A formation algorithm cannot be used when all starting as one platoon!")
+                exit(1)
+
+        # choose vehicle "type" depending on the penetration rate
+        if random() <= self._penetration_rate:
+            vehicle = PlatooningVehicle(
+                self,
+                vid,
+                vtype,
+                depart_position,
+                arrival_position,
+                desired_speed,
+                depart_lane,
+                depart_speed,
+                depart_time,
+                self._acc_headway_time,
+                self._cacc_spacing,
+                self._formation_algorithm,
+                self._alpha,
+                self._speed_deviation_threshold,
+                self._position_deviation_threshold)
+            if self._start_as_platoon:
+                if vid == 0:
+                    vehicle._cf_mode = CF_Mode.ACC
+                    vehicle._platoon_role = PlatoonRole.LEADER
+                else:
+                    vehicle._cf_mode = CF_Mode.CACC
+                    vehicle._platoon_role = PlatoonRole.FOLLOWER
+                vehicle._platoon = Platoon(0, [vehicle], vehicle.desired_speed)
+
+        else:
+            vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
+                              desired_speed, depart_lane, depart_speed, depart_time)
+
+        self._vehicles[vid] = vehicle
+        self._last_vehicle_id = vid
+
+        if self._start_as_platoon:
             platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
             for vehicle in self._vehicles.values():
                 vehicle._platoon = platoon
 
-    def generate_infrastructure(self, number_of_infrastructures: int):
+        logging.info("Spawned vehicle %s" % vid)
+
+    def _generate_infrastructures(self, number_of_infrastructures: int):
         """Generate infrastructures for the simulation"""
 
         if number_of_infrastructures <= 0:
@@ -535,7 +737,7 @@ class Simulator:
 
             last_infrastructure_id = iid
 
-    def run(self, max_step: int):
+    def run(self):
         """Run the simulation with the specified parameters"""
 
         if not self._running:
@@ -583,12 +785,16 @@ class Simulator:
             traci.simulationStep(self._step)
             from random import randrange
 
-        progress_bar = tqdm(desc='Simulation progress', total=max_step, unit='step')
+        progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
         while self._running:
-            if self._step >= max_step:
+            if self.step >= self._max_step:
                 self.stop("Reached step limit")
                 continue
+
+            # spawn vehicle based on given parameters
+            self._spawn_vehicle()
+
             if len(self._vehicles) == 0:
                 self.stop("No more vehicles in the simulation")  # do we really want to exit here?
                 continue

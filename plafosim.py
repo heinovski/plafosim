@@ -52,9 +52,18 @@ def main():
                       help="The distance between departure positions (on-ramps) in m")
     road.add_argument('--arrival-interval', type=int, default=1000,
                       help="The distance between arrival positions (off-ramps) in m")
+    road.add_argument(
+        '--pre-fill',
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        choices=(True, False),
+        help="Whether to fill the road network with vehicles using random positions and given vehicle number/density before the simulation starts"
+    )
     # vehicle properties
     vehicle = parser.add_argument_group('vehicle properties')
-    vehicle.add_argument('--vehicles', type=int, default=100, help="The number of vehicles")
+    vehicle.add_argument('--vehicles', type=int, default=100,
+                         help="The (maximum) number of vehicles that are in the simulation at once")
+    vehicle.add_argument('--density', type=int, default=0, help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles.")
     vehicle.add_argument('--max-speed', type=float, default=55, help="The maximum possible driving speed in m/s")
     vehicle.add_argument('--acc-headway-time', type=float, default=1.0,
                          help="The headway time to be used for the ACC in s")
@@ -103,10 +112,22 @@ def main():
         default=False,
         choices=(True, False),
         help="Whether the vehicle should depart with its desired speed. Overrides random-depart-speed")
-    trip.add_argument('--depart-method', type=str, choices=('interval', 'pobability'),
+    trip.add_argument(
+        '--depart-flow',
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        choices=(True, False),
+        help="Whether to spawn vehicles in a continous flow")
+    trip.add_argument('--depart-method', type=str, choices=('interval', 'probability', 'rate', 'fixed'),
                       default='interval', help="The departure method of vehicles")
-    trip.add_argument('--depart-time-interval', type=int, default=3,
-                      help="The interval between two vehicle departures in s")
+    trip.add_argument('--depart-time-interval', type=int, default=1,
+                      help="The interval between two vehicle departures in s for depart method 'interval'")
+    trip.add_argument('--depart-probability', type=float, default=1,
+                      help="The probability of departure per time step for depart method 'probability'")
+    trip.add_argument('--depart_rate', type=int, default=3600,
+                      help="The rate of departure in vehicles per hour for depart method 'rate'")
+    trip.add_argument('--depart-fixed-time', type=int, default=0,
+                      help="Time of depature in s for all vehicles for depart method 'fixed'")
     trip.add_argument(
         '--random-arrival-position',
         type=lambda x: bool(strtobool(x)),
@@ -156,25 +177,17 @@ def main():
     simulator = Simulator(
         args.road_length * 1000,
         args.lanes,
-        args.lane_changes,
-        args.collisions,
-        args.step_length,
-        args.random_seed,
-        getattr(logging, args.log_level.upper(), None),
-        args.gui,
-        args.gui_delay / 1000,
-        args.track_vehicle,
-        args.result_base_filename)
-    max_step = args.time_limit * 60 * 60
-    simulator.generate_vehicles(
-        max_step,
-        args.vehicles,
-        args.penetration,
         args.depart_interval,
         args.arrival_interval,
+        args.pre_fill,
+        args.vehicles,
+        args.density,
         args.max_speed,
         args.acc_headway_time,
         args.cacc_spacing,
+        args.collisions,
+        args.lane_changes,
+        args.penetration,
         args.random_depart_position,
         args.random_depart_lane,
         args.desired_speed,
@@ -184,17 +197,29 @@ def main():
         args.max_desired_speed,
         args.random_depart_speed,
         args.depart_desired,
+        args.depart_flow,
         args.depart_method,
         args.depart_time_interval,
+        args.depart_probability,
+        args.depart_rate,
+        args.depart_fixed_time,
         args.random_arrival_position,
         args.start_as_platoon,
         args.formation_algorithm,
         args.alpha,
         args.speed_deviation_threshold,
-        args.position_deviation_threshold)
-    # TODO log generation parameters
-    simulator.generate_infrastructure(args.infrastructures)
-    simulator.run(max_step)
+        args.position_deviation_threshold,
+        args.infrastructures,
+        args.step_length,
+        args.time_limit * 60 * 60,
+        args.random_seed,
+        getattr(logging, args.log_level.upper(), None),
+        args.gui,
+        args.gui_delay / 1000,
+        args.track_vehicle,
+        args.result_base_filename)
+
+    simulator.run()
 
     end_time = timer()
     print("The simulation took %.4f seconds" % (end_time - start_time))

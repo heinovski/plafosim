@@ -296,21 +296,6 @@ class Vehicle:
         if self._started:
             return
 
-        # check whether we can actually be inserted? this should be done within the simulator though
-        for vehicle in self._simulator._vehicles.values():
-            if vehicle is self:
-                # we do not need to compare us to ourselves
-                continue
-            if vehicle.lane != self.lane:
-                # we do not care about other lanes
-                continue
-            if vehicle.depart_time > self._simulator._step:
-                # vehicle did not start yet
-                continue
-            if self._simulator.has_collision(self.vid, self.position, self.rear_position, vehicle.vid, vehicle.position, vehicle.rear_position):
-                logging.critical("%d crashed at start into %d" % (self.vid, vehicle.vid))
-                exit(1)
-
         self._started = True
 
     def info(self):

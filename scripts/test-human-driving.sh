@@ -25,6 +25,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --speed-variation 0.1 \
     --min-desired-speed 22 \
     --max-desired-speed 50 \
+    --depart-flow false \
     --depart-method interval \
     --depart-time-interval 3 \
     --step 1 \
