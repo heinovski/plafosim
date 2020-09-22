@@ -71,12 +71,11 @@ class PlatooningVehicle(Vehicle):
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, [self], self.desired_speed)
         self._in_maneuver = False
-        self._formation_algorithm = formation_algorithm
 
-        if self.formation_algorithm is not None:
+        if formation_algorithm is not None:
             # initialize formation algorithm
             # TODO make enum
-            if self.formation_algorithm == "speedposition":
+            if formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
                 logging.critical("Unkown formation algorithm %s!" % formation_algorithm)
@@ -84,6 +83,9 @@ class PlatooningVehicle(Vehicle):
 
             # initialize timer
             self._last_advertisement_step = None
+
+        else:
+            self._formation_algorithm = None
 
     @property
     def cf_mode(self) -> CF_Mode:
@@ -136,10 +138,6 @@ class PlatooningVehicle(Vehicle):
             logging.warn("%d is are already in a meneuver" % self.vid)
             return
         self._in_maneuver = var
-
-    @property
-    def formation_algorithm(self) -> str:
-        return self._formation_algorithm
 
     def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
         """Helper method to calcucate the ACC acceleration based on the given parameters"""
@@ -242,7 +240,7 @@ class PlatooningVehicle(Vehicle):
 
         super()._action()
 
-        if self.formation_algorithm is not None:
+        if self._formation_algorithm is not None:
             # transmit regular platoon advertisements
             self._advertise()
 
