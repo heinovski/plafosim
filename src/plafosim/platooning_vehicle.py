@@ -18,6 +18,7 @@ import logging
 
 from abc import ABC, abstractmethod
 from enum import Enum
+
 from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .vehicle import VehicleType, Vehicle
