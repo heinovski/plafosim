@@ -31,7 +31,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --depart-flow false \
     --depart-method interval \
     --depart-time-interval 3 \
-    --step 1 \
+    ---step-length 1 \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
     2>&1 | tee run_${experiment}_plafosim.log
