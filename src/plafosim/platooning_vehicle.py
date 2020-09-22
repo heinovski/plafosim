@@ -21,7 +21,8 @@ from enum import Enum
 
 from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
-from .vehicle import VehicleType, Vehicle
+from .vehicle_type import VehicleType
+from .vehicle import Vehicle
 # from .simulator import Simulator # TODO fix circular import
 
 
