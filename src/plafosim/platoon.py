@@ -16,6 +16,7 @@
 #
 
 
+# TODO add type hints
 class Platoon:
     """A collection of parameters for a concrete platoon"""
 
@@ -34,11 +35,11 @@ class Platoon:
         return self._platoon_id
 
     @property
-    def leader(self) -> 'PlatooningVehicle':
+    def leader(self):
         return self.formation[0]
 
     @property
-    def last(self) -> 'PlatooningVehicle':
+    def last(self):
         return self.formation[-1]
 
     @property
@@ -86,10 +87,10 @@ class Platoon:
     def get_members(self) -> list:
         return [vehicle.vid for vehicle in self.formation]
 
-    def get_member_index(self, vehicle: 'PlatooningVehicle') -> int:
+    def get_member_index(self, vehicle) -> int:
         return self.formation.index(vehicle)
 
-    def get_front(self, vehicle: 'PlatooningVehicle') -> 'PlatooningVehicle':
+    def get_front(self, vehicle):
         if vehicle is not self.leader:
             return self.formation[self.get_member_index(vehicle) - 1]
         else:
