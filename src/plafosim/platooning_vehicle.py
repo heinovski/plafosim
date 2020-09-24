@@ -24,7 +24,10 @@ from .platoon_role import PlatoonRole
 from .vehicle_type import VehicleType
 from .vehicle import Vehicle
 from .formation_algorithm import SpeedPosition
-# from .simulator import Simulator # TODO fix circular import
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .simulator import Simulator
 
 
 class CF_Mode(Enum):
@@ -39,7 +42,7 @@ class PlatooningVehicle(Vehicle):
 
     def __init__(
             self,
-            simulator,  # TODO add type hint
+            simulator: 'Simulator',
             vid: int,
             vehicle_type: VehicleType,
             depart_position: int,

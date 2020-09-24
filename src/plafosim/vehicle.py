@@ -18,7 +18,10 @@ import logging
 
 from .vehicle_type import VehicleType
 from .message import Message
-# from .simulator import Simulator # TODO fix circular import
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .simulator import Simulator
 
 
 class Vehicle:
@@ -30,7 +33,7 @@ class Vehicle:
 
     def __init__(
             self,
-            simulator,  # TODO add type hint
+            simulator: 'Simulator',
             vid: int,
             vehicle_type: VehicleType,
             depart_position: int,

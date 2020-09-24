@@ -14,9 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .platooning_vehicle import PlatooningVehicle
 
 
-# TODO add type hints
 class Platoon:
     """A collection of parameters for a concrete platoon"""
 
@@ -35,11 +37,11 @@ class Platoon:
         return self._platoon_id
 
     @property
-    def leader(self):
+    def leader(self) -> 'PlatooningVehicle':
         return self.formation[0]
 
     @property
-    def last(self):
+    def last(self) -> 'PlatooningVehicle':
         return self.formation[-1]
 
     @property
@@ -87,10 +89,10 @@ class Platoon:
     def get_members(self) -> list:
         return [vehicle.vid for vehicle in self.formation]
 
-    def get_member_index(self, vehicle) -> int:
+    def get_member_index(self, vehicle: 'PlatooningVehicle') -> int:
         return self.formation.index(vehicle)
 
-    def get_front(self, vehicle):
+    def get_front(self, vehicle: 'PlatooningVehicle'):
         if vehicle is not self.leader:
             return self.formation[self.get_member_index(vehicle) - 1]
         else:
