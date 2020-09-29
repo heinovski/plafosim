@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 class FormationAlgorithm(ABC):
     def __init__(self, name: str, owner):
         self._name = name  # the name of the formation algorithm
+        from .platooning_vehicle import PlatooningVehicle
         assert(isinstance(owner, PlatooningVehicle))
         self._owner = owner  # the owning vehicle
 
