@@ -263,6 +263,7 @@ class PlatooningVehicle(Vehicle):
             # filter based on communication range
             communication_range = self._simulator.road_length
             if abs(vehicle.position - self.position) > communication_range:
+                logging.debug("%d's neighbor %d is out of communication range" % (self.vid, vehicle.vid))
                 continue
 
             neighbors.append(vehicle)

@@ -222,6 +222,7 @@ class SpeedPosition(FormationAlgorithm):
                 logging.info("%d found %d applicable candidates" % (self._owner.vid, len(found_candidates)))
 
             if len(found_candidates) == 0:
+                logging.debug("%d has no candidates" % self._owner.vid)
                 return
 
             # find best candidate to join
