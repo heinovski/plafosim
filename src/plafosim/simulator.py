@@ -868,7 +868,12 @@ class Simulator:
         """Return a nice string representation of a simulator instance"""
 
         import funcy  # TODO get rid of this dependency
-        return str(funcy.omit(self.__dict__, '_vehicles'))
+        sim_dict = self.__dict__
+        sim_dict = funcy.omit(sim_dict, '_vehicles')
+        sim_dict = funcy.omit(sim_dict, '_infrastructures')
+        sim_dict.update({'current_number_of_vehicles': len(self._vehicles)})
+        sim_dict.update({'current_number_of_infrastructures': len(self._infrastructures)})
+        return str(sim_dict)
 
     def finish(self):
         """Clean up the simulation"""
