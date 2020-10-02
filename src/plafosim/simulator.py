@@ -136,6 +136,9 @@ class Simulator:
         # platoon properties
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
+        if formation_strategy == "centralized" and number_of_infrastructures == 0:
+            logging.error("When using a centralized strategy at least 1 infrastructure is needed!")
+            exit(1)
         self._formation_strategy = formation_strategy  # the formation strategy to use
 
         # formation properties
