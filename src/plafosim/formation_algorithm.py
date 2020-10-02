@@ -20,10 +20,6 @@ from abc import ABC, abstractmethod
 
 from .platoon_role import PlatoonRole
 
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from .platooning_vehicle import PlatooningVehicle
-
 
 class FormationAlgorithm(ABC):
     def __init__(self, name: str, owner):
