@@ -87,10 +87,10 @@ class SpeedPosition(FormationAlgorithm):
 
         from .infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
+            logging.info("%d is running formation algorithm %s (centralized)" % (self._owner.iid, self.name))
             all_found_candidates = []
             # select all searching vehicles
             for vehicle in self._owner._simulator._vehicles.values():
-                logging.info("Running formation algorithm %s for %d" % (self.name, vehicle.vid))
 
                 # filter vehicles which are already in a platoon
                 if vehicle.platoon_role != PlatoonRole.NONE:
@@ -185,7 +185,7 @@ class SpeedPosition(FormationAlgorithm):
 
                 all_found_candidates = [x for x in all_found_candidates if is_available(x)]
         else:
-            logging.info("%d is running formation algorithm %s" % (self._owner.vid, self.name))
+            logging.info("%d is running formation algorithm %s (distributed)" % (self._owner.vid, self.name))
 
             # we can only run the algorithm if we are not yet in a platoon
             # because this algorithm does not support changing the platoon later on
