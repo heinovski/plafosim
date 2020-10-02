@@ -247,9 +247,9 @@ class PlatooningVehicle(Vehicle):
             # search for a platoon (depending on the algorithm)
             self._formation_algorithm.do_formation()
 
-    def _get_neighbors(self):
+    def _get_available_platoons(self):
         # HACK FOR AVOIDING MAINTAINING A NEIGHBORTABLE (for now)
-        neighbors = []
+        platoons = []
         for vehicle in self._simulator._vehicles.values():
 
             # filter out self
@@ -260,15 +260,19 @@ class PlatooningVehicle(Vehicle):
             if not isinstance(vehicle, PlatooningVehicle):
                 continue
 
-            # filter based on communication range
-            communication_range = self._simulator.road_length
-            if abs(vehicle.position - self.position) > communication_range:
-                logging.debug("%d's neighbor %d is out of communication range" % (self.vid, vehicle.vid))
+            # filter non-platoons
+            if vehicle.platoon_role != PlatoonRole.LEADER and vehicle.platoon_role != PlatoonRole.NONE:
                 continue
 
-            neighbors.append(vehicle)
+#            # filter based on communication range
+#            communication_range = self._simulator.road_length
+#            if abs(vehicle.position - self.position) > communication_range:
+#                logging.debug("%d's platoon %d is out of communication range" % (self.vid, vehicle.vid))
+#                continue
 
-        return neighbors
+            platoons.append(vehicle.platoon)
+
+        return platoons
 
     def _join(self, platoon_id: int, leader_id: int, teleport: bool = True):
         # just join, without any communication

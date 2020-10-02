@@ -23,6 +23,7 @@ from .platoon_role import PlatoonRole
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .platooning_vehicle import PlatooningVehicle  # noqa 401
+    from .platooning_vehicle import Platoon  # noqa 401
 
 
 class FormationAlgorithm(ABC):
@@ -67,16 +68,16 @@ class SpeedPosition(FormationAlgorithm):
     def position_deviation_threshold(self) -> int:
         return self.position_deviation_threshold
 
-    def _ds(self, vehicle: 'PlatooningVehicle', other_vehicle: 'PlatooningVehicle'):
-        return abs(vehicle.desired_speed - other_vehicle.speed)
+    def _ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+        return abs(vehicle.desired_speed - platoon.speed)
 
-    def _dp(self, vehicle: 'PlatooningVehicle', other_vehicle: 'PlatooningVehicle'):
-        if vehicle.rear_position > other_vehicle.position:
-            # we are in front of the neighbor
-            return abs(vehicle.rear_position - other_vehicle.position)
+    def _dp(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+        if vehicle.rear_position > platoon.position:
+            # we are in front of the platoon
+            return abs(vehicle.rear_position - platoon.position)
         else:
-            # we are behind the neighbor
-            return abs(other_vehicle.rear_position - vehicle.position)
+            # we are behind the platoo
+            return abs(platoon.rear_position - vehicle.position)
 
     def _cost_speed_position(self, ds: float, dp: int, alpha: float, beta: float):
         return (alpha * ds) + (beta * dp)
@@ -86,7 +87,7 @@ class SpeedPosition(FormationAlgorithm):
 
         from .infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
-            possible_matches = []
+            all_found_candidates = []
             # select all searching vehicles
             for vehicle in self._owner._simulator._vehicles.values():
                 logging.info("Running formation algorithm %s for %d" % (self.name, vehicle.vid))
@@ -117,47 +118,49 @@ class SpeedPosition(FormationAlgorithm):
                         logging.debug("%d is not available" % vehicle.vid)
                         continue
 
+                    platoon = other_vehicle.platoon
+
                     # for one vehicle A we are looking at a different vehicle B to
                     # check whether it is useful that A joins B
 
                     # calculate deviation values
-                    ds = self._ds(vehicle, other_vehicle)
-                    dp = self._dp(vehicle, other_vehicle)
+                    ds = self._ds(vehicle, platoon)
+                    dp = self._dp(vehicle, platoon)
 
                     # TODO HACK for skipping vehicles in front of us
-                    if vehicle.position > other_vehicle.rear_position:
-                        logging.debug("%d's other_vehicle %d not applicable because of its absolute position" % (vehicle.vid, other_vehicle.vid))
+                    if vehicle.position > platoon.rear_position:
+                        logging.debug("%d's platoon %d not applicable because of its absolute position" % (vehicle.vid, platoon.platoon_id))
                         continue
 
-                    # remove other_vehicle if not in speed range
+                    # remove platoon if not in speed range
                     if ds > self._speed_deviation_threshold * vehicle.desired_speed:
-                        logging.debug("%d's other_vehicle %d not applicable because of its speed difference" % (vehicle.vid, other_vehicle.vid))
+                        logging.debug("%d's platoon %d not applicable because of its speed difference" % (vehicle.vid, platoon.platoon_id))
                         continue
 
-                    # remove other_vehicle if not in position range
+                    # remove platoon if not in position range
                     if dp > self._position_deviation_threshold:
-                        logging.debug("%d's other_vehicle %d not applicable because of its position difference" % (vehicle.vid, other_vehicle.vid))
+                        logging.debug("%d's platoon %d not applicable because of its position difference" % (vehicle.vid, platoon.platoon_id))
                         continue
 
                     # calculate deviation/cost
                     fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
 
-                    # add neighbor to list
-                    possible_matches.append({'from': vehicle.vid, 'to': other_vehicle.vid, 'pid': other_vehicle.platoon.platoon_id, 'lid': other_vehicle.platoon.leader.vid, 'cost': fx})
-                    logging.info("%d found applicable candidates %d" % (vehicle.vid, other_vehicle.vid))
+                    # add platoon to list
+                    all_found_candidates.append({'vid': vehicle.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
+                    logging.info("%d found applicable candidates %d" % (vehicle.vid, platoon.platoon_id))
 
-            if len(possible_matches) == 0:
+            if len(all_found_candidates) == 0:
                 logging.debug("%d found no possible matches" % self._owner.iid)
                 return
 
             # get unique list of searching vehicles from within the possible matches
             uids = set()
-            uids = [x['from'] for x in possible_matches if x['from'] not in uids and (uids.add(x['from']) or True)]
+            uids = [x['vid'] for x in all_found_candidates if x['vid'] not in uids and (uids.add(x['vid']) or True)]
 
             for v in uids:
                 # get vehicle data and candidates
                 vehicle = self._owner._simulator._vehicles[v]
-                found_candidates = [x for x in possible_matches if x['from'] == v]
+                found_candidates = [x for x in all_found_candidates if x['vid'] == v]
 
                 if len(found_candidates) == 0:
                     # this vehicle has no candidates (anymore)
@@ -165,10 +168,9 @@ class SpeedPosition(FormationAlgorithm):
                     continue
 
                 # find best candidate to join
-                # pick the neighbor with the lowest deviation
+                # pick the platoon with the lowest deviation
                 best = min(found_candidates, key=lambda x: x['cost'])
-
-                logging.info("%d' best candidate is %d from platoon %d (leader %d) with %d" % (vehicle.vid, best['to'], best['pid'], best['lid'], best['cost']))
+                logging.info("%d' best platoon is %d (leader %d) with %d" % (v, best['pid'], best['lid'], best['cost']))
 
                 # perform a join maneuver with the candidate's platoon
                 # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
@@ -176,12 +178,12 @@ class SpeedPosition(FormationAlgorithm):
 
                 # remove all matches from the list of possible matches that would include
                 def is_available(x: dict) -> bool:
-                    return (x['from'] != best['from'] and  # noqa 504 # obviously this vehicle does not search anymore
-                            x['to'] != best['from'] and  # noqa 504 # this vehicle is not applicable as target anymore
-                            x['from'] != best['to'])  # the target vehicle is not applicable anymore
-#                            x['to'] != best['to'])  # the target vehicle is still available  # TODO
+                    return (x['vid'] != best['vid'] and  # noqa 504 # obviously this vehicle does not search anymore
+                            x['lid'] != best['vid'] and  # noqa 504 # this vehicle is not applicable as leader anymore
+                            x['vid'] != best['lid'])  # the leader is not searching anymore
+#                            x['lid'] != best['lid'])  # the leader is still available  # pidDO
 
-                possible_matches = [x for x in possible_matches if is_available(x)]
+                all_found_candidates = [x for x in all_found_candidates if is_available(x)]
         else:
             logging.info("%d is running formation algorithm %s" % (self._owner.vid, self.name))
 
@@ -192,33 +194,33 @@ class SpeedPosition(FormationAlgorithm):
 
             found_candidates = []
 
-            # get all available vehicles from the neighbor table
-            for neighbor in self._owner._get_neighbors():
+            # get all available vehicles from the platoon table to find available platoons
+            for platoon in self._owner._get_available_platoons():
 
                 # calculate deviation values
-                ds = self._ds(self._owner, neighbor)
-                dp = self._dp(self._owner, neighbor)
+                ds = self._ds(self._owner, platoon)
+                dp = self._dp(self._owner, platoon)
 
-                # TODO HACK for skipping vehicles in front of us
-                if self._owner.position > neighbor.rear_position:
-                    logging.debug("%d's neighbor %d not applicable because of its absolute position" % (self._owner.vid, neighbor.vid))
+                # TODO HACK for skipping platoons in front of us
+                if self._owner.position > platoon.rear_position:
+                    logging.debug("%d's platoon %d not applicable because of its absolute position" % (self._owner.vid, platoon.platoon_id))
                     continue
 
-                # remove neighbor if not in speed range
+                # remove platoon if not in speed range
                 if ds > self._speed_deviation_threshold * self._owner.desired_speed:
-                    logging.debug("%d's neighbor %d not applicable because of its speed difference" % (self._owner.vid, neighbor.vid))
+                    logging.debug("%d's platoon %d not applicable because of its speed difference" % (self._owner.vid, platoon.platoon_id))
                     continue
 
-                # remove neighbor if not in position range
+                # remove platoon if not in position range
                 if dp > self._position_deviation_threshold:
-                    logging.debug("%d's neighbor %d not applicable because of its position difference" % (self._owner.vid, neighbor.vid))
+                    logging.debug("%d's platoon %d not applicable because of its position difference" % (self._owner.vid, platoon.platoon_id))
                     continue
 
                 # calculate deviation/cost
                 fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
 
-                # add neighbor to list
-                found_candidates.append({'to': neighbor.vid, 'pid': neighbor.platoon.platoon_id, 'lid': neighbor.platoon.leader.vid, 'cost': fx})
+                # add platoon to list
+                found_candidates.append({'vid': self._owner.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
                 logging.info("%d found %d applicable candidates" % (self._owner.vid, len(found_candidates)))
 
             if len(found_candidates) == 0:
@@ -226,10 +228,9 @@ class SpeedPosition(FormationAlgorithm):
                 return
 
             # find best candidate to join
-            # pick the neighbor with the lowest deviation
+            # pick the platoon with the lowest deviation
             best = min(found_candidates, key=lambda x: x['cost'])
-
-            logging.info("%d' best candidate is %d from platoon %d (leader %d) with %d" % (self._owner.vid, best['to'], best['pid'], best['lid'], best['cost']))
+            logging.info("%d' best platoon is %d (leader %d) with %d" % (self._owner.vid, best['pid'], best['lid'], best['cost']))
 
             # perform a join maneuver with the candidate's platoon
             # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
