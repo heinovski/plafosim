@@ -79,7 +79,7 @@ class PlatooningVehicle(Vehicle):
             if self.formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
-                logging.critical("Unkown formation algorithm %s!" % self.formation_algorithm)
+                logging.critical("Unkown formation algorithm %s!" % formation_algorithm)
                 exit(1)
 
             # initialize timer
