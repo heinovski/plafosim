@@ -68,11 +68,11 @@ class Platoon:
 
     @property
     def max_acceleration(self) -> float:
-        return min(self.formation, key=lambda x: x.max_acceleration)
+        return min(self.formation, key=lambda x: x.max_acceleration).max_acceleration
 
     @property
     def max_deceleration(self) -> float:
-        return min(self.formation, key=lambda x: x.max_deceleration)
+        return min(self.formation, key=lambda x: x.max_deceleration).max_deceleration
 
     @property
     def length(self) -> int:
