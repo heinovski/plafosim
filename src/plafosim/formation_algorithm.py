@@ -22,7 +22,7 @@ from .platoon_role import PlatoonRole
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .platooning_vehicle import PlatooningVehicle
+    from .platooning_vehicle import PlatooningVehicle  # noqa 401
 
 
 class FormationAlgorithm(ABC):
