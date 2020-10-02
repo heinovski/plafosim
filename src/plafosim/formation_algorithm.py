@@ -218,7 +218,7 @@ class SpeedPosition(FormationAlgorithm):
                 fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
 
                 # add neighbor to list
-                found_candidates.append((neighbor.vid, neighbor.platoon.platoon_id, neighbor.platoon.leader.vid, fx))
+                found_candidates.append({'to': neighbor.vid, 'pid': neighbor.platoon.platoon_id, 'lid': neighbor.platoon.leader.vid, 'cost': fx})
                 logging.info("%d found %d applicable candidates" % (self._owner.vid, len(found_candidates)))
 
             if len(found_candidates) == 0:
@@ -227,10 +227,10 @@ class SpeedPosition(FormationAlgorithm):
 
             # find best candidate to join
             # pick the neighbor with the lowest deviation
-            best = min(found_candidates, key=lambda x: x[3])
+            best = min(found_candidates, key=lambda x: x['cost'])
 
-            logging.info("%d' best candidate is %d from platoon %d (leader %d) with %d" % (self._owner.vid, best[0], best[1], best[2], best[3]))
+            logging.info("%d' best candidate is %d from platoon %d (leader %d) with %d" % (self._owner.vid, best['to'], best['pid'], best['lid'], best['cost']))
 
             # perform a join maneuver with the candidate's platoon
             # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
-            self._owner._join(best[1], best[2])
+            self._owner._join(best['pid'], best['lid'])
