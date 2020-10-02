@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 class FormationAlgorithm(ABC):
     def __init__(self, name: str, owner):
         self._name = name  # the name of the formation algorithm
-        from .platooning_vehicle import PlatooningVehicle
+        from .platooning_vehicle import PlatooningVehicle  # noqa 811
         from .infrastructure import Infrastructure
         assert(isinstance(owner, PlatooningVehicle) or isinstance(owner, Infrastructure))
         self._owner = owner  # the owning vehicle
