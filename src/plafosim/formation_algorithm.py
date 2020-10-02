@@ -176,8 +176,8 @@ class SpeedPosition(FormationAlgorithm):
 
                 # remove all matches from the list of possible matches that would include
                 def is_available(x: dict) -> bool:
-                    return (x['from'] != best['from'] and  # obviously this vehicle does not search anymore
-                            x['to'] != best['from'] and  # this vehicle is not applicable as target anymore
+                    return (x['from'] != best['from'] and  # noqa 504 # obviously this vehicle does not search anymore
+                            x['to'] != best['from'] and  # noqa 504 # this vehicle is not applicable as target anymore
                             x['from'] != best['to'])  # the target vehicle is not applicable anymore
 #                            x['to'] != best['to'])  # the target vehicle is still available  # TODO
 
