@@ -49,6 +49,10 @@ class Platoon:
         return self._formation
 
     @property
+    def member_ids(self) -> list:
+        return [x.vid for x in self.formation]
+
+    @property
     def desired_speed(self) -> float:
         return self._desired_speed
 
