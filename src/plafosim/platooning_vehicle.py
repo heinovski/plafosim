@@ -154,7 +154,7 @@ class PlatooningVehicle(Vehicle):
                 logging.debug("%d's front gap %f" % (self.vid, gap_to_predecessor))
                 logging.debug("%d's desired gap %f" % (self.vid, self.desired_gap))
                 logging.debug("%d's desired speed %f" % (self.vid, self.desired_speed))
-                logging.debug("%d's predecessor (%d) speed %f" % (self.vid, self._simulator._get_predecessor_id(self.vid), speed_predecessor))
+                logging.debug("%d's predecessor (%d) speed %f" % (self.vid, self._simulator._get_predecessor(self).vid, speed_predecessor))
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.acc_headway_time * self.speed)
 
@@ -192,7 +192,8 @@ class PlatooningVehicle(Vehicle):
             # sanity checks for front vehicle in platoon
             assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
             # check whether there is a vehicle between us and our front vehicle
-            assert(self.platoon.get_front(self).vid == self._simulator._get_predecessor_id(self.vid))
+
+            assert(self.platoon.get_front(self) is self._simulator._get_predecessor(self))
 
             gap_to_predecessor = predecessor_rear_position - self.position
             logging.debug("%d's front gap %f" % (self.vid, gap_to_predecessor))

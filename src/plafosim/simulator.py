@@ -210,62 +210,68 @@ class Simulator:
     def speed2acceleration(self, speed_from: float, speed_to: float, time_interval: float = 1) -> float:
         return (speed_to - speed_from) / time_interval
 
-    def _get_predecessor_id(self, vid: int, lane: int = -1) -> int:
-        position = self._vehicles[vid].position
+    def _get_predecessor(self, v: Vehicle, lane: int = -1) -> Vehicle:
         if lane == -1:
-            lane = self._vehicles[vid].lane
-        predecessor_id = -1
+            # implicitly search on current lane of vehicle
+            lane = v.lane
+        predecessor = None  # there is no predecessor so far
         for vehicle in self._vehicles.values():
-            if vehicle.vid == vid:
+            if vehicle is v:
+                # skip the vehicle
                 continue
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
             if vehicle.lane != lane:
+                # skip other lane
                 continue
-            if vehicle.position < position:
+            if vehicle.position < v.position:
+                # vehicle is not in front of us
                 continue
-            if vehicle.position == position:
+            if vehicle.position == v.position:
                 # TODO throw error if the vehicles are "interleaved"
                 continue
-            if predecessor_id == -1 or vehicle.position < self._vehicles[predecessor_id].position:
-                predecessor_id = vehicle.vid
-            # TODO throw error if predecessor and vehicle are "interleaved"
-        return predecessor_id
+            # we do not check for collisions here because this method is also called within an update step
+            if predecessor is None or vehicle.rear_position < predecessor.rear_position:
+                # the current vehicle is closer to use than the previos predecessor
+                predecessor = vehicle
+        return predecessor
 
-    def _get_successor_id(self, vid: int, lane: int = -1) -> int:
-        position = self._vehicles[vid].position
+    def _get_successor(self, v: Vehicle, lane: int = -1) -> Vehicle:
         if lane == -1:
-            lane = self._vehicles[vid].lane
-        successor_id = -1
+            # implicitly search on current lane of vehicle
+            lane = v.lane
+        successor = None  # there is no successor so far
         for vehicle in self._vehicles.values():
-            if vehicle.vid is vid:
+            if vehicle is v:
                 continue
-            if vehicle.lane is not lane:
+            if vehicle.lane != lane:
+                # skip other lane
                 continue
-            if vehicle.position > position:
+            if vehicle.position > v.position:
+                # vehicle is not behind us
                 continue
-            if vehicle.position is position:
+            if vehicle.position == v.position:
                 # TODO throw error if the vehicles are "interleaved"
                 continue
-            if successor_id == -1 or vehicle.position > self._vehicles[successor_id].position:
-                successor_id = vehicle.vid
-            # TODO throw error if successor and vehicle are "interleaved"
-        return successor_id
+            # we do not check for collisions here because this method is also called within an update step
+            if successor is None or vehicle.position > successor.position:
+                successor = vehicle
+        return successor
 
-    def _get_predecessor_rear_position(self, vid: int, lane: int = -1) -> int:
-        pid = self._get_predecessor_id(vid, lane)
-        if pid == -1:
+    def _get_predecessor_rear_position(self, vehicle: Vehicle, lane: int = -1) -> float:
+        p = self._get_predecessor(vehicle, lane)
+        if p is None:
             return -1
         else:
-            return self._vehicles[pid].rear_position
+            return p.rear_position
 
-    def _get_predecessor_speed(self, vid: int, lane: int = -1) -> int:
-        pid = self._get_predecessor_id(vid, lane)
-        if pid == -1:
+    def _get_predecessor_speed(self, vehicle: Vehicle, lane: int = -1) -> float:
+        p = self._get_predecessor(vehicle, lane)
+        if p is None:
             return -1
         else:
-            return self._vehicles[pid].speed
+            return p.speed
 
     def is_lane_change_safe(self, vid: int, target_lane: int) -> bool:
         v = self._vehicles[vid]
@@ -274,17 +280,15 @@ class Simulator:
             return True
 
         # check predecessor on target lane
-        predecessor_on_target_lane = self._get_predecessor_id(vid, target_lane)
-        if predecessor_on_target_lane != -1:
-            p = self._vehicles[predecessor_on_target_lane]
+        p = self._get_predecessor(v, target_lane)
+        if p is not None:
             gap_to_predecessor_on_target_lane = p.rear_position - v.position
             if v.speed > v._safe_speed(p.speed, gap_to_predecessor_on_target_lane, v.desired_gap, v.vehicle_type.min_gap):
                 return False
 
         # check successor on target lane
-        successor_on_target_lane = self._get_successor_id(vid, target_lane)
-        if successor_on_target_lane != -1:
-            s = self._vehicles[successor_on_target_lane]
+        s = self._get_successor(v, target_lane)
+        if s is not None:
             gap_to_successor_on_target_lane = v.rear_position - s.position
             if s.speed > s._safe_speed(v.speed, gap_to_successor_on_target_lane):
                 return False
