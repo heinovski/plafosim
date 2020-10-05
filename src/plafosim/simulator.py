@@ -398,12 +398,9 @@ class Simulator:
                 continue
 
             logging.debug("%d's current speed %f" % (vehicle.vid, vehicle.speed))
-
             new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid), vehicle.desired_gap)
             vehicle._acceleration = new_speed - vehicle.speed
-
             logging.debug("%d's current acceleration: %f" % (vehicle.vid, vehicle.acceleration))
-
             vehicle._speed = new_speed
 
     # krauss - single lane traffic
