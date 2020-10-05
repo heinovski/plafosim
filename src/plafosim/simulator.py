@@ -273,9 +273,7 @@ class Simulator:
         else:
             return p.speed
 
-    def is_lane_change_safe(self, vid: int, target_lane: int) -> bool:
-        v = self._vehicles[vid]
-
+    def is_lane_change_safe(self, v: Vehicle, target_lane: int) -> bool:
         if v.lane == target_lane:
             return True
 
@@ -297,12 +295,11 @@ class Simulator:
         return True
 
     # TODO move to vehicle?
-    def _change_lane(self, vid: int, target_lane: int, reason: str) -> bool:
-        v = self._vehicles[vid]
+    def _change_lane(self, v: Vehicle, target_lane: int, reason: str) -> bool:
         source_lane = v.lane
         if source_lane == target_lane:
             return True
-        logging.debug("%d wants to chage from lane %d to lane %d (%s)" % (vid, source_lane, target_lane, reason))
+        logging.debug("%d wants to chage from lane %d to lane %d (%s)" % (v.vid, source_lane, target_lane, reason))
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
@@ -319,11 +316,11 @@ class Simulator:
             if v.platoon_role == PlatoonRole.LEADER:
                 assert(reason == "speedGain" or reason == "keepRight")
 
-                logging.info("%d needs to check all platoon members" % vid)
+                logging.info("%d needs to check all platoon members" % v.vid)
 
                 can_change = True
                 for member in v.platoon.formation:
-                    can_change = can_change and self.is_lane_change_safe(member.vid, target_lane)
+                    can_change = can_change and self.is_lane_change_safe(member, target_lane)
                     if not can_change:
                         logging.debug("lane change is not safe for %d" % member.vid)
 
@@ -341,24 +338,24 @@ class Simulator:
                             f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, member.vid, member.position, source_lane, target_lane, member.speed, reason))
 
                     return abs(lane_diff) <= 1
-                logging.debug("%d's lane change is not safe" % vid)
+                logging.debug("%d's lane change is not safe" % v.vid)
                 return False
 
         # we are just a regular vehicle or we are not (yet) in a platoon
 
         # check adjacent lane is free
-        if self.is_lane_change_safe(vid, target_lane):
-            logging.info("%d is switching lanes: %d -> %d (%s)" % (vid, source_lane, target_lane, reason))
+        if self.is_lane_change_safe(v, target_lane):
+            logging.info("%d is switching lanes: %d -> %d (%s)" % (v.vid, source_lane, target_lane, reason))
 
             # switch to adjacent lane
             v._lane = target_lane
 
             # log lane change
             with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, vid, v.position, source_lane, target_lane, v.speed, reason))
+                f.write("%d,%d,%f,%d,%d,%f,%s\n" % (self.step, v.vid, v.position, source_lane, target_lane, v.speed, reason))
 
             return abs(lane_diff) <= 1
-        logging.debug("%d's lane change is not safe" % vid)
+        logging.debug("%d's lane change is not safe" % v.vid)
         return False
 
     # kraus - multi lane traffic
@@ -383,7 +380,7 @@ class Simulator:
                     source_lane = vehicle.lane
                     target_lane = source_lane + 1
                     # TODO determine whether it is useful to overtake
-                    self._change_lane(vehicle.vid, target_lane, "speedGain")
+                    self._change_lane(vehicle, target_lane, "speedGain")
             else:
                 if isinstance(vehicle, PlatooningVehicle) and vehicle.platoon_role == PlatoonRole.FOLLOWER:
                     # followers are not allowed to change the lane on their own
@@ -391,7 +388,7 @@ class Simulator:
                 if vehicle.lane > 0:
                     source_lane = vehicle.lane
                     target_lane = source_lane - 1
-                    self._change_lane(vehicle.vid, target_lane, "keepRight")
+                    self._change_lane(vehicle, target_lane, "keepRight")
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
