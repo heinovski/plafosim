@@ -393,15 +393,18 @@ class Simulator:
         """Do speed adjustments for all vehicles"""
 
         for vehicle in self._vehicles.values():
-            if vehicle.depart_time > self._step:
-                # vehicle did not start yet
-                continue
+            self._adjust_speed(vehicle)
 
-            logging.debug("%d's current speed %f" % (vehicle.vid, vehicle.speed))
-            new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle.vid), self._get_predecessor_rear_position(vehicle.vid), vehicle.desired_gap)
-            vehicle._acceleration = new_speed - vehicle.speed
-            logging.debug("%d's current acceleration: %f" % (vehicle.vid, vehicle.acceleration))
-            vehicle._speed = new_speed
+    def _adjust_speed(self, vehicle: Vehicle):
+        if vehicle.depart_time > self._step:
+            # vehicle did not start yet
+            return
+
+        logging.debug("%d's current speed %f" % (vehicle.vid, vehicle.speed))
+        new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle), self._get_predecessor_rear_position(vehicle), vehicle.desired_gap)
+        vehicle._acceleration = new_speed - vehicle.speed
+        logging.debug("%d's current acceleration: %f" % (vehicle.vid, vehicle.acceleration))
+        vehicle._speed = new_speed
 
     # krauss - single lane traffic
     # adjust position (move)
