@@ -410,25 +410,28 @@ class Simulator:
         """Do position updates for all vehicles"""
 
         for vehicle in sorted(self._vehicles.values(), key=lambda x: x.position, reverse=True):
-            if vehicle.depart_time > self._step:
-                # vehicle did not start yet
-                continue
-            # increase position according to speed
-            position_difference = self.speed2distance(vehicle.speed, self._step_length)
-            # TODO add emissions/fuel statistics
-            # arrival_position reached?
-            if vehicle.position + position_difference >= vehicle.arrival_position:
-                # TODO use proper method
-                vehicle._position = vehicle.arrival_position
-                vehicle.finish()
-                if self._gui:
-                    import traci
-                    traci.vehicle.remove(str(vehicle.vid), 2)
-                del self._vehicles[vehicle.vid]
-                continue
-            else:
-                # TODO use proper method
-                vehicle._position += position_difference
+            self._move_vehicle(vehicle)
+
+    def _move_vehicle(self, vehicle: Vehicle):
+        if vehicle.depart_time > self._step:
+            # vehicle did not start yet
+            return
+        # increase position according to speed
+        position_difference = self.speed2distance(vehicle.speed, self._step_length)
+        # TODO add emissions/fuel statistics
+        # arrival_position reached?
+        if vehicle.position + position_difference >= vehicle.arrival_position:
+            # TODO use proper method
+            vehicle._position = vehicle.arrival_position
+            vehicle.finish()
+            if self._gui:
+                import traci
+                traci.vehicle.remove(str(vehicle.vid), 2)
+            del self._vehicles[vehicle.vid]
+            return
+        else:
+            # TODO use proper method
+            vehicle._position += position_difference
 
     def check_collisions(self):
         """Do collision checks for all vehicles"""
