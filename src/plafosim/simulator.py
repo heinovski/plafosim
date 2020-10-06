@@ -827,7 +827,6 @@ class Simulator:
 
             if self._gui:
 
-                # simulate vehicles from trace file
                 for vehicle in self._vehicles.values():
                     if vehicle.depart_time > self._step:
                         # vehicle did not start yet
