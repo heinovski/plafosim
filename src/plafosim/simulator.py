@@ -235,7 +235,7 @@ class Simulator:
                 continue
             # we do not check for collisions here because this method is also called within an update step
             if predecessor is None or vehicle.rear_position < predecessor.rear_position:
-                # the current vehicle is closer to use than the previos predecessor
+                # the current vehicle is closer to us than the previos predecessor
                 predecessor = vehicle
         return predecessor
 
