@@ -103,6 +103,31 @@ class TestSimulator:
         assert(self.s._get_predecessor(self.s._vehicles[0], self.s._vehicles[2].lane) is self.s._vehicles[1])
         assert(self.s._get_predecessor(self.s._vehicles[2], self.s._vehicles[0].lane) is self.s._vehicles[0])
 
+    def test_get_predecessor_rear_position(self):
+        self.setup()
+        self.s._step = 1
+        self.s._spawn_vehicle()
+#        self.s._vehicles[0]._started = True
+        self.s._step = 2
+        self.s._spawn_vehicle()
+#        self.s._vehicles[1]._started = True
+        self.s._step = 3
+        self.s._spawn_vehicle()
+#        self.s._vehicles[2]._started = True
+        self.s._vehicles[0]._position = 100
+        self.s._vehicles[0]._lane = 0
+        self.s._vehicles[1]._position = 60
+        self.s._vehicles[1]._lane = 0
+        self.s._vehicles[2]._position = 20
+        self.s._vehicles[2]._lane = 0
+
+        # test simple situation
+        assert(self.s._get_predecessor_rear_position(self.s._vehicles[0]) == -1)
+        assert(self.s._get_predecessor_rear_position(self.s._vehicles[1]) == self.s._vehicles[0].rear_position)
+        assert(self.s._get_predecessor_rear_position(self.s._vehicles[2]) == self.s._vehicles[1].rear_position)
+
+        # we are skipping more complex scenarios, since they are handled by test_predecessor
+
     def test_spawn_vehicle(self):
         self.setup()
 
