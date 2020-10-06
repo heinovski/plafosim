@@ -19,6 +19,8 @@ steps:
 - name: unittests
   image: python
   commands:
+    - pip3 install --upgrade funcy
+    - pip3 install --upgrade tqdm
     - pip3 install --upgrade pytest
     - pip3 install --upgrade pytest-cov
     - export PYTHONPATH=$(pwd)/src
