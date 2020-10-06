@@ -464,7 +464,8 @@ class Simulator:
                 logging.critical("collision between %d (%f-%f,%d) and %d (%f-%f,%d)" % (vehicle.vid, vehicle.position, vehicle.rear_position, vehicle.lane, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane))
                 exit(1)
 
-    def has_collision(self, vehicle1: Vehicle, vehicle2: Vehicle) -> bool:
+    @staticmethod
+    def has_collision(vehicle1: Vehicle, vehicle2: Vehicle) -> bool:
         assert(vehicle1 is not vehicle2)
         assert(vehicle1.lane == vehicle2.lane)
         return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
