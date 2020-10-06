@@ -122,7 +122,7 @@ def main():
                       default='interval', help="The departure method of vehicles")
     trip.add_argument('--depart-time-interval', type=int, default=1,
                       help="The interval between two vehicle departures in s for depart method 'interval'")
-    trip.add_argument('--depart-probability', type=float, default=1,
+    trip.add_argument('--depart-probability', type=float, default=1.0,
                       help="The probability of departure per time step for depart method 'probability'")
     trip.add_argument('--depart_rate', type=int, default=3600,
                       help="The rate of departure in vehicles per hour for depart method 'rate'")
