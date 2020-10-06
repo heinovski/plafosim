@@ -248,6 +248,9 @@ class Simulator:
             if vehicle is v:
                 # skip the vehicle
                 continue
+            if vehicle.depart_time > self._step:
+                # vehicle did not start yet
+                continue
             if vehicle.lane != lane:
                 # skip other lane
                 continue
