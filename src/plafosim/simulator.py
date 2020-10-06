@@ -443,23 +443,26 @@ class Simulator:
         """Do collision checks for all vehicles"""
 
         for vehicle in self._vehicles.values():
-            if vehicle.depart_time > self._step:
-                # vehicle did not start yet
+            self._check_collision(vehicle)
+
+    def _check_collision(self, vehicle: Vehicle):
+        if vehicle.depart_time > self._step:
+            # vehicle did not start yet
+            return
+        # check for crashes of this vehicle with any other vehicle
+        for other_vehicle in self._vehicles.values():
+            if vehicle is other_vehicle:
+                # we do not need to compare us to ourselves
                 continue
-            # check for crashes of this vehicle with any other vehicle
-            for other_vehicle in self._vehicles.values():
-                if vehicle is other_vehicle:
-                    # we do not need to compare us to ourselves
-                    continue
-                if vehicle.lane != other_vehicle.lane:
-                    # we do not care about other lanes
-                    continue
-                if other_vehicle.depart_time > self._step:
-                    # other vehicle did not start yet
-                    continue
-                if self.has_collision(vehicle, other_vehicle):
-                    logging.critical("collision between %d (%f-%f,%d) and %d (%f-%f,%d)" % (vehicle.vid, vehicle.position, vehicle.rear_position, vehicle.lane, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane))
-                    exit(1)
+            if vehicle.lane != other_vehicle.lane:
+                # we do not care about other lanes
+                continue
+            if other_vehicle.depart_time > self._step:
+                # other vehicle did not start yet
+                continue
+            if self.has_collision(vehicle, other_vehicle):
+                logging.critical("collision between %d (%f-%f,%d) and %d (%f-%f,%d)" % (vehicle.vid, vehicle.position, vehicle.rear_position, vehicle.lane, other_vehicle.vid, other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane))
+                exit(1)
 
     def has_collision(self, vehicle1: Vehicle, vehicle2: Vehicle) -> bool:
         assert(vehicle1 is not vehicle2)
