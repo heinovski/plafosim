@@ -246,6 +246,7 @@ class Simulator:
         successor = None  # there is no successor so far
         for vehicle in self._vehicles.values():
             if vehicle is v:
+                # skip the vehicle
                 continue
             if vehicle.lane != lane:
                 # skip other lane
