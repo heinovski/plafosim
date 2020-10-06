@@ -262,6 +262,7 @@ class Simulator:
                 continue
             # we do not check for collisions here because this method is also called within an update step
             if successor is None or vehicle.position > successor.position:
+                # the current vehicle is closer to us than the previous successor
                 successor = vehicle
         return successor
 
