@@ -322,6 +322,8 @@ class PlatooningVehicle(Vehicle):
             self._speed = last.speed
             logging.warn("%d changed speed to %f (from %f)" % (self.vid, self.speed, current_speed))
         else:
+            print("Not yet implemented!")
+            exit(1)
             # start platooning mode
             self._platoon_role = PlatoonRole.JOINER
 
