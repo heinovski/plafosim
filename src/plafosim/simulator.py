@@ -588,10 +588,6 @@ class Simulator:
             logging.info("All %d vehicles have been spawned already" % number_of_vehicles)
             return
 
-        logging.debug("Spawning a vehicle...")
-
-        vid = self._last_vehicle_id + 1
-
         spawn = False  # should we spawn a new vehicle in this timestep?
         if self._depart_method == "interval":
             # spawn interval
@@ -617,7 +613,8 @@ class Simulator:
             # we do not spawn a vehicle in this timestep
             return
 
-        logging.debug("We will spawn a vehicle in this time step")
+        vid = self._last_vehicle_id + 1
+        logging.debug("Spawning vehicle %d" % vid)
 
         if self._random_depart_lane:
             if self._start_as_platoon:
