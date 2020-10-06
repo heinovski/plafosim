@@ -45,24 +45,6 @@ class TestSimulator:
         assert(Simulator.speed2acceleration(36.0, 24.0) == -12.0)
         assert(Simulator.speed2acceleration(32.0, 42.0, 10) == 1.0)  # TODO is this physically correct?
 
-    def test_spawn_vehicle(self):
-        self.setup()
-
-        ## test depart method interval
-        self.s._depart_method = 'interval'
-        self.s._depart_time_interval = 1
-
-        # test simple spawning
-        assert(len(self.s._vehicles) == 0)
-        self.s._spawn_vehicle()
-        assert(len(self.s._vehicles) == 1)
-
-        # test only one spawn per time step
-        self.s._spawn_vehicle()
-        assert(len(self.s._vehicles) == 1)
-
-        # TODO test other depart methods
-
     def test_get_predecessor(self):
         self.setup()
         self.s._step = 1
@@ -120,3 +102,21 @@ class TestSimulator:
         self.s._vehicles[2]._position = self.s._vehicles[0].position - 1
         assert(self.s._get_predecessor(self.s._vehicles[0], self.s._vehicles[2].lane) is self.s._vehicles[1])
         assert(self.s._get_predecessor(self.s._vehicles[2], self.s._vehicles[0].lane) is self.s._vehicles[0])
+
+    def test_spawn_vehicle(self):
+        self.setup()
+
+        ## test depart method interval
+        self.s._depart_method = 'interval'
+        self.s._depart_time_interval = 1
+
+        # test simple spawning
+        assert(len(self.s._vehicles) == 0)
+        self.s._spawn_vehicle()
+        assert(len(self.s._vehicles) == 1)
+
+        # test only one spawn per time step
+        self.s._spawn_vehicle()
+        assert(len(self.s._vehicles) == 1)
+
+        # TODO test other depart methods
