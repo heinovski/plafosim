@@ -21,7 +21,7 @@ import logging
 from distutils.util import strtobool
 from timeit import default_timer as timer
 
-from src.plafosim.simulator import Simulator
+from src.plafosim import Simulator
 
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
