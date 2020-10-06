@@ -28,3 +28,21 @@ class TestSimulator:
 
         assert(len(self.s._vehicles) == 0)
         assert(len(self.s._infrastructures) == 0)
+
+    def test_spawn_vehicle(self):
+        self.setup()
+
+        ## test depart method interval
+        self.s._depart_method = 'interval'
+        self.s._depart_time_interval = 1
+
+        # test simple spawning
+        assert(len(self.s._vehicles) == 0)
+        self.s._spawn_vehicle()
+        assert(len(self.s._vehicles) == 1)
+
+        # test only one spawn per time step
+        self.s._spawn_vehicle()
+        assert(len(self.s._vehicles) == 1)
+
+        # TODO test other depart methods
