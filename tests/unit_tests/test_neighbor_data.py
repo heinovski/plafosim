@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-from plafosim.neighbortable import NeighborData
+from plafosim import NeighborData
 
 
 def test_creation():
