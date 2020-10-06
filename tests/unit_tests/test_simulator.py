@@ -23,7 +23,7 @@ class TestSimulator:
         self.s = Simulator()
         assert(self.s is not None)
 
-    def test_creation(self):
+    def test__init__(self):
         self.setup()
 
         assert(len(self.s._vehicles) == 0)
