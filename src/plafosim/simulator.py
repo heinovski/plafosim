@@ -595,7 +595,8 @@ class Simulator:
         spawn = False  # should we spawn a new vehicle in this timestep?
         if self._depart_method == "interval":
             # spawn interval
-            spawn = self.step % self._depart_time_interval == 0
+            spawn = self.step % self._depart_time_interval == 0 and \
+                (self._vehicles[self._last_vehicle_id].depart_time != self.step if self._last_vehicle_id != -1 else True)
         elif self._depart_method == "probability":
             # spawn probability per time step
             spawn = random() <= self._depart_probability
