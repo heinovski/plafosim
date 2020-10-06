@@ -11,8 +11,8 @@
 
 ## Installation
 
-- install the dependencies listed below
-- clone the repository
+- Install the dependencies listed below
+- Clone the repository
 
 ### Dependencies
 
