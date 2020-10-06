@@ -57,7 +57,7 @@ steps:
       - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
         # we are testing both vehicle types
-      - ./plafosim.py --penetration 0.5 --random-seed $SEED --time-limit 1
+      - ./plafosim.py --penetration 0.5 --time-limit 1 --random-seed $SEED
 
 ---
 kind: pipeline
