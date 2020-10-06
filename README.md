@@ -43,6 +43,18 @@ E.g., use the parameter `vehicles` to configure the number of vehicles in the si
 
 ```./plafosim.py --vehicles 1000```
 
+The available parameters are grouped into different categories:
+
+```
+- road network properties
+- vehicle properties
+- trip properties
+- platoon properties
+- formation properties
+- infrastructure properties
+- simulation properties
+```
+
 You can see the complete list of available parameters by running
 
 ```./plafosim.py -h```
