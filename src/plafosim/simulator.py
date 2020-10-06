@@ -584,7 +584,7 @@ class Simulator:
             logging.info("Number of vehicles %d is reached already" % number_of_vehicles)
             return
 
-        if not self._depart_flow and self._last_vehicle_id >= number_of_vehicles:
+        if not self._depart_flow and self._last_vehicle_id >= number_of_vehicles - 1:
             logging.info("All %d vehicles have been spawned already" % number_of_vehicles)
             return
 
