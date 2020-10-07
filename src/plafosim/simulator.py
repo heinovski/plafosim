@@ -793,7 +793,7 @@ class Simulator:
         with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
             f.write("step,id,position,lane,speed,duration,routeLength\n")
 
-        # crieate output file for vehicle lane changes
+        # create output file for vehicle lane changes
         with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
             f.write("step,id,position,from,to,speed,reason\n")
 
