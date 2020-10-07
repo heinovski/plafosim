@@ -275,7 +275,7 @@ class PlatooningVehicle(Vehicle):
 
         return platoons
 
-    def _join(self, platoon_id: int, leader_id: int, teleport: bool = True):
+    def _join(self, platoon_id: int, leader_id: int):
         # just join, without any communication
 
         assert(not self.is_in_platoon())
@@ -311,33 +311,15 @@ class PlatooningVehicle(Vehicle):
         last = leader.platoon.last
 
         # TODO we do not want to teleport the vehicle
-        if teleport:
-            current_position = self.position
-            self._position = last.rear_position - self.cacc_spacing
-            logging.warn("%d teleported to %d (from %d)" % (self.vid, self.position, current_position))
-            current_lane = self.lane
-            self._lane = leader.lane
-            logging.warn("%d switched to lane %d (from %d)" % (self.vid, self.lane, current_lane))
-            current_speed = self.speed
-            self._speed = last.speed
-            logging.warn("%d changed speed to %f (from %f)" % (self.vid, self.speed, current_speed))
-        else:
-            print("Not yet implemented!")
-            exit(1)
-            # start platooning mode
-            self._platoon_role = PlatoonRole.JOINER
-
-            # switch to correct lane
-            if not self._simulator._change_lane(self.vid, leader.platoon.lane, "joinManeuver"):
-                # TODO we are still not on the correct lane
-                # we probably need some state machine .......
-                print("what know???")
-                exit(1)
-
-            # TODO check whether someone else is between us
-            if self._simulator._get_predecessor_id(self.vid) != leader.platoon.last.vid:
-                print("There is some one between us!!!!")
-                exit(1)
+        current_position = self.position
+        self._position = last.rear_position - self.cacc_spacing
+        logging.warn("%d teleported to %d (from %d)" % (self.vid, self.position, current_position))
+        current_lane = self.lane
+        self._lane = leader.lane
+        logging.warn("%d switched to lane %d (from %d)" % (self.vid, self.lane, current_lane))
+        current_speed = self.speed
+        self._speed = last.speed
+        logging.warn("%d changed speed to %f (from %f)" % (self.vid, self.speed, current_speed))
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
