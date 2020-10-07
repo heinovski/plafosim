@@ -809,6 +809,16 @@ class Simulator:
 
             traci.start(sumoCmd)
             traci.simulationStep(self._step)
+
+            # draw infrastructures
+            for infrastructure in self._infrastructures.values():
+                # add infrastructure
+                if (str(infrastructure.iid)) not in traci.polygon.getIDList():
+                    y = 230
+                    width = 10
+                    color = (255, 126, 0)
+                    traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
+
             from random import randrange
 
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
@@ -826,14 +836,6 @@ class Simulator:
                 continue
 
             if self._gui:
-
-                for infrastructure in self._infrastructures.values():
-                    # add infrastructure
-                    if (str(infrastructure.iid)) not in traci.polygon.getIDList():
-                        y = 230
-                        width = 10
-                        color = (255, 126, 0)
-                        traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
 
                 for vehicle in self._vehicles.values():
                     if vehicle.depart_time > self._step:
