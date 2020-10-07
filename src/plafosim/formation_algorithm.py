@@ -87,11 +87,15 @@ class SpeedPosition(FormationAlgorithm):
 
         from .infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
+            from .platooning_vehicle import PlatooningVehicle  # noqa 811
             logging.info("%d is running formation algorithm %s (centralized)" % (self._owner.iid, self.name))
             all_found_candidates = []
             # select all searching vehicles
             for vehicle in self._owner._simulator._vehicles.values():
 
+                # filter vehicles that are technically not able to do platooning
+                if not isinstance(vehicle, PlatooningVehicle):
+                    continue
                 # filter vehicles which are already in a platoon
                 if vehicle.platoon_role != PlatoonRole.NONE:
                     logging.debug("%d is already in a platoon" % vehicle.vid)
@@ -105,6 +109,9 @@ class SpeedPosition(FormationAlgorithm):
                 for other_vehicle in self._owner._simulator._vehicles.values():
                     # filter same car because we assume driving alone is worse than to do platooning
                     if other_vehicle is vehicle:
+                        continue
+                    # filter vehicles that are technically not able to do platooning
+                    if not isinstance(other_vehicle, PlatooningVehicle):
                         continue
                     # filter vehicles which are not available to become a new leader
                     # we only have this information due to oracle knowledge in the centralized version
