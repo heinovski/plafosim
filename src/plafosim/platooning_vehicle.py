@@ -310,7 +310,9 @@ class PlatooningVehicle(Vehicle):
 
         last = leader.platoon.last
 
-        # TODO we do not want to teleport the vehicle
+        platoon_successor = self._simulator._get_successor(last)
+
+        # teleport the vehicle
         current_position = self.position
         self._position = last.rear_position - self.cacc_spacing
         logging.warn("%d teleported to %d (from %d)" % (self.vid, self.position, current_position))
@@ -320,6 +322,21 @@ class PlatooningVehicle(Vehicle):
         current_speed = self.speed
         self._speed = last.speed
         logging.warn("%d changed speed to %f (from %f)" % (self.vid, self.speed, current_speed))
+
+        # we also need to check interfering vehicles!
+        if platoon_successor is not self and platoon_successor is not None:
+            diff = self.rear_position - platoon_successor.min_gap - platoon_successor.position
+            if diff < 0:
+                # adjust this vehicle
+                platoon_successor._position = platoon_successor._position + diff
+                print(f"adjusted position of {platoon_successor.vid} to {platoon_successor.position}")
+                if isinstance(platoon_successor, PlatooningVehicle):
+                    assert(not platoon_successor.is_in_platoon() or platoon_successor.platoon_role == PlatoonRole.LEADER)
+                    # adjust also all platoon members
+                    for vehicle in platoon_successor.platoon.formation[1:]:
+                        # adjust this vehicle
+                        vehicle._position = vehicle._position + diff
+                        print(f"adjusted position of {vehicle.vid} to {vehicle.position}")
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
