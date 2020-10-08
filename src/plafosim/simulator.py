@@ -921,7 +921,6 @@ class Simulator:
             # remove all infrastructures
             for iid in traci.polygon.getIDList():
                 traci.polygon.remove(iid)
-            traci.close(False)
             # remove all vehicles
             for vid in traci.vehicle.getIDList():
                 traci.vehicle.remove(vid, 2)
