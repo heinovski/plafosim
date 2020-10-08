@@ -108,12 +108,12 @@ class Simulator:
         self._last_vehicle_id = -1  # the id of the last vehicle generated
         self._number_of_vehicles = number_of_vehicles  # the maximum number of vehicles
         self._vehicle_density = vehicle_density  # the number of vehicles per km and lane
-        self._max_speed = max_speed  # the maximum drivig speed # FIXME not used
-        self._acc_headway_time = acc_headway_time  # the headway time fo ACC
+        self._max_speed = max_speed  # the maximum driving speed # FIXME not used
+        self._acc_headway_time = acc_headway_time  # the headway time for ACC
         self._cacc_spacing = cacc_spacing  # the constant spacing for CACC
         self._collisions = collisions  # whether to check for collisions
         self._lane_changes = lane_changes  # whether to enable lane changes
-        self._penetration_rate = penetration_rate  # the peneration rate of platooning vehicles
+        self._penetration_rate = penetration_rate  # the penetration rate of platooning vehicles
 
         # trip properties
         self._random_depart_position = random_depart_position  # whether to use random depart positions
@@ -125,7 +125,7 @@ class Simulator:
         self._max_desired_speed = max_desired_speed  # the maximum desired driving speed
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to depart with the desired driving speed
-        self._depart_flow = depart_flow  # whether to spawn vehicles in a continous flow
+        self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         self._depart_method = depart_method  # the departure method to use
         self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
         self._depart_probability = depart_probability  # the departure probability
@@ -144,11 +144,11 @@ class Simulator:
         # formation properties
         # TODO find a different solution for algorithm specific parameters
         self._alpha = alpha  # the weight of the speed deviation
-        self._speed_deviation_threshold = speed_deviation_threshold  # the maximum deviation from the desired drivng speed
+        self._speed_deviation_threshold = speed_deviation_threshold  # the maximum deviation from the desired driving speed
         self._position_deviation_threshold = position_deviation_threshold  # the maximum deviation from the current position
 
         # infrastructure properties
-        self._infrastructures = {}  # the list (dict) of instrastructures in the simulation
+        self._infrastructures = {}  # the list (dict) of infrastructures in the simulation
 
         # simulation properties
         self._step = 0  # the current simulation step in s
@@ -235,7 +235,7 @@ class Simulator:
                 continue
             # we do not check for collisions here because this method is also called within an update step
             if predecessor is None or vehicle.rear_position < predecessor.rear_position:
-                # the current vehicle is closer to us than the previos predecessor
+                # the current vehicle is closer to us than the previous predecessor
                 predecessor = vehicle
         return predecessor
 
@@ -643,7 +643,7 @@ class Simulator:
                 logging.warn("Vehicles can not have random departure positions when starting as one platoon!")
                 exit(1)
             if not self._depart_desired:
-                logging.warn("random-depart-position is only possible in conjuction with depart-desired!")
+                logging.warn("random-depart-position is only possible in conjunction with depart-desired!")
                 exit(1)
 
             depart_position = randrange(length, self.road_length, self._depart_interval + length)
@@ -871,7 +871,7 @@ class Simulator:
             # call regular actions on vehicles
             self.call_vehicle_actions()
 
-            # call regular actrions on infrastructure
+            # call regular actions on infrastructure
             self.call_infrastructure_actions()
 
             # perform lane changes (for all vehicles)
