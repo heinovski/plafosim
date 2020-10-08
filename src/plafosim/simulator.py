@@ -824,8 +824,6 @@ class Simulator:
                     color = (255, 126, 0)
                     traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
 
-            from random import randrange
-
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
         while self._running:
