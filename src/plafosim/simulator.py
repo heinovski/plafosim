@@ -15,10 +15,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 import logging
+import random
 import time
 
 from math import copysign
-from random import normalvariate, randrange, random, seed
 from tqdm import tqdm
 
 from .vehicle_type import VehicleType
@@ -156,9 +156,9 @@ class Simulator:
         self._max_step = max_step
         self._running = False  # whether the simulation is running
         if random_seed >= 0:
-            self._random_seed = random_seed  # the seed to use for the RNG
+            self._random_seed = random_seed  # the random.seed to use for the RNG
             logging.info("Using random seed %d" % random_seed)
-            seed(random_seed)
+            random.seed(random_seed)
         self._gui = gui  # whether to show a live sumo-gui
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
@@ -502,9 +502,9 @@ class Simulator:
             while collision:
                 # actual calculation of position and lane
                 # always use random position for pre-filled vehicle
-                depart_position = randrange(length, self.road_length, length + min_gap)
+                depart_position = random.randrange(length, self.road_length, length + min_gap)
                 # always use random lane for pre-filled vehicle
-                depart_lane = randrange(0, self.number_of_lanes, 1)
+                depart_lane = random.randrange(0, self.number_of_lanes, 1)
 
                 logging.debug("Generated random depart position (%d,%d) for vehicle %d" % (depart_position, depart_lane, vid))
 
@@ -520,7 +520,7 @@ class Simulator:
 
             if self._random_desired_speed:
                 # normal distribution
-                desired_speed = self._desired_speed * normalvariate(1.0, self._speed_variation)
+                desired_speed = self._desired_speed * random.normalvariate(1.0, self._speed_variation)
                 desired_speed = max(desired_speed, self._min_desired_speed)
                 desired_speed = min(desired_speed, self._max_desired_speed)
             else:
@@ -530,7 +530,7 @@ class Simulator:
             depart_speed = desired_speed
 
             if self._random_arrival_position:
-                arrival_position = randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
+                arrival_position = random.randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
             else:
                 arrival_position = self._road_length
 
@@ -543,7 +543,7 @@ class Simulator:
                     exit(1)
 
             # choose vehicle "type" depending on the penetration rate
-            if random() <= self._penetration_rate:
+            if random.random() <= self._penetration_rate:
                 vehicle = PlatooningVehicle(
                     self,
                     vid,
@@ -607,7 +607,7 @@ class Simulator:
                 spawn = spawn and self._vehicles[self._last_vehicle_id].depart_time != self.step
         elif self._depart_method == "probability":
             # spawn probability per time step
-            spawn = random() <= self._depart_probability
+            spawn = random.random() <= self._depart_probability
         elif self._depart_method == "rate":
             # spawn #vehicles per hour
             spawn_interval = 3600 / self.step_length / self._depart_rate
@@ -634,7 +634,7 @@ class Simulator:
                 logging.warn("Vehicles can not have random departure lanes when starting as one platoon!")
                 exit(1)
 
-            depart_lane = randrange(0, self.number_of_lanes, 1)
+            depart_lane = random.randrange(0, self.number_of_lanes, 1)
         else:
             depart_lane = 0
 
@@ -646,7 +646,7 @@ class Simulator:
                 logging.warn("random-depart-position is only possible in conjunction with depart-desired!")
                 exit(1)
 
-            depart_position = randrange(length, self.road_length, self._depart_interval + length)
+            depart_position = random.randrange(length, self.road_length, self._depart_interval + length)
         else:
             depart_position = length  # equal to departPos="base"
 
@@ -673,14 +673,14 @@ class Simulator:
 
         if self._random_desired_speed:
             # normal distribution
-            desired_speed = self._desired_speed * normalvariate(1.0, self._speed_variation)
+            desired_speed = self._desired_speed * random.normalvariate(1.0, self._speed_variation)
             desired_speed = max(desired_speed, self._min_desired_speed)
             desired_speed = min(desired_speed, self._max_desired_speed)
         else:
             desired_speed = self._desired_speed
 
         if self._random_depart_speed:
-            depart_speed = randrange(0, self._desired_speed, 1)
+            depart_speed = random.randrange(0, self._desired_speed, 1)
         else:
             depart_speed = 0
 
@@ -688,7 +688,7 @@ class Simulator:
             depart_speed = desired_speed
 
         if self._random_arrival_position:
-            arrival_position = randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
+            arrival_position = random.randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
         else:
             arrival_position = self._road_length
 
@@ -701,7 +701,7 @@ class Simulator:
                 exit(1)
 
         # choose vehicle "type" depending on the penetration rate
-        if random() <= self._penetration_rate:
+        if random.random() <= self._penetration_rate:
             vehicle = PlatooningVehicle(
                 self,
                 vid,
@@ -847,7 +847,7 @@ class Simulator:
                     # add vehicles
                     if str(vehicle.vid) not in traci.vehicle.getIDList():
                         traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
-                        traci.vehicle.setColor(str(vehicle.vid), (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
+                        traci.vehicle.setColor(str(vehicle.vid), (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1)))
                         traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
                         traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
                         # track vehicle
