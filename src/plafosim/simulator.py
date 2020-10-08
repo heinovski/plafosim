@@ -847,7 +847,11 @@ class Simulator:
                     # add vehicles
                     if str(vehicle.vid) not in traci.vehicle.getIDList():
                         traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
+                        # save internal state of random number generator
+                        state = random.getstate()
                         traci.vehicle.setColor(str(vehicle.vid), (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1)))
+                        # restore internal state of random number generator to not influence the determinsim of the simulation
+                        random.setstate(state)
                         traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
                         traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
                         # track vehicle
