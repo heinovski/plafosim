@@ -46,10 +46,10 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: execution
+name: executionNoFormation
 
 steps:
-  - name: run without formation
+  - name: run
     image: python
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
@@ -58,7 +58,14 @@ steps:
       - pip3 install --upgrade tqdm
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --time-limit 1 --random-seed $SEED
-  - name: run with formation distributed
+
+---
+kind: pipeline
+type: docker
+name: executionDistributedFormation
+
+steps:
+  - name: run
     image: python
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
@@ -67,7 +74,14 @@ steps:
       - pip3 install --upgrade tqdm
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --time-limit 1 --random-seed $SEED
-  - name: run with formation centralized
+
+---
+kind: pipeline
+type: docker
+name: executionCentralizedFormation
+
+steps:
+  - name: run
     image: python
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
