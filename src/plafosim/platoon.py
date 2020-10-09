@@ -101,3 +101,6 @@ class Platoon:
             return self.formation[self.get_member_index(vehicle) - 1]
         else:
             return None
+
+    def __str__(self) -> str:
+        return f"platoon {self.platoon_id}: {self.member_ids}"
