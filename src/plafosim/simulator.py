@@ -313,7 +313,7 @@ class Simulator:
             logging.warn(f"{v.vid} only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
-            logging.info(f"Adjusted target lane of {v.vid} to {target_lane} (from {old_target_lane})")
+            logging.warn(f"Adjusted target lane of {v.vid} to {target_lane} (from {old_target_lane})")
 
         if isinstance(v, PlatooningVehicle) and v.is_in_platoon():
             # followers are not allowed to change the lane on their one
