@@ -145,9 +145,8 @@ class PlatooningVehicle(Vehicle):
         # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         return -1.0 / self.acc_headway_time * (self.speed - desired_speed + self.acc_lambda * (-gap_to_predecessor + desired_gap))
 
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, desired_gap: float = 0) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
         if self._cf_mode is CF_Mode.ACC:
-            del desired_gap  # delete passed variable to avoid misuse
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different modes
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
@@ -257,8 +256,8 @@ class PlatooningVehicle(Vehicle):
 
             return new_speed
 
-        # default: drive freely
-        return super().new_speed(speed_predecessor, predecessor_rear_position, super().desired_gap)
+        # default: use CC or drive freely
+        return super().new_speed(speed_predecessor, predecessor_rear_position)
 
     def finish(self):
         # clean up platoon

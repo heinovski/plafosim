@@ -175,7 +175,7 @@ class Vehicle:
     # tau_b = v/b
     # v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
     # v(t + step_size) = max[0, v_des(t) - epsilon]
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, desired_gap: float = 0) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
         """Calculate the new speed for a vehicle using the kraus model"""
 
         logging.debug(f"{self.vid}'s desired speed is {self.desired_speed}")
@@ -201,9 +201,8 @@ class Vehicle:
             gap_to_predecessor = predecessor_rear_position - self.position
             logging.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
             logging.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
-            if desired_gap > 0:
-                logging.debug(f"{self.vid}'s desired gap {desired_gap}")
-            safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, desired_gap, self.min_gap)
+            logging.debug(f"{self.vid}'s desired gap {self.desired_gap}")
+            safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
             logging.debug(f"{self.vid}'s safe speed {safe_speed}")
 
             if safe_speed < new_speed:

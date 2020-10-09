@@ -409,7 +409,7 @@ class Simulator:
             return
 
         logging.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
-        new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle), self._get_predecessor_rear_position(vehicle), vehicle.desired_gap)
+        new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle), self._get_predecessor_rear_position(vehicle))
         vehicle._acceleration = new_speed - vehicle.speed
         logging.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
         vehicle._speed = new_speed
