@@ -85,7 +85,7 @@ class Simulator:
             position_deviation_threshold: int = 300,
             number_of_infrastructures: int = 0,
             step_length: int = 1,
-            max_step: int = 100 * 60 * 60,
+            max_step: int = 1 * 60 * 60,
             random_seed: int = -1,
             log_level: int = 'warn',
             gui: bool = False,

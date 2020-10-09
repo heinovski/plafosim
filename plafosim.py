@@ -156,7 +156,7 @@ def main():
     # simulation properties
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
-    simulation.add_argument('--time-limit', type=int, default=100, help="The simulation limit in h")
+    simulation.add_argument('--time-limit', type=float, default=1, help="The simulation limit in h")
     simulation.add_argument('--random-seed', type=int, default=-1,
                             help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--log-level', type=str, default="warn",
@@ -214,7 +214,7 @@ def main():
         args.position_deviation_threshold,
         args.infrastructures,
         args.step_length,
-        args.time_limit * 60 * 60,
+        round(args.time_limit * 60 * 60),
         args.random_seed,
         getattr(logging, args.log_level.upper(), None),
         args.gui,
