@@ -42,7 +42,7 @@ class Message:
 
     def __str__(self) -> str:
         """Get a string representation of the message"""
-        return "%d -> %d (%s): %s" % (self._origin, self._destination, self.__class__.__name__, self._data)
+        return f"{self._origin} -> {self._destination} ({self.__class__.__name__}): {self._data}"
 
 
 class ManeuverType(Enum):

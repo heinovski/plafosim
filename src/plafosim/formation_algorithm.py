@@ -192,7 +192,7 @@ class SpeedPosition(FormationAlgorithm):
 
                 all_found_candidates = [x for x in all_found_candidates if is_available(x)]
         else:
-            logging.info("%d is running formation algorithm %s (distributed)" % (self._owner.vid, self.name))
+            logging.info(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
 
             # we can only run the algorithm if we are not yet in a platoon
             # because this algorithm does not support changing the platoon later on
@@ -210,17 +210,17 @@ class SpeedPosition(FormationAlgorithm):
 
                 # TODO HACK for skipping platoons in front of us
                 if self._owner.position > platoon.rear_position:
-                    logging.debug("%d's platoon %d not applicable because of its absolute position" % (self._owner.vid, platoon.platoon_id))
+                    logging.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                     continue
 
                 # remove platoon if not in speed range
                 if ds > self._speed_deviation_threshold * self._owner.desired_speed:
-                    logging.debug("%d's platoon %d not applicable because of its speed difference" % (self._owner.vid, platoon.platoon_id))
+                    logging.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
                     continue
 
                 # remove platoon if not in position range
                 if dp > self._position_deviation_threshold:
-                    logging.debug("%d's platoon %d not applicable because of its position difference" % (self._owner.vid, platoon.platoon_id))
+                    logging.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
                     continue
 
                 # calculate deviation/cost
@@ -228,16 +228,16 @@ class SpeedPosition(FormationAlgorithm):
 
                 # add platoon to list
                 found_candidates.append({'vid': self._owner.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
-                logging.info("%d found %d applicable candidates" % (self._owner.vid, len(found_candidates)))
+                logging.info(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
 
             if len(found_candidates) == 0:
-                logging.debug("%d has no candidates" % self._owner.vid)
+                logging.debug(f"{self._owner.vid} has no candidates")
                 return
 
             # find best candidate to join
             # pick the platoon with the lowest deviation
             best = min(found_candidates, key=lambda x: x['cost'])
-            logging.info("%d' best platoon is %d (leader %d) with %d" % (self._owner.vid, best['pid'], best['lid'], best['cost']))
+            logging.info(f"{self._owner.vid}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
 
             # perform a join maneuver with the candidate's platoon
             # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?

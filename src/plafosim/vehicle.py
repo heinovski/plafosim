@@ -178,7 +178,7 @@ class Vehicle:
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, desired_gap: float = 0) -> float:
         """Calculate the new speed for a vehicle using the kraus model"""
 
-        logging.debug("%d's desired speed %f" % (self.vid, self.desired_speed))
+        logging.debug(f"{self.vid}'s desired speed is {self.desired_speed}")
 
         new_speed = -1
         # do we need to adjust our speed?
@@ -186,32 +186,32 @@ class Vehicle:
         if diff_to_desired > 0:
             # we need to accelerate
             new_speed = min(self.speed + min(diff_to_desired, self._simulator.acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
-            logging.debug("%d wants to accelerate to %f" % (self.vid, new_speed))
+            logging.debug(f"{self.vid} wants to accelerate to {new_speed}")
         elif diff_to_desired < 0:
             # we need to decelerate
             new_speed = max(self.speed + max(diff_to_desired, -self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
-            logging.debug("%d wants to decelerate to %f" % (self.vid, new_speed))
+            logging.debug(f"{self.vid} wants to decelerate to {new_speed}")
         else:
             new_speed = self.speed
-            logging.debug("%d keeps the speed of %f" % (self.vid, new_speed))
+            logging.debug(f"{self.vid} keeps the speed of {new_speed}")
 
         # vsafe
         if speed_predecessor >= 0 and predecessor_rear_position >= 0:
             # we have a predecessor
             gap_to_predecessor = predecessor_rear_position - self.position
-            logging.debug("%d's front gap %f" % (self.vid, gap_to_predecessor))
-            logging.debug("%d's predecessor speed %f" % (self.vid, speed_predecessor))
+            logging.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+            logging.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
             if desired_gap > 0:
-                logging.debug("%d's desired gap %f" % (self.vid, desired_gap))
+                logging.debug(f"{self.vid}'s desired gap {desired_gap}")
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, desired_gap, self.min_gap)
-            logging.debug("%d's safe speed %f" % (self.vid, safe_speed))
+            logging.debug(f"{self.vid}'s safe speed {safe_speed}")
 
             if safe_speed < new_speed:
-                logging.info("%d is blocked by a slow vehicle!" % self.vid)
+                logging.info(f"{self.vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
                 new_speed = max(safe_speed, self.speed - self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
-                logging.debug("%d's new speed after safe speed %f" % (self.vid, new_speed))
+                logging.debug(f"{self.vid}'s new speed after safe speed is {new_speed}")
             else:
                 self._blocked_front = False
         else:
@@ -224,7 +224,7 @@ class Vehicle:
         if (new_speed < 0):
             new_speed = 0
 
-        logging.debug("%d's new speed is %f" % (self.vid, new_speed))
+        logging.debug(f"{self.vid}'s new speed is {new_speed}")
 
         return new_speed
 
@@ -263,14 +263,14 @@ class Vehicle:
         """Return info of a Vehicle"""
 
         e_remaining_travel_time = round((self.arrival_position - self.position) / self.desired_speed)
-        return "%d at %d-%d, %d with %f, takes %d" % (self.vid, self.position, self.rear_position, self.lane, self.speed, e_remaining_travel_time)
+        return f"{self.vid} at {self.position}-{self.rear_position}, {self.lane} with {self.speed}, takes {e_remaining_travel_time}"
 
     def _statistics(self):
         """Write continuous statistics"""
 
         # mobility/trip statistics
         with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
-            f.write("%d,%d,%f,%d,%f,%d,%f\n" % (self._simulator.step, self.vid, self.position, self.lane, self.speed, self.travel_time, self.travel_distance))
+            f.write(f"{self._simulator.step},{self.vid},{self.position},{self.lane},{self.speed},{self.travel_time},{self.travel_distance}\n")
 
         # TODO emission statistics?
 
@@ -281,17 +281,17 @@ class Vehicle:
         """Clean up the instance of the vehicle"""
 
         if (self.position < self.arrival_position):
-            logging.warn("%d's finish method was called even though it did not arrive yet!" % self.vid)
+            logging.warn(f"{self.vid}'s finish method was called even though it did not arrive yet!")
             return
 
         e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
         time_loss = self.travel_time - round(e_travel_time)
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
 
-        logging.info("%d arrived at %d, %d with %f, took %d, %d, %d (%d%%)" % (self.vid, self.position, self.lane, self.speed, self.travel_time, self.travel_distance, time_loss, travel_time_ratio * 100))
+        logging.info(f"{self.vid} arrived at {self.position}, {self.lane} with {self.speed}, took {self.travel_time}, {self.travel_distance}, {time_loss} {travel_time_ratio * 100}")
 
         with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-            f.write("%d,%d,%d,%d,%f,%d,%d,%f,%f,%d,%f,%f,%f\n" % (self.vid, self.depart_time, self.depart_lane, self.depart_position, self.depart_speed, self._simulator.step, self.lane, self.position, self.speed, self.travel_time, self.travel_distance, time_loss, self.desired_speed))
+            f.write(f"{self.vid},{self.depart_time},{self.depart_lane},{self.depart_position},{self.depart_speed},{self._simulator.step},{self.lane},{self.position},{self.speed},{self.travel_time},{self.travel_distance},{time_loss},{self.desired_speed}\n")
 
         with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
             # TODO emissions model not yet implemented
@@ -301,7 +301,7 @@ class Vehicle:
             self._pmx = -1
             self._npx = -1
             self._fuel = -1
-            f.write("%d,%d,%d,%d,%d,%d,%d\n" % (self.vid, self._co, self._co2, self._hc, self._pmx, self._npx, self._fuel))
+            f.write(f"{self.vid},{self._co},{self._co2},{self._hc},{self._pmx},{self._npx},{self._fuel}\n")
 
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
@@ -346,4 +346,4 @@ class Vehicle:
     def _receive_Message(self, message: Message):
         """Handle a message of concrete type Message"""
 
-        logging.warn("%d received non-sense message %s" % (self.vid, message))
+        logging.warn(f"{self.vid} received non-sense message {message}")

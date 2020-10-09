@@ -41,7 +41,7 @@ class Infrastructure:
             if formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
-                logging.critical("Unkown formation algorithm %s!" % self.formation_algorithm)
+                logging.critical(f"Unkown formation algorithm {formation_algorithm}!")
                 exit(1)
         else:
             self._formation_algorithm = None
@@ -59,7 +59,7 @@ class Infrastructure:
     def action(self):
         """Trigger actions of a infrastructure"""
 
-        logging.info("%d was triggered" % self.iid)
+        logging.info(f"{self.iid} was triggered")
 
         if self._formation_algorithm is not None:
             # search for a platoon (depending on the algorithm)
