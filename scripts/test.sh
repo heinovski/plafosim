@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2020 Julian Heinovski <heinovski@ccs-labs.org>
 #
@@ -14,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-#!/bin/bash
 
 ROOT=$(pwd)/$(dirname $0)/../
 
