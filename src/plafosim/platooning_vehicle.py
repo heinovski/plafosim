@@ -409,7 +409,7 @@ class PlatooningVehicle(Vehicle):
 
             self.platoon._formation.remove(self)
 
-            # update formation all members
+            # update formation for all members
             for vehicle in self.platoon.formation:
                 vehicle._platoon = self.platoon
 
