@@ -200,7 +200,7 @@ class PlatooningVehicle(Vehicle):
                         if follower is self:
                             continue
 
-                        logging.debug(f"{self.vid} is updating speed of its follower {follower}")
+                        logging.debug(f"{self.vid} is updating speed of its follower {follower.vid}")
                         follower._speed = new_speed
                 else:
                     new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
