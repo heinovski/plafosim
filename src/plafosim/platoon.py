@@ -68,7 +68,7 @@ class Platoon:
 
     @property
     def max_speed(self) -> float:
-        return min(self.formation, key=lambda x: x.max_speed)
+        return min(self.formation, key=lambda x: x.max_speed).max_speed
 
     @property
     def max_acceleration(self) -> float:
