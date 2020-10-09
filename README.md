@@ -5,6 +5,8 @@
 [![Build Status](https://drone.tkn.tu-berlin.de/api/badges/CCS/plafosim/status.svg)](https://drone.tkn.tu-berlin.de/CCS/plafosim)
 [![Test Coverage](https://plafosim.de/coverage/coverage.svg)](https://drone.tkn.tu-berlin.de/CCS/plafosim)
 
+This tool is in active development and has not been published yet.
+
 ### Quickstart
 
 ```./plafosim.py```
