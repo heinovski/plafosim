@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+
 from .formation_algorithm import FormationAlgorithm  # noqa 401
 from .formation_algorithm import SpeedPosition  # noqa 401
 from .infrastructure import Infrastructure  # noqa 401
