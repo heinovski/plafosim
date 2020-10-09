@@ -323,7 +323,7 @@ class Simulator:
             if v.platoon_role == PlatoonRole.LEADER:
                 assert(reason == "speedGain" or reason == "keepRight")
 
-                logging.info(f"{v.vid} needs to check all its platoon members")
+                logging.debug(f"{v.vid} needs to check all its platoon members")
 
                 can_change = True
                 for member in v.platoon.formation:
