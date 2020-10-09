@@ -306,7 +306,7 @@ class Simulator:
         source_lane = v.lane
         if source_lane == target_lane:
             return True
-        logging.debug(f"{v.vid} wants to chage from lane {source_lane} to lane {target_lane} ({reason})")
+        logging.debug(f"{v.vid} wants to change from lane {source_lane} to lane {target_lane} ({reason})")
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
