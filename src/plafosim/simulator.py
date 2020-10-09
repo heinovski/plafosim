@@ -592,7 +592,7 @@ class Simulator:
             number_of_vehicles = self._number_of_vehicles
 
         if len(self._vehicles) >= number_of_vehicles:
-            logging.info(f"Number of vehicles {number_of_vehicles} is reached already")
+            logging.debug(f"Number of vehicles {number_of_vehicles} is reached already")
             return
 
         if not self._depart_flow and self._last_vehicle_id >= number_of_vehicles - 1:
