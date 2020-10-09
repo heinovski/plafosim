@@ -395,7 +395,7 @@ class PlatooningVehicle(Vehicle):
 
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
 
-            logging.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid}")
+            logging.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
         else:
             # leave in the middle
             # TODO check wether is is safe to leave
