@@ -399,14 +399,7 @@ class PlatooningVehicle(Vehicle):
 
         self.in_maneuver = True
 
-        if self is self.platoon.last:
-            # leave at back
-            # TODO check whether it is safe to leave
-            # TODO tell the leader (who needs to tell all other vehicles)
-            # TODO leave
-            logging.warn("Leave from back of a platoon is not yet implemented!")
-            exit(1)
-        elif self is self.platoon.leader:
+        if self is self.platoon.leader:
             # leave at front
 
             # tell the second vehicle in the platoon to become the new leader
@@ -427,6 +420,13 @@ class PlatooningVehicle(Vehicle):
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
 
             logging.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
+        elif self is self.platoon.last:
+            # leave at back
+            # TODO check whether it is safe to leave
+            # TODO tell the leader (who needs to tell all other vehicles)
+            # TODO leave
+            logging.warn("Leave from back of a platoon is not yet implemented!")
+            exit(1)
         else:
             # leave in the middle
             # TODO check wether is is safe to leave
