@@ -596,7 +596,7 @@ class Simulator:
             return
 
         if not self._depart_flow and self._last_vehicle_id >= number_of_vehicles - 1:
-            logging.info(f"All {number_of_vehicles} vehicles have been spawned already")
+            logging.debug(f"All {number_of_vehicles} vehicles have been spawned already")
             return
 
         spawn = False  # should we spawn a new vehicle in this timestep?
