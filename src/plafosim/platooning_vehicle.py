@@ -391,9 +391,9 @@ class PlatooningVehicle(Vehicle):
     def _leave(self):
         # just leave, without any communication
 
-        assert(self.is_in_platoon())
         if self.platoon.length == 1:
             return
+        assert(self.is_in_platoon())
 
         logging.info(f"{self.vid} is trying to leave platoon {self.platoon.platoon_id} (leader {self.platoon.leader.vid})")
 
@@ -422,6 +422,7 @@ class PlatooningVehicle(Vehicle):
             logging.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
         elif self is self.platoon.last:
             # leave at back
+            assert(self is not self.platoon.leader)
             # TODO check whether it is safe to leave
             # TODO tell the leader (who needs to tell all other vehicles)
             # TODO leave
