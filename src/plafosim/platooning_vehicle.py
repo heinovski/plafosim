@@ -104,6 +104,11 @@ class PlatooningVehicle(Vehicle):
         return self._cacc_spacing
 
     @property
+    def desired_speed(self) -> float:
+        # return desired speed of platoon if in platoon
+        return self.platoon.desired_speed if self.is_in_platoon() else self._desired_speed
+
+    @property
     def desired_gap(self) -> float:
         if self.cf_mode is CF_Mode.ACC:
             return self.acc_headway_time * self.speed
