@@ -345,7 +345,7 @@ class PlatooningVehicle(Vehicle):
 
         for vehicle in leader.platoon.formation:
             # we copy all parameters from the platoon (for now)
-            # thus, the follower no drives as fast as the already existing platoon (i.e., only the leader in the worst case)
+            # thus, the follower now drives as fast as the already existing platoon (i.e., only the leader in the worst case)
             vehicle._platoon = leader.platoon
 
         # switch to CACC
