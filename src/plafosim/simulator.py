@@ -259,9 +259,6 @@ class Simulator:
             if vehicle.position > v.position:
                 # vehicle is not behind us
                 continue
-            if vehicle.position == v.position:
-                # TODO throw error if the vehicles are "interleaved"
-                continue
             # we do not check for collisions here because this method is also called within an update step
             if successor is None or vehicle.position > successor.position:
                 # the current vehicle is closer to us than the previous successor
