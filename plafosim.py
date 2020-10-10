@@ -64,7 +64,7 @@ def main():
     vehicle = parser.add_argument_group('vehicle properties')
     vehicle.add_argument('--vehicles', type=int, default=100,
                          help="The (maximum) number of vehicles that are in the simulation at once")
-    vehicle.add_argument('--density', type=int, default=0, help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles.")
+    vehicle.add_argument('--density', type=float, default=0, help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles.")
     vehicle.add_argument('--max-speed', type=float, default=55, help="The maximum possible driving speed in m/s")
     vehicle.add_argument('--acc-headway-time', type=float, default=1.0,
                          help="The headway time to be used for the ACC in s")

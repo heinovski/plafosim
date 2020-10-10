@@ -478,7 +478,7 @@ class Simulator:
     def _generate_vehicles(self):
 
         if self._vehicle_density > 0:
-            number_of_vehicles = self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes
+            number_of_vehicles = round(self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes)
         else:
             number_of_vehicles = self._number_of_vehicles
 
