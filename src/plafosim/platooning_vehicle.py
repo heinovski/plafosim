@@ -429,11 +429,6 @@ class PlatooningVehicle(Vehicle):
 
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
 
-            # reset color of vehicle
-            if self._simulator._gui:
-                import traci
-                traci.vehicle.setColor(str(self.vid), self._color)
-
             logging.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
         elif self is self.platoon.last:
             # leave at back
@@ -450,6 +445,11 @@ class PlatooningVehicle(Vehicle):
             # TODO leave
             logging.warn("Leave from the middle of a platoon is not yet implemented!")
             exit(1)
+
+        # reset color of vehicle
+        if self._simulator._gui:
+            import traci
+            traci.vehicle.setColor(str(self.vid), self._color)
 
         self.in_maneuver = False
 
