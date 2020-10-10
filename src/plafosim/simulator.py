@@ -166,6 +166,7 @@ class Simulator:
         self._result_base_filename = result_base_filename  # the base filename of the result files
 
         # TODO log generation parameters
+        self._pre_fill = pre_fill
         if pre_fill:
             self._generate_vehicles()
 
@@ -852,7 +853,8 @@ class Simulator:
                         state = random.getstate()
                         traci.vehicle.setColor(str(vehicle.vid), (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1)))
                         # restore internal state of random number generator to not influence the determinsim of the simulation
-                        random.setstate(state)
+                        if not (self._pre_fill and self._step == 0):
+                            random.setstate(state)
                         traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
                         traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
                         # track vehicle
