@@ -848,7 +848,9 @@ class Simulator:
                         traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
                         # save internal state of random number generator
                         state = random.getstate()
-                        traci.vehicle.setColor(str(vehicle.vid), (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1)))
+                        color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
+                        traci.vehicle.setColor(str(vehicle.vid), color)
+                        vehicle._color = color
                         # restore internal state of random number generator to not influence the determinsim of the simulation
                         if not (self._pre_fill and self._step == 0):
                             random.setstate(state)

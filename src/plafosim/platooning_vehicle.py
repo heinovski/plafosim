@@ -388,6 +388,11 @@ class PlatooningVehicle(Vehicle):
         self._cf_mode = CF_Mode.CACC
         self._blocked_front = False
 
+        # set color of vehicle
+        if self._simulator._gui:
+            import traci
+            traci.vehicle.setColor(str(vehicle.vid), leader._color)
+
         logging.info(f"{self.vid} joined platoon {platoon_id} (leader: {leader_id})")
 
         self.in_maneuver = False
@@ -423,6 +428,11 @@ class PlatooningVehicle(Vehicle):
             self._platoon = Platoon(self.vid, [self], self.desired_speed)
 
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
+
+            # reset color of vehicle
+            if self._simulator._gui:
+                import traci
+                traci.vehicle.setColor(str(self.vid), self._color)
 
             logging.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
         elif self is self.platoon.last:
