@@ -340,7 +340,7 @@ class Simulator:
                         member._lane = target_lane
 
                         # log lane change
-                        with open(self._result_base_filename + '_member_changes.csv', 'a') as f:
+                        with open(self._result_base_filename + '_platoon_changes.csv', 'a') as f:
                             f.write(f"{self.step},{member.vid},{member.position},{source_lane},{target_lane},{member.speed},{reason}\n")
 
                     return abs(lane_diff) <= 1
