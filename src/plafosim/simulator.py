@@ -800,6 +800,10 @@ class Simulator:
         with open(self._result_base_filename + '_platoon_traces.csv', 'w') as f:
             f.write("step,id,position,rear_position,lane,speed,size,length\n")
 
+        # create output file for platoon lane changes
+        with open(self._result_base_filename + '_platoon_changes.csv', 'w') as f:
+            f.write("step,id,position,from,to,speed,reason\n")
+
         if self._gui:
             import os
             import sys
