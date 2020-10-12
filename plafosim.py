@@ -170,7 +170,9 @@ def main():
         default=0,
         help="The delay used in every simulation step to visualize the current network state in ms")
     simulation.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
-    simulation.add_argument(
+    # result recording properties
+    results = parser.add_argument_group('result recording properties')
+    results.add_argument(
         '--result-base-filename',
         type=str,
         default='results',
