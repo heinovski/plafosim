@@ -289,6 +289,16 @@ class PlatooningVehicle(Vehicle):
 
         return f"{super().info()}, platoon {self.platoon.platoon_id if self.is_in_platoon() else None}"
 
+    def _statistics(self):
+        """Write continuous statistics"""
+
+        super()._statistics()
+
+        if self._platoon_role == PlatoonRole.LEADER:
+            # write statistics about this platoon
+            with open(self._simulator._result_base_filename + '_platoon_traces.csv', 'a') as f:
+                f.write(f"{self._simulator.step},{self.platoon.platoon_id},{self.platoon.position},{self.platoon.rear_position}{self.platoon.lane},{self.platoon.speed},{self.platoon.size},{self.platoon.length}\n")
+
     def _get_available_platoons(self):
         # HACK FOR AVOIDING MAINTAINING A NEIGHBORTABLE (for now)
         platoons = []
