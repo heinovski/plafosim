@@ -38,7 +38,7 @@ def test_creation():
     assert(platoon.lane == 0)
     # TODO max_acceleration
     # TODO max_deceleration
-    assert(platoon.length == 3)
+    assert(platoon.size == 3)
     assert(platoon.position == 0)
     # TODO rear_position
     assert(platoon.get_members() == [1, 2, 3])

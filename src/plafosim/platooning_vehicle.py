@@ -401,7 +401,7 @@ class PlatooningVehicle(Vehicle):
     def _leave(self):
         # just leave, without any communication
 
-        if self.platoon.length == 1:
+        if self.platoon.size == 1:
             return
         assert(self.is_in_platoon())
 
