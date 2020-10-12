@@ -13,7 +13,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: test
+name: tests
 
 steps:
 - name: unittests
