@@ -284,6 +284,11 @@ class PlatooningVehicle(Vehicle):
             # search for a platoon (depending on the algorithm)
             self._formation_algorithm.do_formation()
 
+    def info(self):
+        """Return info of a PlatooningVehicle"""
+
+        return f"{super().info()}, platoon {self.platoon.platoon_id if self.is_in_platoon() else None}"
+
     def _get_available_platoons(self):
         # HACK FOR AVOIDING MAINTAINING A NEIGHBORTABLE (for now)
         platoons = []
