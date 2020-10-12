@@ -59,6 +59,11 @@ steps:
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --random-seed $SEED
 
+trigger:
+  branch:
+    - master
+    - develop
+
 ---
 kind: pipeline
 type: docker
@@ -75,6 +80,11 @@ steps:
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
 
+trigger:
+  branch:
+    - master
+    - develop
+
 ---
 kind: pipeline
 type: docker
@@ -90,6 +100,11 @@ steps:
       - pip3 install --upgrade tqdm
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --infrastructures 1 --random-seed $SEED
+
+trigger:
+  branch:
+    - master
+    - develop
 
 ---
 kind: pipeline
