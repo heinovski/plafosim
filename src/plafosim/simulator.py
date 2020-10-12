@@ -92,7 +92,13 @@ class Simulator:
             gui: bool = False,
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
-            result_base_filename: str = 'results'):
+            result_base_filename: str = 'results',
+            record_vehicle_trips: bool = True,
+            record_vehicle_emissions: bool = True,
+            record_vehicle_traces: bool = True,
+            record_vehicle_changes: bool = True,
+            record_platoon_traces: bool = True,
+            record_platoon_changes: bool = True):
         """Initialize a simulator instance"""
 
         # TODO add custom filter that prepends the log entry with the step time
@@ -164,6 +170,12 @@ class Simulator:
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._result_base_filename = result_base_filename  # the base filename of the result files
+        self._record_vehicle_trips = record_vehicle_trips  # whether to record vehicles trips
+        self._record_vehicle_emissions = record_vehicle_emissions  # whether to record vehicle emissions
+        self._record_vehicle_traces = record_vehicle_traces  # whether to record vehicle traces
+        self._record_vehicle_changes = record_vehicle_changes  # whether to record vehicle lane changes
+        self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
+        self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
 
         # TODO log generation parameters
         self._pre_fill = pre_fill
@@ -339,9 +351,10 @@ class Simulator:
                         # switch to adjacent lane
                         member._lane = target_lane
 
-                        # log lane change
-                        with open(self._result_base_filename + '_platoon_changes.csv', 'a') as f:
-                            f.write(f"{self.step},{member.vid},{member.position},{source_lane},{target_lane},{member.speed},{reason}\n")
+                        if self._record_platoon_changes:
+                            # log lane change
+                            with open(self._result_base_filename + '_platoon_changes.csv', 'a') as f:
+                                f.write(f"{self.step},{member.vid},{member.position},{source_lane},{target_lane},{member.speed},{reason}\n")
 
                     return abs(lane_diff) <= 1
                 logging.debug(f"{v.vid}'s lane change is not safe")
@@ -356,9 +369,10 @@ class Simulator:
             # switch to adjacent lane
             v._lane = target_lane
 
-            # log lane change
-            with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                f.write(f"{self.step},{v.vid},{v.position},{source_lane},{target_lane},{v.speed},{reason}\n")
+            if self._record_vehicle_changes:
+                # log lane change
+                with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
+                    f.write(f"{self.step},{v.vid},{v.position},{source_lane},{target_lane},{v.speed},{reason}\n")
 
             return abs(lane_diff) <= 1
         logging.debug(f"{v.vid}'s lane change is not safe")
@@ -780,29 +794,35 @@ class Simulator:
             f.write("simulation start: " + time.asctime(time.localtime(time.time())) + '\n')
             f.write("parameters" + str(self) + '\n')
 
-        # create output file for vehicle trips
-        with open(self._result_base_filename + '_vehicle_trips.csv', 'w') as f:
-            f.write("id,depart,departLane,departPos,departSpeed,arrival,arrivalLane,arrivalPos,arrivalSpeed,duration,routeLength,timeLoss,desiredSpeed\n")
+        if self._record_vehicle_trips:
+            # create output file for vehicle trips
+            with open(self._result_base_filename + '_vehicle_trips.csv', 'w') as f:
+                f.write("id,depart,departLane,departPos,departSpeed,arrival,arrivalLane,arrivalPos,arrivalSpeed,duration,routeLength,timeLoss,desiredSpeed\n")
 
-        # create output file for vehicle emissions
-        with open(self._result_base_filename + '_vehicle_emissions.csv', 'w') as f:
-            f.write("id,CO,CO2,HC,PMx,NOx,fuel\n")
+        if self._record_vehicle_emissions:
+            # create output file for vehicle emissions
+            with open(self._result_base_filename + '_vehicle_emissions.csv', 'w') as f:
+                f.write("id,CO,CO2,HC,PMx,NOx,fuel\n")
 
-        # create output file for vehicle traces
-        with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
-            f.write("step,id,position,lane,speed,duration,routeLength\n")
+        if self._record_vehicle_traces:
+            # create output file for vehicle traces
+            with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
+                f.write("step,id,position,lane,speed,duration,routeLength\n")
 
-        # create output file for vehicle lane changes
-        with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
-            f.write("step,id,position,from,to,speed,reason\n")
+        if self._record_vehicle_changes:
+            # create output file for vehicle lane changes
+            with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
+                f.write("step,id,position,from,to,speed,reason\n")
 
-        # create output file for platoon traces
-        with open(self._result_base_filename + '_platoon_traces.csv', 'w') as f:
-            f.write("step,id,position,rear_position,lane,speed,size,length\n")
+        if self._record_platoon_traces:
+            # create output file for platoon traces
+            with open(self._result_base_filename + '_platoon_traces.csv', 'w') as f:
+                f.write("step,id,position,rear_position,lane,speed,size,length\n")
 
-        # create output file for platoon lane changes
-        with open(self._result_base_filename + '_platoon_changes.csv', 'w') as f:
-            f.write("step,id,position,from,to,speed,reason\n")
+        if self._record_platoon_changes:
+            # create output file for platoon lane changes
+            with open(self._result_base_filename + '_platoon_changes.csv', 'w') as f:
+                f.write("step,id,position,from,to,speed,reason\n")
 
         if self._gui:
             import os

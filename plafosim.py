@@ -177,6 +177,18 @@ def main():
         type=str,
         default='results',
         help="The base filename of the result files")
+    results.add_argument('--record-vehicle-trips', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record vehicle trips")
+    results.add_argument('--record-vehicle-emissions', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record vehicle emissions")
+    results.add_argument('--record-vehicle-traces', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record vehicles traces")
+    results.add_argument('--record-vehicle-changes', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record vehicle lane changes")
+    results.add_argument('--record-platoon-traces', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record platoon traces")
+    results.add_argument('--record-platoon-changes', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record platoon lane changes")
 
     args = parser.parse_args()
     simulator = Simulator(
@@ -223,7 +235,14 @@ def main():
         args.gui,
         args.gui_delay / 1000,
         args.track_vehicle,
-        args.result_base_filename)
+        args.result_base_filename,
+        args.record_vehicle_trips,
+        args.record_vehicle_emissions,
+        args.record_vehicle_traces,
+        args.record_vehicle_changes,
+        args.record_platoon_traces,
+        args.record_platoon_changes
+    )
 
     simulator.run()
 

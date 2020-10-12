@@ -48,6 +48,12 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --step-length 1 \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
+    --record-vehicle-trips true \
+    --record-vehicle-emissions true \
+    --record-vehicle-traces true \
+    --record-vehicle-changes true \
+    --record-platoon-traces false \
+    --record-platoon-changes false \
     2>&1 | tee run_${experiment}_plafosim.log
 
 # also change routes file

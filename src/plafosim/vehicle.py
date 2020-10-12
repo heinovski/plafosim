@@ -268,9 +268,10 @@ class Vehicle:
     def _statistics(self):
         """Write continuous statistics"""
 
-        # mobility/trip statistics
-        with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
-            f.write(f"{self._simulator.step},{self.vid},{self.position},{self.lane},{self.speed},{self.travel_time},{self.travel_distance}\n")
+        if self._simulator._record_vehicle_traces:
+            # mobility/trip statistics
+            with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
+                f.write(f"{self._simulator.step},{self.vid},{self.position},{self.lane},{self.speed},{self.travel_time},{self.travel_distance}\n")
 
         # TODO emission statistics?
 
@@ -290,18 +291,14 @@ class Vehicle:
 
         logging.info(f"{self.vid} arrived at {self.position}, {self.lane} with {self.speed}, took {self.travel_time}, {self.travel_distance}, {time_loss} {travel_time_ratio * 100}")
 
-        with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-            f.write(f"{self.vid},{self.depart_time},{self.depart_lane},{self.depart_position},{self.depart_speed},{self._simulator.step},{self.lane},{self.position},{self.speed},{self.travel_time},{self.travel_distance},{time_loss},{self.desired_speed}\n")
+        if self._simulator._record_vehicle_trips:
+            with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
+                f.write(f"{self.vid},{self.depart_time},{self.depart_lane},{self.depart_position},{self.depart_speed},{self._simulator.step},{self.lane},{self.position},{self.speed},{self.travel_time},{self.travel_distance},{time_loss},{self.desired_speed}\n")
 
-        with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
-            # TODO emissions model not yet implemented
-            self._co = -1
-            self._co2 = -1
-            self._hc = -1
-            self._pmx = -1
-            self._npx = -1
-            self._fuel = -1
-            f.write(f"{self.vid},{self._co},{self._co2},{self._hc},{self._pmx},{self._npx},{self._fuel}\n")
+        if self._simulator._record_vehicle_emissions:
+            with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
+                # TODO emissions model not yet implemented
+                f.write(f"{self.vid},{self._co},{self._co2},{self._hc},{self._pmx},{self._npx},{self._fuel}\n")
 
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
