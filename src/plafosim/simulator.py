@@ -83,6 +83,7 @@ class Simulator:
             start_as_platoon: bool = False,
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',
+            formation_centralized_kind: str = 'greedy',
             alpha: float = 0.5,
             speed_deviation_threshold: float = 0.1,
             position_deviation_threshold: int = 300,
@@ -150,6 +151,7 @@ class Simulator:
             logging.error("When using a centralized strategy at least 1 infrastructure is needed!")
             exit(1)
         self._formation_strategy = formation_strategy  # the formation strategy to use
+        self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
 
         # formation properties
         # TODO find a different solution for algorithm specific parameters
@@ -794,6 +796,7 @@ class Simulator:
                                             iid,
                                             position,
                                             self._formation_algorithm if self._formation_strategy == "centralized" else None,
+                                            self._formation_centralized_kind,
                                             self._alpha,
                                             self._speed_deviation_threshold,
                                             self._position_deviation_threshold)

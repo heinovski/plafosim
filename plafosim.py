@@ -146,6 +146,8 @@ def main():
                          choices=["speedposition"], help="The formation algorithm to use")
     platoon.add_argument('--formation-strategy', type=str, default="distributed",
                          choices=["distributed", "centralized"], help="The formation strategy to use")
+    platoon.add_argument('--formation-centralized-kind', type=str, default="greedy",
+                         choices=["greedy", "optimal"], help="The kind of the centralized formation")
 
     # formation properties
     formation = parser.add_argument_group('formation properties')
@@ -234,6 +236,7 @@ def main():
         args.start_as_platoon,
         args.formation_algorithm,
         args.formation_strategy,
+        args.formation_centralized_kind,
         args.alpha,
         args.speed_deviation_threshold,
         args.position_deviation_threshold,

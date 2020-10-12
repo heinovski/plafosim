@@ -29,6 +29,7 @@ class Infrastructure:
             iid: int,
             position: int,
             formation_algorithm: str,
+            formation_kind: str,
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
@@ -46,6 +47,7 @@ class Infrastructure:
                 exit(1)
         else:
             self._formation_algorithm = None
+        self._formation_kind = formation_kind
 
     @property
     def iid(self) -> int:
