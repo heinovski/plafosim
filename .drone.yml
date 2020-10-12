@@ -109,10 +109,10 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: correctnessHuman
+name: correctness
 
 steps:
-- name: statistical tests
+- name: human
   image: dbuse/sumo-python:3.8-buster-1_1_0
   commands:
     - apt update
@@ -124,36 +124,7 @@ steps:
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
     - ./scripts/test-human-driving.sh 42
-
-- name: copy artifacts
-  image: dbuse/sumo-python:3.8-buster-1_1_0
-  environment:
-    HOST:
-      from_secret: ARTIFACTS_HOST
-    USERNAME:
-      from_secret: ARTIFACTS_USER
-    PASSWORD:
-      from_secret: ARTIFACTS_PASSWORD
-    BASE_DIR:
-      from_secret: ARTIFACTS_PATH
-    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
-  commands:
-    - apt update
-    - apt install lftp
-    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -p $DIR; mput -O $DIR *.csv *.png"
-
-trigger:
-  branch:
-    - master
-    - develop
-
----
-kind: pipeline
-type: docker
-name: correctnessACC
-
-steps:
-- name: statistical tests
+- name: ACC
   image: dbuse/sumo-python:3.8-buster-1_1_0
   commands:
     - apt update
@@ -165,7 +136,18 @@ steps:
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
     - ./scripts/test-acc-driving.sh 42
-
+- name: CACC
+  image: dbuse/sumo-python:3.8-buster-1_1_0
+  commands:
+    - apt update
+    - apt install time
+    - pip3 install --upgrade funcy
+    - pip3 install --upgrade tqdm
+    - pip3 install --upgrade matplotlib
+    - pip3 install --upgrade pandas
+    - pip3 install --upgrade seaborn
+    - pip3 install --upgrade statsmodels
+    - ./scripts/test-cacc-driving.sh 42
 - name: copy artifacts
   image: dbuse/sumo-python:3.8-buster-1_1_0
   environment:
@@ -182,30 +164,6 @@ steps:
     - apt update
     - apt install lftp
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -p $DIR; mput -O $DIR *.csv *.png"
-
-trigger:
-  branch:
-    - master
-    - develop
-
----
-kind: pipeline
-type: docker
-name: correctnessCACC
-
-steps:
-- name: statistical tests
-  image: dbuse/sumo-python:3.8-buster-1_1_0
-  commands:
-    - apt update
-    - apt install time
-    - pip3 install --upgrade funcy
-    - pip3 install --upgrade tqdm
-    - pip3 install --upgrade matplotlib
-    - pip3 install --upgrade pandas
-    - pip3 install --upgrade seaborn
-    - pip3 install --upgrade statsmodels
-    - ./scripts/test-cacc-driving.sh 42
 
 trigger:
   branch:
