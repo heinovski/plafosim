@@ -91,6 +91,10 @@ class Platoon:
     def rear_position(self) -> int:
         return self.last.rear_position
 
+    @property
+    def length(self) -> int:
+        return self.position - self.rear_position
+
     def get_members(self) -> list:
         return [vehicle.vid for vehicle in self.formation]
 
