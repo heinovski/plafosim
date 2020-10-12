@@ -181,13 +181,13 @@ def main():
                          choices=(True, False), help="Whether to record vehicle trips")
     results.add_argument('--record-vehicle-emissions', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to record vehicle emissions")
-    results.add_argument('--record-vehicle-traces', type=lambda x: bool(strtobool(x)), default=True,
+    results.add_argument('--record-vehicle-traces', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record vehicles traces")
-    results.add_argument('--record-vehicle-changes', type=lambda x: bool(strtobool(x)), default=True,
+    results.add_argument('--record-vehicle-changes', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record vehicle lane changes")
-    results.add_argument('--record-platoon-traces', type=lambda x: bool(strtobool(x)), default=True,
+    results.add_argument('--record-platoon-traces', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record platoon traces")
-    results.add_argument('--record-platoon-changes', type=lambda x: bool(strtobool(x)), default=True,
+    results.add_argument('--record-platoon-changes', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record platoon lane changes")
 
     args = parser.parse_args()

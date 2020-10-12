@@ -95,10 +95,10 @@ class Simulator:
             result_base_filename: str = 'results',
             record_vehicle_trips: bool = True,
             record_vehicle_emissions: bool = True,
-            record_vehicle_traces: bool = True,
-            record_vehicle_changes: bool = True,
-            record_platoon_traces: bool = True,
-            record_platoon_changes: bool = True):
+            record_vehicle_traces: bool = False,
+            record_vehicle_changes: bool = False,
+            record_platoon_traces: bool = False,
+            record_platoon_changes: bool = False):
         """Initialize a simulator instance"""
 
         # TODO add custom filter that prepends the log entry with the step time
