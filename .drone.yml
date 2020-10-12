@@ -21,6 +21,7 @@ steps:
   commands:
     - pip3 install --upgrade funcy
     - pip3 install --upgrade tqdm
+    - pip3 install --upgrade ortools
     - pip3 install --upgrade pytest
     - pip3 install --upgrade pytest-cov
     - export PYTHONPATH=$(pwd)/src
@@ -67,7 +68,7 @@ steps:
       - pip3 install --upgrade tqdm
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
-  - name: centralized formation
+  - name: centralized formation (greedy)
     image: python
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
@@ -75,7 +76,17 @@ steps:
       - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
         # we are testing both vehicle types
-      - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --infrastructures 1 --random-seed $SEED
+      - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
+  - name: centralized formation (optimal)
+    image: python
+    environment:
+      SEED: ${DRONE_BUILD_NUMBER}
+    commands:
+      - pip3 install --upgrade funcy
+      - pip3 install --upgrade tqdm
+      - pip3 install --upgrade ortools
+        # we are testing both vehicle types
+      - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 
 trigger:
   branch:
