@@ -17,6 +17,7 @@
 #
 
 set -e
+set -o pipefail
 
 seed="$1"
 
