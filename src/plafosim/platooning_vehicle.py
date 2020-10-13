@@ -380,14 +380,14 @@ class PlatooningVehicle(Vehicle):
             if diff < 0:
                 # adjust this vehicle
                 platoon_successor._position = platoon_successor._position + diff
-                print(f"adjusted position of {platoon_successor.vid} to {platoon_successor.position}")
+                logging.warn(f"adjusted position of {platoon_successor.vid} to {platoon_successor.position}")
                 if isinstance(platoon_successor, PlatooningVehicle):
                     assert(not platoon_successor.is_in_platoon() or platoon_successor.platoon_role == PlatoonRole.LEADER)
                     # adjust also all platoon members
                     for vehicle in platoon_successor.platoon.formation[1:]:
                         # adjust this vehicle
                         vehicle._position = vehicle._position + diff
-                        print(f"adjusted position of {vehicle.vid} to {vehicle.position}")
+                        logging.warn(f"adjusted position of {vehicle.vid} to {vehicle.position}")
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
