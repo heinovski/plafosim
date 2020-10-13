@@ -88,6 +88,11 @@ class PlatooningVehicle(Vehicle):
         else:
             self._formation_algorithm = None
 
+        self._last_platoon_join_time = -1
+        self._time_in_platoon = 0
+        self._last_platoon_join_position = -1
+        self._distance_in_platoon = 0
+
     @property
     def cf_mode(self) -> CF_Mode:
         return self._cf_mode
@@ -144,6 +149,14 @@ class PlatooningVehicle(Vehicle):
             logging.warn(f"{self.vid} is are already in a meneuver")
             return
         self._in_maneuver = var
+
+    @property
+    def time_in_platoon(self) -> int:
+        return self._time_in_platoon
+
+    @property
+    def distance_in_platoon(self) -> float:
+        return self._distance_in_platoon
 
     def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
         """Helper method to calcucate the ACC acceleration based on the given parameters"""
@@ -271,6 +284,16 @@ class PlatooningVehicle(Vehicle):
         # clean up platoon
         if self.is_in_platoon():
             self._leave()
+
+        platoon_time_ratio = round(self.time_in_platoon / self.travel_time, 2)
+        platoon_distance_ratio = round(self.distance_in_platoon / self.travel_distance, 2)
+
+        logging.info(f"{self.vid} drove {self.time_in_platoon}s ({self.distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100} ({platoon_distance_ratio * 100})")
+
+        # TODO log savings from platoon?
+        if self._simulator._record_platoon_trips:
+            with open(self._simulator._result_base_filename + '_platoon_trips.csv', 'a') as f:
+                f.write(f"{self.vid},{self.time_in_platoon},{self.distance_in_platoon},{platoon_time_ratio},{platoon_distance_ratio}\n")
 
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
@@ -413,6 +436,11 @@ class PlatooningVehicle(Vehicle):
         self.in_maneuver = False
         leader.in_maneuver = False
 
+        self._last_platoon_join_time = self._simulator._step
+        leader._last_platoon_join_time = self._simulator._step
+        self._last_platoon_join_position = self.position
+        leader._last_platoon_join_position = leader.position
+
     def _leave(self):
         # just leave, without any communication
 
@@ -467,6 +495,11 @@ class PlatooningVehicle(Vehicle):
             traci.vehicle.setColor(str(self.vid), self._color)
 
         self.in_maneuver = False
+
+        assert(self._last_platoon_join_time >= 0)
+        self._time_in_platoon = self.time_in_platoon + (self._simulator._step - self._last_platoon_join_time)
+        assert(self._last_platoon_join_position >= 0)
+        self._distance_in_platoon = self.distance_in_platoon + (self.position - self._last_platoon_join_position)
 
     def _advertise(self):
         """Maintain regular sending of platoon advertisements"""

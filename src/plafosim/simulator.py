@@ -97,6 +97,7 @@ class Simulator:
             record_vehicle_emissions: bool = True,
             record_vehicle_traces: bool = False,
             record_vehicle_changes: bool = False,
+            record_platoon_trips: bool = True,
             record_platoon_traces: bool = False,
             record_platoon_changes: bool = False):
         """Initialize a simulator instance"""
@@ -174,6 +175,7 @@ class Simulator:
         self._record_vehicle_emissions = record_vehicle_emissions  # whether to record vehicle emissions
         self._record_vehicle_traces = record_vehicle_traces  # whether to record vehicle traces
         self._record_vehicle_changes = record_vehicle_changes  # whether to record vehicle lane changes
+        self._record_platoon_trips = record_platoon_trips  # whether to record platoon trips
         self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
 
@@ -593,6 +595,8 @@ class Simulator:
                 platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
                 for vehicle in self._vehicles.values():
                     vehicle._platoon = platoon
+                    vehicle._last_platoon_join_time = depart_time  # this might trigger an assertion, since it is -1
+                    vehicle._last_platoon_join_position = depart_position  # this might trigger an assertion, since it is -1
 
             logging.debug(f"Spawned vehicle {vid}")
 
@@ -751,6 +755,8 @@ class Simulator:
             platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
             for vehicle in self._vehicles.values():
                 vehicle._platoon = platoon
+                vehicle._last_platoon_join_time = depart_time
+                vehicle._last_platoon_join_position = depart_position
 
         logging.info(f"Spawned vehicle {vid}")
 
@@ -813,6 +819,11 @@ class Simulator:
             # create output file for vehicle lane changes
             with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
                 f.write("step,id,position,from,to,speed,reason\n")
+
+        if self._record_platoon_trips:
+            # create output file for platoon trips
+            with open(self._result_base_filename + '_platoon_trips.csv', 'w') as f:
+                f.write("id,timeInPlatoon,distanceInPlatoon,platoonTimeRatio,platoonDistanceRatio\n")
 
         if self._record_platoon_traces:
             # create output file for platoon traces

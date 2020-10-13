@@ -185,6 +185,8 @@ def main():
                          choices=(True, False), help="Whether to record vehicles traces")
     results.add_argument('--record-vehicle-changes', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record vehicle lane changes")
+    results.add_argument('--record-platoon-trips', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record platoon trips")
     results.add_argument('--record-platoon-traces', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record platoon traces")
     results.add_argument('--record-platoon-changes', type=lambda x: bool(strtobool(x)), default=False,
@@ -240,6 +242,7 @@ def main():
         args.record_vehicle_emissions,
         args.record_vehicle_traces,
         args.record_vehicle_changes,
+        args.record_platoon_trips,
         args.record_platoon_traces,
         args.record_platoon_changes
     )
