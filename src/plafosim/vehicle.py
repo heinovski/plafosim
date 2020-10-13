@@ -293,7 +293,7 @@ class Vehicle:
 
         if self._simulator._record_vehicle_trips:
             with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-                f.write(f"{self.vid},{self.depart_time},{self.depart_lane},{self.depart_position},{self.depart_speed},{self._simulator.step},{self.lane},{self.position},{self.speed},{self.travel_time},{self.travel_distance},{time_loss},{self.desired_speed}\n")
+                f.write(f"{self.vid},{self.depart_time},{self.depart_lane},{self.depart_position},{self.depart_speed},{self._simulator.step},{self.lane},{self.position},{self.speed},{self.travel_time},{self.travel_distance},{time_loss},{self.desired_speed},{e_travel_time},{travel_time_ratio}\n")
 
         if self._simulator._record_vehicle_emissions:
             with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
