@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.7.0, 2020-10-15
+- Added simple centralized formation algorithm (speed & position)
+- Added updating platoon followers upon new speed of leader
+- Added default values to all simulator arguments
+- Added more tests
+- Added (more) configurable result recording
+- Added type hints
+- Added drawing of infrastructures in the GUI
+- Updated join maneuver (adjusting of interfering vehicles)
+- Updated logging to use format strings
+- Updated CI definitions
+- Updated coloring of vehicles
+- Updated default values for arguments
+- Updated copyright headers
+- Updated project structure
+- Updated methods using only ids to use vehicle instances
+- Updated trace playing script
+- Fixed random state when using GUI
+- Fixed random state when using pre-fill
+
 ## v0.6.0, 2020-09-22
 - Updated traffic generation
 - Added simple join (at back) maneuver
