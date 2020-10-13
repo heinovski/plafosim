@@ -52,8 +52,6 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
     --record-vehicle-changes true \
-    --record-platoon-traces false \
-    --record-platoon-changes false \
     2>&1 | tee run_${experiment}_plafosim.log
 
 # also change routes file
