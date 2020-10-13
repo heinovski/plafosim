@@ -273,10 +273,9 @@ class Vehicle:
             with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
                 f.write(f"{self._simulator.step},{self.vid},{self.position},{self.lane},{self.speed},{self.travel_time},{self.travel_distance}\n")
 
-        # TODO emission statistics?
+        # TODO current emissions
 
-        # TODO write statistic about minimum gap between vehicles
-        # or rather integrate this into the lane statistic as well
+        # TODO current gap to front
 
     def finish(self):
         """Clean up the instance of the vehicle"""
@@ -298,6 +297,7 @@ class Vehicle:
         if self._simulator._record_vehicle_emissions:
             with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
                 # TODO emissions model not yet implemented
+                # TODO log estimated emissios?
                 f.write(f"{self.vid},{self._co},{self._co2},{self._hc},{self._pmx},{self._npx},{self._fuel}\n")
 
     def __str__(self) -> str:
