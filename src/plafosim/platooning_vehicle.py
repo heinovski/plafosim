@@ -266,11 +266,11 @@ class PlatooningVehicle(Vehicle):
         return super().new_speed(speed_predecessor, predecessor_rear_position)
 
     def finish(self):
+        super().finish()
+
         # clean up platoon
         if self.is_in_platoon():
             self._leave()
-
-        super().finish()
 
     def _action(self):
         """Trigger concrete actions of a PlatooningVehicle"""
