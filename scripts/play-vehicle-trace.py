@@ -38,7 +38,8 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
 parser.add_argument('trace_file', type=str, help="The name of the vehicle trace file")
 parser.add_argument('sumo_config', type=str, help="The name of the SUMO config file")
-parser.add_argument('--method', type=str, default='pandas', choices=('pandas, read'), help="The method to use for reading the trace file")
+parser.add_argument('--method', type=str, default='pandas', choices=('pandas, read'),
+                    help="The method to use for reading the trace file")
 parser.add_argument('--gui-delay', type=int, default=0,
                     help="The delay used in every simulation step to visualize the current network state in ms")
 parser.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
