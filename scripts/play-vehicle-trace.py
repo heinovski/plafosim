@@ -94,7 +94,7 @@ def use_pandas():
     step = traces.step.min()
     traci.simulationStep(step)
 
-    for step in tqdm(range(traces.step.min(),traces.step.max()), desc="Trace progress", unit='step'):
+    for step in tqdm(range(traces.step.min(), traces.step.max()), desc="Trace progress", unit='step'):
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
             if str(vehicle.id) not in traci.vehicle.getIDList():
