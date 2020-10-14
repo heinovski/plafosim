@@ -75,7 +75,7 @@ def add_vehicle(vid: str, position: str, speed: str, lane: str):
 def move_vehicle(vid: str, position: str, speed: str, lane: str):
     logging.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
     traci.vehicle.setSpeed(vid, float(speed))
-    traci.vehicle.moveTo(vid, pos=float(position), laneID='edge_0_0_%s' % lane)
+    traci.vehicle.moveTo(vid, pos=float(position), laneID=f'edge_0_0_{lane}')
     # traci.vehicle.moveToXY(vehID=str(vid), x=position, y=traci.vehicle.getPosition3D(str(vid))[1], lane=lane, edgeID='')
 
 
