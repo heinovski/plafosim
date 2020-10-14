@@ -23,6 +23,8 @@ import random
 import sys
 import time
 
+from tqdm import tqdm
+
 
 if 'SUMO_HOME' not in os.environ:
     sys.exit("please declare environment variable 'SUMO_HOME'")
@@ -92,9 +94,7 @@ def use_pandas():
     step = traces.step.min()
     traci.simulationStep(step)
 
-    while step <= traces.step.max():
-        logging.info(f"Current step: {step}")  # TODO use tqdm
-
+    for step in tqdm(range(traces.step.min(),traces.step.max()), desc="Trace progress", unit='step'):
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
             if str(vehicle.id) not in traci.vehicle.getIDList():
@@ -110,8 +110,6 @@ def use_pandas():
 
         # sleep for visualization
         time.sleep(args.gui_delay / 1000)
-
-        step += 1
 
 
 def use_read():
