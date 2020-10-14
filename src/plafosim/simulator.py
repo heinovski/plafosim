@@ -791,14 +791,7 @@ class Simulator:
 
             last_infrastructure_id = iid
 
-    def run(self):
-        """Run the simulation with the specified parameters"""
-
-        if not self._running:
-            self._running = True
-        else:
-            logging.warn("Simulation is already running!")
-
+    def _initialize_result_recording(self):
         # write some general information about the simulation
         with open(self._result_base_filename + '_general.out', 'w') as f:
             f.write("simulation start: " + time.asctime(time.localtime(time.time())) + '\n')
@@ -838,6 +831,16 @@ class Simulator:
             # create output file for platoon lane changes
             with open(self._result_base_filename + '_platoon_changes.csv', 'w') as f:
                 f.write("step,id,position,from,to,speed,reason\n")
+
+    def run(self):
+        """Run the simulation with the specified parameters"""
+
+        if not self._running:
+            self._running = True
+        else:
+            logging.warn("Simulation is already running!")
+
+        self._initialize_result_recording()
 
         if self._gui:
             import os
