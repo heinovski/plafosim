@@ -170,6 +170,8 @@ class PlatooningVehicle(Vehicle):
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
                 logging.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+                if gap_to_predecessor < 0:
+                    logging.warn(f"{self.vid}'s front gap is negative")
                 logging.debug(f"{self.vid}'s desired gap {self.desired_gap}")
                 logging.debug(f"{self.vid}'s desired speed {self.desired_speed}")
                 logging.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}")
