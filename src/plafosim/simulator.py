@@ -17,6 +17,8 @@
 
 import logging
 import random
+import os
+import sys
 import time
 
 from math import copysign
@@ -167,7 +169,14 @@ class Simulator:
             self._random_seed = random_seed  # the random.seed to use for the RNG
             logging.info(f"Using random seed {random_seed}")
             random.seed(random_seed)
+
         self._gui = gui  # whether to show a live sumo-gui
+        if gui:
+            if 'SUMO_HOME' not in os.environ:
+                sys.exit("please declare environment variable 'SUMO_HOME'")
+            tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+            sys.path.append(tools)
+
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._result_base_filename = result_base_filename  # the base filename of the result files
@@ -832,6 +841,60 @@ class Simulator:
             with open(self._result_base_filename + '_platoon_changes.csv', 'w') as f:
                 f.write("step,id,position,from,to,speed,reason\n")
 
+    def _initialize_gui(self):
+        sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
+        sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'warn']
+
+        import traci
+        traci.start(sumoCmd)
+        traci.simulationStep(self._step)
+
+        # draw infrastructures
+        for infrastructure in self._infrastructures.values():
+            # add infrastructure
+            if (str(infrastructure.iid)) not in traci.polygon.getIDList():
+                y = 230
+                width = 10
+                color = (255, 126, 0)
+                traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
+
+    def _update_gui(self):
+        import traci
+        for vehicle in self._vehicles.values():
+            if vehicle.depart_time > self._step:
+                # vehicle did not start yet
+                continue
+            # add vehicles
+            if str(vehicle.vid) not in traci.vehicle.getIDList():
+                traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
+                # save internal state of random number generator
+                state = random.getstate()
+                color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
+                traci.vehicle.setColor(str(vehicle.vid), color)
+                vehicle._color = color
+                # restore internal state of random number generator to not influence the determinsim of the simulation
+                if not (self._pre_fill and self._step == 0):
+                    random.setstate(state)
+                traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
+                traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
+                # track vehicle
+                if vehicle.vid == self._gui_track_vehicle:
+                    traci.gui.trackVehicle("View #0", str(vehicle.vid))
+                    traci.gui.setZoom("View #0", 1000000)
+            # update vehicles
+            traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
+            traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID=f'edge_0_0_{vehicle.lane}')
+
+        traci.simulationStep(self._step)
+
+        # remove vehicles not in simulator
+        for vid in traci.vehicle.getIDList():
+            if int(vid) not in self._vehicles.keys():
+                traci.vehicle.remove(vid, 2)
+
+        # sleep for visualization
+        time.sleep(self._gui_delay)
+
     def run(self):
         """Run the simulation with the specified parameters"""
 
@@ -842,32 +905,9 @@ class Simulator:
 
         self._initialize_result_recording()
 
+        # initialize the GUI
         if self._gui:
-            import os
-            import sys
-
-            if 'SUMO_HOME' not in os.environ:
-                sys.exit("please declare environment variable 'SUMO_HOME'")
-
-            tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-            sys.path.append(tools)
-
-            import traci
-
-            sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-            sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'warn']
-
-            traci.start(sumoCmd)
-            traci.simulationStep(self._step)
-
-            # draw infrastructures
-            for infrastructure in self._infrastructures.values():
-                # add infrastructure
-                if (str(infrastructure.iid)) not in traci.polygon.getIDList():
-                    y = 230
-                    width = 10
-                    color = (255, 126, 0)
-                    traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
+            self._initialize_gui()
 
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
@@ -883,42 +923,9 @@ class Simulator:
                 self.stop("No more vehicles in the simulation")  # do we really want to exit here?
                 continue
 
+            # update the GUI
             if self._gui:
-
-                for vehicle in self._vehicles.values():
-                    if vehicle.depart_time > self._step:
-                        # vehicle did not start yet
-                        continue
-                    # add vehicles
-                    if str(vehicle.vid) not in traci.vehicle.getIDList():
-                        traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
-                        # save internal state of random number generator
-                        state = random.getstate()
-                        color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
-                        traci.vehicle.setColor(str(vehicle.vid), color)
-                        vehicle._color = color
-                        # restore internal state of random number generator to not influence the determinsim of the simulation
-                        if not (self._pre_fill and self._step == 0):
-                            random.setstate(state)
-                        traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
-                        traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
-                        # track vehicle
-                        if vehicle.vid == self._gui_track_vehicle:
-                            traci.gui.trackVehicle("View #0", str(vehicle.vid))
-                            traci.gui.setZoom("View #0", 1000000)
-                    # update vehicles
-                    traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
-                    traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID=f'edge_0_0_{vehicle.lane}')
-
-                traci.simulationStep(self._step)
-
-                # remove vehicles not in simulator
-                for vid in traci.vehicle.getIDList():
-                    if int(vid) not in self._vehicles.keys():
-                        traci.vehicle.remove(vid, 2)
-
-                # sleep for visualization
-                time.sleep(self._gui_delay)
+                self._update_gui()
 
             # call regular actions on vehicles
             self.call_vehicle_actions()
