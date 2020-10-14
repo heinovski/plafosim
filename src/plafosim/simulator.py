@@ -974,6 +974,10 @@ class Simulator:
     def finish(self):
         """Clean up the simulation"""
 
+        if self._running:
+            logging.warn("Finish called during simulation!")
+            return
+
         # write some general information about the simulation
         with open(self._result_base_filename + '_general.out', 'a') as f:
             f.write("simulation end: " + time.asctime(time.localtime(time.time())) + '\n')
