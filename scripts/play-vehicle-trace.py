@@ -127,6 +127,9 @@ def use_read():
                 # next step
                 traci.simulationStep(step)
                 step = int(lstep)
+
+                # sleep for visualization
+                time.sleep(args.gui_delay / 1000)
                 logging.info(f"Current step: {step}")  # TODO use tqdm
 
             # simulate vehicles from trace file
@@ -135,7 +138,6 @@ def use_read():
             move_vehicle(vid, position, speed, lane)
 
             # TODO remove vehicles that arrived
-            # TODO use gui-delay
 
 
 logging.info("Replaying vehicle trace")
