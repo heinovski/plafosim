@@ -42,7 +42,12 @@ parser.add_argument('--method', type=str, default='pandas', choices=('pandas, re
 parser.add_argument('--gui-delay', type=int, default=0,
                     help="The delay used in every simulation step to visualize the current network state in ms")
 parser.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
+parser.add_argument('--log-level', type=str, default="warn",
+                    choices=["warn", "info", "debug"], help="Whether to enable debug output")
 args = parser.parse_args()
+
+# TODO add custom filter that prepends the log entry with the step time
+logging.basicConfig(level=getattr(logging, args.log_level.upper(), None), format="%(levelname)s: %(message)s")
 
 tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
 sys.path.append(tools)
