@@ -54,17 +54,18 @@ def main():
     road.add_argument('--arrival-interval', type=int, default=1000,
                       help="The distance between arrival positions (off-ramps) in m")
     road.add_argument(
-        '--pre-fill',
-        type=lambda x: bool(strtobool(x)),
-        default=False,
-        choices=(True, False),
+        '--pre-fill', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
         help="Whether to fill the road network with vehicles using random positions and given vehicle number/density before the simulation starts"
     )
+
     # vehicle properties
     vehicle = parser.add_argument_group('vehicle properties')
     vehicle.add_argument('--vehicles', type=int, default=100,
                          help="The (maximum) number of vehicles that are in the simulation at once")
-    vehicle.add_argument('--density', type=float, default=0, help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles.")
+    vehicle.add_argument(
+        '--density', type=float, default=0,
+        help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles."
+    )
     vehicle.add_argument('--max-speed', type=float, default=55, help="The maximum possible driving speed in m/s")
     vehicle.add_argument('--acc-headway-time', type=float, default=1.0,
                          help="The headway time to be used for the ACC in s")
@@ -76,6 +77,7 @@ def main():
                          choices=(True, False), help="Whether to enable lane changes")
     vehicle.add_argument('--penetration', type=float, default=1.0,
                          help="Penetration rate of vehicles with platooning capabilities")
+
     # trip properties
     trip = parser.add_argument_group('trip properties')
     trip.add_argument(
@@ -135,6 +137,7 @@ def main():
         default=False,
         choices=(True, False),
         help="Whether to use a random arrival position for every vehicle instead of the end of the road")
+
     # platoon properties
     platoon = parser.add_argument_group('platoon properties')
     platoon.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
@@ -143,17 +146,24 @@ def main():
                          choices=["speedposition"], help="The formation algorithm to use")
     platoon.add_argument('--formation-strategy', type=str, default="distributed",
                          choices=["distributed", "centralized"], help="The formation strategy to use")
+
     # formation properties
     formation = parser.add_argument_group('formation properties')
     formation.add_argument('--alpha', type=float, default=0.5,
                            help="The weight of the speed deviation in comparison to the position deviation")
-    formation.add_argument('--speed-deviation-threshold', type=float, default=0.1,
-                           help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates")
-    formation.add_argument('--position-deviation-threshold', type=int, default=300,
-                           help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates")
+    formation.add_argument(
+        '--speed-deviation-threshold', type=float, default=0.1,
+        help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates"
+    )
+    formation.add_argument(
+        '--position-deviation-threshold', type=int, default=300,
+        help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates"
+    )
+
     # infrastructure properties
     infrastructures = parser.add_argument_group('infrastructure properties')
     infrastructures.add_argument('--infrastructures', type=int, default=0, help="The number of infrastructures")
+
     # simulation properties
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
@@ -162,6 +172,7 @@ def main():
                             help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--log-level', type=str, default="warn",
                             choices=["warn", "info", "debug"], help="Whether to enable debug output")
+
     # gui properties
     gui = parser.add_argument_group('gui properties')
     gui.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
@@ -169,13 +180,11 @@ def main():
     gui.add_argument('--gui-delay', type=int, default=0,
                      help="The delay used in every simulation step to visualize the current network state in ms")
     gui.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
+
     # result recording properties
     results = parser.add_argument_group('result recording properties')
-    results.add_argument(
-        '--result-base-filename',
-        type=str,
-        default='results',
-        help="The base filename of the result files")
+    results.add_argument('--result-base-filename', type=str, default='results',
+                         help="The base filename of the result files")
     results.add_argument('--record-vehicle-trips', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to record vehicle trips")
     results.add_argument('--record-vehicle-emissions', type=lambda x: bool(strtobool(x)), default=True,
