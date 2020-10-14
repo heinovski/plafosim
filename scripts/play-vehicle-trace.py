@@ -40,6 +40,7 @@ parser.add_argument('sumo_config', type=str, help="The name of the SUMO config f
 parser.add_argument('--method', type=str, default='pandas', choices=('pandas, read'), help="The method to use for reading the trace file")
 parser.add_argument('--gui-delay', type=int, default=0,
                     help="The delay used in every simulation step to visualize the current network state in ms")
+parser.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
 args = parser.parse_args()
 
 tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -59,6 +60,10 @@ def add_vehicle(vid: str, position: str, speed: str, lane: str):
     traci.vehicle.setColor(vid, (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
     traci.vehicle.setSpeedMode(vid, 0)
     traci.vehicle.setLaneChangeMode(vid, 0)
+    # track vehicle
+    if vid == str(args.track_vehicle):
+        traci.gui.trackVehicle("View #0", vid)
+        traci.gui.setZoom("View #0", 1000000)
 
 
 def move_vehicle(vid: str, position: str, speed: str, lane: str):
