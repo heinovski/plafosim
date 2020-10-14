@@ -211,13 +211,13 @@ class Simulator:
     def step(self) -> int:
         return self._step
 
-    def call_vehicle_actions(self):
+    def _call_vehicle_actions(self):
         """Trigger actions of all vehicles"""
 
         for vehicle in self._vehicles.values():
             vehicle.action()
 
-    def call_infrastructure_actions(self):
+    def _call_infrastructure_actions(self):
         """Trigger actions of all instrastructures"""
 
         for instrastructure in self._infrastructures.values():
@@ -397,7 +397,7 @@ class Simulator:
     # if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
     # for vehicles on the right lane:
     # if (v > v^0_safe) and (not congested) then v <- v^0_safe
-    def change_lanes(self):
+    def _change_lanes(self):
         """Do lane changes for all vehicles"""
 
         for vehicle in self._vehicles.values():
@@ -424,7 +424,7 @@ class Simulator:
                 target_lane = source_lane - 1
                 self._change_lane(vehicle, target_lane, "keepRight")
 
-    def adjust_speeds(self):
+    def _adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
 
         for vehicle in self._vehicles.values():
@@ -444,7 +444,7 @@ class Simulator:
     # krauss - single lane traffic
     # adjust position (move)
     # x(t + step_size) = x(t) + v(t)*step_size
-    def move_vehicles(self):
+    def _move_vehicles(self):
         """Do position updates for all vehicles"""
 
         for vehicle in sorted(self._vehicles.values(), key=lambda x: x.position, reverse=True):
@@ -472,7 +472,7 @@ class Simulator:
             vehicle._position += position_difference
             logging.debug(f"{vehicle.vid}'s new position {vehicle.position}-{vehicle.rear_position}")
 
-    def check_collisions(self):
+    def _check_collisions(self):
         """Do collision checks for all vehicles"""
 
         for vehicle in self._vehicles.values():
@@ -928,24 +928,24 @@ class Simulator:
                 self._update_gui()
 
             # call regular actions on vehicles
-            self.call_vehicle_actions()
+            self._call_vehicle_actions()
 
             # call regular actions on infrastructure
-            self.call_infrastructure_actions()
+            self._call_infrastructure_actions()
 
             # perform lane changes (for all vehicles)
             if self._lane_changes:
-                self.change_lanes()
+                self._change_lanes()
 
             # adjust speed (of all vehicles)
-            self.adjust_speeds()
+            self._adjust_speeds()
 
             # adjust positions (of all vehicles)
-            self.move_vehicles()
+            self._move_vehicles()
 
             # do collision check (for all vehicles)
             if self._collisions:
-                self.check_collisions()
+                self._check_collisions()
 
             self._step += self._step_length
             progress_bar.update(self._step_length)
