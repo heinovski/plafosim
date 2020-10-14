@@ -162,14 +162,13 @@ def main():
                             help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--log-level', type=str, default="warn",
                             choices=["warn", "info", "debug"], help="Whether to enable debug output")
-    simulation.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False,
-                            choices=(True, False), help="Whether to enable a live sumo gui")
-    simulation.add_argument(
-        '--gui-delay',
-        type=int,
-        default=0,
-        help="The delay used in every simulation step to visualize the current network state in ms")
-    simulation.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
+    # gui properties
+    gui = parser.add_argument_group('gui properties')
+    gui.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
+                     help="Whether to enable a live sumo gui")
+    gui.add_argument('--gui-delay', type=int, default=0,
+                     help="The delay used in every simulation step to visualize the current network state in ms")
+    gui.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
     # result recording properties
     results = parser.add_argument_group('result recording properties')
     results.add_argument(

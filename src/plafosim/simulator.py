@@ -170,6 +170,7 @@ class Simulator:
             logging.info(f"Using random seed {random_seed}")
             random.seed(random_seed)
 
+        # gui properties
         self._gui = gui  # whether to show a live sumo-gui
         if gui:
             if 'SUMO_HOME' not in os.environ:
@@ -179,6 +180,7 @@ class Simulator:
 
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
+
         self._result_base_filename = result_base_filename  # the base filename of the result files
         self._record_vehicle_trips = record_vehicle_trips  # whether to record vehicles trips
         self._record_vehicle_emissions = record_vehicle_emissions  # whether to record vehicle emissions
