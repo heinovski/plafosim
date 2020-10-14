@@ -131,6 +131,7 @@ def use_read():
             move_vehicle(vid, position, speed, lane)
 
             # TODO remove vehicles that arrived
+            # TODO use gui-delay
 
 logging.info("Replaying vehicle trace")
 
