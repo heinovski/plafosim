@@ -92,7 +92,7 @@ class Platoon:
         return self.last.rear_position
 
     @property
-    def length(self) -> int:
+    def length(self) -> float:
         return self.position - self.rear_position
 
     def get_members(self) -> list:
