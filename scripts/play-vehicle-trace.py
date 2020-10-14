@@ -19,10 +19,10 @@
 import argparse
 import logging
 import os
+import random
 import sys
 import time
 
-from random import randrange
 
 if 'SUMO_HOME' not in os.environ:
     sys.exit("please declare environment variable 'SUMO_HOME'")
@@ -58,7 +58,7 @@ traci.start(sumoCmd)
 def add_vehicle(vid: str, position: str, speed: str, lane: str):
     logging.debug(f"Adding vehicle {vid} at {position},{lane} with {speed}")
     traci.vehicle.add(vid, 'route', departPos=float(position), departSpeed=speed, departLane=lane, typeID='vehicle')
-    traci.vehicle.setColor(vid, (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
+    traci.vehicle.setColor(vid, (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1)))
     traci.vehicle.setSpeedMode(vid, 0)
     traci.vehicle.setLaneChangeMode(vid, 0)
     # track vehicle
