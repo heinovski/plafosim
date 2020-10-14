@@ -837,7 +837,7 @@ class Simulator:
         if self._record_platoon_traces:
             # create output file for platoon traces
             with open(self._result_base_filename + '_platoon_traces.csv', 'w') as f:
-                f.write("step,id,position,rear_position,lane,speed,size,length\n")
+                f.write("step,id,leader,position,rear_position,lane,speed,size,length\n")
 
         if self._record_platoon_changes:
             # create output file for platoon lane changes
