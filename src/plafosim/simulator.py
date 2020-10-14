@@ -392,25 +392,28 @@ class Simulator:
         """Do lane changes for all vehicles"""
 
         for vehicle in self._vehicles.values():
-            if vehicle.depart_time > self._step:
-                # vehicle did not start yet
-                continue
+            self._adjust_lane(vehicle)
 
-            # decide upon and perform a lane change for this vehicle
-            if vehicle.blocked_front:
-                if vehicle.lane < self.number_of_lanes - 1:
-                    source_lane = vehicle.lane
-                    target_lane = source_lane + 1
-                    # TODO determine whether it is useful to overtake
-                    self._change_lane(vehicle, target_lane, "speedGain")
-            else:
-                if isinstance(vehicle, PlatooningVehicle) and vehicle.platoon_role == PlatoonRole.FOLLOWER:
-                    # followers are not allowed to change the lane on their own
-                    continue
-                if vehicle.lane > 0:
-                    source_lane = vehicle.lane
-                    target_lane = source_lane - 1
-                    self._change_lane(vehicle, target_lane, "keepRight")
+    def _adjust_lane(self, vehicle: Vehicle):
+        if vehicle.depart_time > self._step:
+            # vehicle did not start yet
+            return
+
+        # decide upon and perform a lane change for this vehicle
+        if vehicle.blocked_front:
+            if vehicle.lane < self.number_of_lanes - 1:
+                source_lane = vehicle.lane
+                target_lane = source_lane + 1
+                # TODO determine whether it is useful to overtake
+                self._change_lane(vehicle, target_lane, "speedGain")
+        else:
+            if isinstance(vehicle, PlatooningVehicle) and vehicle.platoon_role == PlatoonRole.FOLLOWER:
+                # followers are not allowed to change the lane on their own
+                return
+            if vehicle.lane > 0:
+                source_lane = vehicle.lane
+                target_lane = source_lane - 1
+                self._change_lane(vehicle, target_lane, "keepRight")
 
     def adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
