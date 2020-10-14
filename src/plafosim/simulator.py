@@ -458,6 +458,7 @@ class Simulator:
         else:
             # TODO use proper method
             vehicle._position += position_difference
+            logging.debug(f"{vehicle.vid}'s new position {vehicle.position}-{vehicle.rear_position}")
 
     def check_collisions(self):
         """Do collision checks for all vehicles"""
