@@ -138,6 +138,7 @@ def use_read():
             # TODO remove vehicles that arrived
             # TODO use gui-delay
 
+
 logging.info("Replaying vehicle trace")
 
 if args.method == "pandas":
