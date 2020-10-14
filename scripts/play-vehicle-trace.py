@@ -17,6 +17,7 @@
 #
 
 import argparse
+import logging
 import os
 import sys
 import time
@@ -55,7 +56,7 @@ traci.start(sumoCmd)
 
 
 def add_vehicle(vid: str, position: str, speed: str, lane: str):
-    print("adding %s" % vid, flush=True)
+    logging.debug(f"Adding vehicle {vid} at {position},{lane} with {speed}")
     traci.vehicle.add(vid, 'route', departPos=float(position), departSpeed=speed, departLane=lane, typeID='vehicle')
     traci.vehicle.setColor(vid, (randrange(0, 255, 1), randrange(0, 255, 1), randrange(0, 255, 1)))
     traci.vehicle.setSpeedMode(vid, 0)
@@ -67,13 +68,14 @@ def add_vehicle(vid: str, position: str, speed: str, lane: str):
 
 
 def move_vehicle(vid: str, position: str, speed: str, lane: str):
+    logging.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
     traci.vehicle.setSpeed(vid, float(speed))
     traci.vehicle.moveTo(vid, pos=float(position), laneID='edge_0_0_%s' % lane)
     # traci.vehicle.moveToXY(vehID=str(vid), x=position, y=traci.vehicle.getPosition3D(str(vid))[1], lane=lane, edgeID='')
 
 
 def remove_vehicle(vid: str):
-    print("removing %s" % vid, flush=True)
+    logging.debug(f"Removing vehicle {vid}")
     traci.vehicle.remove(vid, 2)
 
 
@@ -85,7 +87,7 @@ def use_pandas():
     traci.simulationStep(step)
 
     while step <= traces.step.max():
-        print("\rCurrent step: %d" % step, sep=' ', end='', flush=True)
+        logging.info(f"Current step: {step}")  # TODO use tqdm
 
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
@@ -115,13 +117,13 @@ def use_read():
             if lstep == "step":
                 continue
             if int(lstep) < step:
-                print("Step number is not increasing!")
+                logging.critical("Step number is not increasing!")
                 exit(1)
             elif int(lstep) > step:
                 # next step
                 traci.simulationStep(step)
                 step = int(lstep)
-                print("\rCurrent step: %d" % step, sep=' ', end='', flush=True)
+                logging.info(f"Current step: {step}")  # TODO use tqdm
 
             # simulate vehicles from trace file
             if vid not in traci.vehicle.getIDList():
@@ -130,6 +132,7 @@ def use_read():
 
             # TODO remove vehicles that arrived
 
+logging.info("Replaying vehicle trace")
 
 if args.method == "pandas":
     use_pandas()
@@ -137,7 +140,7 @@ else:
     use_read()
 
 # end of file
-print("Reached end of trace file")
+logging.info("Reached end of trace file")
 
 # remove all vehicles
 for vid in traci.vehicle.getIDList():
