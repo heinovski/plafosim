@@ -159,7 +159,7 @@ class PlatooningVehicle(Vehicle):
         return self._distance_in_platoon
 
     def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
-        """Helper method to calcucate the ACC acceleration based on the given parameters"""
+        """Helper method to calculate the ACC acceleration based on the given parameters"""
 
         # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         return -1.0 / self.acc_headway_time * (self.speed - desired_speed + self.acc_lambda * (-gap_to_predecessor + desired_gap))

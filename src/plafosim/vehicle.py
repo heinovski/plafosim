@@ -297,7 +297,7 @@ class Vehicle:
         if self._simulator._record_vehicle_emissions:
             with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
                 # TODO emissions model not yet implemented
-                # TODO log estimated emissios?
+                # TODO log estimated emissions?
                 f.write(f"{self.vid},{self._co},{self._co2},{self._hc},{self._pmx},{self._npx},{self._fuel}\n")
 
     def __str__(self) -> str:
