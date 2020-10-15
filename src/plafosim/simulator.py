@@ -106,7 +106,7 @@ class Simulator:
         """Initialize a simulator instance"""
 
         # TODO add custom filter that prepends the log entry with the step time
-        logging.basicConfig(level=log_level, format="%(levelname)s: %(message)s")
+        logging.basicConfig(level=log_level, format="%(levelname)s [%(name)s]: %(message)s")
 
         # road network properties
         self._road_length = road_length  # the length of the road
