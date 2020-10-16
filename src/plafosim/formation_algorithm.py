@@ -70,7 +70,7 @@ class SpeedPosition(FormationAlgorithm):
         return self.position_deviation_threshold
 
     def _ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
-        return abs(vehicle.desired_speed - platoon.speed)
+        return abs(vehicle.desired_speed - platoon.desired_speed)
 
     def _dp(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         if vehicle.rear_position > platoon.position:
