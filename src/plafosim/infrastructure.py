@@ -20,6 +20,8 @@ import logging
 #from .simulator import Simulator  # TODO fix circular import
 from .platooning_vehicle import SpeedPosition, PlatooningVehicle
 
+LOG = logging.getLogger(__name__)
+
 
 class Infrastructure:
 
@@ -43,7 +45,7 @@ class Infrastructure:
             if formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
-                logging.critical(f"Unkown formation algorithm {formation_algorithm}!")
+                LOG.critical(f"Unkown formation algorithm {formation_algorithm}!")
                 exit(1)
         else:
             self._formation_algorithm = None
@@ -62,7 +64,7 @@ class Infrastructure:
     def action(self):
         """Trigger actions of a infrastructure"""
 
-        logging.info(f"{self.iid} was triggered")
+        LOG.info(f"{self.iid} was triggered")
 
         if self._formation_algorithm is not None:
             # search for a platoon (depending on the algorithm)

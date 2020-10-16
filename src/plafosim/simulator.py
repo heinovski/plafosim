@@ -31,6 +31,8 @@ from .platooning_vehicle import PlatooningVehicle, CF_Mode
 from .platoon_role import PlatoonRole
 from .platoon import Platoon
 
+LOG = logging.getLogger(__name__)
+
 # assumptions
 # you just reach your arrival_position
 # position is in the middle of the front bumper
@@ -148,7 +150,7 @@ class Simulator:
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures == 0:
-            logging.error("When using a centralized strategy at least 1 infrastructure is needed!")
+            LOG.error("When using a centralized strategy at least 1 infrastructure is needed!")
             exit(1)
         self._formation_strategy = formation_strategy  # the formation strategy to use
         self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
@@ -169,7 +171,7 @@ class Simulator:
         self._running = False  # whether the simulation is running
         if random_seed >= 0:
             self._random_seed = random_seed  # the random.seed to use for the RNG
-            logging.info(f"Using random seed {random_seed}")
+            LOG.info(f"Using random seed {random_seed}")
             random.seed(random_seed)
 
         # gui properties
@@ -333,14 +335,14 @@ class Simulator:
         source_lane = v.lane
         if source_lane == target_lane:
             return True
-        logging.debug(f"{v.vid} wants to change from lane {source_lane} to lane {target_lane} ({reason})")
+        LOG.debug(f"{v.vid} wants to change from lane {source_lane} to lane {target_lane} ({reason})")
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
-            logging.warn(f"{v.vid} only change to adjacent lane!")
+            LOG.warn(f"{v.vid} only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
-            logging.warn(f"Adjusted target lane of {v.vid} to {target_lane} (from {old_target_lane})")
+            LOG.warn(f"Adjusted target lane of {v.vid} to {target_lane} (from {old_target_lane})")
 
         if isinstance(v, PlatooningVehicle) and v.is_in_platoon():
             # followers are not allowed to change the lane on their one
@@ -350,19 +352,19 @@ class Simulator:
             if v.platoon_role == PlatoonRole.LEADER:
                 assert(reason == "speedGain" or reason == "keepRight")
 
-                logging.debug(f"{v.vid} needs to check all its platoon members")
+                LOG.debug(f"{v.vid} needs to check all its platoon members")
 
                 can_change = True
                 for member in v.platoon.formation:
                     can_change = can_change and self.is_lane_change_safe(member, target_lane)
                     if not can_change:
-                        logging.debug(f"lane change is not safe for member {member.vid}")
+                        LOG.debug(f"lane change is not safe for member {member.vid}")
 
                 if can_change:
                     # perform lane change for all vehicles in this platoon
                     for member in v.platoon.formation:
                         assert(member.lane == source_lane)
-                        logging.info(f"{member.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
+                        LOG.info(f"{member.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
                         # switch to adjacent lane
                         member._lane = target_lane
@@ -373,14 +375,14 @@ class Simulator:
                                 f.write(f"{self.step},{member.vid},{member.position},{source_lane},{target_lane},{member.speed},{reason}\n")
 
                     return abs(lane_diff) <= 1
-                logging.debug(f"{v.vid}'s lane change is not safe")
+                LOG.debug(f"{v.vid}'s lane change is not safe")
                 return False
 
         # we are just a regular vehicle or we are not (yet) in a platoon
 
         # check adjacent lane is free
         if self.is_lane_change_safe(v, target_lane):
-            logging.info(f"{v.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
+            LOG.info(f"{v.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
             # switch to adjacent lane
             v._lane = target_lane
@@ -391,7 +393,7 @@ class Simulator:
                     f.write(f"{self.step},{v.vid},{v.position},{source_lane},{target_lane},{v.speed},{reason}\n")
 
             return abs(lane_diff) <= 1
-        logging.debug(f"{v.vid}'s lane change is not safe")
+        LOG.debug(f"{v.vid}'s lane change is not safe")
         return False
 
     # kraus - multi lane traffic
@@ -440,10 +442,10 @@ class Simulator:
             # vehicle did not start yet
             return
 
-        logging.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
+        LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
         new_speed = vehicle.new_speed(self._get_predecessor_speed(vehicle), self._get_predecessor_rear_position(vehicle))
         vehicle._acceleration = new_speed - vehicle.speed
-        logging.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
+        LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
         vehicle._speed = new_speed
 
     # krauss - single lane traffic
@@ -475,7 +477,7 @@ class Simulator:
         else:
             # TODO use proper method
             vehicle._position += position_difference
-            logging.debug(f"{vehicle.vid}'s new position {vehicle.position}-{vehicle.rear_position}")
+            LOG.debug(f"{vehicle.vid}'s new position {vehicle.position}-{vehicle.rear_position}")
 
     def _check_collisions(self):
         """Do collision checks for all vehicles"""
@@ -499,7 +501,7 @@ class Simulator:
                 # other vehicle did not start yet
                 continue
             if self.has_collision(vehicle, other_vehicle):
-                logging.critical(f"collision between {vehicle.vid} ({vehicle.position}-{vehicle.rear_position},{vehicle.lane}) and {other_vehicle.vid} ({other_vehicle.position}-{other_vehicle.rear_position},{other_vehicle.lane})")
+                LOG.critical(f"collision between {vehicle.vid} ({vehicle.position}-{vehicle.rear_position},{vehicle.lane}) and {other_vehicle.vid} ({other_vehicle.position}-{other_vehicle.rear_position},{other_vehicle.lane})")
                 exit(1)
 
     @staticmethod
@@ -516,7 +518,7 @@ class Simulator:
         else:
             number_of_vehicles = self._number_of_vehicles
 
-        logging.info(f"Pre-filling the road network with {number_of_vehicles} vehicles")
+        LOG.info(f"Pre-filling the road network with {number_of_vehicles} vehicles")
 
         # low density 5C/km/l
         # medium density 7C/km/l
@@ -539,7 +541,7 @@ class Simulator:
                 # always use random lane for pre-filled vehicle
                 depart_lane = random.randrange(0, self.number_of_lanes, 1)
 
-                logging.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
+                LOG.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
 
                 # avoid a collision with an existing vehicle
                 collision = False
@@ -569,10 +571,10 @@ class Simulator:
 
             if self._start_as_platoon:
                 if self._penetration_rate < 1.0:
-                    logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                    LOG.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
                     exit(1)
                 if self._formation_algorithm is not None:
-                    logging.warn("A formation algorithm cannot be used when all starting as one platoon!")
+                    LOG.warn("A formation algorithm cannot be used when all starting as one platoon!")
                     exit(1)
 
             # choose vehicle "type" depending on the penetration rate
@@ -616,7 +618,7 @@ class Simulator:
                     vehicle._last_platoon_join_time = depart_time  # this might trigger an assertion, since it is -1
                     vehicle._last_platoon_join_position = depart_position  # this might trigger an assertion, since it is -1
 
-            logging.debug(f"Spawned vehicle {vid}")
+            LOG.debug(f"Spawned vehicle {vid}")
 
     # TODO remove duplicated code
     def _spawn_vehicle(self):
@@ -627,11 +629,11 @@ class Simulator:
             number_of_vehicles = self._number_of_vehicles
 
         if len(self._vehicles) >= number_of_vehicles:
-            logging.debug(f"Number of vehicles {number_of_vehicles} is reached already")
+            LOG.debug(f"Number of vehicles {number_of_vehicles} is reached already")
             return
 
         if not self._depart_flow and self._last_vehicle_id >= number_of_vehicles - 1:
-            logging.debug(f"All {number_of_vehicles} vehicles have been spawned already")
+            LOG.debug(f"All {number_of_vehicles} vehicles have been spawned already")
             return
 
         spawn = False  # should we spawn a new vehicle in this timestep?
@@ -652,7 +654,7 @@ class Simulator:
             print("depart method fixed is not yet implemented!")
             exit(1)
         else:
-            logging.critical("Unknown depart method!")
+            LOG.critical("Unknown depart method!")
             exit(1)
 
         if spawn:
@@ -662,11 +664,11 @@ class Simulator:
             return
 
         vid = self._last_vehicle_id + 1
-        logging.debug(f"Spawning vehicle {vid}")
+        LOG.debug(f"Spawning vehicle {vid}")
 
         if self._random_depart_lane:
             if self._start_as_platoon:
-                logging.warn("Vehicles can not have random departure lanes when starting as one platoon!")
+                LOG.warn("Vehicles can not have random departure lanes when starting as one platoon!")
                 exit(1)
 
             depart_lane = random.randrange(0, self.number_of_lanes, 1)
@@ -675,10 +677,10 @@ class Simulator:
 
         if self._random_depart_position:
             if self._start_as_platoon:
-                logging.warn("Vehicles can not have random departure positions when starting as one platoon!")
+                LOG.warn("Vehicles can not have random departure positions when starting as one platoon!")
                 exit(1)
             if not self._depart_desired:
-                logging.warn("random-depart-position is only possible in conjunction with depart-desired!")
+                LOG.warn("random-depart-position is only possible in conjunction with depart-desired!")
                 exit(1)
 
             depart_position = random.randrange(length, self.road_length, self._depart_interval + length)
@@ -703,7 +705,7 @@ class Simulator:
                 if depart_lane < self.number_of_lanes:
                     depart_lane = depart_lane + 1
                 else:
-                    logging.critical(f"{vid} crashed at start into {vehicle.vid}")
+                    LOG.critical(f"{vid} crashed at start into {vehicle.vid}")
                     exit(1)
 
         if self._random_desired_speed:
@@ -729,10 +731,10 @@ class Simulator:
 
         if self._start_as_platoon:
             if self._penetration_rate < 1.0:
-                logging.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                LOG.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
                 exit(1)
             if self._formation_algorithm is not None:
-                logging.warn("A formation algorithm cannot be used when all starting as one platoon!")
+                LOG.warn("A formation algorithm cannot be used when all starting as one platoon!")
                 exit(1)
 
         # choose vehicle "type" depending on the penetration rate
@@ -776,7 +778,7 @@ class Simulator:
                 vehicle._last_platoon_join_time = depart_time
                 vehicle._last_platoon_join_position = depart_position
 
-        logging.info(f"Spawned vehicle {vid}")
+        LOG.info(f"Spawned vehicle {vid}")
 
     def _generate_infrastructures(self, number_of_infrastructures: int):
         """Generate infrastructures for the simulation"""
@@ -802,7 +804,7 @@ class Simulator:
                                             self._position_deviation_threshold)
             self._infrastructures[iid] = infrastructure
 
-            logging.info(f"Generated infrastructure {infrastructure}")
+            LOG.info(f"Generated infrastructure {infrastructure}")
 
             last_infrastructure_id = iid
 
@@ -907,7 +909,7 @@ class Simulator:
         if not self._running:
             self._running = True
         else:
-            logging.warn("Simulation is already running!")
+            LOG.warn("Simulation is already running!")
 
         self._initialize_result_recording()
 
@@ -978,7 +980,7 @@ class Simulator:
         """Clean up the simulation"""
 
         if self._running:
-            logging.warn("Finish called during simulation!")
+            LOG.warn("Finish called during simulation!")
             return
 
         # write some general information about the simulation

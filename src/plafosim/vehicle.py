@@ -24,6 +24,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .simulator import Simulator
 
+LOG = logging.getLogger(__name__)
+
 
 class Vehicle:
     """A collection of state information for a vehicle in the simulation
@@ -179,7 +181,7 @@ class Vehicle:
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
         """Calculate the new speed for a vehicle using the kraus model"""
 
-        logging.debug(f"{self.vid}'s desired speed is {self.desired_speed}")
+        LOG.debug(f"{self.vid}'s desired speed is {self.desired_speed}")
 
         new_speed = -1
         # do we need to adjust our speed?
@@ -187,31 +189,31 @@ class Vehicle:
         if diff_to_desired > 0:
             # we need to accelerate
             new_speed = min(self.speed + min(diff_to_desired, self._simulator.acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
-            logging.debug(f"{self.vid} wants to accelerate to {new_speed}")
+            LOG.debug(f"{self.vid} wants to accelerate to {new_speed}")
         elif diff_to_desired < 0:
             # we need to decelerate
             new_speed = max(self.speed + max(diff_to_desired, -self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
-            logging.debug(f"{self.vid} wants to decelerate to {new_speed}")
+            LOG.debug(f"{self.vid} wants to decelerate to {new_speed}")
         else:
             new_speed = self.speed
-            logging.debug(f"{self.vid} keeps the speed of {new_speed}")
+            LOG.debug(f"{self.vid} keeps the speed of {new_speed}")
 
         # vsafe
         if speed_predecessor >= 0 and predecessor_rear_position >= 0:
             # we have a predecessor
             gap_to_predecessor = predecessor_rear_position - self.position
-            logging.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
-            logging.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
-            logging.debug(f"{self.vid}'s desired gap {self.desired_gap}")
+            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
+            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
-            logging.debug(f"{self.vid}'s safe speed {safe_speed}")
+            LOG.debug(f"{self.vid}'s safe speed {safe_speed}")
 
             if safe_speed < new_speed:
-                logging.info(f"{self.vid} is blocked by a slow vehicle!")
+                LOG.info(f"{self.vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
                 new_speed = max(safe_speed, self.speed - self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
-                logging.debug(f"{self.vid}'s new speed after safe speed is {new_speed}")
+                LOG.debug(f"{self.vid}'s new speed after safe speed is {new_speed}")
             else:
                 self._blocked_front = False
         else:
@@ -224,7 +226,7 @@ class Vehicle:
         if (new_speed < 0):
             new_speed = 0
 
-        logging.debug(f"{self.vid}'s new speed is {new_speed}")
+        LOG.debug(f"{self.vid}'s new speed is {new_speed}")
 
         return new_speed
 
@@ -238,7 +240,7 @@ class Vehicle:
             # we started (right now)
             self._start()
 
-            logging.info(self.info())
+            LOG.info(self.info())
 
             # log periodic statistics
             self._statistics()
@@ -281,14 +283,14 @@ class Vehicle:
         """Clean up the instance of the vehicle"""
 
         if (self.position < self.arrival_position):
-            logging.warn(f"{self.vid}'s finish method was called even though it did not arrive yet!")
+            LOG.warn(f"{self.vid}'s finish method was called even though it did not arrive yet!")
             return
 
         e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
         time_loss = self.travel_time - round(e_travel_time)
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
 
-        logging.info(f"{self.vid} arrived at {self.position}, {self.lane} with {self.speed}, took {self.travel_time}, {self.travel_distance}, {time_loss} {travel_time_ratio * 100}")
+        LOG.info(f"{self.vid} arrived at {self.position}, {self.lane} with {self.speed}, took {self.travel_time}, {self.travel_distance}, {time_loss} {travel_time_ratio * 100}")
 
         if self._simulator._record_vehicle_trips:
             with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
@@ -343,4 +345,4 @@ class Vehicle:
     def _receive_Message(self, message: Message):
         """Handle a message of concrete type Message"""
 
-        logging.warn(f"{self.vid} received non-sense message {message}")
+        LOG.warn(f"{self.vid} received non-sense message {message}")

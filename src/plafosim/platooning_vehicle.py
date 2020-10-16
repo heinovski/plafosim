@@ -30,6 +30,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .simulator import Simulator
 
+LOG = logging.getLogger(__name__)
+
 
 class CF_Mode(Enum):
 
@@ -64,11 +66,11 @@ class PlatooningVehicle(Vehicle):
         self._cf_mode = CF_Mode.ACC
         self._acc_headway_time = acc_headway_time
         if self.acc_headway_time < 1.0:
-            logging.warn("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
+            LOG.warn("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
         self._acc_lambda = 0.1  # see Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         self._cacc_spacing = cacc_spacing
         if self.cacc_spacing < 5.0:
-            logging.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
+            LOG.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, [self], self.desired_speed)
         self._in_maneuver = False
@@ -79,7 +81,7 @@ class PlatooningVehicle(Vehicle):
             if formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
-                logging.critical(f"Unknown formation algorithm {formation_algorithm}!")
+                LOG.critical(f"Unknown formation algorithm {formation_algorithm}!")
                 exit(1)
 
             # initialize timer
@@ -146,7 +148,7 @@ class PlatooningVehicle(Vehicle):
     def in_maneuver(self, var: bool):
         if self._in_maneuver and var:
             # we can only start a new maneuver if we are not already in one
-            logging.warn(f"{self.vid} is are already in a meneuver")
+            LOG.warn(f"{self.vid} is are already in a meneuver")
             return
         self._in_maneuver = var
 
@@ -169,31 +171,31 @@ class PlatooningVehicle(Vehicle):
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different modes
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
-                logging.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+                LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
                 if gap_to_predecessor < 0:
-                    logging.warn(f"{self.vid}'s front gap is negative")
-                logging.debug(f"{self.vid}'s desired gap {self.desired_gap}")
-                logging.debug(f"{self.vid}'s desired speed {self.desired_speed}")
-                logging.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}")
+                    LOG.warn(f"{self.vid}'s front gap is negative")
+                LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
+                LOG.debug(f"{self.vid}'s desired speed {self.desired_speed}")
+                LOG.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}")
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.acc_headway_time * self.speed)
 
-                logging.debug(f"{self.vid}'s ACC safe speed {self.speed + u}")
+                LOG.debug(f"{self.vid}'s ACC safe speed {self.speed + u}")
 
                 u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-                logging.debug(f"{self.vid}'s ACC max acceleration speed {self.speed + u}")
+                LOG.debug(f"{self.vid}'s ACC max acceleration speed {self.speed + u}")
 
                 u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
-                logging.debug(f"{self.vid}'s ACC max deceleration speed {self.speed + u}")
+                LOG.debug(f"{self.vid}'s ACC max deceleration speed {self.speed + u}")
 
                 new_speed = self.speed + u
                 new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-                logging.debug(f"{self.vid}'s ACC max possible speed {new_speed}")
+                LOG.debug(f"{self.vid}'s ACC max possible speed {new_speed}")
 
                 if self.is_in_platoon():
                     assert(self.platoon_role is PlatoonRole.LEADER)
 
-                    logging.debug(f"{self.vid}'s ACC new individual speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s ACC new individual speed {new_speed}")
 
                     # make sure that the leader uses the platoon's parameters for ACC
 
@@ -206,13 +208,13 @@ class PlatooningVehicle(Vehicle):
                     # only drive as fast as the maximum speed of the individual platoon members
                     new_speed = min(new_speed, self.platoon.max_speed)
 
-                    logging.debug(f"{self.vid}'s CACC possible speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}")
 
                     # only drive as fast as the platoon's desired speed
                     new_speed = min(new_speed, self.platoon.desired_speed)
-                    logging.debug(f"{self.vid}'s CACC desired speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s CACC desired speed {new_speed}")
 
-                    logging.debug(f"{self.vid}'s CACC new speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s CACC new speed {new_speed}")
 
                     # HACK for avoiding communication for platoon management
                     # update all my followers
@@ -220,16 +222,16 @@ class PlatooningVehicle(Vehicle):
                         if follower is self:
                             continue
 
-                        logging.debug(f"{self.vid} is updating speed of its follower {follower.vid}")
+                        LOG.debug(f"{self.vid} is updating speed of its follower {follower.vid}")
                         follower._speed = new_speed
                 else:
                     new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
-                    logging.debug(f"{self.vid}'s ACC desired speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s ACC desired speed {new_speed}")
 
-                    logging.debug(f"{self.vid}'s ACC new speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s ACC new speed {new_speed}")
 
                 if new_speed < self.desired_speed and u <= 0:
-                    logging.info(f"{self.vid} is blocked by slow vehicle!")
+                    LOG.info(f"{self.vid} is blocked by slow vehicle!")
                     self._blocked_front = True
                 else:
                     self._blocked_front = False
@@ -247,9 +249,9 @@ class PlatooningVehicle(Vehicle):
             assert(self.platoon.get_front(self) is self._simulator._get_predecessor(self))
 
             gap_to_predecessor = predecessor_rear_position - self.position
-            logging.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
-            logging.debug(f"{self.vid}'s desired gap {self.desired_gap}")
-            logging.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
+            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
+            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
 
             ### HACK FOR AVOIDING COMMUNICATION ###
             # acceleration_predecessor = self.platoon.get_front(self).acceleration
@@ -261,19 +263,19 @@ class PlatooningVehicle(Vehicle):
             u = self._acc_acceleration(speed_leader, gap_to_predecessor, self.desired_gap)
             #####################
 
-            logging.debug(f"{self.vid}'s CACC safe speed {self.speed + u}")
+            LOG.debug(f"{self.vid}'s CACC safe speed {self.speed + u}")
 
             u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-            logging.debug(f"{self.vid}'s CACC max acceleration speed {self.speed + u}")
+            LOG.debug(f"{self.vid}'s CACC max acceleration speed {self.speed + u}")
 
             u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
-            logging.debug(f"{self.vid}'s CACC max deceleration speed {self.speed + u}")
+            LOG.debug(f"{self.vid}'s CACC max deceleration speed {self.speed + u}")
 
             new_speed = self.speed + u
             new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-            logging.debug(f"{self.vid}'s CACC possible speed {new_speed}")
+            LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}")
 
-            logging.debug(f"{self.vid}'s CACC new speed {new_speed}")
+            LOG.debug(f"{self.vid}'s CACC new speed {new_speed}")
 
             return new_speed
 
@@ -290,7 +292,7 @@ class PlatooningVehicle(Vehicle):
         platoon_time_ratio = round(self.time_in_platoon / self.travel_time, 2)
         platoon_distance_ratio = round(self.distance_in_platoon / self.travel_distance, 2)
 
-        logging.info(f"{self.vid} drove {self.time_in_platoon}s ({self.distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100} ({platoon_distance_ratio * 100})")
+        LOG.info(f"{self.vid} drove {self.time_in_platoon}s ({self.distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100} ({platoon_distance_ratio * 100})")
 
         # TODO log savings from platoon?
         if self._simulator._record_platoon_trips:
@@ -344,7 +346,7 @@ class PlatooningVehicle(Vehicle):
 #            # filter based on communication range
 #            communication_range = self._simulator.road_length
 #            if abs(vehicle.position - self.position) > communication_range:
-#                logging.debug(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range")
+#                LOG.debug(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range")
 #                continue
 
             platoons.append(vehicle.platoon)
@@ -356,7 +358,7 @@ class PlatooningVehicle(Vehicle):
 
         assert(not self.is_in_platoon())
 
-        logging.info(f"{self.vid} is trying to join platoon {platoon_id} (leader {leader_id})")
+        LOG.info(f"{self.vid} is trying to join platoon {platoon_id} (leader {leader_id})")
 
         # TODO make sure to set all platoon speed related values
         # TODO make sure to use them as your new defaults
@@ -375,19 +377,19 @@ class PlatooningVehicle(Vehicle):
         # TODO join at arbitrary positions
         # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
         if self.position >= leader.platoon.rear_position:
-            logging.warn(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
+            LOG.warn(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
             self.in_maneuver = False
             return
 
         if leader.in_maneuver:
-            logging.warn(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
+            LOG.warn(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
             self.in_maneuver = False
             return
 
         # update the leader
         leader.in_maneuver = True
         leader._platoon_role = PlatoonRole.LEADER
-        logging.debug(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
+        LOG.debug(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
 
         last = leader.platoon.last
 
@@ -396,13 +398,13 @@ class PlatooningVehicle(Vehicle):
         # teleport the vehicle
         current_position = self.position
         self._position = last.rear_position - self.cacc_spacing
-        logging.warn(f"{self.vid} teleported to {self.position} (from {current_position})")
+        LOG.warn(f"{self.vid} teleported to {self.position} (from {current_position})")
         current_lane = self.lane
         self._lane = leader.lane
-        logging.warn(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
+        LOG.warn(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
         current_speed = self.speed
         self._speed = last.speed
-        logging.warn(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
+        LOG.warn(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
 
         # we also need to check interfering vehicles!
         if platoon_successor is not self and platoon_successor is not None:
@@ -410,14 +412,14 @@ class PlatooningVehicle(Vehicle):
             if diff < 0:
                 # adjust this vehicle
                 platoon_successor._position = platoon_successor._position + diff
-                logging.warn(f"adjusted position of {platoon_successor.vid} to {platoon_successor.position}")
+                LOG.warn(f"adjusted position of {platoon_successor.vid} to {platoon_successor.position}")
                 if isinstance(platoon_successor, PlatooningVehicle):
                     assert(not platoon_successor.is_in_platoon() or platoon_successor.platoon_role == PlatoonRole.LEADER)
                     # adjust also all platoon members
                     for vehicle in platoon_successor.platoon.formation[1:]:
                         # adjust this vehicle
                         vehicle._position = vehicle._position + diff
-                        logging.warn(f"adjusted position of {vehicle.vid} to {vehicle.position}")
+                        LOG.warn(f"adjusted position of {vehicle.vid} to {vehicle.position}")
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
@@ -438,7 +440,7 @@ class PlatooningVehicle(Vehicle):
             import traci
             traci.vehicle.setColor(str(vehicle.vid), leader._color)
 
-        logging.info(f"{self.vid} joined platoon {platoon_id} (leader: {leader_id})")
+        LOG.info(f"{self.vid} joined platoon {platoon_id} (leader: {leader_id})")
 
         self.in_maneuver = False
         leader.in_maneuver = False
@@ -455,7 +457,7 @@ class PlatooningVehicle(Vehicle):
             return
         assert(self.is_in_platoon())
 
-        logging.info(f"{self.vid} is trying to leave platoon {self.platoon.platoon_id} (leader {self.platoon.leader.vid})")
+        LOG.info(f"{self.vid} is trying to leave platoon {self.platoon.platoon_id} (leader {self.platoon.leader.vid})")
 
         self.in_maneuver = True
 
@@ -479,21 +481,21 @@ class PlatooningVehicle(Vehicle):
 
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
 
-            logging.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
+            LOG.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
         elif self is self.platoon.last:
             # leave at back
             assert(self is not self.platoon.leader)
             # TODO check whether it is safe to leave
             # TODO tell the leader (who needs to tell all other vehicles)
             # TODO leave
-            logging.warn("Leave from back of a platoon is not yet implemented!")
+            LOG.warn("Leave from back of a platoon is not yet implemented!")
             exit(1)
         else:
             # leave in the middle
             # TODO check wether is is safe to leave
             # TODO tell the leader (who needs to tell all other vehicles and needs to tell them to make space)
             # TODO leave
-            logging.warn("Leave from the middle of a platoon is not yet implemented!")
+            LOG.warn("Leave from the middle of a platoon is not yet implemented!")
             exit(1)
 
         # reset color of vehicle
@@ -546,4 +548,4 @@ class PlatooningVehicle(Vehicle):
         """Handle a message of concrete type PlatoonAdvertisement"""
 
         # TODO add contents to the neighbor table
-        logging.info(f"{self.vid} received an advertisement from {advertisement.origin}")
+        LOG.info(f"{self.vid} received an advertisement from {advertisement.origin}")
