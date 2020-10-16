@@ -366,6 +366,11 @@ class PlatooningVehicle(Vehicle):
         leader = self._simulator._vehicles[leader_id]
         assert(isinstance(leader, PlatooningVehicle))
 
+        # correct platoon
+        assert(leader.platoon.platoon_id == platoon_id)
+        # correct leader of that platoon
+        assert(leader.vid == leader.platoon.leader.vid)
+
         # TODO joint at front
         # TODO join at arbitrary positions
         # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
