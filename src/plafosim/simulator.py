@@ -817,7 +817,7 @@ class Simulator:
         if self._record_vehicle_trips:
             # create output file for vehicle trips
             with open(self._result_base_filename + '_vehicle_trips.csv', 'w') as f:
-                f.write("id,depart,departLane,departPos,departSpeed,arrival,arrivalLane,arrivalPos,arrivalSpeed,duration,routeLength,timeLoss,desiredSpeed,estimatedTravelTime,travelTimeRatio,avgDrivingSpeed\n")
+                f.write("id,depart,departLane,departPos,departSpeed,arrival,arrivalLane,arrivalPos,arrivalSpeed,duration,routeLength,timeLoss,desiredSpeed,estimatedTravelTime,travelTimeRatio,avgDrivingSpeed,avgDeviationDesiredSpeed\n")
 
         if self._record_vehicle_emissions:
             # create output file for vehicle emissions
