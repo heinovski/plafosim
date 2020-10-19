@@ -15,9 +15,15 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import logging
+
+from statistics import mean
+
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .platooning_vehicle import PlatooningVehicle  # noqa 401
+
+LOG = logging.getLogger(__name__)
 
 
 class Platoon:
@@ -106,6 +112,11 @@ class Platoon:
             return self.formation[self.get_member_index(vehicle) - 1]
         else:
             return None
+
+    def update_desired_speed(self):
+        old_desired_speed = self.desired_speed
+        self._desired_speed = min(mean([v._desired_speed for v in self.formation]), self.max_speed)
+        LOG.debug(f"Updated platoon {self.platoon_id}'s desired speed to {self.desired_speed} (from {old_desired_speed})")
 
     def __str__(self) -> str:
         return f"platoon {self.platoon_id}: {self.member_ids}"

@@ -425,15 +425,18 @@ class PlatooningVehicle(Vehicle):
 
         # update all members
         leader.platoon._formation.append(self)
+        # update the desired speed of the platoon to the average of all platoom members
+        leader.platoon.update_desired_speed()
+
+        # switch to CACC
+        self._cf_mode = CF_Mode.CACC
+        self._blocked_front = False
 
         for vehicle in leader.platoon.formation:
             # we copy all parameters from the platoon (for now)
             # thus, the follower now drives as fast as the already existing platoon (i.e., only the leader in the worst case)
             vehicle._platoon = leader.platoon
-
-        # switch to CACC
-        self._cf_mode = CF_Mode.CACC
-        self._blocked_front = False
+            self._simulator._adjust_speed(vehicle)
 
         # set color of vehicle
         if self._simulator._gui:
@@ -470,10 +473,12 @@ class PlatooningVehicle(Vehicle):
             new_leader._cf_mode = CF_Mode.ACC
 
             self.platoon._formation.remove(self)
+            self.platoon.update_desired_speed()
 
             # update formation for all members
             for vehicle in self.platoon.formation:
                 vehicle._platoon = self.platoon
+                self._simulator._adjust_speed(vehicle)
 
             # leave
             self._platoon_role = PlatoonRole.NONE  # the current platoon role
