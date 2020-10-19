@@ -334,12 +334,12 @@ class SpeedPosition(FormationAlgorithm):
 
                     all_found_candidates = [x for x in all_found_candidates if is_available(x)]
         else:
-            LOG.info(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
-
             # we can only run the algorithm if we are not yet in a platoon
             # because this algorithm does not support changing the platoon later on
             if self._owner.platoon_role != PlatoonRole.NONE:
                 return
+
+            LOG.info(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
 
             found_candidates = []
 
