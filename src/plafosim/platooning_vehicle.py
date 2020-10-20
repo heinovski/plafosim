@@ -58,6 +58,7 @@ class PlatooningVehicle(Vehicle):
             acc_headway_time: float,
             cacc_spacing: float,
             formation_algorithm: str,
+            execution_interval: int,
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
@@ -84,8 +85,10 @@ class PlatooningVehicle(Vehicle):
             else:
                 LOG.critical(f"Unknown formation algorithm {formation_algorithm}!")
                 exit(1)
+            self._execution_interval = execution_interval
 
-            # initialize timer
+            # initialize timers
+            self._last_formation_step = self.depart_time  # initialize with vehicle start
             self._last_advertisement_step = None
 
         else:
@@ -309,8 +312,10 @@ class PlatooningVehicle(Vehicle):
             # transmit regular platoon advertisements
             self._advertise()
 
-            # search for a platoon (depending on the algorithm)
-            self._formation_algorithm.do_formation()
+            if self._simulator.step >= self._last_formation_step + self._execution_interval:
+                # search for a platoon (depending on the algorithm)
+                self._formation_algorithm.do_formation()
+                self._last_execution_step = self._simulator.step
 
     def info(self):
         """Return info of a PlatooningVehicle"""

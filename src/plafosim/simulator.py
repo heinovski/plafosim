@@ -87,6 +87,7 @@ class Simulator:
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',
             formation_centralized_kind: str = 'greedy',
+            execution_interval: int = 1,
             alpha: float = 0.5,
             speed_deviation_threshold: float = 0.1,
             position_deviation_threshold: int = 300,
@@ -166,6 +167,10 @@ class Simulator:
 
         # formation properties
         # TODO find a different solution for algorithm specific parameters
+        self._execution_interval = execution_interval  # the interval between two iterations of a formation algorithm
+        if execution_interval <= 0:
+            LOG.error("Execution interval has to be at least 1 second!")
+            exit(1)
         self._alpha = alpha  # the weight of the speed deviation
         self._speed_deviation_threshold = speed_deviation_threshold  # the maximum deviation from the desired driving speed
         self._position_deviation_threshold = position_deviation_threshold  # the maximum deviation from the current position
@@ -602,6 +607,7 @@ class Simulator:
                     self._acc_headway_time,
                     self._cacc_spacing,
                     self._formation_algorithm if self._formation_strategy == "distributed" else None,
+                    self._execution_interval,
                     self._alpha,
                     self._speed_deviation_threshold,
                     self._position_deviation_threshold)
@@ -763,6 +769,7 @@ class Simulator:
                 self._acc_headway_time,
                 self._cacc_spacing,
                 self._formation_algorithm if self._formation_strategy == "distributed" else None,
+                self._execution_interval,
                 self._alpha,
                 self._speed_deviation_threshold,
                 self._position_deviation_threshold)
@@ -810,6 +817,7 @@ class Simulator:
                                             position,
                                             self._formation_algorithm if self._formation_strategy == "centralized" else None,
                                             self._formation_centralized_kind,
+                                            self._execution_interval,
                                             self._alpha,
                                             self._speed_deviation_threshold,
                                             self._position_deviation_threshold)

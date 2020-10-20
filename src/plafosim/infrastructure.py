@@ -32,6 +32,7 @@ class Infrastructure:
             position: int,
             formation_algorithm: str,
             formation_kind: str,
+            execution_interval: int,
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
@@ -47,6 +48,10 @@ class Infrastructure:
             else:
                 LOG.critical(f"Unkown formation algorithm {formation_algorithm}!")
                 exit(1)
+            self._execution_interval = execution_interval
+
+            # initialize timer
+            self._last_formation_step = 0  # initialize with vehicle start
         else:
             self._formation_algorithm = None
         self._formation_kind = formation_kind
@@ -67,8 +72,10 @@ class Infrastructure:
         LOG.info(f"{self.iid} was triggered")
 
         if self._formation_algorithm is not None:
-            # search for a platoon (depending on the algorithm)
-            self._formation_algorithm.do_formation()
+            if self._simulator.step >= self._last_formation_step + self._execution_interval:
+                # search for a platoon (depending on the algorithm)
+                self._formation_algorithm.do_formation()
+                self._last_execution_step = self._simulator.step
 
     def _get_neighbors(self):
         neighbors = []
