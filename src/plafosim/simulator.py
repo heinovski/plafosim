@@ -236,13 +236,13 @@ class Simulator:
         """Trigger actions of all vehicles"""
 
         for vehicle in self._vehicles.values():
-            vehicle.action()
+            vehicle.action(self.step)
 
     def _call_infrastructure_actions(self):
         """Trigger actions of all instrastructures"""
 
         for instrastructure in self._infrastructures.values():
-            instrastructure.action()
+            instrastructure.action(self.step)
 
     @staticmethod
     def speed2distance(speed: float, time_interval: float = 1) -> float:

@@ -303,19 +303,19 @@ class PlatooningVehicle(Vehicle):
             with open(self._simulator._result_base_filename + '_platoon_trips.csv', 'a') as f:
                 f.write(f"{self.vid},{self.time_in_platoon},{self.distance_in_platoon},{platoon_time_ratio},{platoon_distance_ratio}\n")
 
-    def _action(self):
+    def _action(self, step: int):
         """Trigger concrete actions of a PlatooningVehicle"""
 
-        super()._action()
+        super()._action(step)
 
         if self._formation_algorithm is not None:
             # transmit regular platoon advertisements
             self._advertise()
 
-            if self._simulator.step >= self._last_formation_step + self._execution_interval:
+            if step >= self._last_formation_step + self._execution_interval:
                 # search for a platoon (depending on the algorithm)
                 self._formation_algorithm.do_formation()
-                self._last_execution_step = self._simulator.step
+                self._last_execution_step = step
 
     def info(self):
         """Return info of a PlatooningVehicle"""

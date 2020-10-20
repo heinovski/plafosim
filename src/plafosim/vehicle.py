@@ -236,10 +236,10 @@ class Vehicle:
 
         return new_speed
 
-    def action(self):
+    def action(self, step: int):
         """Trigger actions of a vehicle"""
 
-        if self._simulator.step < self.depart_time:
+        if step < self.depart_time:
             # we did not start yet
             return
         else:
@@ -252,9 +252,9 @@ class Vehicle:
             self._statistics()
 
             # What has to be triggered periodically?
-            self._action()
+            self._action(step)
 
-    def _action(self):
+    def _action(self, step: int):
         """Trigger concrete actions of a Vehicle"""
 
         pass  # this vehicle has no application running
