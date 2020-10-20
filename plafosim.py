@@ -137,7 +137,8 @@ def main():
         default=False,
         choices=(True, False),
         help="Whether to use a random arrival position for every vehicle instead of the end of the road")
-    trip.add_argument('--minimum_trip_length', type=int, default=0, help="The minimum trip length for a vehicle (in m)")
+    trip.add_argument('--minimum-trip-length', type=int, default=0,
+                      help="The minimum trip length for a vehicle (in m)")
 
     # communication properties
     communication = parser.add_argument_group('communication properties')
