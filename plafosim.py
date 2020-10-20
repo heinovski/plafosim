@@ -156,7 +156,7 @@ def main():
 
     # formation properties
     formation = parser.add_argument_group('formation properties')
-    formation.add_argument('--execution-interval', type=int, default=1,
+    formation.add_argument('--execution-interval', type=int, default=60,
                            help="The interval between two iterations of a formation algorithm (in s)")
     formation.add_argument('--alpha', type=float, default=0.5,
                            help="The weight of the speed deviation in comparison to the position deviation")
