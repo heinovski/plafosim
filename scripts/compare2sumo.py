@@ -212,21 +212,17 @@ pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
 pl.savefig('%s_desired_speed.png' % args.experiment)
 
-# distplot with desired driving speed
+# ecdfplot with desired driving speed
 
 fig, ax = pl.subplots()
 pl.title("Desired Driving Speed for %d Vehicles" % number_of_vehicles)
-seaborn.distplot(
+seaborn.ecdfplot(
     sumo_trips.desiredSpeed,
-    hist=False,
-    kde_kws={'cumulative': True},
     label='sumo',
     ax=ax
 )
-seaborn.distplot(
+seaborn.ecdfplot(
     plafosim_trips.desiredSpeed,
-    hist=False,
-    kde_kws={'cumulative': True},
     label='plafosim',
     ax=ax
 )
@@ -247,10 +243,8 @@ for label in trip_diff_labels:
 
     pl.figure()
     pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
-    seaborn.distplot(
+    seaborn.ecdfplot(
         data,
-        hist=False,
-        kde_kws={'cumulative': True},
     )
     pl.savefig('%s_diff_%s_dist.png' % (args.experiment, label))
 
@@ -383,10 +377,8 @@ for label in trip_diff_labels:
 #
 #    pl.figure()
 #    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
-#    seaborn.distplot(
+#    seaborn.ecdfplot(
 #        data,
-#        hist=False,
-#        kde_kws={'cumulative': True},
 #    )
 #    pl.savefig('%s_diff_%s_dist.png' % (args.experiment, label))
 
