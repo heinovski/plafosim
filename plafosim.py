@@ -138,12 +138,12 @@ def main():
         choices=(True, False),
         help="Whether to use a random arrival position for every vehicle instead of the end of the road")
     trip.add_argument('--minimum-trip-length', type=int, default=0,
-                      help="The minimum trip length for a vehicle (in m)")
+                      help="The minimum trip length for a vehicle in m")
 
     # communication properties
     communication = parser.add_argument_group('communication properties')
     communication.add_argument('--communication-range', type=float, default=1000,
-                               help="The maximum communication range between two vehicles (in m). A value of -1 disables the communication range checks")
+                               help="The maximum communication range between two vehicles in m. A value of -1 disables the communication range checks")
 
     # platoon properties
     platoon = parser.add_argument_group('platoon properties')
@@ -159,7 +159,7 @@ def main():
     # formation properties
     formation = parser.add_argument_group('formation properties')
     formation.add_argument('--execution-interval', type=int, default=60,
-                           help="The interval between two iterations of a formation algorithm (in s)")
+                           help="The interval between two iterations of a formation algorithm in s")
     formation.add_argument('--alpha', type=float, default=0.5,
                            help="The weight of the speed deviation in comparison to the position deviation")
     formation.add_argument(
