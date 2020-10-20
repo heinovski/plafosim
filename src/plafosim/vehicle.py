@@ -44,7 +44,8 @@ class Vehicle:
             desired_speed: float,
             depart_lane: int,
             depart_speed: float,
-            depart_time: int):
+            depart_time: int,
+            communication_range: float):
         """Initialize a vehicle instance"""
 
         self._simulator = simulator  # the simulator
@@ -65,6 +66,11 @@ class Vehicle:
         self._speed = self._depart_speed  # the current speed of the vehicle
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
         self._acceleration = 0  # the current acceleration of the vehicle
+
+        # communication properties
+        # TODO move to platooning vehicle
+        self._communication_range = communication_range  # the maximum communication range between two vehicles
+
         # statistics
         self._co = 0  # the total co emission in g
         self._co2 = 0  # the total co2 emission in g

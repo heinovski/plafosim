@@ -138,6 +138,11 @@ def main():
         choices=(True, False),
         help="Whether to use a random arrival position for every vehicle instead of the end of the road")
 
+    # communication properties
+    communication = parser.add_argument_group('communication properties')
+    communication.add_argument('--communication-range', type=float, default=1000,
+                               help="The maximum communication range between two vehicles (in m). A value of -1 disables the communication range checks")
+
     # platoon properties
     platoon = parser.add_argument_group('platoon properties')
     platoon.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
@@ -233,6 +238,7 @@ def main():
         args.depart_rate,
         args.depart_fixed_time,
         args.random_arrival_position,
+        args.communication_range,
         args.start_as_platoon,
         args.formation_algorithm,
         args.formation_strategy,

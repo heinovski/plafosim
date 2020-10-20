@@ -54,6 +54,7 @@ class PlatooningVehicle(Vehicle):
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
+            communication_range: float,
             acc_headway_time: float,
             cacc_spacing: float,
             formation_algorithm: str,
@@ -61,7 +62,7 @@ class PlatooningVehicle(Vehicle):
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
-                         depart_speed, depart_time)
+                         depart_speed, depart_time, communication_range)
 
         self._cf_mode = CF_Mode.ACC
         self._acc_headway_time = acc_headway_time
@@ -343,11 +344,10 @@ class PlatooningVehicle(Vehicle):
             if vehicle.platoon_role != PlatoonRole.LEADER and vehicle.platoon_role != PlatoonRole.NONE:
                 continue
 
-#            # filter based on communication range
-#            communication_range = self._simulator.road_length
-#            if abs(vehicle.position - self.position) > communication_range:
-#                LOG.debug(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range")
-#                continue
+            # filter based on communication range
+            if abs(vehicle.position - self.position) > self._communication_range:
+                LOG.debug(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range})")
+                continue
 
             platoons.append(vehicle.platoon)
 

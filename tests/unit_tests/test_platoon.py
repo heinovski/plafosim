@@ -20,9 +20,9 @@ from plafosim import Platoon
 
 
 def test_creation():
-    v1 = PlatooningVehicle(None, 1, None, 0, 1000, 36, 0, 0, 0, 1, 5, None, 0.5, 0.1, 300)
-    v2 = PlatooningVehicle(None, 2, None, 0, 1000, 36, 0, 0, 1, 1, 5, None, 0.5, 0.1, 300)
-    v3 = PlatooningVehicle(None, 3, None, 0, 1000, 36, 0, 0, 2, 1, 5, None, 0.5, 0.1, 300)
+    v1 = PlatooningVehicle(None, 1, None, 0, 1000, 36, 0, 0, 0, -1, 1, 5, None, 0.5, 0.1, 300)
+    v2 = PlatooningVehicle(None, 2, None, 0, 1000, 36, 0, 0, 1, -1, 1, 5, None, 0.5, 0.1, 300)
+    v3 = PlatooningVehicle(None, 3, None, 0, 1000, 36, 0, 0, 2, -1, 1, 5, None, 0.5, 0.1, 300)
 
     platoon_id = 2
     formation = [v1, v2, v3]

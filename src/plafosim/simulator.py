@@ -82,6 +82,7 @@ class Simulator:
             depart_rate: int = 3600,
             depart_fixed_time: int = 0,
             random_arrival_position: bool = False,
+            communication_range: float = 1000,
             start_as_platoon: bool = False,
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',
@@ -145,6 +146,14 @@ class Simulator:
         self._depart_rate = depart_rate  # the departure rate
         self._depart_fixed_time = depart_fixed_time  # the fixed departure time for all vehicles
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
+
+        # communication properties
+        self._communication_range = communication_range  # the maximum communication range between two vehicles
+        if communication_range == -1:
+            self._communication_range = road_length
+        if self._communication_range <= 0:
+            LOG.error("Communication range has to be > 0!")
+            exit(1)
 
         # platoon properties
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
@@ -589,6 +598,7 @@ class Simulator:
                     depart_lane,
                     depart_speed,
                     depart_time,
+                    self._communication_range,
                     self._acc_headway_time,
                     self._cacc_spacing,
                     self._formation_algorithm if self._formation_strategy == "distributed" else None,
@@ -606,7 +616,7 @@ class Simulator:
 
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
-                                  desired_speed, depart_lane, depart_speed, depart_time)
+                                  desired_speed, depart_lane, depart_speed, depart_time, self._communication_range)
 
             self._vehicles[vid] = vehicle
             self._last_vehicle_id = vid
@@ -698,7 +708,7 @@ class Simulator:
                     continue
                 # do we have a collision?
                 # TODO HACK for using collision check
-                vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time)
+                vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time, -1)
                 collision = collision or self.has_collision(vehicle, other_vehicle)
             # can we avoid the collision by switching the departure lane?
             if collision:
@@ -749,6 +759,7 @@ class Simulator:
                 depart_lane,
                 depart_speed,
                 depart_time,
+                self._communication_range,
                 self._acc_headway_time,
                 self._cacc_spacing,
                 self._formation_algorithm if self._formation_strategy == "distributed" else None,
@@ -766,7 +777,7 @@ class Simulator:
 
         else:
             vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
-                              desired_speed, depart_lane, depart_speed, depart_time)
+                              desired_speed, depart_lane, depart_speed, depart_time, self._communication_range)
 
         self._vehicles[vid] = vehicle
         self._last_vehicle_id = vid
