@@ -566,7 +566,7 @@ class Simulator:
                         # we do not care about other lanes
                         continue
                     # TODO HACK for using collision check
-                    vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time)
+                    vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time, self._communication_range)
                     collision = collision or self.has_collision(vehicle, other_vehicle)
 
             if self._random_desired_speed:
