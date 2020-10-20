@@ -82,6 +82,7 @@ class Simulator:
             depart_rate: int = 3600,
             depart_fixed_time: int = 0,
             random_arrival_position: bool = False,
+            minimum_trip_length: int = 0,
             communication_range: float = 1000,
             start_as_platoon: bool = False,
             formation_algorithm: str = None,
@@ -147,6 +148,7 @@ class Simulator:
         self._depart_rate = depart_rate  # the departure rate
         self._depart_fixed_time = depart_fixed_time  # the fixed departure time for all vehicles
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
+        self._minimum_trip_length = minimum_trip_length  # the minimum trip length
 
         # communication properties
         self._communication_range = communication_range  # the maximum communication range between two vehicles
@@ -579,7 +581,7 @@ class Simulator:
             depart_speed = desired_speed
 
             if self._random_arrival_position:
-                arrival_position = random.randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
+                arrival_position = random.randrange(depart_position + max(self._arrival_interval, self._minimum_trip_length), self._road_length, self._arrival_interval)
             else:
                 arrival_position = self._road_length
 
@@ -741,7 +743,7 @@ class Simulator:
             depart_speed = desired_speed
 
         if self._random_arrival_position:
-            arrival_position = random.randrange(depart_position + self._arrival_interval, self._road_length, self._arrival_interval)
+            arrival_position = random.randrange(depart_position + max(self._arrival_interval, self._minimum_trip_length), self._road_length, self._arrival_interval)
         else:
             arrival_position = self._road_length
 
