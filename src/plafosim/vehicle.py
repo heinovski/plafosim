@@ -141,7 +141,9 @@ class Vehicle:
 
     @property
     def rear_position(self) -> int:
-        return max(self.position - self.length, 0)
+        # return max(self.position - self.length, 0)  # is slower than if-else
+        position = self.position - self.length
+        return 0 if position < 0 else position
 
     @property
     def lane(self) -> int:
