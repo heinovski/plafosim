@@ -453,8 +453,8 @@ class PlatooningVehicle(Vehicle):
         self.in_maneuver = False
         leader.in_maneuver = False
 
-        self._last_platoon_join_time = self._simulator._step
-        leader._last_platoon_join_time = self._simulator._step
+        self._last_platoon_join_time = self._simulator.step
+        leader._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
         leader._last_platoon_join_position = leader.position
 
@@ -514,7 +514,7 @@ class PlatooningVehicle(Vehicle):
         self.in_maneuver = False
 
         assert(self._last_platoon_join_time >= 0)
-        self._time_in_platoon = self.time_in_platoon + (self._simulator._step - self._last_platoon_join_time)
+        self._time_in_platoon = self.time_in_platoon + (self._simulator.step - self._last_platoon_join_time)
         assert(self._last_platoon_join_position >= 0)
         self._distance_in_platoon = self.distance_in_platoon + (self.position - self._last_platoon_join_position)
 
