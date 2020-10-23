@@ -16,6 +16,7 @@
 #
 
 import logging
+import sys
 
 from enum import Enum
 
@@ -83,8 +84,7 @@ class PlatooningVehicle(Vehicle):
             if formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
-                LOG.critical(f"Unknown formation algorithm {formation_algorithm}!")
-                exit(1)
+                sys.exit(f"Unknown formation algorithm {formation_algorithm}!")
             self._execution_interval = execution_interval
 
             # initialize timers
@@ -498,15 +498,13 @@ class PlatooningVehicle(Vehicle):
             # TODO check whether it is safe to leave
             # TODO tell the leader (who needs to tell all other vehicles)
             # TODO leave
-            LOG.warn("Leave from back of a platoon is not yet implemented!")
-            exit(1)
+            sys.exit("Leave from back of a platoon is not yet implemented!")
         else:
             # leave in the middle
             # TODO check wether is is safe to leave
             # TODO tell the leader (who needs to tell all other vehicles and needs to tell them to make space)
             # TODO leave
-            LOG.warn("Leave from the middle of a platoon is not yet implemented!")
-            exit(1)
+            sys.exit("Leave from the middle of a platoon is not yet implemented!")
 
         # reset color of vehicle
         if self._simulator._gui:

@@ -121,8 +121,7 @@ def use_read():
             if lstep == "step":
                 continue
             if int(lstep) < step:
-                logging.critical("Step number is not increasing!")
-                exit(1)
+                sys.exit("Step number is not increasing!")
             elif int(lstep) > step:
                 # next step
                 traci.simulationStep(step)

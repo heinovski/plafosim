@@ -16,6 +16,7 @@
 #
 
 import logging
+import sys
 
 from abc import ABC, abstractmethod
 
@@ -43,8 +44,7 @@ class FormationAlgorithm(ABC):
 
     @abstractmethod
     def do_formation(self):
-        print("There shouldn't be an instance of this abstract base class!")
-        exit(1)
+        sys.exit("There shouldn't be an instance of this abstract base class!")
 
 
 class SpeedPosition(FormationAlgorithm):

@@ -21,6 +21,7 @@ import matplotlib.pyplot as pl
 import pandas
 import re
 import seaborn
+import sys
 
 from math import ceil
 
@@ -546,5 +547,4 @@ for label in lifetime_diff_labels:
         print(d)
 
 if error:
-    print("There was at least one deviation error!")
-    exit(1)
+    sys.exit("There was at least one deviation error!")

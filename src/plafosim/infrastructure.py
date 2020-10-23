@@ -16,6 +16,7 @@
 #
 
 import logging
+import sys
 
 #from .simulator import Simulator  # TODO fix circular import
 from .platooning_vehicle import SpeedPosition, PlatooningVehicle
@@ -46,8 +47,7 @@ class Infrastructure:
             if formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
-                LOG.critical(f"Unkown formation algorithm {formation_algorithm}!")
-                exit(1)
+                sys.exit(f"Unkown formation algorithm {formation_algorithm}!")
             self._execution_interval = execution_interval
 
             # initialize timer

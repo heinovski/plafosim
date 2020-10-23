@@ -142,8 +142,7 @@ class Simulator:
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to depart with the desired driving speed
         if random_depart_position and not depart_desired:
-            LOG.warn("random-depart-position is only possible in conjunction with depart-desired!")
-            exit(1)
+            sys.exit("random-depart-position is only possible in conjunction with depart-desired!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         self._depart_method = depart_method  # the departure method to use
         self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
@@ -158,29 +157,23 @@ class Simulator:
         if communication_range == -1:
             self._communication_range = road_length
         if self._communication_range <= 0:
-            LOG.error("Communication range has to be > 0!")
-            exit(1)
+            sys.exit("Communication range has to be > 0!")
 
         # platoon properties
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
         if start_as_platoon:
             if penetration_rate < 1.0:
-                LOG.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
-                exit(1)
+                sys.exit("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
             if formation_algorithm is not None:
-                LOG.warn("A formation algorithm cannot be used when all starting as one platoon!")
-                exit(1)
+                sys.exit("A formation algorithm cannot be used when all starting as one platoon!")
             if random_depart_position:
-                LOG.warn("Vehicles can not have random departure positions when starting as one platoon!")
-                exit(1)
+                sys.exit("Vehicles can not have random departure positions when starting as one platoon!")
             if random_depart_lane:
-                LOG.warn("Vehicles can not have random departure lanes when starting as one platoon!")
-                exit(1)
+                sys.exit("Vehicles can not have random departure lanes when starting as one platoon!")
 
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures == 0:
-            LOG.error("When using a centralized strategy at least 1 infrastructure is needed!")
-            exit(1)
+            sys.exit("When using a centralized strategy at least 1 infrastructure is needed!")
         self._formation_strategy = formation_strategy  # the formation strategy to use
         self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
 
@@ -188,8 +181,7 @@ class Simulator:
         # TODO find a different solution for algorithm specific parameters
         self._execution_interval = execution_interval  # the interval between two iterations of a formation algorithm
         if execution_interval <= 0:
-            LOG.error("Execution interval has to be at least 1 second!")
-            exit(1)
+            sys.exit("Execution interval has to be at least 1 second!")
         self._alpha = alpha  # the weight of the speed deviation
         self._speed_deviation_threshold = speed_deviation_threshold  # the maximum deviation from the desired driving speed
         self._position_deviation_threshold = position_deviation_threshold  # the maximum deviation from the current position
@@ -535,8 +527,7 @@ class Simulator:
                 # other vehicle did not start yet
                 continue
             if self.has_collision(vehicle, other_vehicle):
-                LOG.critical(f"collision between {vehicle.vid} ({vehicle.position}-{vehicle.rear_position},{vehicle.lane}) and {other_vehicle.vid} ({other_vehicle.position}-{other_vehicle.rear_position},{other_vehicle.lane})")
-                exit(1)
+                sys.exit(f"collision between {vehicle.vid} ({vehicle.position}-{vehicle.rear_position},{vehicle.lane}) and {other_vehicle.vid} ({other_vehicle.position}-{other_vehicle.rear_position},{other_vehicle.lane})")
 
     @staticmethod
     def has_collision(vehicle1: Vehicle, vehicle2: Vehicle) -> bool:
@@ -671,11 +662,9 @@ class Simulator:
             spawn = self.step % round(spawn_interval) == 0
         elif self._depart_method == "fixed" and self.step == self._depart_fixed_time:
             # we create all of the vehicles now
-            print("depart method fixed is not yet implemented!")
-            exit(1)
+            sys.exit("depart method fixed is not yet implemented!")
         else:
-            LOG.critical("Unknown depart method!")
-            exit(1)
+            sys.exit("Unknown depart method!")
 
         if spawn:
             depart_time = self.step
@@ -714,8 +703,7 @@ class Simulator:
                 if depart_lane < self.number_of_lanes:
                     depart_lane = depart_lane + 1
                 else:
-                    LOG.critical(f"{vid} crashed at start into {vehicle.vid}")
-                    exit(1)
+                    sys.exit(f"{vid} crashed at start into {vehicle.vid}")
 
         if self._random_desired_speed:
             # normal distribution
