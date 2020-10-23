@@ -141,6 +141,9 @@ class Simulator:
         self._max_desired_speed = max_desired_speed  # the maximum desired driving speed
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to depart with the desired driving speed
+        if random_depart_position and not depart_desired:
+            LOG.warn("random-depart-position is only possible in conjunction with depart-desired!")
+            exit(1)
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         self._depart_method = depart_method  # the departure method to use
         self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
@@ -160,6 +163,20 @@ class Simulator:
 
         # platoon properties
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
+        if start_as_platoon:
+            if penetration_rate < 1.0:
+                LOG.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                exit(1)
+            if formation_algorithm is not None:
+                LOG.warn("A formation algorithm cannot be used when all starting as one platoon!")
+                exit(1)
+            if random_depart_position:
+                LOG.warn("Vehicles can not have random departure positions when starting as one platoon!")
+                exit(1)
+            if random_depart_lane:
+                LOG.warn("Vehicles can not have random departure lanes when starting as one platoon!")
+                exit(1)
+
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures == 0:
             LOG.error("When using a centralized strategy at least 1 infrastructure is needed!")
@@ -578,14 +595,6 @@ class Simulator:
             else:
                 arrival_position = self._road_length
 
-            if self._start_as_platoon:
-                if self._penetration_rate < 1.0:
-                    LOG.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
-                    exit(1)
-                if self._formation_algorithm is not None:
-                    LOG.warn("A formation algorithm cannot be used when all starting as one platoon!")
-                    exit(1)
-
             # choose vehicle "type" depending on the penetration rate
             if random.random() <= self._penetration_rate:
                 vehicle = PlatooningVehicle(
@@ -678,22 +687,11 @@ class Simulator:
         LOG.debug(f"Spawning vehicle {vid}")
 
         if self._random_depart_lane:
-            if self._start_as_platoon:
-                LOG.warn("Vehicles can not have random departure lanes when starting as one platoon!")
-                exit(1)
-
             depart_lane = random.randrange(0, self.number_of_lanes, 1)
         else:
             depart_lane = 0
 
         if self._random_depart_position:
-            if self._start_as_platoon:
-                LOG.warn("Vehicles can not have random departure positions when starting as one platoon!")
-                exit(1)
-            if not self._depart_desired:
-                LOG.warn("random-depart-position is only possible in conjunction with depart-desired!")
-                exit(1)
-
             depart_position = random.randrange(length, self.road_length, self._depart_interval + length)
         else:
             depart_position = length  # equal to departPos="base"
@@ -739,14 +737,6 @@ class Simulator:
             arrival_position = random.randrange(depart_position + max(self._arrival_interval, self._minimum_trip_length), self._road_length, self._arrival_interval)
         else:
             arrival_position = self._road_length
-
-        if self._start_as_platoon:
-            if self._penetration_rate < 1.0:
-                LOG.warn("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
-                exit(1)
-            if self._formation_algorithm is not None:
-                LOG.warn("A formation algorithm cannot be used when all starting as one platoon!")
-                exit(1)
 
         # choose vehicle "type" depending on the penetration rate
         if random.random() <= self._penetration_rate:
