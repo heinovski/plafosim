@@ -536,14 +536,6 @@ class Simulator:
 
         LOG.info(f"Pre-filling the road network with {number_of_vehicles} vehicles")
 
-        # low density 5C/km/l
-        # medium density 7C/km/l
-        # high density 10C/km/l
-
-        # normal flows, 62C/min, 21C/min, 11C/min + 8T/min, 3T/min, 1T/min
-        # use these values to calculate the total number of vehicles from the road length and number of lanes
-        # or overwrite with another number
-
         for num in tqdm(range(0, number_of_vehicles), desc="Generated vehicles"):
 
             vid = self._last_vehicle_id + 1
