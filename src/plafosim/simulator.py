@@ -271,53 +271,53 @@ class Simulator:
     def speed2acceleration(speed_from: float, speed_to: float, time_interval: float = 1) -> float:
         return (speed_to - speed_from) / time_interval
 
-    def _get_predecessor(self, v: Vehicle, lane: int = -1) -> Vehicle:
+    def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         if lane == -1:
             # implicitly search on current lane of vehicle
-            lane = v.lane
+            lane = vehicle.lane
         predecessor = None  # there is no predecessor so far
-        for vehicle in self._vehicles.values():
-            if vehicle is v:
+        for other_vehicle in self._vehicles.values():
+            if other_vehicle is vehicle:
                 # skip the vehicle
                 continue
-            if vehicle.depart_time > self._step:
+            if other_vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
-            if vehicle.lane != lane:
+            if other_vehicle.lane != lane:
                 # skip other lane
                 continue
-            if vehicle.position < v.position:
+            if other_vehicle.position < vehicle.position:
                 # vehicle is not in front of us
                 # this means we consider all vehicles that are at least as far as we are
                 continue
             # we do not check for collisions here because this method is also called within an update step
-            if predecessor is None or vehicle.rear_position < predecessor.rear_position:
+            if predecessor is None or other_vehicle.rear_position < predecessor.rear_position:
                 # the current vehicle is closer to us than the previous predecessor
-                predecessor = vehicle
+                predecessor = other_vehicle
         return predecessor
 
-    def _get_successor(self, v: Vehicle, lane: int = -1) -> Vehicle:
+    def _get_successor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         if lane == -1:
             # implicitly search on current lane of vehicle
-            lane = v.lane
+            lane = vehicle.lane
         successor = None  # there is no successor so far
-        for vehicle in self._vehicles.values():
-            if vehicle is v:
+        for other_vehicle in self._vehicles.values():
+            if other_vehicle is vehicle:
                 # skip the vehicle
                 continue
-            if vehicle.depart_time > self._step:
+            if other_vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
-            if vehicle.lane != lane:
+            if other_vehicle.lane != lane:
                 # skip other lane
                 continue
-            if vehicle.position > v.position:
+            if other_vehicle.position > vehicle.position:
                 # vehicle is not behind us
                 continue
             # we do not check for collisions here because this method is also called within an update step
-            if successor is None or vehicle.position > successor.position:
+            if successor is None or other_vehicle.position > successor.position:
                 # the current vehicle is closer to us than the previous successor
-                successor = vehicle
+                successor = other_vehicle
         return successor
 
     def _get_predecessor_rear_position(self, vehicle: Vehicle, lane: int = -1) -> float:
@@ -334,60 +334,60 @@ class Simulator:
         else:
             return p.speed
 
-    def is_lane_change_safe(self, v: Vehicle, target_lane: int) -> bool:
-        if v.lane == target_lane:
+    def is_lane_change_safe(self, vehicle: Vehicle, target_lane: int) -> bool:
+        if vehicle.lane == target_lane:
             return True
 
         # check predecessor on target lane
-        p = self._get_predecessor(v, target_lane)
+        p = self._get_predecessor(vehicle, target_lane)
         if p is not None:
-            gap_to_predecessor_on_target_lane = p.rear_position - v.position
-            if v.speed > v._safe_speed(p.speed, gap_to_predecessor_on_target_lane, v.desired_gap, v.vehicle_type.min_gap):
+            gap_to_predecessor_on_target_lane = p.rear_position - vehicle.position
+            if vehicle.speed > vehicle._safe_speed(p.speed, gap_to_predecessor_on_target_lane, vehicle.desired_gap, vehicle.vehicle_type.min_gap):
                 return False
 
         # check successor on target lane
-        s = self._get_successor(v, target_lane)
+        s = self._get_successor(vehicle, target_lane)
         if s is not None:
-            gap_to_successor_on_target_lane = v.rear_position - s.position
-            if s.speed > s._safe_speed(v.speed, gap_to_successor_on_target_lane):
+            gap_to_successor_on_target_lane = vehicle.rear_position - s.position
+            if s.speed > s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane):
                 return False
 
         # safe
         return True
 
     # TODO move to vehicle?
-    def _change_lane(self, v: Vehicle, target_lane: int, reason: str) -> bool:
-        source_lane = v.lane
+    def _change_lane(self, vehicle: Vehicle, target_lane: int, reason: str) -> bool:
+        source_lane = vehicle.lane
         if source_lane == target_lane:
             return True
-        LOG.debug(f"{v.vid} wants to change from lane {source_lane} to lane {target_lane} ({reason})")
+        LOG.debug(f"{vehicle.vid} wants to change from lane {source_lane} to lane {target_lane} ({reason})")
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
-            LOG.warn(f"{v.vid} only change to adjacent lane!")
+            LOG.warn(f"{vehicle.vid} only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
-            LOG.warn(f"Adjusted target lane of {v.vid} to {target_lane} (from {old_target_lane})")
+            LOG.warn(f"Adjusted target lane of {vehicle.vid} to {target_lane} (from {old_target_lane})")
 
-        if isinstance(v, PlatooningVehicle) and v.is_in_platoon():
+        if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon():
             # followers are not allowed to change the lane on their one
-            assert(v.platoon_role is not PlatoonRole.FOLLOWER)
+            assert(vehicle.platoon_role is not PlatoonRole.FOLLOWER)
 
             # leaders are allowed to change the lane
-            if v.platoon_role == PlatoonRole.LEADER:
+            if vehicle.platoon_role == PlatoonRole.LEADER:
                 assert(reason == "speedGain" or reason == "keepRight")
 
-                LOG.debug(f"{v.vid} needs to check all its platoon members")
+                LOG.debug(f"{vehicle.vid} needs to check all its platoon members")
 
                 can_change = True
-                for member in v.platoon.formation:
+                for member in vehicle.platoon.formation:
                     can_change = can_change and self.is_lane_change_safe(member, target_lane)
                     if not can_change:
                         LOG.debug(f"lane change is not safe for member {member.vid}")
 
                 if can_change:
                     # perform lane change for all vehicles in this platoon
-                    for member in v.platoon.formation:
+                    for member in vehicle.platoon.formation:
                         assert(member.lane == source_lane)
                         LOG.info(f"{member.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
@@ -400,25 +400,25 @@ class Simulator:
                                 f.write(f"{self.step},{member.vid},{member.position},{source_lane},{target_lane},{member.speed},{reason}\n")
 
                     return abs(lane_diff) <= 1
-                LOG.debug(f"{v.vid}'s lane change is not safe")
+                LOG.debug(f"{vehicle.vid}'s lane change is not safe")
                 return False
 
         # we are just a regular vehicle or we are not (yet) in a platoon
 
         # check adjacent lane is free
-        if self.is_lane_change_safe(v, target_lane):
-            LOG.info(f"{v.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
+        if self.is_lane_change_safe(vehicle, target_lane):
+            LOG.info(f"{vehicle.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
             # switch to adjacent lane
-            v._lane = target_lane
+            vehicle._lane = target_lane
 
             if self._record_vehicle_changes:
                 # log lane change
                 with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                    f.write(f"{self.step},{v.vid},{v.position},{source_lane},{target_lane},{v.speed},{reason}\n")
+                    f.write(f"{self.step},{vehicle.vid},{vehicle.position},{source_lane},{target_lane},{vehicle.speed},{reason}\n")
 
             return abs(lane_diff) <= 1
-        LOG.debug(f"{v.vid}'s lane change is not safe")
+        LOG.debug(f"{vehicle.vid}'s lane change is not safe")
         return False
 
     # kraus - multi lane traffic
