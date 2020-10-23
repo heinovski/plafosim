@@ -40,11 +40,11 @@ class TestSimulator:
 
     def test_acceleration2speed(self):
         assert(Simulator.acceleration2speed(2.5) == 2.5)
-        assert(Simulator.acceleration2speed(5.2, 10) == 52.0)  # TODO is this physically correct?
+        assert(Simulator.acceleration2speed(5.2, 10) == 52.0)
 
     def test_speed2acceleration(self):
         assert(Simulator.speed2acceleration(36.0, 24.0) == -12.0)
-        assert(Simulator.speed2acceleration(32.0, 42.0, 10) == 1.0)  # TODO is this physically correct?
+        assert(Simulator.speed2acceleration(32.0, 42.0, 10) == 1.0)
 
     def test_get_predecessor(self):
         self.setup()
