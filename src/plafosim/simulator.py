@@ -105,6 +105,7 @@ class Simulator:
             record_vehicle_emissions: bool = True,
             record_vehicle_traces: bool = False,
             record_vehicle_changes: bool = False,
+            record_emission_traces: bool = False,
             record_platoon_trips: bool = True,
             record_platoon_traces: bool = False,
             record_platoon_changes: bool = False):
@@ -216,6 +217,7 @@ class Simulator:
         self._record_vehicle_emissions = record_vehicle_emissions  # whether to record vehicle emissions
         self._record_vehicle_traces = record_vehicle_traces  # whether to record vehicle traces
         self._record_vehicle_changes = record_vehicle_changes  # whether to record vehicle lane changes
+        self._record_emission_traces = record_emission_traces  # whether to record emission traces
         self._record_platoon_trips = record_platoon_trips  # whether to record platoon trips
         self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
@@ -825,6 +827,11 @@ class Simulator:
             # create output file for vehicle lane changes
             with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
                 f.write("step,id,position,from,to,speed,reason\n")
+
+        if self._record_emission_traces:
+            # create output file for emission traces
+            with open(self._result_base_filename + '_emission_traces.csv', 'w') as f:
+                f.write("step,id,CO,CO2,HC,PMx,NOx,fuel\n")
 
         if self._record_platoon_trips:
             # create output file for platoon trips

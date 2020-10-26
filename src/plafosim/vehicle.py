@@ -308,6 +308,11 @@ class Vehicle:
             'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0]
         }
         diesel = False  # TODO make paramemter of vehicle type
+
+        if self._simulator._record_emission_traces:
+            with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
+                f.write(f"{self._simulator.step},{self.vid}")
+
         for variable in self._emissions.keys():
             scale = 3.6
             if variable == 'fuel':
@@ -315,8 +320,16 @@ class Vehicle:
                     scale *= 836.0
                 else:
                     scale *= 742.0
-            value = self._calculate_emission(self.acceleration, self.speed, emission_factors[variable], scale)
-            self._emissions[variable] += value * self._simulator.step_length
+            value = self._calculate_emission(self.acceleration, self.speed, emission_factors[variable], scale) * self._simulator.step_length
+            self._emissions[variable] += value
+
+            if self._simulator._record_emission_traces:
+                with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
+                    f.write(f",{round(value, 2)}")
+
+        if self._simulator._record_emission_traces:
+            with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
+                f.write("\n")
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
         if a < 0:
