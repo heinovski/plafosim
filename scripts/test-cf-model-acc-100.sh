@@ -60,6 +60,7 @@ echo "Running PlaFoSim..."
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
     --record-vehicle-changes true \
+    --record-emission-traces true \
     2>&1 | tee ${experiment}_plafosim.log
 
 echo "Running SUMO..."

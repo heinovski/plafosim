@@ -45,6 +45,7 @@ echo "Running PlaFoSim..."
     --acc-headway-time 1.5 \
     --cacc-spacing 5.0 \
     --start-as-platoon true \
+    --reduced-air-drag false \
     --pre-fill true \
     --penetration 1 \
     --desired-speed 36 \
@@ -62,6 +63,7 @@ echo "Running PlaFoSim..."
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
     --record-vehicle-changes true \
+    --record-emission-traces true \
     2>&1 | tee ${experiment}_plafosim.log
 
 echo "Running SUMO..."
