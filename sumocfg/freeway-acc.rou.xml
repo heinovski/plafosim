@@ -4,5 +4,5 @@
 
     <route id="route" edges="edge_0_0" />
 
-    <flow id="static" begin="0" period="3" type="acc" number="100" route="route" departSpeed="0" arrivalPos="100000" />
+    <flow id="static" begin="0" period="3" type="acc" number="100" route="route" departSpeed="0" arrivalPos="100000" departPos="base" departLane="first" />
 </routes>
