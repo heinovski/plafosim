@@ -286,6 +286,32 @@ class PlatooningVehicle(Vehicle):
         # default: use CC or drive freely
         return super().new_speed(speed_predecessor, predecessor_rear_position)
 
+    def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
+        # Gino Sovran, "Tractive-Energy-Based Formulae for the Impact of Aerodynamics on Fuel Economy Over the EPA Driving Schedules," SAE International, Technical Paper, 830304, February 1983.
+        # double fuelChange = 0.46 * getAirDragCoefficientChange();
+        # double currentCO2 = value * (1 - fuelChange);
+        #
+        # calculate savings by platooning by using
+        # Charles-Henri Bruneau, Khodor Khadra and Iraj Mortazavi, "Flow analysis of square-back simplified vehicles in platoon," International Journal of Heat and Fluid Flow, vol. 66, pp. 43–59, August 2017.
+        # Table 5: d = L, vehicle length = 4m, distance = 5m
+
+        air_drag_change = 0.0
+        if self._platoon_role == PlatoonRole.LEADER:
+            # savings by followers
+            if self.platoon.size > 1:
+                air_drag_change = 0.12  # bruneau
+        elif self._platoon_role == PlatoonRole.FOLLOWER:
+            # savings by leader/front vehicles
+            if self is self.platoon.last:
+                # last vehicle
+                air_drag_change = 0.23  # bruneau
+            else:
+                # in between
+                air_drag_change = 0.27  # bruneau
+        emission_change = air_drag_change * 0.46  # sovran
+
+        return super()._calculate_emission(a, v, f, scale) * (1.0 - emission_change)
+
     def finish(self):
         super().finish()
 
