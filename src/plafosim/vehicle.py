@@ -72,12 +72,14 @@ class Vehicle:
         self._communication_range = communication_range  # the maximum communication range between two vehicles
 
         # statistics
-        self._co = 0  # the total co emission in g
-        self._co2 = 0  # the total co2 emission in g
-        self._hc = 0  # the total hc emission in g
-        self._pmx = 0  # the total pmx emission in g
-        self._npx = 0  # the total npx emission in g
-        self._fuel = 0  # the total fuel consumption in ml
+        self._emissions = {
+            'co': 0,  # the total co emission in mg
+            'co2': 0,  # the total co2 emission in mg
+            'hc': 0,  # the total hc emission in mg
+            'pmx': 0,  # the total pmx emission in mg
+            'nox': 0,  # the total nox emission in mg
+            'fuel': 0  # the total fuel consumption in ml
+        }
 
     @property
     def vid(self) -> int:
@@ -283,9 +285,43 @@ class Vehicle:
             with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
                 f.write(f"{self._simulator.step},{self.vid},{self.position},{self.lane},{self.speed},{self.travel_time},{self.travel_distance}\n")
 
-        # TODO current emissions
+        self._calculate_emissions()
 
         # TODO current gap to front
+
+    def _calculate_emissions(self):
+        # Computes the emitted pollutant amount using the given speed and acceleration
+        #
+        # As the functions are defining emissions in g/hour, the function's result is normed
+        # by 3.6 (seconds in an hour/1000) yielding mg/s. For fuel ml/s is returned.
+        # Negative acceleration results directly in zero emission.
+        #
+        # The amount emitted by the given emission class when moving with the given velocity and acceleration [mg/s or ml/s]
+        #
+        # SUMO: The current default model is HBEFA3/PC_G_EU4 (a gasoline powered Euro norm 4 passenger car modeled using the HBEFA3 based model).
+        emission_factors = {
+            'co': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
+            'co2': [9449, 938.4, 0.0, -467.1, 28.26, 0.0],
+            'hc': [2.923, 0.1113, 0.0, -0.3476, 0.01032, 0.0],
+            'pmx': [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
+            'nox': [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
+            'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0]
+        }
+        diesel = False  # TODO make paramemter of vehicle type
+        for variable in self._emissions.keys():
+            scale = 3.6
+            if variable == 'fuel':
+                if diesel:
+                    scale *= 836.0
+                else:
+                    scale *= 742.0
+            value = self._calculate_emission(self.acceleration, self.speed, emission_factors[variable], scale)
+            self._emissions[variable] += value * self._simulator.step_length
+
+    def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
+        if a < 0:
+            return 0
+        return max((f[0] + f[1] * a * v + f[2] * a * a * v + f[3] * v + f[4] * v * v + f[5] * v * v * v) / scale, 0.0)
 
     def finish(self):
         """Clean up the instance of the vehicle"""
@@ -308,9 +344,8 @@ class Vehicle:
 
         if self._simulator._record_vehicle_emissions:
             with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
-                # TODO emissions model not yet implemented
                 # TODO log estimated emissions?
-                f.write(f"{self.vid},{self._co},{self._co2},{self._hc},{self._pmx},{self._npx},{self._fuel}\n")
+                f.write(f"{self.vid},{self._emissions['co']},{self._emissions['co2']},{self._emissions['hc']},{self._emissions['pmx']},{self._emissions['nox']},{self._emissions['fuel']}\n")
 
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
