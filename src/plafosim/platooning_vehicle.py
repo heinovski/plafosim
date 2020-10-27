@@ -283,7 +283,7 @@ class PlatooningVehicle(Vehicle):
 
             return new_speed
 
-        # default: use CC or drive freely
+        # default: use CC or driving freely
         return super().new_speed(speed_predecessor, predecessor_rear_position)
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
