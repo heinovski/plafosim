@@ -228,7 +228,7 @@ class Vehicle:
             # we have no predecessor
             self._blocked_front = False
 
-        # TODO dawdling?
+        # TODO dawdling? we do not support dawdling at the moment (sigma == 0.0)
         # new_speed -= random() * new_speed
 
         if (new_speed < 0):
