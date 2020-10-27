@@ -298,8 +298,8 @@ class PlatooningVehicle(Vehicle):
         air_drag_change = 0.0
         if self._platoon_role == PlatoonRole.LEADER:
             # savings by followers
-            if self.platoon.size > 1:
-                air_drag_change = 0.12  # bruneau
+            assert(self.platoon.size > 1)
+            air_drag_change = 0.12  # bruneau
         elif self._platoon_role == PlatoonRole.FOLLOWER:
             # savings by leader/front vehicles
             if self is self.platoon.last:
