@@ -1,5 +1,27 @@
 # Changelog
 
+## v.8.0, 2020-12-03
+- Added ortools solver for optimal assignments
+- Added emission model
+- Added communication interval between vehicles
+- Added execution intervals for formation algorithms
+- Added minimum trip size
+- Added desired headway time
+- Added more sanity checks for parameter
+- Added switch for disabling result recording for pre-filled vehicles
+- Updated the join maneuver
+- Updated the leave maneuver
+- Updated logging
+- Updated the comparison script to sumo
+- Updated exits due to sanity checks
+- Updated simulation with gui
+- Updated the minimum gap parameter
+- Updated units in cli script
+- Updated random depart/arrival position generation
+- Fixed execution paths in scripts
+- Fixed position correction after teleport
+- Tuned performance a little bit
+
 ## v0.7.0, 2020-10-15
 - Added simple centralized formation algorithm (speed & position)
 - Added updating platoon followers upon new speed of leader
