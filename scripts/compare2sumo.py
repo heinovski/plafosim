@@ -36,7 +36,7 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
-parser.add_argument('--experiment', type=str, default='human',
+parser.add_argument('--experiment', type=str, default='cc',
                     help="The name of the experiment to use for all result files")
 parser.add_argument('--desired-speed', type=float, default=36.0, help="The desired speed to use for the comparison")
 parser.add_argument('--arrival-position', type=int, default=100000,
@@ -303,8 +303,8 @@ for label in trip_diff_labels:
             l_75 = -3.697500
             l_max = 66.120000
     else:
-        # limits were set for human driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
-        assert(args.experiment == "human")
+        # limits were set for cc driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+        assert(args.experiment == "cc")
         if label == 'desiredSpeed':
             l_mean = 0.311689
             l_std = 5.129675
@@ -429,8 +429,8 @@ for label in lifetime_labels:
             l_75 = 0.000000
             l_max = 0.300000
         else:
-            # limits were set for human driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
-            assert(args.experiment == "human")
+            # limits were set for cc driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+            assert(args.experiment == "cc")
             l_mean = -0.424894
             l_std = 1.789486
             l_min = -44.640000
@@ -507,8 +507,8 @@ for label in lifetime_diff_labels:
             l_75 = 1.000000
             l_max = 3.000000
     else:
-        # limits were set for human driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
-        assert(args.experiment == "human")
+        # limits were set for cc driving with seed 42 on commit 8fc9e552ab7b93ab9e6744f7a642bbf27a486e9f
+        assert(args.experiment == "cc")
         if label == 'diff_sumo_speed':
             l_mean = 0.852827
             l_std = 5.060980

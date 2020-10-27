@@ -36,7 +36,7 @@ LOG = logging.getLogger(__name__)
 
 class CF_Mode(Enum):
 
-    CC = 0  # safe speed; aka human
+    CC = 0  # safe speed
     ACC = 1  # fixed time gap
     CACC = 2  # small fixed distance
 

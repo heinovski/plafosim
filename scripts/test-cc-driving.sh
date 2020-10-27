@@ -21,9 +21,9 @@ set -o pipefail
 
 seed="$1"
 
-### Human
+### CC
 
-experiment=human
+experiment=cc
 
 echo "simulator,real,user,sys" > runtimes_$experiment.csv
 
