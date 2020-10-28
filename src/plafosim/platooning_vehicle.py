@@ -498,26 +498,40 @@ class PlatooningVehicle(Vehicle):
         if self is self.platoon.leader:
             # leave at front
 
-            # tell the second vehicle in the platoon to become the new leader
-            new_leader = self.platoon.formation[1]
-            new_leader._platoon_role = PlatoonRole.LEADER
-            new_leader._cf_mode = CF_Mode.ACC
+            if self.platoon.size == 2:
+                # tell the only follower to drive individually
+                follower = self.platoon.formation[1]
+                follower._platoon_role = PlatoonRole.NONE
+                follower._cf_mode = CF_Mode.ACC
+                follower._platoon = Platoon(follower.vid, [follower], follower.desired_speed)
+                self._simulator._adjust_speed(follower)
+                # reset color of vehicle
+                if self._simulator._gui:
+                    import traci
+                    traci.vehicle.setColor(str(follower.vid), follower._color)
+            else:
+                # tell the second vehicle in the platoon to become the new leader
+                new_leader = self.platoon.formation[1]
+                new_leader._platoon_role = PlatoonRole.LEADER
+                new_leader._cf_mode = CF_Mode.ACC
 
-            self.platoon._formation.remove(self)
-            self.platoon.update_desired_speed()
+                LOG.debug(f"{new_leader.vid} became leader of platoon {new_leader.platoon.platoon_id}")
 
-            # update formation for all members
-            for vehicle in self.platoon.formation:
-                vehicle._platoon = self.platoon
-                self._simulator._adjust_speed(vehicle)
+                self.platoon._formation.remove(self)
+                assert(self.platoon.size > 1)
+                self.platoon.update_desired_speed()
+
+                # update formation for all members
+                for vehicle in self.platoon.formation:
+                    vehicle._platoon = self.platoon
+                    self._simulator._adjust_speed(vehicle)
 
             # leave
+            LOG.info(f"{self.vid} left platoon {self.platoon.platoon_id}")
             self._platoon_role = PlatoonRole.NONE  # the current platoon role
             self._platoon = Platoon(self.vid, [self], self.desired_speed)
 
             self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
-
-            LOG.info(f"{self.vid} left platoon {new_leader.platoon.platoon_id} (new leader {new_leader.vid})")
         elif self is self.platoon.last:
             # leave at back
             assert(self is not self.platoon.leader)
