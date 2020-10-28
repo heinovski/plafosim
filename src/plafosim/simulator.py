@@ -854,7 +854,6 @@ class Simulator:
 
         import traci
         traci.start(sumoCmd)
-        traci.simulationStep(self._step)
 
         # draw infrastructures
         for infrastructure in self._infrastructures.values():
@@ -891,8 +890,6 @@ class Simulator:
             # update vehicles
             traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
             traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID=f'edge_0_0_{vehicle.lane}')
-
-        traci.simulationStep(self._step)
 
         # remove vehicles not in simulator
         for vid in traci.vehicle.getIDList():
@@ -954,8 +951,13 @@ class Simulator:
             if self._collisions:
                 self._check_collisions()
 
+            # a new step begins
             self._step += self._step_length
             progress_bar.update(self._step_length)
+            if self._gui:
+                import traci
+                traci.simulationStep(self.step)
+                assert(traci.simulation.getTime() == float(self.step))
 
     def stop(self, msg: str):
         """Stop the simulation with the given message"""
