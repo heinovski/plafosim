@@ -624,6 +624,9 @@ class Simulator:
             self._vehicles[vid] = vehicle
             self._last_vehicle_id = vid
 
+            if self._gui:
+                self._add_gui_vehicle(vehicle)
+
             if self._start_as_platoon:
                 platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
                 for vehicle in self._vehicles.values():
@@ -764,6 +767,9 @@ class Simulator:
         self._vehicles[vid] = vehicle
         self._last_vehicle_id = vid
 
+        if self._gui:
+            self._add_gui_vehicle(vehicle)
+
         if self._start_as_platoon:
             platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
             for vehicle in self._vehicles.values():
@@ -870,8 +876,6 @@ class Simulator:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
-            # add vehicle
-            self._add_gui_vehicle(vehicle)
             # update vehicles
             traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
             traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID=f'edge_0_0_{vehicle.lane}')
