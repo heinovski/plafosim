@@ -870,23 +870,8 @@ class Simulator:
             if vehicle.depart_time > self._step:
                 # vehicle did not start yet
                 continue
-            # add vehicles
-            if str(vehicle.vid) not in traci.vehicle.getIDList():
-                traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
-                # save internal state of random number generator
-                state = random.getstate()
-                color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
-                traci.vehicle.setColor(str(vehicle.vid), color)
-                vehicle._color = color
-                # restore internal state of random number generator to not influence the determinsim of the simulation
-                if not (self._pre_fill and self._step == 0):
-                    random.setstate(state)
-                traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
-                traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
-                # track vehicle
-                if vehicle.vid == self._gui_track_vehicle:
-                    traci.gui.trackVehicle("View #0", str(vehicle.vid))
-                    traci.gui.setZoom("View #0", 1000000)
+            # add vehicle
+            self._add_gui_vehicle(vehicle)
             # update vehicles
             traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
             traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID=f'edge_0_0_{vehicle.lane}')
@@ -898,6 +883,25 @@ class Simulator:
 
         # sleep for visualization
         time.sleep(self._gui_delay)
+
+    def _add_gui_vehicle(self, vehicle: Vehicle):
+        import traci
+        if str(vehicle.vid) not in traci.vehicle.getIDList():
+            traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
+            # save internal state of random number generator
+            state = random.getstate()
+            color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
+            traci.vehicle.setColor(str(vehicle.vid), color)
+            vehicle._color = color
+            # restore internal state of random number generator to not influence the determinsim of the simulation
+            if not (self._pre_fill and self._step == 0):
+                random.setstate(state)
+            traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
+            traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
+            # track vehicle
+            if vehicle.vid == self._gui_track_vehicle:
+                traci.gui.trackVehicle("View #0", str(vehicle.vid))
+                traci.gui.setZoom("View #0", 1000000)
 
     def run(self):
         """Run the simulation with the specified parameters"""
