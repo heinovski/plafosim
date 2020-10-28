@@ -344,6 +344,9 @@ class Simulator:
         p = self._get_predecessor(vehicle, target_lane)
         if p is not None:
             gap_to_predecessor_on_target_lane = p.rear_position - vehicle.position
+            if gap_to_predecessor_on_target_lane < 0:
+                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
+                return False
             if vehicle.speed > vehicle._safe_speed(p.speed, gap_to_predecessor_on_target_lane, vehicle.desired_gap, vehicle.vehicle_type.min_gap):
                 LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
                 return False
@@ -352,6 +355,9 @@ class Simulator:
         s = self._get_successor(vehicle, target_lane)
         if s is not None:
             gap_to_successor_on_target_lane = vehicle.rear_position - s.position
+            if gap_to_successor_on_target_lane < 0:
+                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its successor")
+                return False
             if s.speed > s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane):
                 LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its successor")
                 return False
