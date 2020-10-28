@@ -445,8 +445,7 @@ class Simulator:
         # decide upon and perform a lane change for this vehicle
         if vehicle.blocked_front:
             if vehicle.lane < self.number_of_lanes - 1:
-                source_lane = vehicle.lane
-                target_lane = source_lane + 1
+                target_lane = vehicle.lane + 1
                 # TODO determine whether it is useful to overtake
                 self._change_lane(vehicle, target_lane, "speedGain")
         else:
@@ -454,8 +453,7 @@ class Simulator:
                 # followers are not allowed to change the lane on their own
                 return
             if vehicle.lane > 0:
-                source_lane = vehicle.lane
-                target_lane = source_lane - 1
+                target_lane = vehicle.lane - 1
                 self._change_lane(vehicle, target_lane, "keepRight")
 
     def _adjust_speeds(self):
