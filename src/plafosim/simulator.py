@@ -345,6 +345,7 @@ class Simulator:
         if p is not None:
             gap_to_predecessor_on_target_lane = p.rear_position - vehicle.position
             if vehicle.speed > vehicle._safe_speed(p.speed, gap_to_predecessor_on_target_lane, vehicle.desired_gap, vehicle.vehicle_type.min_gap):
+                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
                 return False
 
         # check successor on target lane
@@ -352,6 +353,7 @@ class Simulator:
         if s is not None:
             gap_to_successor_on_target_lane = vehicle.rear_position - s.position
             if s.speed > s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane):
+                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its successor")
                 return False
 
         # safe
@@ -701,6 +703,7 @@ class Simulator:
             if collision:
                 if depart_lane < self.number_of_lanes:
                     depart_lane = depart_lane + 1
+                    LOG.debug(f"Increased depart lane for {vid} to avoid a collision")
                 else:
                     sys.exit(f"{vid} crashed at start into {vehicle.vid}")
 
