@@ -627,12 +627,8 @@ class Simulator:
             if self._gui:
                 self._add_gui_vehicle(vehicle)
 
-            if self._start_as_platoon:
-                platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
-                for vehicle in self._vehicles.values():
-                    vehicle._platoon = platoon
-                    vehicle._last_platoon_join_time = depart_time  # this might trigger an assertion, since it is -1
-                    vehicle._last_platoon_join_position = depart_position  # this might trigger an assertion, since it is -1
+            if self._start_as_platoon and vid > 0:
+                vehicle._join(0, 0)
 
             LOG.debug(f"Spawned vehicle {vid}")
 
@@ -751,15 +747,6 @@ class Simulator:
                 self._alpha,
                 self._speed_deviation_threshold,
                 self._position_deviation_threshold)
-            if self._start_as_platoon:
-                if vid == 0:
-                    vehicle._cf_mode = CF_Mode.ACC
-                    vehicle._platoon_role = PlatoonRole.LEADER
-                else:
-                    vehicle._cf_mode = CF_Mode.CACC
-                    vehicle._platoon_role = PlatoonRole.FOLLOWER
-                vehicle._platoon = Platoon(0, [vehicle], vehicle.desired_speed)
-
         else:
             vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
                               desired_speed, depart_lane, depart_speed, depart_time, self._communication_range)
@@ -770,12 +757,8 @@ class Simulator:
         if self._gui:
             self._add_gui_vehicle(vehicle)
 
-        if self._start_as_platoon:
-            platoon = Platoon(0, list(self._vehicles.values()), self._vehicles[0].desired_speed)
-            for vehicle in self._vehicles.values():
-                vehicle._platoon = platoon
-                vehicle._last_platoon_join_time = depart_time
-                vehicle._last_platoon_join_position = depart_position
+        if self._start_as_platoon and vid > 0:
+            vehicle._join(0, 0)
 
         LOG.info(f"Spawned vehicle {vid}")
 
