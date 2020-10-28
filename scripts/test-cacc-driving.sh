@@ -20,6 +20,7 @@ set -e
 set -o pipefail
 
 seed="$1"
+ROOT=$(pwd)/$(dirname $0)/..
 
 ### CACC
 
@@ -28,7 +29,7 @@ experiment=cacc
 echo "simulator,real,user,sys" > runtimes_$experiment.csv
 
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_$experiment.csv --append \
-    ./plafosim.py \
+    $ROOT/plafosim.py \
     --lanes 4 \
     --collisions true \
     --lane-changes true \

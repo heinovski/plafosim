@@ -20,6 +20,7 @@ set -e
 set -o pipefail
 
 seed="$1"
+ROOT=$(pwd)/$(dirname $0)/..
 
 ### ACC
 
@@ -28,7 +29,7 @@ experiment=acc
 echo "simulator,real,user,sys" > runtimes_$experiment.csv
 
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_$experiment.csv --append \
-    ./plafosim.py \
+    $ROOT/plafosim.py \
     --lanes 4 \
     --collisions true \
     --lane-changes true \
@@ -58,7 +59,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
 # also change routes file
 /usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_$experiment.csv --append \
     $SUMO_HOME/bin/sumo \
-    -c sumocfg/freeway-$experiment.sumo.cfg \
+    -c $ROOT/sumocfg/freeway-$experiment.sumo.cfg \
     --fcd-output $experiment-traces.xml \
     --device.fcd.deterministic \
     --tripinfo-output $experiment-trips.xml \
@@ -74,4 +75,4 @@ $SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissio
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-traces.xml -o $experiment-traces.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-changes.xml -o $experiment-changes.csv -s ','
 
-./scripts/compare2sumo.py --experiment $experiment --desired-speed 36 --arrival-position 100000
+$ROOT/scripts/compare2sumo.py --experiment $experiment --desired-speed 36 --arrival-position 100000

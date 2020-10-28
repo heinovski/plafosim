@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-ROOT=$(pwd)/$(dirname $0)/../
+ROOT=$(pwd)/$(dirname $0)/..
 
 export PYTHONPATH=${ROOT}/src
 
