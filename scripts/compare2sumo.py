@@ -255,21 +255,21 @@ for label in trip_diff_labels:
     if args.experiment == "acc":
         # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'desiredSpeed':
-            l_mean = 0.797542
-            l_std = 4.827881
-            l_min = -10.017924
-            l_25 = -2.877840
-            l_50 = 1.300530
-            l_75 = 3.399956
+            l_mean = 0.443730
+            l_std = 5.233829
+            l_min = -15.603038
+            l_25 = -3.039654
+            l_50 = 1.074574
+            l_75 = 3.385923
             l_max = 13.190750
         elif label == 'arrival':
-            l_mean = -128.515464
-            l_std = 312.824868
+            l_mean = -104.460000
+            l_std = 338.990314
             l_min = -993.000000
-            l_25 = -293.000000
-            l_50 = -136.000000
-            l_75 = 28.000000
-            l_max = 584.000000
+            l_25 = -273.500000
+            l_50 = -121.500000
+            l_75 = 51.500000
+            l_max = 929.000000
         elif label == 'arrivalLane':
             l_mean = -0.020619
             l_std = 0.432516
@@ -279,28 +279,28 @@ for label in trip_diff_labels:
             l_75 = 0.000000
             l_max = 2.000000
         elif label == 'arrivalSpeed':
-            l_mean = 0.815480
-            l_std = 5.015899
-            l_min = -10.177924
-            l_25 = -2.977840
-            l_50 = 1.322301
-            l_75 = 3.408643
+            l_mean = 0.459230
+            l_std = 5.407964
+            l_min = -15.723038
+            l_25 = -3.217154
+            l_50 = 1.060580
+            l_75 = 3.388095
             l_max = 14.078517
         elif label == 'duration':
-            l_mean = -128.515464
-            l_std = 312.824868
+            l_mean = -104.460000
+            l_std = 338.990314
             l_min = -993.000000
-            l_25 = -293.000000
-            l_50 = -136.000000
-            l_75 = 28.000000
-            l_max = 584.000000
+            l_25 = -273.500000
+            l_50 = -121.500000
+            l_75 = 51.500000
+            l_max = 929.000000
         elif label == 'timeLoss':
-            l_mean = -70.195052
-            l_std = 113.620331
-            l_min = -410.060000
-            l_25 = -106.710000
-            l_50 = -16.330000
-            l_75 = -4.190000
+            l_mean = -76.270600
+            l_std = 121.250862
+            l_min = -414.530000
+            l_25 = -113.902500
+            l_50 = -17.330000
+            l_75 = -4.377500
             l_max = 51.850000
     else:
         # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
