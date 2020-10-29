@@ -258,19 +258,19 @@ class Simulator:
             instrastructure.action(self.step)
 
     @staticmethod
-    def speed2distance(speed: float, time_interval: float = 1) -> float:
+    def speed2distance(speed: float, time_interval: float = 1.0) -> float:
         return speed * time_interval
 
     @staticmethod
-    def distance2speed(distance: float, time_interval: float = 1) -> float:
+    def distance2speed(distance: float, time_interval: float = 1.0) -> float:
         return distance / time_interval
 
     @staticmethod
-    def acceleration2speed(acceleration: float, time_interval: float = 1) -> float:
+    def acceleration2speed(acceleration: float, time_interval: float = 1.0) -> float:
         return acceleration * time_interval
 
     @staticmethod
-    def speed2acceleration(speed_from: float, speed_to: float, time_interval: float = 1) -> float:
+    def speed2acceleration(speed_from: float, speed_to: float, time_interval: float = 1.0) -> float:
         return (speed_to - speed_from) / time_interval
 
     def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
