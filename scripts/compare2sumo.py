@@ -253,106 +253,106 @@ for label in trip_diff_labels:
     d = data.describe()
 
     if args.experiment == "acc":
-        # limits were set for acc driving with seed 42 on commit 9491b3a748a72c2c9b3f5493dd4145173d5cd831
+        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'desiredSpeed':
-            l_mean = 0.311689
-            l_std = 5.129675
-            l_min = -14.137094
-            l_25 = -3.869720
-            l_50 = 0.360809
-            l_75 = 4.116360
-            l_max = 11.989368
+            l_mean = 0.797542
+            l_std = 4.827881
+            l_min = -10.017924
+            l_25 = -2.877840
+            l_50 = 1.300530
+            l_75 = 3.399956
+            l_max = 13.190750
         elif label == 'arrival':
-            l_mean = -125.050000
-            l_std = 339.510354
-            l_min = -1037.000000
-            l_25 = -349.000000
-            l_50 = -112.000000
-            l_75 = 97.750000
-            l_max = 696.000000
+            l_mean = -128.515464
+            l_std = 312.824868
+            l_min = -993.000000
+            l_25 = -293.000000
+            l_50 = -136.000000
+            l_75 = 28.000000
+            l_max = 584.000000
         elif label == 'arrivalLane':
-            l_mean = -0.05
-            l_std = 0.50
-            l_min = -2.00
-            l_25 = 0.00
-            l_50 = 0.00
-            l_75 = 0.00
-            l_max = 1.00
-        elif label == 'arrivalSpeed':
-            l_mean = 0.193908
-            l_std = 5.151659
-            l_min = -14.367094
-            l_25 = -3.934720
-            l_50 = 0.350551
-            l_75 = 3.908860
-            l_max = 11.949368
-        elif label == 'duration':
-            l_mean = -125.050000
-            l_std = 339.510354
-            l_min = -1037.000000
-            l_25 = -349.000000
-            l_50 = -112.000000
-            l_75 = 97.750000
-            l_max = 696.000000
-        elif label == 'timeLoss':
-            l_mean = -97.581700
-            l_std = 114.687015
-            l_min = -439.840000
-            l_25 = -186.165000
-            l_50 = -36.635000
-            l_75 = -3.697500
-            l_max = 66.120000
-    else:
-        # limits were set for cc driving with seed 42 on commit 9491b3a748a72c2c9b3f5493dd4145173d5cd831
-        assert(args.experiment == "cc")
-        if label == 'desiredSpeed':
-            l_mean = 0.311689
-            l_std = 5.129675
-            l_min = -14.137094
-            l_25 = -3.869720
-            l_50 = 0.360809
-            l_75 = 4.116360
-            l_max = 11.989368
-        elif label == 'arrival':
-            l_mean = -26.040000
-            l_std = 406.590031
-            l_min = -1039.000000
-            l_25 = -299.500000
-            l_50 = -22.000000
-            l_75 = 316.250000
-            l_max = 1109.000000
-        elif label == 'arrivalLane':
-            l_mean = -0.010000
-            l_std = 0.481894
+            l_mean = -0.020619
+            l_std = 0.432516
             l_min = -1.000000
             l_25 = 0.000000
             l_50 = 0.000000
             l_75 = 0.000000
             l_max = 2.000000
         elif label == 'arrivalSpeed':
-            l_mean = 0.199089
-            l_std = 5.154142
-            l_min = -14.367094
-            l_25 = -3.934720
-            l_50 = 0.350551
-            l_75 = 3.908860
-            l_max = 11.949368
+            l_mean = 0.815480
+            l_std = 5.015899
+            l_min = -10.177924
+            l_25 = -2.977840
+            l_50 = 1.322301
+            l_75 = 3.408643
+            l_max = 14.078517
         elif label == 'duration':
-            l_mean = -26.040000
-            l_std = 406.590031
-            l_min = -1039.000000
-            l_25 = -299.500000
-            l_50 = -22.000000
-            l_75 = 316.250000
-            l_max = 1109.000000
+            l_mean = -128.515464
+            l_std = 312.824868
+            l_min = -993.000000
+            l_25 = -293.000000
+            l_50 = -136.000000
+            l_75 = 28.000000
+            l_max = 584.000000
         elif label == 'timeLoss':
-            l_mean = 1.406100
-            l_std = 7.578794
-            l_min = -8.580000
-            l_25 = -2.685000
-            l_50 = 0.425000
-            l_75 = 3.320000
-            l_max = 51.310000
+            l_mean = -70.195052
+            l_std = 113.620331
+            l_min = -410.060000
+            l_25 = -106.710000
+            l_50 = -16.330000
+            l_75 = -4.190000
+            l_max = 51.850000
+    else:
+        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+        assert(args.experiment == "cc")
+        if label == 'desiredSpeed':
+            l_mean = 0.443730
+            l_std = 5.233829
+            l_min = -15.603038
+            l_25 = -3.039654
+            l_50 = 1.074574
+            l_75 = 3.385923
+            l_max = 13.190750
+        elif label == 'arrival':
+            l_mean = -26.730000
+            l_std = 407.655327
+            l_min = -1036.000000
+            l_25 = -253.750000
+            l_50 = -76.000000
+            l_75 = 246.750000
+            l_max = 1308.000000
+        elif label == 'arrivalLane':
+            l_mean = 0.000000
+            l_std = 0.376051
+            l_min = -1.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 0.000000
+            l_max = 1.000000
+        elif label == 'arrivalSpeed':
+            l_mean = 0.330030
+            l_std = 5.230733
+            l_min = -15.723038
+            l_25 = -3.217154
+            l_50 = 1.054574
+            l_75 = 3.327779
+            l_max = 12.980750
+        elif label == 'duration':
+            l_mean = -26.730000
+            l_std = 407.655327
+            l_min = -1036.000000
+            l_25 = -253.750000
+            l_50 = -76.000000
+            l_75 = 246.750000
+            l_max = 1308.000000
+        elif label == 'timeLoss':
+            l_mean = 1.423600
+            l_std = 5.655546
+            l_min = -9.150000
+            l_25 = -2.005000
+            l_50 = 0.590000
+            l_75 = 3.847500
+            l_max = 26.340000
 
     if \
             abs(d['mean']) > ceil(abs(l_mean)) \
@@ -420,24 +420,25 @@ for label in lifetime_labels:
         d = data.describe()
 
         if args.experiment == "acc":
-            # limits were set for acc driving with seed 42 on commit 9491b3a748a72c2c9b3f5493dd4145173d5cd831
-            l_mean = -0.831217
-            l_std = 2.218281
-            l_min = -44.640000
-            l_25 = -0.610000
+            # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+            l_mean = -0.817673
+            l_std = 2.355079
+            l_min = -45.360000
+            l_25 = -0.250000
             l_50 = 0.000000
             l_75 = 0.000000
             l_max = 0.300000
         else:
-            # limits were set for cc driving with seed 42 on commit 9491b3a748a72c2c9b3f5493dd4145173d5cd831
+            # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
             assert(args.experiment == "cc")
-            l_mean = -0.094490
-            l_std = 1.789486
-            l_min = -44.640000
+            l_mean = -0.092872
+            l_std = 1.662458
+            l_min = -45.360000
             l_25 = 0.000000
             l_50 = 0.000000
             l_75 = 0.110000
             l_max = 0.300000
+
         if \
                 abs(d['mean']) > ceil(abs(l_mean)) \
                 or abs(d['std']) > ceil(abs(l_std)) \
@@ -481,53 +482,53 @@ for label in lifetime_diff_labels:
     d = data.describe()
 
     if args.experiment == "acc":
-        # limits were set for acc driving with seed 42 on commit 9491b3a748a72c2c9b3f5493dd4145173d5cd831
+        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'diff_sumo_speed':
-            l_mean = 1.500986
-            l_std = 4.172065
-            l_min = -14.367094
-            l_25 = -1.222341
-            l_50 = 1.384935
-            l_75 = 4.213975
-            l_max = 30.532657
+            l_mean = 1.301589
+            l_std = 4.255137
+            l_min = -15.723038
+            l_25 = -1.682917
+            l_50 = 1.529976
+            l_75 = 3.381246
+            l_max = 33.860530
         elif label == 'diff_sumo_position':
-            l_mean = 1922.106740
-            l_std = 6123.681019
-            l_min = -20514.177876
-            l_25 = -1308.425765
-            l_50 = 1137.371442
-            l_75 = 5073.995492
-            l_max = 28698.190713
+            l_mean = 1502.795554
+            l_std = 5986.644990
+            l_min = -25668.784062
+            l_25 = -671.744891
+            l_50 = 1140.942710
+            l_75 = 4122.465834
+            l_max = 29147.415562
         elif label == 'diff_sumo_lane':
-            l_mean = 0.605153
-            l_std = 0.764974
+            l_mean = 0.518561
+            l_std = 0.725133
             l_min = 0.000000
             l_25 = 0.000000
             l_50 = 0.000000
             l_75 = 1.000000
             l_max = 3.000000
     else:
-        # limits were set for cc driving with seed 42 on commit 9491b3a748a72c2c9b3f5493dd4145173d5cd831
+        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         assert(args.experiment == "cc")
         if label == 'diff_sumo_speed':
-            l_mean = 0.229980
-            l_std = 5.030584
-            l_min = -16.420497
-            l_25 = -3.778178
-            l_50 = 0.174948
-            l_75 = 3.822624
-            l_max = 18.670178
+            l_mean = 433.044838
+            l_std = 7174.285684
+            l_min = -36107.642525
+            l_25 = -3137.431724
+            l_50 = 441.553603
+            l_75 = 4062.827690
+            l_max = 30372.293185
         elif label == 'diff_sumo_position':
-            l_mean = 384.018239
-            l_std = 7294.801636
-            l_min = -32664.608124
-            l_25 = -3263.824954
-            l_50 = 122.256943
-            l_75 = 4197.033319
-            l_max = 28742.518143
+            l_mean = 433.044838
+            l_std = 7174.285684
+            l_min = -36107.642525
+            l_25 = -3137.431724
+            l_50 = 441.553603
+            l_75 = 4062.827690
+            l_max = 30372.293185
         elif label == 'diff_sumo_lane':
-            l_mean = 0.319393
-            l_std = 0.522768
+            l_mean = 0.330117
+            l_std = 0.536979
             l_min = 0.000000
             l_25 = 0.000000
             l_50 = 0.000000
