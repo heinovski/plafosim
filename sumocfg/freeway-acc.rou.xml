@@ -1,6 +1,6 @@
 <routes>
     <!-- normal distribution at mean=1.0, dev=0.1, min=0.62, max=1.54) of edge speed (130 km/h) -->
-    <vType id="acc" accel="2.5" decel="15.0" apparentDecel="15.0" emergencyDecel="15.0" sigma="0" tau="1.0" length="4" minGap="0" maxSpeed="55.55" speedFactor="normc(1.0,0.1,0.62,1.54)" color="0,1,0" carFollowModel="ACC" laneChangeModel="LC2013" emissionClass="HBEFA3/PC_G_EU4" />
+    <vType id="acc" accel="2.5" decel="15.0" apparentDecel="15.0" emergencyDecel="15.0" sigma="0" tau="1.0" length="4" minGap="2.5" maxSpeed="55.55" speedFactor="normc(1.0,0.1,0.62,1.54)" color="0,1,0" carFollowModel="ACC" laneChangeModel="LC2013" emissionClass="HBEFA3/PC_G_EU4" />
 
     <route id="route" edges="edge_0_0" />
 
