@@ -19,7 +19,7 @@
 class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
-    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float, min_gap: float):
+    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float, min_gap: float, desired_headway_time: float):
         """Initializes a vehicle type"""
         self._name = name  # the name of a vehicle type
         self._length = length  # the length of a vehicle type
@@ -27,6 +27,7 @@ class VehicleType:
         self._max_acceleration = max_acceleration  # the maximum acceleration of the vehicle type
         self._max_deceleration = max_deceleration  # the maximum deceleration of the vehicle type
         self._min_gap = min_gap  # the minimum gap to the vehicle in front
+        self._desired_headway_time = desired_headway_time  # the desired headway time
 
     @property
     def name(self) -> str:
@@ -57,3 +58,8 @@ class VehicleType:
     def min_gap(self) -> float:
         """Returns the minimum gap of a vehicle type"""
         return self._min_gap
+
+    @property
+    def desired_headway_time(self) -> float:
+        """Returns the desired headway time of a vehicle type"""
+        return self._desired_headway_time

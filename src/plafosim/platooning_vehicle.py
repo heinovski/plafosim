@@ -68,7 +68,7 @@ class PlatooningVehicle(Vehicle):
 
         self._cf_mode = CF_Mode.ACC
         self._acc_headway_time = acc_headway_time
-        if self.acc_headway_time < 1.0:
+        if acc_headway_time < 1.0:
             LOG.warn("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
         self._acc_lambda = 0.1  # see Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         self._cacc_spacing = cacc_spacing
@@ -104,8 +104,10 @@ class PlatooningVehicle(Vehicle):
         return self._cf_mode
 
     @property
-    def acc_headway_time(self) -> float:
-        return self._acc_headway_time
+    def desired_headway_time(self) -> float:
+        if self.cf_mode == CF_Mode.ACC or self.cf_mode == CF_Mode.CACC:
+            return self._acc_headway_time
+        return super().desired_headway_time
 
     @property
     def acc_lambda(self) -> float:
@@ -122,10 +124,9 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def desired_gap(self) -> float:
-        if self.cf_mode is CF_Mode.ACC:
-            return self.acc_headway_time * self.speed
-        else:
+        if self.cf_mode == CF_Mode.CACC:
             return self.cacc_spacing
+        return super().desired_gap
 
     @property
     def platoon_role(self) -> PlatoonRole:
@@ -168,7 +169,7 @@ class PlatooningVehicle(Vehicle):
         """Helper method to calculate the ACC acceleration based on the given parameters"""
 
         # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
-        return -1.0 / self.acc_headway_time * (self.speed - desired_speed + self.acc_lambda * (-gap_to_predecessor + desired_gap))
+        return -1.0 / self.desired_headway_time * (self.speed - desired_speed + self.acc_lambda * (-gap_to_predecessor + desired_gap))
 
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
         if self._cf_mode is CF_Mode.ACC:
@@ -182,7 +183,7 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"{self.vid}'s desired speed {self.desired_speed}")
                 LOG.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}")
 
-                u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.acc_headway_time * self.speed)
+                u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.desired_gap)
 
                 LOG.debug(f"{self.vid}'s ACC safe speed {self.speed + u}")
 

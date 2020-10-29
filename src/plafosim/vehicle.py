@@ -110,6 +110,10 @@ class Vehicle:
         return self._vehicle_type.min_gap
 
     @property
+    def desired_headway_time(self) -> float:
+        return self._vehicle_type.desired_headway_time
+
+    @property
     def depart_position(self) -> int:
         return self._depart_position
 
@@ -123,7 +127,7 @@ class Vehicle:
 
     @property
     def desired_gap(self) -> float:
-        return self.vehicle_type.min_gap
+        return self._simulator.speed2distance(self.desired_headway_time * self.speed, self._simulator._step_length)
 
     @property
     def depart_lane(self) -> int:
@@ -177,7 +181,7 @@ class Vehicle:
     def _safe_speed(self, speed_predecessor: float, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
         speed_diff_to_use = speed_predecessor - self.speed  # use to drive the same speed
         position_diff_to_use = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
-        return speed_diff_to_use + self._simulator.distance2speed(position_diff_to_use, self._simulator.step_length)
+        return speed_diff_to_use + self._simulator.distance2speed(position_diff_to_use, self.desired_headway_time)
 
     # krauss - single lane traffic
     # adjust speed

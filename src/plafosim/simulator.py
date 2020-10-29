@@ -45,7 +45,8 @@ max_speed = 55  # m/s # TODO make parameter
 max_acceleration = 2.5  # m/s # TODO make parameter
 max_deceleration = 15  # m/s # TODO make parameter
 min_gap = 0  # m # TODO make parameter
-vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap)  # TODO support multiple vtypes
+desired_headway_time = 1.0  # s # TODO make parameter
+vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap, desired_headway_time)  # TODO support multiple vtypes
 
 
 class Simulator:

@@ -23,10 +23,11 @@ def test_creation():
     length = 4
     max_speed = 55
     max_acceleration = 2.5
-    max_deceleration = 15
-    min_gap = 1
+    max_deceleration = 15.0
+    min_gap = 1.0
+    desired_headway_time = 1.0
 
-    vtype = VehicleType(name, length, max_speed, max_acceleration, max_deceleration, min_gap)
+    vtype = VehicleType(name, length, max_speed, max_acceleration, max_deceleration, min_gap, desired_headway_time)
 
     assert(vtype is not None)
     assert(vtype.name == name)
@@ -35,3 +36,4 @@ def test_creation():
     assert(vtype.max_acceleration == max_acceleration)
     assert(vtype.max_deceleration == max_deceleration)
     assert(vtype.min_gap == min_gap)
+    assert(vtype.desired_headway_time == desired_headway_time)
