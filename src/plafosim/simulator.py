@@ -359,7 +359,7 @@ class Simulator:
             if gap_to_successor_on_target_lane < 0:
                 LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its successor")
                 return False
-            if s.speed >= s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane):
+            if s.speed >= s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane, s.desired_gap, s.min_gap):
                 LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its successor")
                 return False
 
