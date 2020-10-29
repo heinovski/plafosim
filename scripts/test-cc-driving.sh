@@ -34,7 +34,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --collisions true \
     --lane-changes true \
     --vehicles 100 \
-    --time-limit 1 \
+    --time-limit 1.1 \
     --road-length 100 \
     --max-speed 55 \
     --penetration 0 \

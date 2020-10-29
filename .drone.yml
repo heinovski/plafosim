@@ -110,7 +110,7 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
-    - ./scripts/test-cc-driving.sh 42
+    - ./scripts/test-cc-driving.sh 1337
 - name: ACC
   image: dbuse/sumo-python:3.8-buster-1_1_0
   commands:
@@ -122,7 +122,7 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
-    - ./scripts/test-acc-driving.sh 42
+    - ./scripts/test-acc-driving.sh 1337
 - name: CACC
   image: dbuse/sumo-python:3.8-buster-1_1_0
   commands:
@@ -134,7 +134,7 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
-    - ./scripts/test-cacc-driving.sh 42
+    - ./scripts/test-cacc-driving.sh 1337
 - name: copy artifacts
   image: dbuse/sumo-python:3.8-buster-1_1_0
   environment:
