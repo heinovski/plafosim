@@ -72,7 +72,7 @@ class PlatooningVehicle(Vehicle):
             LOG.warn("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
         self._acc_lambda = 0.1  # see Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         self._cacc_spacing = cacc_spacing
-        if self.cacc_spacing < 5.0:
+        if cacc_spacing < 5.0:
             LOG.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, [self], self.desired_speed)
@@ -110,14 +110,6 @@ class PlatooningVehicle(Vehicle):
         return super().desired_headway_time
 
     @property
-    def acc_lambda(self) -> float:
-        return self._acc_lambda
-
-    @property
-    def cacc_spacing(self) -> float:
-        return self._cacc_spacing
-
-    @property
     def desired_speed(self) -> float:
         # return desired speed of platoon if in platoon
         return self.platoon.desired_speed if self.is_in_platoon() else self._desired_speed
@@ -125,7 +117,7 @@ class PlatooningVehicle(Vehicle):
     @property
     def desired_gap(self) -> float:
         if self.cf_mode == CF_Mode.CACC:
-            return self.cacc_spacing
+            return self._cacc_spacing
         return super().desired_gap
 
     @property
@@ -169,7 +161,7 @@ class PlatooningVehicle(Vehicle):
         """Helper method to calculate the ACC acceleration based on the given parameters"""
 
         # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
-        return -1.0 / self.desired_headway_time * (self.speed - desired_speed + self.acc_lambda * (-gap_to_predecessor + desired_gap))
+        return -1.0 / self.desired_headway_time * (self.speed - desired_speed + self._acc_lambda * (-gap_to_predecessor + desired_gap))
 
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
         if self._cf_mode is CF_Mode.ACC:
@@ -431,7 +423,7 @@ class PlatooningVehicle(Vehicle):
 
         # teleport the vehicle
         current_position = self.position
-        self._position = last.rear_position - self.cacc_spacing
+        self._position = last.rear_position - self._cacc_spacing
         LOG.warn(f"{self.vid} teleported to {self.position} (from {current_position})")
         current_lane = self.lane
         self._lane = leader.lane
