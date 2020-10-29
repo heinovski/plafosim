@@ -468,7 +468,7 @@ class Simulator:
     def _adjust_speeds(self):
         """Do speed adjustments for all vehicles"""
 
-        for vehicle in self._vehicles.values():
+        for vehicle in sorted(self._vehicles.values(), key=lambda x: x.position, reverse=True):
             self._adjust_speed(vehicle)
 
     def _adjust_speed(self, vehicle: Vehicle):
