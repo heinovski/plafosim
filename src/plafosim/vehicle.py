@@ -179,9 +179,8 @@ class Vehicle:
     # v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
     def _safe_speed(self, speed_predecessor: float, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
-        speed_diff_to_use = speed_predecessor - self.speed  # use to drive the same speed
-        position_diff_to_use = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
-        return speed_diff_to_use + self._simulator.distance2speed(position_diff_to_use, self.desired_headway_time)
+        gap_to_close = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
+        return speed_predecessor + self._simulator.distance2speed(gap_to_close, self.desired_headway_time)
 
     # krauss - single lane traffic
     # adjust speed
