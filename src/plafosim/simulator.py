@@ -644,7 +644,7 @@ class Simulator:
             if self._start_as_platoon and vid > 0:
                 vehicle._join(0, 0)
 
-            LOG.debug(f"Spawned vehicle {vid}")
+            LOG.debug(f"Generated vehicle {vid}")
 
     # TODO remove duplicated code
     def _spawn_vehicle(self):
