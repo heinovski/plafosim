@@ -696,7 +696,7 @@ class Simulator:
             depart_lane = 0
 
         if self._random_depart_position:
-            depart_position = random.randrange(length, self.road_length, self._depart_interval + length + min_gap)
+            depart_position = random.randrange(length, self.road_length - self._minimum_trip_length, self._depart_interval + length + min_gap)
         else:
             depart_position = length  # equal to departPos="base"
 
