@@ -174,6 +174,8 @@ class Simulator:
                 sys.exit("Vehicles can not have random departure positions when starting as one platoon!")
             if random_depart_lane:
                 sys.exit("Vehicles can not have random departure lanes when starting as one platoon!")
+            if random_arrival_position:
+                sys.exit("Vehicles can not have random arrival posiition when starting as one platoon!")
 
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures == 0:
