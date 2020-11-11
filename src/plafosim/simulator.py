@@ -170,6 +170,8 @@ class Simulator:
                 sys.exit("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
             if formation_algorithm is not None:
                 sys.exit("A formation algorithm cannot be used when all starting as one platoon!")
+            if depart_flow:
+                sys.exit("Vehicles can not spawn in a flow when starting as one platoon!")
             if random_depart_position:
                 sys.exit("Vehicles can not have random departure positions when starting as one platoon!")
             if random_depart_lane:
