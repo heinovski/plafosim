@@ -153,6 +153,8 @@ class Simulator:
         self._depart_fixed_time = depart_fixed_time  # the fixed departure time for all vehicles
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         self._minimum_trip_length = minimum_trip_length  # the minimum trip length
+        if minimum_trip_length > road_length:
+            sys.exit("Minimum trip length cannot be bigger than the length of the entire road!")
 
         # communication properties
         self._communication_range = communication_range  # the maximum communication range between two vehicles
