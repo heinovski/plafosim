@@ -638,9 +638,6 @@ class Simulator:
             self._vehicles[vid] = vehicle
             self._last_vehicle_id = vid
 
-            if self._gui:
-                self._add_gui_vehicle(vehicle)
-
             if self._start_as_platoon and vid > 0:
                 vehicle._join(0, 0)
 
@@ -867,6 +864,9 @@ class Simulator:
                 width = 10
                 color = (255, 126, 0)
                 traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
+        # draw pre-filled vehicles
+        for vehicle in self._vehicles.values():
+            self._add_gui_vehicle(vehicle)
 
     def _update_gui(self):
         import traci
