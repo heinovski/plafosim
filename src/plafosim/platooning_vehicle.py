@@ -426,8 +426,10 @@ class PlatooningVehicle(Vehicle):
         self._position = last.rear_position - self._cacc_spacing
         LOG.warn(f"{self.vid} teleported to {self.position} (from {current_position})")
         current_lane = self.lane
-        self._lane = leader.lane
-        LOG.warn(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
+        new_lane = leader.lane
+        if current_lane != new_lane:
+            self._lane = new_lane
+            LOG.warn(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
         current_speed = self.speed
         self._speed = last.speed
         LOG.warn(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
