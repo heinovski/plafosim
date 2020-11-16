@@ -565,26 +565,30 @@ class Simulator:
             vid = self._last_vehicle_id + 1
             depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
 
-            collision = True
-            while collision:
-                # actual calculation of position and lane
-                # always use random position for pre-filled vehicle
-                # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
-                depart_position = random.randrange(length, self.road_length, round(length + min_gap))
-                # always use random lane for pre-filled vehicle
-                depart_lane = random.randrange(0, self.number_of_lanes, 1)
+            if self._start_as_platoon:
+                depart_position = (number_of_vehicles - vid) * (length + self._cacc_spacing)
+                depart_lane = 0
+            else:
+                collision = True
+                while collision:
+                    # actual calculation of position and lane
+                    # always use random position for pre-filled vehicle
+                    # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
+                    depart_position = random.randrange(length, self.road_length, round(length + min_gap))
+                    # always use random lane for pre-filled vehicle
+                    depart_lane = random.randrange(0, self.number_of_lanes, 1)
 
-                LOG.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
+                    LOG.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
 
-                # avoid a collision with an existing vehicle
-                collision = False
-                for other_vehicle in self._vehicles.values():
-                    if other_vehicle.lane != depart_lane:
-                        # we do not care about other lanes
-                        continue
-                    # TODO HACK for using collision check
-                    vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time, -1)
-                    collision = collision or self.has_collision(vehicle, other_vehicle)
+                    # avoid a collision with an existing vehicle
+                    collision = False
+                    for other_vehicle in self._vehicles.values():
+                        if other_vehicle.lane != depart_lane:
+                            # we do not care about other lanes
+                            continue
+                        # TODO HACK for using collision check
+                        vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time, -1)
+                        collision = collision or self.has_collision(vehicle, other_vehicle)
 
             if self._random_desired_speed:
                 # normal distribution
@@ -622,24 +626,12 @@ class Simulator:
                     self._alpha,
                     self._speed_deviation_threshold,
                     self._position_deviation_threshold)
-                if self._start_as_platoon:
-                    if vid == 0:
-                        vehicle._cf_mode = CF_Mode.ACC
-                        vehicle._platoon_role = PlatoonRole.LEADER
-                    else:
-                        vehicle._cf_mode = CF_Mode.CACC
-                        vehicle._platoon_role = PlatoonRole.FOLLOWER
-                    vehicle._platoon = Platoon(0, [vehicle], vehicle.desired_speed)
-
             else:
                 vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
                                   desired_speed, depart_lane, depart_speed, depart_time, self._communication_range)
 
             self._vehicles[vid] = vehicle
             self._last_vehicle_id = vid
-
-            if self._start_as_platoon and vid > 0:
-                vehicle._join(0, 0)
 
             LOG.debug(f"Generated vehicle {vid}")
 
@@ -918,6 +910,11 @@ class Simulator:
         # initialize the GUI
         if self._gui:
             self._initialize_gui()
+
+        # initialize pre-filled vehicles
+        for vehicle in self._vehicles.values():
+            if self._start_as_platoon and vehicle.vid > 0:
+                vehicle._join(0, 0)
 
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
