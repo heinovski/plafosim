@@ -735,7 +735,15 @@ class Simulator:
             depart_speed = desired_speed
 
         if self._random_arrival_position:
-            arrival_position = random.randrange(depart_position + max(self._arrival_interval, self._minimum_trip_length), self._road_length, self._arrival_interval)
+            min_arrival = depart_position + self._minimum_trip_length
+            min_arrival_ramp = min_arrival + (self._arrival_interval - min_arrival) % self._arrival_interval
+            assert(min_arrival_ramp >= 0)
+            assert(min_arrival_ramp <= self._road_length)
+            if min_arrival_ramp == self._road_length:
+                # exit at end
+                arrival_position = self._road_length
+            else:
+                arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._arrival_interval)
         else:
             arrival_position = self._road_length
 
