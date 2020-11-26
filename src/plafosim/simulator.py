@@ -602,7 +602,18 @@ class Simulator:
             depart_speed = desired_speed
 
             if self._random_arrival_position:
-                arrival_position = random.randrange(depart_position + max(self._arrival_interval, self._minimum_trip_length), self._road_length, self._arrival_interval)
+                # we cannot use the minimum trip time here since, the pre-generation is supposed to produce a snapshot of a realistic simulation
+                # but we can assume that a vehicle has to drive a least to the next exit ramp
+                min_arrival = depart_position + self._arrival_interval
+                min_arrival_ramp = min_arrival + (self._arrival_interval - min_arrival) % self._arrival_interval
+                assert(min_arrival_ramp >= 0)
+                assert(min_arrival_ramp <= self._road_length)
+                if min_arrival_ramp == self._road_length:
+                    # exit at end
+                    arrival_position = self._road_length
+                else:
+                    arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._arrival_interval)
+                    assert(arrival_position > depart_position)
             else:
                 arrival_position = self._road_length
 
