@@ -27,9 +27,8 @@ from tqdm import tqdm
 from .vehicle_type import VehicleType
 from .vehicle import Vehicle
 from .infrastructure import Infrastructure
-from .platooning_vehicle import PlatooningVehicle, CF_Mode
+from .platooning_vehicle import PlatooningVehicle
 from .platoon_role import PlatoonRole
-from .platoon import Platoon
 
 LOG = logging.getLogger(__name__)
 
