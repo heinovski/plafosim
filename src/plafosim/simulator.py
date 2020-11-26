@@ -603,7 +603,7 @@ class Simulator:
             if self._random_arrival_position:
                 # we cannot use the minimum trip time here since, the pre-generation is supposed to produce a snapshot of a realistic simulation
                 # but we can assume that a vehicle has to drive a least to the next exit ramp
-                min_arrival = depart_position + self._arrival_interval
+                min_arrival = min(depart_position + self._arrival_interval, self._road_length)
                 min_arrival_ramp = min_arrival + (self._arrival_interval - min_arrival) % self._arrival_interval
                 assert(min_arrival_ramp >= 0)
                 assert(min_arrival_ramp <= self._road_length)
