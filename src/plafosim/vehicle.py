@@ -348,6 +348,8 @@ class Vehicle:
             LOG.warn(f"{self.vid}'s finish method was called even though it did not arrive yet!")
             return
 
+        # TODO should we avoid logging if the mimimum trip length has not been fulfilled?
+
         e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
         time_loss = self.travel_time - round(e_travel_time)
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
