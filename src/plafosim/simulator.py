@@ -685,9 +685,17 @@ class Simulator:
             depart_lane = 0
 
         if self._random_depart_position:
-            depart_position = random.randrange(length, self.road_length - self._minimum_trip_length, round(self._depart_interval + length + min_gap))
+            max_depart = self._road_length - self._minimum_trip_length
+            max_depart_ramp = max_depart - (self._depart_interval + max_depart) % self._depart_interval
+            assert(max_depart_ramp <= self._road_length)
+            assert(max_depart_ramp >= 0)
+            if max_depart_ramp == 0:
+                # start at beginning
+                depart_position = length  # equql to departPos="base" in SUMO
+            else:
+                depart_position = random.randrange(0, max_depart_ramp, self._depart_interval)  # TODO length (base)
         else:
-            depart_position = length  # equal to departPos="base"
+            depart_position = length  # equal to departPos="base" in SUMO
 
         # check whether the can actually be inserted
         collision = True  # assume we have a collision to check at least once
