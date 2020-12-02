@@ -496,6 +496,7 @@ class PlatooningVehicle(Vehicle):
                 # adjust this vehicle
                 old_position = vehicle.position
                 vehicle._position += diff_to_should_position  # difference is negative
+                assert(vehicle.position >= 0)
                 LOG.warn(f"adjusted position of {vehicle.vid} to {vehicle.position} (from {old_position})")
             if new_successor is self or new_successor is None:
                 return
@@ -504,6 +505,7 @@ class PlatooningVehicle(Vehicle):
             new_successor = self._simulator._get_successor(successor)
             old_position = successor.position
             successor._position += diff_to_should_position  # difference is negative
+            assert(vehicle.position >= 0)
             LOG.warn(f"adjusted position of {successor.vid} to {successor.position} (from {old_position})")
             if new_successor is self or new_successor is None:
                 return
