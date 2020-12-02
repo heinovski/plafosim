@@ -423,16 +423,20 @@ class PlatooningVehicle(Vehicle):
 
         # teleport the vehicle
         current_position = self.position
-        self._position = last.rear_position - self._cacc_spacing
-        LOG.warn(f"{self.vid} teleported to {self.position} (from {current_position})")
+        new_position = last.rear_position - self._cacc_spacing
+        if current_position != new_position:
+            self._position = new_position
+            LOG.warn(f"{self.vid} teleported to {self.position} (from {current_position})")
         current_lane = self.lane
         new_lane = leader.lane
         if current_lane != new_lane:
             self._lane = new_lane
             LOG.warn(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
         current_speed = self.speed
-        self._speed = last.speed
-        LOG.warn(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
+        new_speed = last.speed
+        if current_speed != new_speed:
+            self._speed = new_speed
+            LOG.warn(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
 
         # we also need to check interfering vehicles!
         if platoon_successor is not self and platoon_successor is not None:
