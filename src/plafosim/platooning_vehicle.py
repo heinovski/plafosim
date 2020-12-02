@@ -424,6 +424,7 @@ class PlatooningVehicle(Vehicle):
         # teleport the vehicle
         current_position = self.position
         new_position = last.rear_position - self._cacc_spacing
+        assert(new_position >= 0)
         if current_position != new_position:
             self._position = new_position
             LOG.warn(f"{self.vid} teleported to {self.position} (from {current_position})")
