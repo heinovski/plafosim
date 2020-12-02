@@ -407,6 +407,14 @@ class PlatooningVehicle(Vehicle):
             self.in_maneuver = False
             return
 
+        last = leader.platoon.last
+        new_position = last.rear_position - self._cacc_spacing
+
+        if new_position - self.length < 0:
+            # we cannot join since we would be outside of the road
+            LOG.warn(f"{self.vid} is too close to the begin of the road!")
+            return
+
         if leader.in_maneuver:
             LOG.warn(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
             self.in_maneuver = False
@@ -417,13 +425,10 @@ class PlatooningVehicle(Vehicle):
         leader._platoon_role = PlatoonRole.LEADER
         LOG.debug(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
 
-        last = leader.platoon.last
-
         platoon_successor = self._simulator._get_successor(last)
 
         # teleport the vehicle
         current_position = self.position
-        new_position = last.rear_position - self._cacc_spacing
         assert(new_position >= 0)
         if current_position != new_position:
             self._position = new_position
