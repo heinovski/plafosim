@@ -440,19 +440,7 @@ class PlatooningVehicle(Vehicle):
             LOG.warn(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
 
         # we also need to check interfering vehicles!
-        if platoon_successor is not self and platoon_successor is not None:
-            diff = self.rear_position - platoon_successor.min_gap - platoon_successor.position
-            if diff < 0:
-                # adjust this vehicle
-                platoon_successor._position = platoon_successor._position + diff
-                LOG.warn(f"adjusted position of {platoon_successor.vid} to {platoon_successor.position}")
-                if isinstance(platoon_successor, PlatooningVehicle):
-                    assert(not platoon_successor.is_in_platoon() or platoon_successor.platoon_role == PlatoonRole.LEADER)
-                    # adjust also all platoon members
-                    for vehicle in platoon_successor.platoon.formation[1:]:
-                        # adjust this vehicle
-                        vehicle._position = vehicle._position + diff
-                        LOG.warn(f"adjusted position of {vehicle.vid} to {vehicle.position}")
+        self._correct_position(self, platoon_successor)
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
@@ -485,6 +473,41 @@ class PlatooningVehicle(Vehicle):
         leader._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
         leader._last_platoon_join_position = leader.position
+
+    def _correct_position(self, front: Vehicle, successor: Vehicle):
+        # NOTE: we assume that self is the newly joined vehicle
+        if front is successor:
+            return
+        if successor is None:
+            return
+        LOG.debug(f"Checking positon of vehicle {successor.vid}")
+        diff_to_should_position = front.rear_position - successor.min_gap - successor.position
+        if diff_to_should_position >= 0:
+            # we do not need to worry
+            return
+        # the position of the successor needs to be adjusted
+        LOG.debug(f"We need to adjust the position of vehicle {successor.vid}")
+        # check whether vehicle was platoon leader
+        if isinstance(successor, PlatooningVehicle) and successor.is_in_platoon():
+            assert(successor.platoon_role == PlatoonRole.LEADER)
+            LOG.debug(f"We need to adjust the entire platoon of {successor.vid} ({successor.platoon.platoon_id})")
+            new_successor = self._simulator._get_successor(successor.platoon.last)
+            for vehicle in successor.platoon.formation:
+                # adjust this vehicle
+                old_position = vehicle.position
+                vehicle._position += diff_to_should_position  # difference is negative
+                LOG.warn(f"adjusted position of {vehicle.vid} to {vehicle.position} (from {old_position})")
+            if new_successor is self or new_successor is None:
+                return
+            self._correct_position(successor.platoon.last, new_successor)
+        else:
+            new_successor = self._simulator._get_successor(successor)
+            old_position = successor.position
+            successor._position += diff_to_should_position  # difference is negative
+            LOG.warn(f"adjusted position of {successor.vid} to {successor.position} (from {old_position})")
+            if new_successor is self or new_successor is None:
+                return
+            self._correct_position(successor, new_successor)
 
     def _leave(self):
         # just leave, without any communication
