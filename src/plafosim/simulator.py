@@ -108,7 +108,8 @@ class Simulator:
             record_emission_traces: bool = False,
             record_platoon_trips: bool = True,
             record_platoon_traces: bool = False,
-            record_platoon_changes: bool = False):
+            record_platoon_changes: bool = False,
+            record_prefilled: bool = False):
         """Initialize a simulator instance"""
 
         # TODO add custom filter that prepends the log entry with the step time
@@ -227,6 +228,7 @@ class Simulator:
         self._record_platoon_trips = record_platoon_trips  # whether to record platoon trips
         self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
+        self._record_prefilled = record_prefilled  # whether to record results for pre-filled vehicles
 
         # TODO log generation parameters
         self._pre_fill = pre_fill

@@ -319,6 +319,10 @@ class PlatooningVehicle(Vehicle):
 
         LOG.info(f"{self.vid} drove {self.time_in_platoon}s ({self.distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100} ({platoon_distance_ratio * 100})")
 
+        if not self._simulator._record_prefilled and self._depart_time == -1:
+            # we do not record statistics for pre-filled vehicles
+            return
+
         # TODO log savings from platoon?
         if self._simulator._record_platoon_trips:
             with open(self._simulator._result_base_filename + '_platoon_trips.csv', 'a') as f:
@@ -347,6 +351,10 @@ class PlatooningVehicle(Vehicle):
         """Write continuous statistics"""
 
         super()._statistics()
+
+        if not self._simulator._record_prefilled and self._depart_time == -1:
+            # we do not record statistics for pre-filled vehicles
+            return
 
         if self._platoon_role == PlatoonRole.LEADER and self._simulator._record_platoon_traces:
             # write statistics about this platoon

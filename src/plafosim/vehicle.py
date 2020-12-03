@@ -285,6 +285,10 @@ class Vehicle:
     def _statistics(self):
         """Write continuous statistics"""
 
+        if not self._simulator._record_prefilled and self._depart_time == -1:
+            # we do not record statistics for pre-filled vehicles
+            return
+
         if self._simulator._record_vehicle_traces:
             # mobility/trip statistics
             with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
@@ -313,6 +317,10 @@ class Vehicle:
             'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0]
         }
         diesel = False  # TODO make paramemter of vehicle type
+
+        if not self._simulator._record_prefilled and self._depart_time == -1:
+            # we do not record statistics for pre-filled vehicles
+            return
 
         if self._simulator._record_emission_traces:
             with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
@@ -357,6 +365,10 @@ class Vehicle:
         average_deviation_desired_speed = round(self._desired_speed - average_driving_speed, 1)
 
         LOG.info(f"{self.vid} arrived at {self.position}, {self.lane} with {self.speed}, took {self.travel_time}, {self.travel_distance}, {time_loss} {travel_time_ratio * 100}")
+
+        if not self._simulator._record_prefilled and self._depart_time == -1:
+            # we do not record statistics for pre-filled vehicles
+            return
 
         if self._simulator._record_vehicle_trips:
             with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:

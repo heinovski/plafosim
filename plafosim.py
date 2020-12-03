@@ -212,6 +212,8 @@ def main():
                          choices=(True, False), help="Whether to record platoon traces")
     results.add_argument('--record-platoon-changes', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record platoon lane changes")
+    results.add_argument('--record-prefilled', type=lambda x: bool(strtobool(x)), default=False,
+                         choices=(True, False), help="Whether to record results for pre-filled vehicles")
 
     args = parser.parse_args()
     simulator = Simulator(
@@ -270,7 +272,8 @@ def main():
         args.record_emission_traces,
         args.record_platoon_trips,
         args.record_platoon_traces,
-        args.record_platoon_changes
+        args.record_platoon_changes,
+        args.record_prefilled
     )
 
     simulator.run()
