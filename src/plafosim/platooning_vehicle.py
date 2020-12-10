@@ -566,25 +566,84 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted_leader_maneuver += 1
             return
 
-        # update the leader
-        leader.in_maneuver = True
-        if not leader.is_in_platoon():
-            # only if leader was alone before
-            LOG.info(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
-            leader._last_platoon_join_time = self._simulator.step
-            leader._last_platoon_join_position = leader.position
-            if leader._first_platoon_join_time == -1:
-                leader._first_platoon_join_time = self._simulator.step
-                assert(leader._first_platoon_join_position == -1)
-                leader._first_platoon_join_position = self.position
-            leader._number_platoons += 1
-        leader._platoon_role = PlatoonRole.LEADER
-
         platoon_successor = self._simulator._get_successor(last)
         if platoon_successor is None:
             LOG.debug(f"{self.vid}'s new position is {new_position} (behind {last.vid})")
         else:
             LOG.debug(f"{self.vid}'s new position is {new_position} (between {last.vid} and {platoon_successor.vid})")
+
+            # MAKE SPACE FOR THE JOINER
+            # the idea is to move the vehicle(s) behind the platoon to make room for the joiner
+            # we start with the first one (direct follower) and proceed with the next vehicle(s) as long as we need more space
+            # thus, we move only as little vehicles and as little as necessary (until they reach the mingap to the front vehicle)
+            # this way, it is more realistic and keeps the correct order of vehicles without producing an incorrect state during the process
+            # we might also move the method to the vehicle class or make it even part of the simulator
+
+            # how big needs the gap behind the platoon in front of the platoon successor to be
+            # cacc spacing + joiner + successor's min gap
+            required_gap = self._cacc_spacing + self.length + platoon_successor.min_gap
+            LOG.debug(f"We need a gap of {required_gap}m behind the platoon (vehicle {last.vid}) to teleport vehicle {self.vid}")
+            current_gap = last.rear_position - platoon_successor.position
+            still_required_space = required_gap - current_gap
+            LOG.debug(f"We currently have a gap of {current_gap} and thus still require {still_required_space}m")
+            if last.rear_position - (required_gap + platoon_successor.length) < 0:
+                # it is not possible to join because we cannot shift the current platoon successor out of the road
+                LOG.warning(f"Could not make enough space to teleport vehicle {self.vid}!")
+                self.in_maneuver = False
+                self._joins_aborted += 1
+                self._joins_aborted_no_space += 1
+                return
+
+            # list of vehicles that where moved already
+            already_moved_vehicles = []
+            # vehicle we are moving next
+            current_vehicle = platoon_successor
+            # we need to do act to make space
+            while still_required_space > 0:
+                assert(current_vehicle is not None)
+                # move vehicle until min gap to its successor is reached
+                LOG.debug(f"We are checking vehicle {current_vehicle.vid} for a possible move")
+                # successor of the vehicle we are moving now
+                current_successor = self._simulator._get_successor(current_vehicle)
+                if current_successor is not None:
+                    LOG.debug(f"The successor of vehicle {current_vehicle.vid} is {current_successor.vid}")
+                    # gap between vehicle we move now and its successor
+                    current_back_gap = current_vehicle.rear_position - current_successor.position
+                    LOG.debug(f"{current_vehicle.vid}'s back gap is {current_back_gap}m")
+                    # avaiable space we could utilize during the move
+                    current_possible_space = current_back_gap - current_successor.min_gap
+                    LOG.debug(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
+                else:
+                    LOG.debug(f"Vehicle {current_vehicle.vid} has no successor")
+                    # we have no successor
+                    # thus, we can move as far as we like to
+                    # but only until the end of the road
+                    current_possible_space = current_vehicle.position - current_vehicle.length
+                    LOG.debug(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
+                # space we are actually gaining during this move
+                current_gained_space = min(still_required_space, current_possible_space)
+                LOG.debug(f"We will gain {current_gained_space}m by moving vehicle {current_vehicle.vid}")
+                # can we move of the current vehicle?
+                if current_gained_space > 0:
+                    # move the current vehicle
+                    current_vehicle._position -= current_gained_space
+                    LOG.debug(f"We moved vehicle {current_vehicle.vid} to {current_vehicle.position}")
+                    # move the previous vehicle(s) as well to keep the correct spacings between them
+                    for v in already_moved_vehicles:
+                        v._position -= current_gained_space
+                        LOG.debug(f"We moved vehicle {v.vid} to {v.position} as well")
+                    # how much space do we still need?
+                    still_required_space -= current_gained_space
+                else:
+                    LOG.warning(f"Could not make enough space to teleport vehicle {self.vid}!")
+                    self.in_maneuver = False
+                    self._joins_aborted += 1
+                    return
+
+                # we need to rember this vehicle
+                already_moved_vehicles.append(current_vehicle)
+                current_vehicle = current_successor
+                LOG.debug(f"We still require {still_required_space}m")
 
         # teleport the vehicle
         current_position = self.position
@@ -606,8 +665,19 @@ class PlatooningVehicle(Vehicle):
             LOG.info(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
             self._joins_teleport_speed += 1
 
-        # we also need to check interfering vehicles!
-        self._correct_position(self, platoon_successor)
+        # update the leader
+        leader.in_maneuver = True
+        if not leader.is_in_platoon():
+            # only if leader was alone before
+            LOG.info(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
+            leader._last_platoon_join_time = self._simulator.step
+            leader._last_platoon_join_position = leader.position
+            if leader._first_platoon_join_time == -1:
+                leader._first_platoon_join_time = self._simulator.step
+                assert(leader._first_platoon_join_position == -1)
+                leader._first_platoon_join_position = self.position
+            leader._number_platoons += 1
+        leader._platoon_role = PlatoonRole.LEADER
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
@@ -645,45 +715,6 @@ class PlatooningVehicle(Vehicle):
             self._first_platoon_join_position = self.position
         self._joins_succesful += 1
         self._number_platoons += 1
-
-    def _correct_position(self, front: Vehicle, successor: Vehicle):
-        # NOTE: we assume that self is the newly joined vehicle
-        if front is successor:
-            return
-        if successor is None:
-            return
-        LOG.debug(f"Checking positon of vehicle {successor.vid}")
-        should_max_position = front.rear_position - successor.min_gap
-        diff_to_should_max_position = should_max_position - successor.position
-        if diff_to_should_max_position >= 0:
-            # we do not need to worry
-            return
-        # the position of the successor needs to be adjusted
-        LOG.debug(f"We need to adjust the position of vehicle {successor.vid}")
-        self._joins_correct_position += 1
-        # check whether vehicle was platoon leader
-        if isinstance(successor, PlatooningVehicle) and successor.is_in_platoon():
-            assert(successor.platoon_role == PlatoonRole.LEADER)
-            LOG.debug(f"We need to adjust the entire platoon of {successor.vid} ({successor.platoon.platoon_id})")
-            new_successor = self._simulator._get_successor(successor.platoon.last)
-            for vehicle in successor.platoon.formation:
-                # adjust this vehicle
-                old_position = vehicle.position
-                vehicle._position = should_max_position
-                assert(vehicle.position >= 0)
-                LOG.warning(f"adjusted position of {vehicle.vid} to {vehicle.position} (from {old_position})")
-            if new_successor is self or new_successor is None:
-                return
-            self._correct_position(successor.platoon.last, new_successor)
-        else:
-            new_successor = self._simulator._get_successor(successor)
-            old_position = successor.position
-            successor._position = should_max_position
-            assert(successor.position >= 0)
-            LOG.warning(f"adjusted position of {successor.vid} to {successor.position} (from {old_position})")
-            if new_successor is self or new_successor is None:
-                return
-            self._correct_position(successor, new_successor)
 
     def _leave(self):
         # just leave, without any communication
