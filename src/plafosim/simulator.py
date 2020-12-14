@@ -524,6 +524,9 @@ class Simulator:
     def _check_collisions(self):
         """Do collision checks for all vehicles"""
 
+        if len(self._vehicles) <= 1:
+            return
+
         for vehicle in self._vehicles.values():
             self._check_collision(vehicle)
 
