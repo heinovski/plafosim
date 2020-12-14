@@ -724,11 +724,11 @@ class Simulator:
                 collision = collision or self.has_collision(vehicle, other_vehicle)
             # can we avoid the collision by switching the departure lane?
             if collision:
-                if depart_lane < self.number_of_lanes:
-                    depart_lane = depart_lane + 1
-                    LOG.debug(f"Increased depart lane for {vid} to avoid a collision")
-                else:
+                if depart_lane == self.number_of_lanes - 1:
+                    # reached maximum number of lanes already
                     sys.exit(f"{vid} crashed at start into {vehicle.vid}")
+                depart_lane = depart_lane + 1
+                LOG.warn(f"Increased depart lane for {vid} to avoid a collision")
 
         if self._random_desired_speed:
             # normal distribution
