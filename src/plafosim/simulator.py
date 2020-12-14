@@ -504,10 +504,10 @@ class Simulator:
             # vehicle did not start yet
             return
         # increase position according to speed
-        position_difference = self.speed2distance(vehicle.speed, self._step_length)
+        new_position = vehicle.position + self.speed2distance(vehicle.speed, self._step_length)
         # TODO add emissions/fuel statistics
         # arrival_position reached?
-        if vehicle.position + position_difference >= vehicle.arrival_position:
+        if new_position >= vehicle.arrival_position:
             # TODO use proper method
             vehicle._position = vehicle.arrival_position
             vehicle.finish()
@@ -518,7 +518,7 @@ class Simulator:
             return
         else:
             # TODO use proper method
-            vehicle._position += position_difference
+            vehicle._position = new_position
             LOG.debug(f"{vehicle.vid}'s new position {vehicle.position}-{vehicle.rear_position},{vehicle.lane}")
 
     def _check_collisions(self):
