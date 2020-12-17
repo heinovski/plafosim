@@ -178,7 +178,7 @@ def main():
     # simulation properties
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
-    simulation.add_argument('--time-limit', type=float, default=1, help="The simulation limit in h")
+    simulation.add_argument('--time-limit', type=float, default=1.0, help="The simulation limit in h")
     simulation.add_argument('--random-seed', type=int, default=-1,
                             help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--log-level', type=str, default="warn",
