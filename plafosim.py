@@ -142,7 +142,7 @@ def main():
 
     # communication properties
     communication = parser.add_argument_group('communication properties')
-    communication.add_argument('--communication-range', type=float, default=1000,
+    communication.add_argument('--communication-range', type=int, default=1000,
                                help="The maximum communication range between two vehicles in m. A value of -1 disables the communication range checks")
 
     # platoon properties

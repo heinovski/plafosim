@@ -83,7 +83,7 @@ class Simulator:
             depart_fixed_time: int = 0,
             random_arrival_position: bool = False,
             minimum_trip_length: int = 0,
-            communication_range: float = 1000,
+            communication_range: int = 1000,
             start_as_platoon: bool = False,
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',

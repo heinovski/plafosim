@@ -45,7 +45,7 @@ class Vehicle:
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
-            communication_range: float):
+            communication_range: int):
         """Initialize a vehicle instance"""
 
         self._simulator = simulator  # the simulator

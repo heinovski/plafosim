@@ -55,7 +55,7 @@ class PlatooningVehicle(Vehicle):
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
-            communication_range: float,
+            communication_range: int,
             acc_headway_time: float,
             cacc_spacing: float,
             formation_algorithm: str,
