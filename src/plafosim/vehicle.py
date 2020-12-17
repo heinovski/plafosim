@@ -217,7 +217,7 @@ class Vehicle:
             gap_to_predecessor = predecessor_rear_position - self.position
             LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
             if gap_to_predecessor < 0:
-                LOG.warn(f"{self.vid}'s front gap is negative")
+                LOG.warn(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
             LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
             LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
