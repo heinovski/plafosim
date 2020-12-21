@@ -189,6 +189,10 @@ class PlatooningVehicle(Vehicle):
                 new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
                 LOG.debug(f"{self.vid}'s ACC max possible speed {new_speed}")
 
+                # make sure we do not drive backwards
+                if (new_speed < 0):
+                    new_speed = 0
+
                 if self.is_in_platoon():
                     assert(self.platoon_role is PlatoonRole.LEADER)
 
@@ -275,6 +279,10 @@ class PlatooningVehicle(Vehicle):
             LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}")
 
             LOG.debug(f"{self.vid}'s CACC new speed {new_speed}")
+
+            # make sure we do not drive backwards
+            if (new_speed < 0):
+                new_speed = 0
 
             return new_speed
 

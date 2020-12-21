@@ -238,6 +238,7 @@ class Vehicle:
         # TODO dawdling? we do not support dawdling at the moment (sigma == 0.0)
         # new_speed -= random() * new_speed
 
+        # make sure we do not drive backwards
         if (new_speed < 0):
             new_speed = 0
 
