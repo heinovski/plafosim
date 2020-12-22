@@ -93,8 +93,8 @@ class Simulator:
             number_of_infrastructures: int = 0,
             step_length: int = 1,
             max_step: int = 1 * 60 * 60,
-            collisions: bool = True,
             lane_changes: bool = True,
+            collisions: bool = True,
             random_seed: int = -1,
             log_level: int = 'warn',
             gui: bool = False,
@@ -200,8 +200,8 @@ class Simulator:
         self._step_length = step_length  # the length of a simulation step
         self._max_step = max_step
         self._running = False  # whether the simulation is running
-        self._collisions = collisions  # whether to check for collisions
         self._lane_changes = lane_changes  # whether to enable lane changes
+        self._collisions = collisions  # whether to check for collisions
         if random_seed >= 0:
             self._random_seed = random_seed  # the random.seed to use for the RNG
             LOG.info(f"Using random seed {random_seed}")
