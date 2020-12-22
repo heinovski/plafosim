@@ -63,8 +63,6 @@ class Simulator:
             max_speed: float = 55,
             acc_headway_time: float = 1.0,
             cacc_spacing: float = 5.0,
-            collisions: bool = True,
-            lane_changes: bool = True,
             penetration_rate: float = 1.0,
             random_depart_position: bool = False,
             random_depart_lane: bool = False,
@@ -95,6 +93,8 @@ class Simulator:
             number_of_infrastructures: int = 0,
             step_length: int = 1,
             max_step: int = 1 * 60 * 60,
+            collisions: bool = True,
+            lane_changes: bool = True,
             random_seed: int = -1,
             log_level: int = 'warn',
             gui: bool = False,
@@ -129,8 +129,6 @@ class Simulator:
         self._max_speed = max_speed  # the maximum driving speed # FIXME not used
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
         self._cacc_spacing = cacc_spacing  # the constant spacing for CACC
-        self._collisions = collisions  # whether to check for collisions
-        self._lane_changes = lane_changes  # whether to enable lane changes
         self._penetration_rate = penetration_rate  # the penetration rate of platooning vehicles
 
         # trip properties
@@ -202,6 +200,8 @@ class Simulator:
         self._step_length = step_length  # the length of a simulation step
         self._max_step = max_step
         self._running = False  # whether the simulation is running
+        self._collisions = collisions  # whether to check for collisions
+        self._lane_changes = lane_changes  # whether to enable lane changes
         if random_seed >= 0:
             self._random_seed = random_seed  # the random.seed to use for the RNG
             LOG.info(f"Using random seed {random_seed}")

@@ -71,10 +71,6 @@ def main():
                          help="The headway time to be used for the ACC in s")
     vehicle.add_argument('--cacc-spacing', type=float, default=5.0,
                          help="The constant spacing to be used for the CACC in m")
-    vehicle.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
-                         choices=(True, False), help="Whether to enable collision checks")
-    vehicle.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
-                         choices=(True, False), help="Whether to enable lane changes")
     vehicle.add_argument('--penetration', type=float, default=1.0,
                          help="Penetration rate of vehicles with platooning capabilities")
 
@@ -179,6 +175,10 @@ def main():
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
     simulation.add_argument('--time-limit', type=float, default=1.0, help="The simulation limit in h")
+    simulation.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
+                            choices=(True, False), help="Whether to enable lane changes")
+    simulation.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
+                            choices=(True, False), help="Whether to enable collision checks")
     simulation.add_argument('--random-seed', type=int, default=-1,
                             help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--log-level', type=str, default="warn",
@@ -227,8 +227,6 @@ def main():
         args.max_speed,
         args.acc_headway_time,
         args.cacc_spacing,
-        args.collisions,
-        args.lane_changes,
         args.penetration,
         args.random_depart_position,
         args.random_depart_lane,
@@ -259,6 +257,8 @@ def main():
         args.infrastructures,
         args.step_length,
         round(args.time_limit * 60 * 60),
+        args.collisions,
+        args.lane_changes,
         args.random_seed,
         getattr(logging, args.log_level.upper(), None),
         args.gui,
