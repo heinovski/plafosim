@@ -22,7 +22,7 @@ from .message import Message
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .simulator import Simulator
+    from .simulator import Simulator  # noqa 401
 
 LOG = logging.getLogger(__name__)
 
