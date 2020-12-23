@@ -68,12 +68,8 @@ class PlatooningVehicle(Vehicle):
 
         self._cf_mode = CF_Mode.ACC
         self._acc_headway_time = acc_headway_time
-        if acc_headway_time < 1.0:
-            LOG.warn("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
         self._acc_lambda = 0.1  # see Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         self._cacc_spacing = cacc_spacing
-        if cacc_spacing < 5.0:
-            LOG.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self.vid, [self], self.desired_speed)
         self._in_maneuver = False

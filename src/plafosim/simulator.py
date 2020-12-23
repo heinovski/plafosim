@@ -128,7 +128,11 @@ class Simulator:
         self._vehicle_density = vehicle_density  # the number of vehicles per km and lane
         self._max_speed = max_speed  # the maximum driving speed # FIXME not used
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
+        if acc_headway_time < 1.0:
+            LOG.warn("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
         self._cacc_spacing = cacc_spacing  # the constant spacing for CACC
+        if cacc_spacing < 5.0:
+            LOG.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._penetration_rate = penetration_rate  # the penetration rate of platooning vehicles
 
         # trip properties
