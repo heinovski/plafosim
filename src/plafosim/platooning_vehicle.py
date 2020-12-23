@@ -100,9 +100,13 @@ class PlatooningVehicle(Vehicle):
         return self._cf_mode
 
     @property
+    def acc_headway_time(self) -> float:
+        return self._acc_headway_time
+
+    @property
     def desired_headway_time(self) -> float:
         if self.cf_mode == CF_Mode.ACC or self.cf_mode == CF_Mode.CACC:
-            return self._acc_headway_time
+            return self.acc_headway_time
         return super().desired_headway_time
 
     @property

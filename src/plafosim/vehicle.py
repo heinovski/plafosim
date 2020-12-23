@@ -110,8 +110,12 @@ class Vehicle:
         return self._vehicle_type.min_gap
 
     @property
+    def cc_headway_time(self) -> float:
+        return self._vehicle_type.cc_headway_time
+
+    @property
     def desired_headway_time(self) -> float:
-        return self._vehicle_type.desired_headway_time
+        return self.cc_headway_time
 
     @property
     def depart_position(self) -> int:
