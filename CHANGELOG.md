@@ -1,104 +1,125 @@
 # Changelog
 
-## v.8.0, 2020-12-03
-- Added ortools solver for optimal assignments
-- Added emission model
-- Added communication interval between vehicles
-- Added execution intervals for formation algorithms
-- Added minimum trip size
-- Added desired headway time
-- Added more sanity checks for parameter
-- Added switch for disabling result recording for pre-filled vehicles
-- Updated the join maneuver
-- Updated the leave maneuver
-- Updated logging
-- Updated the comparison script to sumo
-- Updated exits due to sanity checks
-- Updated simulation with gui
-- Updated the minimum gap parameter
-- Updated units in cli script
-- Updated random depart/arrival position generation
-- Fixed execution paths in scripts
-- Fixed position correction after teleport
-- Tuned performance a little bit
+## [v0.8.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.8.0) - 2020-12-03
+* Added communication range between vehicles (#167)
+* Added desired headway time
+* Added emission model (#50)
+* Added execution intervals for formation algorithms (#166)
+* Added minimum trip length (#170, #187)
+* Added more sanity checks for parameter
+* Added new ecdfplot in comparison (#168)
+* Added ortools solver for optimal assignments (#127)
+* Added switch for disabling result recording for pre-filled vehicles (#190)
+* Fixed CF Models (#185)
+* Fixed collisions due to buggy lane change (#183)
+* Fixed execution paths in scripts (#184)
+* Fixed position correction after teleport (#188)
+* Fixed start as platoon (#182)
+* Small improvements (#174)
+* Tuned performance of the simulator (#172)
+* Updated adjustment of the platoon's desired speed to the avg of all members (#162)
+* Updated CC cf model and comparison (#176)
+* Updated depart parameters (#175)
+* Updated exits due to sanity checks
+* Updated logging (#137, #161)
+* Updated random depart/arrival position generation
+* Updated simulation with gui
+* Updated the comparison script to sumo
+* Updated the join maneuver
+* Updated the leave maneuver
+* Updated the minimum gap parameter
+* Updated units in cli script
 
-## v0.7.0, 2020-10-15
-- Added simple centralized formation algorithm (speed & position)
-- Added updating platoon followers upon new speed of leader
-- Added default values to all simulator arguments
-- Added more tests
-- Added (more) configurable result recording
-- Added type hints
-- Added drawing of infrastructures in the GUI
-- Updated join maneuver (adjusting of interfering vehicles)
-- Updated logging to use format strings
-- Updated CI definitions
-- Updated coloring of vehicles
-- Updated default values for arguments
-- Updated copyright headers
-- Updated project structure
-- Updated methods using only ids to use vehicle instances
-- Updated trace playing script
-- Fixed random state when using GUI
-- Fixed random state when using pre-fill
+## [v0.7.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.7.0) - 2020-10-15
+* Added a more complex join (#124)
+* Added dedicated modules (#111)
+* Added default values to all simulator arguments
+* Added drawing of infrastructures in the GUI (#130)
+* Added formation test to CI (#101)
+* Added missing type hints (#120)
+* Added (more) configurable result recording
+* Added (more) statistics (#143, #145)
+* Added more tests
+* Added simple (speed & position) centralized formation algorithm (#109)
+* Added type hints
+* Added updating platoon followers upon new speed of leader (#95)
+* Cleaned up imports (#131)
+* Fixed desired speed for vehicles in a platoon (#139)
+* Fixed random state when using GUI (#136)
+* Fixed random state when using pre-fill
+* Fixed simulator exit code is ignored in CI (#146)
+* Fixed teleport in join (#135)
+* Let formation work with platoons only (#123)
+* Updated advanced simulation control (#133)
+* Updated CI definitions
+* Updated coloring of vehicles
+* Updated copyright headers
+* Updated default values for arguments
+* Updated join maneuver (adjusting of interfering vehicles)
+* Updated logging to use format strings
+* Updated methods using only ids to use vehicle instances
+* Updated project structure
+* Updated testing of Simulator (#126)
+* Updated trace playing script
 
-## v0.6.0, 2020-09-22
-- Updated traffic generation
-- Added simple join (at back) maneuver
-- Added an abstract base class for formation algorithms
-- Added simple distributed formation algorithm (speed & position)
-- Added simple leave (at front) maneuver
-- Added support for infrastructure
-- Updated platoon class
-- Added proper logging
-- Added functionality to track a vehicle in the gui
+## [v0.6.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.6.0) - 2020-09-22
+* Updated traffic generation (#79)
+* Added simple join (at back) and leave at front) maneuver (#85)
+* Added an abstract base class for formation algorithms
+* Added simple (speed & position) distributed formation algorithm (#53)
+* Added support for infrastructure (#96)
+* Updated platoon class (#93)
+* Added proper logging (#92)
+* Added functionality to track a vehicle in the gui (#89)
+* Moved formation logic to composition (#103)
+* Split up vehicle.py (#87)
 
-## v0.5.0, 2020-09-04
-- Added ACC car-following model
-- Added CACC car-following model
-- Reworked lane change safety check
-- Improved collision check
-- Added random seed to simulator (and CI execution)
-- Added progress bars
-- Reworked comparison to Sumo
-- Added comparison to Sumo for ACC
+## [v0.5.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.5.0) - 2020-09-04
+* Added ACC car-following model (#51)
+* Added CACC car-following model (#61)
+* Reworked lane change safety check
+* Improved collision check
+* Added random seed (#78, #81)
+* Added step log (#75)
+* Updated comparison script (#71, #73, #74)
+* Added comparison to Sumo for ACC
 
-## v0.4.0, 2020-08-10
-- Added simple lane change model
-- Added script to compare the simulator to Sumo
-- Updated car-following model
-- Added execution step to CI
-- Added comparison step to CI
+## [v0.4.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.4.0) - 2020-08-10
+* Added simple lane change model
+* Added script to compare the simulator to Sumo
+* Updated car-following model
+* Added execution step to CI
+* Added comparison step to CI
 
-## v0.3.0, 2020-08-03
-- Updated trip generation
-- Added platoon class
-- Added blocked warning
-- Added testing framework
-- Improved the result recording
-- Update the step log
-- Updated the GUI
+## [v0.3.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.3.0) - 2020-08-03
+* Updated trip generation
+* Added platoon class
+* Added blocked warning
+* Added testing framework
+* Improved the result recording
+* Update the step log
+* Updated the GUI
 
-## v0.2.0, 2020-07-06
-- Updated car-following model
-- Updated messaging
-- Updated result recording
-- Reworked internal data structure for vehicles
-- Added functionality to removed finished vehicles
-- Added simple vehicle trace player
-- Added simple live GUI by using Sumo
-- Added neighbor table stub
+## [v0.2.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.2.0) - 2020-07-06
+* Updated car-following model
+* Updated messaging
+* Updated result recording
+* Reworked internal data structure for vehicles
+* Added functionality to removed finished vehicles
+* Added simple vehicle trace player
+* Added simple live GUI by using Sumo
+* Added neighbor table stub
 
-## v0.1.0, 2020-06-04 -- Initial release.
-- Began a new project
-- Added a VehicleType class
-- Added Vehicle class
-- Added Simulator class
-- Added Krauss' car-following model
-- Added simple communication functionality between vehicles
-- Added PlatoonRole enum
-- Added PlatooningVehicle class
-- Added CLI script with arguments
-- Added parameters for vehicles, trips, and the simulator
-- Added simple result recording
-- Added simple platoon advertising functionality
+## [v0.1.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.1.0) - 2020-06-04
+* Began a new project
+* Added a VehicleType class
+* Added Vehicle class
+* Added Simulator class
+* Added Krauss' car-following model
+* Added simple communication functionality between vehicles
+* Added PlatoonRole enum
+* Added PlatooningVehicle class
+* Added CLI script with arguments
+* Added parameters for vehicles, trips, and the simulator
+* Added simple result recording
+* Added simple platoon advertising functionality
