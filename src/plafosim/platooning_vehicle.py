@@ -428,7 +428,7 @@ class PlatooningVehicle(Vehicle):
 
         if new_position - self.length < 0:
             # we cannot join since we would be outside of the road
-            LOG.warn(f"{self.vid} is too close to the begin of the road!")
+            LOG.warn(f"{self.vid} is too close to the begining of the road!")
             return
 
         if leader.in_maneuver:
