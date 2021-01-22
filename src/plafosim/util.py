@@ -15,7 +15,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import numpy as np
 import pandas as pd
+
+
+def assert_index_equal(a, b):
+    assert(list(a.index) == list(b.index))
 
 
 def speed2distance(speed: float, time_interval: float = 1.0) -> float:
@@ -32,6 +37,29 @@ def acceleration2speed(acceleration: float, time_interval: float = 1.0) -> float
 
 def speed2acceleration(speed_from: float, speed_to: float, time_interval: float = 1.0) -> float:
     return (speed_to - speed_from) / time_interval
+
+
+def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
+    assert_index_equal(position, vdf)
+
+    clipped_position = pd.Series(
+        np.clip(
+            position.values,
+            0,
+            vdf.arrival_position  # do not move further than arrival position
+        ), index=position.index)
+    assert_index_equal(clipped_position, position)
+
+    return clipped_position
+
+
+# krauss - single lane traffic
+# adjust position (move)
+# x(t + step_size) = x(t) + v(t)*step_size
+def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
+    position = vdf.position + (vdf.speed * step_length)
+    vdf['position'] = clip_position(position, vdf)
+    return vdf
 
 
 def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
