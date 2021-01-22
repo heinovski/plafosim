@@ -93,6 +93,7 @@ class Simulator:
             number_of_infrastructures: int = 0,
             step_length: int = 1,
             max_step: int = 1 * 60 * 60,
+            actions: bool = True,
             lane_changes: bool = True,
             collisions: bool = True,
             random_seed: int = -1,
@@ -204,6 +205,7 @@ class Simulator:
         self._step_length = step_length  # the length of a simulation step
         self._max_step = max_step
         self._running = False  # whether the simulation is running
+        self._actions = actions  # whether to enable actions
         self._lane_changes = lane_changes  # whether to enable lane changes
         self._collisions = collisions  # whether to check for collisions
         if random_seed >= 0:
@@ -969,11 +971,11 @@ class Simulator:
             if self._gui:
                 self._update_gui()
 
-            # call regular actions on vehicles
-            self._call_vehicle_actions()
-
-            # call regular actions on infrastructure
-            self._call_infrastructure_actions()
+            if self._actions:
+                # call regular actions on vehicles
+                self._call_vehicle_actions()
+                # call regular actions on infrastructure
+                self._call_infrastructure_actions()
 
             # perform lane changes (for all vehicles)
             if self._lane_changes:

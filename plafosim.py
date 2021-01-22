@@ -175,6 +175,8 @@ def main():
     simulation = parser.add_argument_group('simulation properties')
     simulation.add_argument('--step-length', type=int, default=1, help="The step length in s")
     simulation.add_argument('--time-limit', type=float, default=1.0, help="The simulation limit in h")
+    simulation.add_argument('--actions', type=lambda x: bool(strtobool(x)), default=True,
+                            choices=(True, False), help="Whether to enable actions")
     simulation.add_argument('--lane-changes', type=lambda x: bool(strtobool(x)), default=True,
                             choices=(True, False), help="Whether to enable lane changes")
     simulation.add_argument('--collisions', type=lambda x: bool(strtobool(x)), default=True,
@@ -257,6 +259,7 @@ def main():
         args.infrastructures,
         args.step_length,
         round(args.time_limit * 60 * 60),
+        args.actions,
         args.lane_changes,
         args.collisions,
         args.random_seed,
