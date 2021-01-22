@@ -545,7 +545,6 @@ class Simulator:
         assert(vehicle1.lane == vehicle2.lane)
         return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
 
-    # TODO remove duplicated code
     def _generate_vehicles(self):
 
         if self._vehicle_density > 0:
@@ -560,6 +559,7 @@ class Simulator:
             vid = self._last_vehicle_id + 1
             depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
 
+            # TODO remove duplicated code
             if self._start_as_platoon:
                 depart_position = (number_of_vehicles - vid) * (length + self._cacc_spacing)
                 depart_lane = 0
@@ -590,6 +590,7 @@ class Simulator:
             # always use desired speed for pre-fill vehicles
             depart_speed = desired_speed
 
+            # TODO remove duplicated code
             if self._random_arrival_position:
                 # we cannot use the minimum trip time here since, the pre-generation is supposed to produce a snapshot of a realistic simulation
                 # but we can assume that a vehicle has to drive a least to the next exit ramp
@@ -606,32 +607,17 @@ class Simulator:
             else:
                 arrival_position = self._road_length
 
-            # choose vehicle "type" depending on the penetration rate
-            if random.random() <= self._penetration_rate:
-                vehicle = PlatooningVehicle(
-                    self,
-                    vid,
-                    vtype,
-                    depart_position,
-                    arrival_position,
-                    desired_speed,
-                    depart_lane,
-                    depart_speed,
-                    depart_time,
-                    self._communication_range,
-                    self._acc_headway_time,
-                    self._cacc_spacing,
-                    self._formation_algorithm if self._formation_strategy == "distributed" else None,
-                    self._execution_interval,
-                    self._alpha,
-                    self._speed_deviation_threshold,
-                    self._position_deviation_threshold)
-            else:
-                vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
-                                  desired_speed, depart_lane, depart_speed, depart_time, self._communication_range)
-
-            self._vehicles[vid] = vehicle
-            self._last_vehicle_id = vid
+            self._add_vehicle(
+                vid,
+                vtype,
+                depart_position,
+                arrival_position,
+                desired_speed,
+                depart_lane,
+                depart_speed,
+                depart_time,
+                self._communication_range
+            )
 
             LOG.debug(f"Generated vehicle {vid}")
 
@@ -646,7 +632,6 @@ class Simulator:
 
         return desired_speed
 
-    # TODO remove duplicated code
     def _spawn_vehicle(self):
 
         if self._vehicle_density > 0:
@@ -695,6 +680,7 @@ class Simulator:
         else:
             depart_lane = 0
 
+        # TODO remove duplicated code
         if self._random_depart_position:
             max_depart = self._road_length - self._minimum_trip_length
             max_depart_ramp = max_depart - (self._depart_interval + max_depart) % self._depart_interval
@@ -708,6 +694,7 @@ class Simulator:
         else:
             depart_position = length  # equal to departPos="base" in SUMO
 
+        # TODO remove duplicated code
         # check whether the can actually be inserted
         collision = True  # assume we have a collision to check at least once
         while collision:
@@ -739,6 +726,7 @@ class Simulator:
         if self._depart_desired:
             depart_speed = desired_speed
 
+        # TODO remove duplicated code
         if self._random_arrival_position:
             min_arrival = depart_position + self._minimum_trip_length
             min_arrival_ramp = min_arrival + (self._arrival_interval - min_arrival) % self._arrival_interval
@@ -752,6 +740,38 @@ class Simulator:
         else:
             arrival_position = self._road_length
 
+        vehicle = self._add_vehicle(
+            vid,
+            vtype,
+            depart_position,
+            arrival_position,
+            desired_speed,
+            depart_lane,
+            depart_speed,
+            depart_time,
+            self._communication_range
+        )
+
+        if self._gui:
+            self._add_gui_vehicle(vehicle)
+
+        if self._start_as_platoon and vid > 0:
+            vehicle._join(0, 0)
+
+        LOG.info(f"Spawned vehicle {vid} ({depart_position}-{vehicle.rear_position},{depart_lane})")
+
+    def _add_vehicle(
+            self,
+            vid,
+            vtype,
+            depart_position,
+            arrival_position,
+            desired_speed,
+            depart_lane,
+            depart_speed,
+            depart_time,
+            communication_range
+    ):
         # choose vehicle "type" depending on the penetration rate
         if random.random() <= self._penetration_rate:
             vehicle = PlatooningVehicle(
@@ -773,19 +793,24 @@ class Simulator:
                 self._speed_deviation_threshold,
                 self._position_deviation_threshold)
         else:
-            vehicle = Vehicle(self, vid, vtype, depart_position, arrival_position,
-                              desired_speed, depart_lane, depart_speed, depart_time, self._communication_range)
+            vehicle = Vehicle(
+                self,
+                vid,
+                vtype,
+                depart_position,
+                arrival_position,
+                desired_speed,
+                depart_lane,
+                depart_speed,
+                depart_time,
+                self._communication_range,
+            )
 
+        # add instance
         self._vehicles[vid] = vehicle
         self._last_vehicle_id = vid
 
-        if self._gui:
-            self._add_gui_vehicle(vehicle)
-
-        if self._start_as_platoon and vid > 0:
-            vehicle._join(0, 0)
-
-        LOG.info(f"Spawned vehicle {vid}")
+        return vehicle
 
     def _generate_infrastructures(self, number_of_infrastructures: int):
         """Generate infrastructures for the simulation"""
