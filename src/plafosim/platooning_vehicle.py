@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-class CF_Mode(Enum):
+class CF_Model(Enum):
 
     CC = 0  # safe speed
     ACC = 1  # fixed time gap
@@ -66,7 +66,7 @@ class PlatooningVehicle(Vehicle):
         super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
                          depart_speed, depart_time, communication_range)
 
-        self._cf_mode = CF_Mode.ACC
+        self._cf_model = CF_Model.ACC
         self._acc_headway_time = acc_headway_time
         self._acc_lambda = 0.1  # see Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         self._cacc_spacing = cacc_spacing
@@ -96,8 +96,8 @@ class PlatooningVehicle(Vehicle):
         self._distance_in_platoon = 0
 
     @property
-    def cf_mode(self) -> CF_Mode:
-        return self._cf_mode
+    def cf_model(self) -> CF_Model:
+        return self._cf_model
 
     @property
     def acc_headway_time(self) -> float:
@@ -105,7 +105,7 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def desired_headway_time(self) -> float:
-        if self.cf_mode == CF_Mode.ACC or self.cf_mode == CF_Mode.CACC:
+        if self.cf_model == CF_Model.ACC or self.cf_model == CF_Model.CACC:
             return self.acc_headway_time
         return super().desired_headway_time
 
@@ -116,7 +116,7 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def desired_gap(self) -> float:
-        if self.cf_mode == CF_Mode.CACC:
+        if self.cf_model == CF_Model.CACC:
             return self._cacc_spacing
         return super().desired_gap
 
@@ -164,8 +164,8 @@ class PlatooningVehicle(Vehicle):
         return -1.0 / self.desired_headway_time * (self.speed - desired_speed + self._acc_lambda * (-gap_to_predecessor + desired_gap))
 
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
-        if self._cf_mode is CF_Mode.ACC:
-            # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different modes
+        if self._cf_model is CF_Model.ACC:
+            # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different models
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
                 LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
@@ -239,7 +239,7 @@ class PlatooningVehicle(Vehicle):
 
                 return new_speed
 
-        elif self._cf_mode is CF_Mode.CACC:
+        elif self._cf_model is CF_Model.CACC:
             assert(self.is_in_platoon())
             assert(self.platoon_role is not PlatoonRole.LEADER)  # only followers can use CACC
 
@@ -471,7 +471,7 @@ class PlatooningVehicle(Vehicle):
         leader.platoon.update_desired_speed()
 
         # switch to CACC
-        self._cf_mode = CF_Mode.CACC
+        self._cf_model = CF_Model.CACC
         self._blocked_front = False
 
         for vehicle in leader.platoon.formation:
@@ -550,7 +550,7 @@ class PlatooningVehicle(Vehicle):
                 # tell the only follower to drive individually
                 follower = self.platoon.formation[1]
                 follower._platoon_role = PlatoonRole.NONE
-                follower._cf_mode = CF_Mode.ACC
+                follower._cf_model = CF_Model.ACC
                 follower._platoon = Platoon(follower.vid, [follower], follower.desired_speed)
                 self._simulator._adjust_speed(follower)  # FIXME duplicated execution of CACC
                 # reset color of vehicle
@@ -561,7 +561,7 @@ class PlatooningVehicle(Vehicle):
                 # tell the second vehicle in the platoon to become the new leader
                 new_leader = self.platoon.formation[1]
                 new_leader._platoon_role = PlatoonRole.LEADER
-                new_leader._cf_mode = CF_Mode.ACC
+                new_leader._cf_model = CF_Model.ACC
 
                 LOG.debug(f"{new_leader.vid} became leader of platoon {new_leader.platoon.platoon_id}")
 
@@ -579,7 +579,7 @@ class PlatooningVehicle(Vehicle):
             self._platoon_role = PlatoonRole.NONE  # the current platoon role
             self._platoon = Platoon(self.vid, [self], self.desired_speed)
 
-            self._cf_mode = CF_Mode.ACC  # not necessary, but we still do it explicitly
+            self._cf_model = CF_Model.ACC  # not necessary, but we still do it explicitly
         elif self is self.platoon.last:
             # leave at back
             assert(self is not self.platoon.leader)
