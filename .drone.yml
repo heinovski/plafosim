@@ -22,6 +22,7 @@ steps:
     - pip3 install --upgrade funcy
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade ortools
+    - pip3 install --upgrade pandas
     - pip3 install --upgrade pytest
     - pip3 install --upgrade pytest-cov
     - export PYTHONPATH=$(pwd)/src
@@ -57,6 +58,7 @@ steps:
     commands:
       - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
+      - pip3 install --upgrade pandas
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --random-seed $SEED
   - name: distributed formation
@@ -66,6 +68,7 @@ steps:
     commands:
       - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
+      - pip3 install --upgrade pandas
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
   - name: centralized formation (greedy)
@@ -75,6 +78,7 @@ steps:
     commands:
       - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
+      - pip3 install --upgrade pandas
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
   - name: centralized formation (optimal)
@@ -85,6 +89,7 @@ steps:
       - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
       - pip3 install --upgrade ortools
+      - pip3 install --upgrade pandas
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 

@@ -18,11 +18,11 @@
 import logging
 
 from .cf_model import CF_Model
+from .message import Message
 from .util import acceleration2speed
 from .util import distance2speed
 from .util import speed2distance
 from .vehicle_type import VehicleType
-from .message import Message
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

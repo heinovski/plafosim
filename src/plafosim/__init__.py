@@ -40,6 +40,7 @@ from .platoon_role import PlatoonRole  # noqa 401
 from .simulator import Simulator  # noqa 401
 from .util import acceleration2speed  # noqa 401
 from .util import distance2speed  # noqa 401
+from .util import get_crashed_vehicles  # noqa 401
 from .util import speed2acceleration  # noqa 401
 from .util import speed2distance  # noqa 401
 from .vehicle import Vehicle  # noqa 401

@@ -15,9 +15,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import funcy  # TODO get rid of this dependency
 import logging
-import random
 import os
+import pandas as pd
+import random
+import re
 import sys
 import time
 
@@ -25,12 +28,13 @@ from collections import namedtuple
 from math import copysign
 from tqdm import tqdm
 
-from .vehicle_type import VehicleType
-from .vehicle import Vehicle
 from .infrastructure import Infrastructure
 from .platooning_vehicle import PlatooningVehicle
 from .platoon_role import PlatoonRole
+from .util import get_crashed_vehicles
 from .util import speed2distance
+from .vehicle import Vehicle
+from .vehicle_type import VehicleType
 
 LOG = logging.getLogger(__name__)
 
@@ -500,26 +504,18 @@ class Simulator:
             vehicle._position = new_position
             LOG.debug(f"{vehicle.vid}'s new position {vehicle.position}-{vehicle.rear_position},{vehicle.lane}")
 
-    def _check_collisions(self):
+    @staticmethod
+    def _check_collisions(vdf: pd.DataFrame):
         """Do collision checks for all vehicles"""
 
-        if len(self._vehicles) <= 1:
+        if vdf.empty:
             return
 
-        for vehicle in self._vehicles.values():
-            self._check_collision(vehicle)
-
-    def _check_collision(self, vehicle: Vehicle):
-        # check for crashes of this vehicle with any other vehicle
-        for other_vehicle in self._vehicles.values():
-            if vehicle is other_vehicle:
-                # we do not need to compare us to ourselves
-                continue
-            if vehicle.lane != other_vehicle.lane:
-                # we do not care about other lanes
-                continue
-            if self.has_collision(vehicle, other_vehicle):
-                sys.exit(f"collision between {vehicle.vid} ({vehicle.position}-{vehicle.rear_position},{vehicle.lane}) and {other_vehicle.vid} ({other_vehicle.position}-{other_vehicle.rear_position},{other_vehicle.lane})")
+        crashed_vehicles = get_crashed_vehicles(vdf)
+        if crashed_vehicles:
+            for v in crashed_vehicles:
+                print(f"{v}: {vdf.loc[v].position}:{vdf.loc[v].length},{vdf.loc[v].lane}")
+            sys.exit(f"There were collisions with the following vehicles {crashed_vehicles}!")
 
     @staticmethod
     def has_collision(vehicle1: TV, vehicle2: TV) -> bool:
@@ -987,9 +983,15 @@ class Simulator:
             # adjust positions (of all vehicles)
             self._move_vehicles()
 
+            # BEGIN VECTORIZATION PART - CONVERT LIST OF OBJECTS TO DATAFRAME
+            vdf = self._get_vehicles_df()
+
             # do collision check (for all vehicles)
             if self._collisions:
-                self._check_collisions()
+                self._check_collisions(vdf)
+
+            del vdf
+            # END VECTORIZATION PART
 
             # a new step begins
             self._step += self._step_length
@@ -1001,6 +1003,21 @@ class Simulator:
 
         return self.step
 
+    def _get_vehicles_df(self) -> pd.DataFrame:
+        if not self._vehicles:
+            return pd.DataFrame()
+        return (
+            pd.DataFrame([
+                dict(
+                    **v.__dict__,
+                    length=v.length
+                )
+                for v in self._vehicles.values()
+            ])
+            .rename(columns=lambda x: re.sub('^_', '', x))
+            .set_index('vid')
+        )
+
     def stop(self, msg: str):
         """Stop the simulation with the given message"""
 
@@ -1011,7 +1028,6 @@ class Simulator:
     def __str__(self) -> str:
         """Return a nice string representation of a simulator instance"""
 
-        import funcy  # TODO get rid of this dependency
         sim_dict = self.__dict__
         sim_dict = funcy.omit(sim_dict, '_vehicles')
         sim_dict = funcy.omit(sim_dict, '_infrastructures')

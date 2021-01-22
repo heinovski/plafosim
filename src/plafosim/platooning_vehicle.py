@@ -19,12 +19,12 @@ import logging
 import sys
 
 from .cf_model import CF_Model
+from .formation_algorithm import SpeedPosition
 from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
-from .vehicle_type import VehicleType
 from .vehicle import Vehicle
-from .formation_algorithm import SpeedPosition
+from .vehicle_type import VehicleType
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -55,8 +55,18 @@ class PlatooningVehicle(Vehicle):
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
-        super().__init__(simulator, vid, vehicle_type, depart_position, arrival_position, desired_speed, depart_lane,
-                         depart_speed, depart_time, communication_range)
+        super().__init__(
+            simulator,
+            vid,
+            vehicle_type,
+            depart_position,
+            arrival_position,
+            desired_speed,
+            depart_lane,
+            depart_speed,
+            depart_time,
+            communication_range
+        )
 
         self._cf_model = CF_Model.ACC
         self._acc_headway_time = acc_headway_time
