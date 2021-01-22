@@ -30,22 +30,6 @@ class TestSimulator:
         assert(len(self.s._vehicles) == 0)
         assert(len(self.s._infrastructures) == 0)
 
-    def test_speed2distance(self):
-        assert(Simulator.speed2distance(36.0) == 36.0)
-        assert(Simulator.speed2distance(26.0, 10) == 260.0)
-
-    def test_distance2speed(self):
-        assert(Simulator.distance2speed(275.0) == 275.0)
-        assert(Simulator.distance2speed(257.0, 10) == 25.7)
-
-    def test_acceleration2speed(self):
-        assert(Simulator.acceleration2speed(2.5) == 2.5)
-        assert(Simulator.acceleration2speed(5.2, 10) == 52.0)
-
-    def test_speed2acceleration(self):
-        assert(Simulator.speed2acceleration(36.0, 24.0) == -12.0)
-        assert(Simulator.speed2acceleration(32.0, 42.0, 10) == 1.0)
-
     def test_get_predecessor(self):
         self.setup()
         self.s._step = 1

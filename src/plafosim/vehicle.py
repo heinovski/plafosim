@@ -18,6 +18,9 @@
 import logging
 
 from .cf_model import CF_Model
+from .util import acceleration2speed
+from .util import distance2speed
+from .util import speed2distance
 from .vehicle_type import VehicleType
 from .message import Message
 
@@ -133,7 +136,7 @@ class Vehicle:
 
     @property
     def desired_gap(self) -> float:
-        return self._simulator.speed2distance(self.desired_headway_time * self.speed, self._simulator._step_length)
+        return speed2distance(self.desired_headway_time * self.speed, self._simulator._step_length)
 
     @property
     def depart_lane(self) -> int:
@@ -190,7 +193,7 @@ class Vehicle:
     # this is a simple and dumb calculation for the safe speed of a vehicle based on the positions of the predecessor and the vehicle itself
     def _safe_speed(self, speed_predecessor: float, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
         gap_to_close = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
-        return speed_predecessor + self._simulator.distance2speed(gap_to_close, self.desired_headway_time)
+        return speed_predecessor + distance2speed(gap_to_close, self.desired_headway_time)
 
     # krauss - single lane traffic
     # adjust speed
@@ -211,11 +214,11 @@ class Vehicle:
         diff_to_desired = self.desired_speed - self.speed
         if diff_to_desired > 0:
             # we need to accelerate
-            new_speed = min(self.speed + min(diff_to_desired, self._simulator.acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
+            new_speed = min(self.speed + min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
             LOG.debug(f"{self.vid} wants to accelerate to {new_speed}")
         elif diff_to_desired < 0:
             # we need to decelerate
-            new_speed = max(self.speed + max(diff_to_desired, -self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
+            new_speed = max(self.speed + max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
             LOG.debug(f"{self.vid} wants to decelerate to {new_speed}")
         else:
             new_speed = self.speed
@@ -237,7 +240,7 @@ class Vehicle:
                 LOG.info(f"{self.vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
-                new_speed = max(safe_speed, self.speed - self._simulator.acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
+                new_speed = max(safe_speed, self.speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
                 LOG.debug(f"{self.vid}'s new speed after safe speed is {new_speed}")
             else:
                 self._blocked_front = False

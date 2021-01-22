@@ -29,6 +29,7 @@ from .vehicle import Vehicle
 from .infrastructure import Infrastructure
 from .platooning_vehicle import PlatooningVehicle
 from .platoon_role import PlatoonRole
+from .util import speed2distance
 
 LOG = logging.getLogger(__name__)
 
@@ -271,22 +272,6 @@ class Simulator:
         for instrastructure in self._infrastructures.values():
             instrastructure.action(self.step)
 
-    @staticmethod
-    def speed2distance(speed: float, time_interval: float = 1.0) -> float:
-        return speed * time_interval
-
-    @staticmethod
-    def distance2speed(distance: float, time_interval: float = 1.0) -> float:
-        return distance / time_interval
-
-    @staticmethod
-    def acceleration2speed(acceleration: float, time_interval: float = 1.0) -> float:
-        return acceleration * time_interval
-
-    @staticmethod
-    def speed2acceleration(speed_from: float, speed_to: float, time_interval: float = 1.0) -> float:
-        return (speed_to - speed_from) / time_interval
-
     def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         if lane == -1:
             # implicitly search on current lane of vehicle
@@ -510,7 +495,7 @@ class Simulator:
             # vehicle did not start yet
             return
         # increase position according to speed
-        new_position = vehicle.position + self.speed2distance(vehicle.speed, self._step_length)
+        new_position = vehicle.position + speed2distance(vehicle.speed, self._step_length)
         # TODO add emissions/fuel statistics
         # arrival_position reached?
         if new_position >= vehicle.arrival_position:
