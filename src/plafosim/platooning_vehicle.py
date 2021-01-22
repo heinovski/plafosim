@@ -18,8 +18,7 @@
 import logging
 import sys
 
-from enum import Enum
-
+from .cf_model import CF_Model
 from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
@@ -32,13 +31,6 @@ if TYPE_CHECKING:
     from .simulator import Simulator  # noqa 401
 
 LOG = logging.getLogger(__name__)
-
-
-class CF_Model(Enum):
-
-    CC = 0  # safe speed
-    ACC = 1  # fixed time gap
-    CACC = 2  # small fixed distance
 
 
 class PlatooningVehicle(Vehicle):

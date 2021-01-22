@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+from .cf_model import CF_Model  # noqa 401
 from .formation_algorithm import FormationAlgorithm  # noqa 401
 from .formation_algorithm import SpeedPosition  # noqa 401
 from .infrastructure import Infrastructure  # noqa 401
@@ -34,7 +35,6 @@ from .message import UpdatePlatoonFormation  # noqa 401
 from .neighbortable import NeighborData  # noqa 401
 from .neighbortable import NeighborTable  # noqa 401
 from .platoon import Platoon  # noqa 401
-from .platooning_vehicle import CF_Model  # noqa 401
 from .platooning_vehicle import PlatooningVehicle  # noqa 401
 from .platoon_role import PlatoonRole  # noqa 401
 from .simulator import Simulator  # noqa 401
