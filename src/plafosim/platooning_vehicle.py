@@ -490,8 +490,9 @@ class PlatooningVehicle(Vehicle):
         if successor is None:
             return
         LOG.debug(f"Checking positon of vehicle {successor.vid}")
-        diff_to_should_position = front.rear_position - successor.min_gap - successor.position
-        if diff_to_should_position >= 0:
+        should_max_position = front.rear_position - successor.min_gap
+        diff_to_should_max_position = should_max_position - successor.position
+        if diff_to_should_max_position >= 0:
             # we do not need to worry
             return
         # the position of the successor needs to be adjusted
@@ -504,7 +505,7 @@ class PlatooningVehicle(Vehicle):
             for vehicle in successor.platoon.formation:
                 # adjust this vehicle
                 old_position = vehicle.position
-                vehicle._position += diff_to_should_position  # difference is negative
+                vehicle._position = should_max_position
                 assert(vehicle.position >= 0)
                 LOG.warn(f"adjusted position of {vehicle.vid} to {vehicle.position} (from {old_position})")
             if new_successor is self or new_successor is None:
@@ -513,7 +514,7 @@ class PlatooningVehicle(Vehicle):
         else:
             new_successor = self._simulator._get_successor(successor)
             old_position = successor.position
-            successor._position += diff_to_should_position  # difference is negative
+            successor._position = should_max_position
             assert(successor.position >= 0)
             LOG.warn(f"adjusted position of {successor.vid} to {successor.position} (from {old_position})")
             if new_successor is self or new_successor is None:
