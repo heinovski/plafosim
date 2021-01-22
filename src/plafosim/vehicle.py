@@ -17,6 +17,7 @@
 
 import logging
 
+from .cf_model import CF_Model
 from .vehicle_type import VehicleType
 from .message import Message
 
@@ -66,6 +67,7 @@ class Vehicle:
         self._speed = self._depart_speed  # the current speed of the vehicle
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
         self._acceleration = 0  # the current acceleration of the vehicle
+        self._cf_model = CF_Model.CC  # the current car following model
 
         # communication properties
         # TODO move to platooning vehicle
@@ -166,6 +168,10 @@ class Vehicle:
     @property
     def acceleration(self) -> int:
         return self._acceleration
+
+    @property
+    def cf_model(self) -> CF_Model:
+        return self._cf_model
 
     @property
     def travel_distance(self) -> float:

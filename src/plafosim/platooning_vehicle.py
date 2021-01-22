@@ -88,10 +88,6 @@ class PlatooningVehicle(Vehicle):
         self._distance_in_platoon = 0
 
     @property
-    def cf_model(self) -> CF_Model:
-        return self._cf_model
-
-    @property
     def acc_headway_time(self) -> float:
         return self._acc_headway_time
 
