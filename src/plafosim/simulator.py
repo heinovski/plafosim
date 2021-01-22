@@ -585,13 +585,7 @@ class Simulator:
                         vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time, -1)
                         collision = collision or self.has_collision(vehicle, other_vehicle)
 
-            if self._random_desired_speed:
-                # normal distribution
-                desired_speed = self._desired_speed * random.normalvariate(1.0, self._speed_variation)
-                desired_speed = max(desired_speed, self._min_desired_speed)
-                desired_speed = min(desired_speed, self._max_desired_speed)
-            else:
-                desired_speed = self._desired_speed
+            desired_speed = self._get_desired_speed()
 
             # always use desired speed for pre-fill vehicles
             depart_speed = desired_speed
@@ -640,6 +634,17 @@ class Simulator:
             self._last_vehicle_id = vid
 
             LOG.debug(f"Generated vehicle {vid}")
+
+    def _get_desired_speed(self) -> float:
+        if self._random_desired_speed:
+            # normal distribution
+            desired_speed = self._desired_speed * random.normalvariate(1.0, self._speed_variation)
+            desired_speed = max(desired_speed, self._min_desired_speed)
+            desired_speed = min(desired_speed, self._max_desired_speed)
+        else:
+            desired_speed = self._desired_speed
+
+        return desired_speed
 
     # TODO remove duplicated code
     def _spawn_vehicle(self):
@@ -724,13 +729,7 @@ class Simulator:
                 depart_lane = depart_lane + 1
                 LOG.warn(f"Increased depart lane for {vid} to avoid a collision")
 
-        if self._random_desired_speed:
-            # normal distribution
-            desired_speed = self._desired_speed * random.normalvariate(1.0, self._speed_variation)
-            desired_speed = max(desired_speed, self._min_desired_speed)
-            desired_speed = min(desired_speed, self._max_desired_speed)
-        else:
-            desired_speed = self._desired_speed
+        desired_speed = self._get_desired_speed()
 
         if self._random_depart_speed:
             depart_speed = random.randrange(0, self._desired_speed, 1)
