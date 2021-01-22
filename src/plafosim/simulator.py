@@ -948,7 +948,7 @@ class Simulator:
             # spawn vehicle based on given parameters
             self._spawn_vehicle()
 
-            if len(self._vehicles) == 0:
+            if not self._vehicles:
                 self.stop("No more vehicles in the simulation")  # do we really want to exit here?
                 continue
 
