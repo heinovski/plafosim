@@ -133,7 +133,7 @@ class PlatooningVehicle(Vehicle):
     def in_maneuver(self, var: bool):
         if self._in_maneuver and var:
             # we can only start a new maneuver if we are not already in one
-            LOG.warn(f"{self.vid} is are already in a meneuver")
+            LOG.warn(f"{self.vid} is already in a meneuver")
             return
         self._in_maneuver = var
 
