@@ -1008,6 +1008,8 @@ class Simulator:
                 traci.simulationStep(self.step)
                 assert(traci.simulation.getTime() == float(self.step))
 
+        return self.step
+
     def stop(self, msg: str):
         """Stop the simulation with the given message"""
 

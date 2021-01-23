@@ -279,10 +279,12 @@ def main():
         args.record_prefilled
     )
 
-    simulator.run()
+    steps = simulator.run()
 
     end_time = timer()
-    print("The simulation took %.4f seconds" % (end_time - start_time))
+    run_time = end_time - start_time
+
+    print(f"The simulation took {run_time} seconds ({(steps / run_time)} step/s)")
 
 
 if __name__ == "__main__":
