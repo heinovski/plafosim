@@ -558,37 +558,52 @@ class PlatooningVehicle(Vehicle):
                 new_leader = self.platoon.formation[1]
                 new_leader._platoon_role = PlatoonRole.LEADER
                 new_leader._cf_model = CF_Model.ACC
-
                 LOG.debug(f"{new_leader.vid} became leader of platoon {new_leader.platoon.platoon_id}")
-
-                self.platoon._formation.remove(self)
-                assert(self.platoon.size > 1)
-                self.platoon.update_desired_speed()
-
-                # update formation for all members
-                for vehicle in self.platoon.formation:
-                    vehicle._platoon = self.platoon
-                    self._simulator._adjust_speed(vehicle)  # FIXME duplicated execution of CACC
-
-            # leave
-            LOG.info(f"{self.vid} left platoon {self.platoon.platoon_id}")
-            self._platoon_role = PlatoonRole.NONE  # the current platoon role
-            self._platoon = Platoon(self.vid, [self], self.desired_speed)
-
-            self._cf_model = CF_Model.ACC  # not necessary, but we still do it explicitly
         elif self is self.platoon.last:
             # leave at back
-            assert(self is not self.platoon.leader)
+            LOG.warn("Leave from back of a platoon is not yet properly implemented!")
+
             # TODO check whether it is safe to leave
-            # TODO tell the leader (who needs to tell all other vehicles)
-            # TODO leave
-            sys.exit("Leave from back of a platoon is not yet implemented!")
+
+            if self.platoon.size == 2:
+                # tell the current leader to drive individually
+                leader = self.platoon.leader
+                leader._platoon_role = PlatoonRole.NONE
+                leader._cf_model = CF_Model.ACC
+                leader._platoon = Platoon(leader.vid, [leader], leader.desired_speed)
+                self._simulator._adjust_speed(leader)  # FIXME duplicated execution of CACC
+
+                # reset color of vehicle
+                if self._simulator._gui:
+                    import traci
+                    traci.vehicle.setColor(str(leader.vid), leader._color)
+
+                # statistics
+                assert(leader._last_platoon_join_time >= 0)
+                leader._time_in_platoon = leader.time_in_platoon + (leader._simulator.step - leader._last_platoon_join_time)
+                assert(leader._last_platoon_join_position >= 0)
+                leader._distance_in_platoon = leader.distance_in_platoon + (leader.position - leader._last_platoon_join_position)
         else:
             # leave in the middle
+            LOG.warn("Leave from the middle of a platoon is not yet properly implemented!")
+
             # TODO check wether is is safe to leave
-            # TODO tell the leader (who needs to tell all other vehicles and needs to tell them to make space)
-            # TODO leave
-            sys.exit("Leave from the middle of a platoon is not yet implemented!")
+            # TODO the leader needs to all other vehicles to make space
+
+        # leave the platoon
+        self.platoon._formation.remove(self)
+        self.platoon.update_desired_speed()
+
+        # update formation for all members
+        for vehicle in self.platoon.formation:
+            vehicle._platoon = self.platoon  # TODO superfluous?
+            self._simulator._adjust_speed(vehicle)  # FIXME duplicated execution of CACC
+
+        # leave
+        LOG.info(f"{self.vid} left platoon {self.platoon.platoon_id} (leader {self.platoon.leader.vid})")
+        self._platoon_role = PlatoonRole.NONE  # the current platoon role
+        self._platoon = Platoon(self.vid, [self], self.desired_speed)
+        self._cf_model = CF_Model.ACC  # not necessary, but we still do it explicitly
 
         # reset color of vehicle
         if self._simulator._gui:
