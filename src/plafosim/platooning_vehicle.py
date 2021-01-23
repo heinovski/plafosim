@@ -542,10 +542,17 @@ class PlatooningVehicle(Vehicle):
                 follower._cf_model = CF_Model.ACC
                 follower._platoon = Platoon(follower.vid, [follower], follower.desired_speed)
                 self._simulator._adjust_speed(follower)  # FIXME duplicated execution of CACC
+
                 # reset color of vehicle
                 if self._simulator._gui:
                     import traci
                     traci.vehicle.setColor(str(follower.vid), follower._color)
+
+                # statistics
+                assert(follower._last_platoon_join_time >= 0)
+                follower._time_in_platoon = follower.time_in_platoon + (follower._simulator.step - follower._last_platoon_join_time)
+                assert(follower._last_platoon_join_position >= 0)
+                follower._distance_in_platoon = follower.distance_in_platoon + (follower.position - follower._last_platoon_join_position)
             else:
                 # tell the second vehicle in the platoon to become the new leader
                 new_leader = self.platoon.formation[1]
