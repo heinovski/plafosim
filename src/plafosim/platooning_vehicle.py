@@ -537,7 +537,7 @@ class PlatooningVehicle(Vehicle):
 
             if self.platoon.size == 2:
                 # tell the only follower to drive individually
-                follower = self.platoon.formation[1]
+                follower = self.platoon.last
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
                 follower._platoon = Platoon(follower.vid, [follower], follower.desired_speed)
