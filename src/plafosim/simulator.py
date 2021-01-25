@@ -21,6 +21,7 @@ import os
 import sys
 import time
 
+from collections import namedtuple
 from math import copysign
 from tqdm import tqdm
 
@@ -47,6 +48,7 @@ max_deceleration = 15  # m/s # TODO make parameter
 min_gap = 2.5  # m # TODO make parameter
 desired_headway_time = 1.0  # s # TODO make parameter
 vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap, desired_headway_time)  # TODO support multiple vtypes
+TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
 
 
 class Simulator:
@@ -520,7 +522,10 @@ class Simulator:
                 sys.exit(f"collision between {vehicle.vid} ({vehicle.position}-{vehicle.rear_position},{vehicle.lane}) and {other_vehicle.vid} ({other_vehicle.position}-{other_vehicle.rear_position},{other_vehicle.lane})")
 
     @staticmethod
-    def has_collision(vehicle1: Vehicle, vehicle2: Vehicle) -> bool:
+    def has_collision(vehicle1: TV, vehicle2: TV) -> bool:
+        """
+        TV(position, rear_position, lane)
+        """
         assert(vehicle1 is not vehicle2)
         assert(vehicle1.lane == vehicle2.lane)
         return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
@@ -544,8 +549,10 @@ class Simulator:
                 depart_position = (number_of_vehicles - vid) * (length + self._cacc_spacing)
                 depart_lane = 0
             else:
+                # assume we have a collision to check at least once
                 collision = True
                 while collision:
+                    collision = False
                     # actual calculation of position and lane
                     # always use random position for pre-filled vehicle
                     # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
@@ -555,15 +562,17 @@ class Simulator:
 
                     LOG.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
 
+                    if not self._vehicles:
+                        continue
+
                     # avoid a collision with an existing vehicle
-                    collision = False
                     for other_vehicle in self._vehicles.values():
                         if other_vehicle.lane != depart_lane:
                             # we do not care about other lanes
                             continue
-                        # TODO HACK for using collision check
-                        vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time, -1)
-                        collision = collision or self.has_collision(vehicle, other_vehicle)
+                        tv = TV(depart_position, depart_position - vtype.length, depart_lane)
+                        otv = TV(other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane)
+                        collision = collision or self.has_collision(tv, otv)
 
             desired_speed = self._get_desired_speed()
 
@@ -676,25 +685,30 @@ class Simulator:
 
         # TODO remove duplicated code
         # check whether the can actually be inserted
-        collision = True  # assume we have a collision to check at least once
+        # assume we have a collision to check at least once
+        collision = bool(self._vehicles)
         while collision:
             collision = False  # so far we do not have a collision
+            LOG.debug(f"Checking for a collision with an existing vehicle for new vehicle {vid}")
+            # avoid a collision with an existing vehicle
             # check all vehicles
             for other_vehicle in self._vehicles.values():
                 if other_vehicle.lane != depart_lane:
                     # we do not care about other lanes
                     continue
                 # do we have a collision?
-                # TODO HACK for using collision check
-                vehicle = Vehicle(self, vid, vtype, depart_position, -1, -1, depart_lane, -1, depart_time, -1)
-                collision = collision or self.has_collision(vehicle, other_vehicle)
-            # can we avoid the collision by switching the departure lane?
+                tv = TV(depart_position, depart_position - vtype.length, depart_lane)
+                otv = TV(other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane)
+                collision = collision or self.has_collision(tv, otv)
+
             if collision:
+                # can we avoid the collision by switching the departure lane?
                 if depart_lane == self.number_of_lanes - 1:
                     # reached maximum number of lanes already
                     sys.exit(f"{vid} crashed at start into another vehicle")
                 depart_lane = depart_lane + 1
                 LOG.warn(f"Increased depart lane for {vid} to avoid a collision")
+                # we need to check again
 
         desired_speed = self._get_desired_speed()
 
