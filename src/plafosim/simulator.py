@@ -755,10 +755,10 @@ class Simulator:
         if self._gui:
             self._add_gui_vehicle(vehicle)
 
+        LOG.info(f"Spawned vehicle {vid} ({depart_position}-{vehicle.rear_position},{depart_lane})")
+
         if self._start_as_platoon and vid > 0:
             vehicle._join(0, 0)
-
-        LOG.info(f"Spawned vehicle {vid} ({depart_position}-{vehicle.rear_position},{depart_lane})")
 
     def _add_vehicle(
             self,
