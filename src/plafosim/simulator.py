@@ -281,9 +281,6 @@ class Simulator:
             if other_vehicle is vehicle:
                 # skip the vehicle
                 continue
-            if other_vehicle.depart_time > self._step:
-                # vehicle did not start yet
-                continue
             if other_vehicle.lane != lane:
                 # skip other lane
                 continue
@@ -305,9 +302,6 @@ class Simulator:
         for other_vehicle in self._vehicles.values():
             if other_vehicle is vehicle:
                 # skip the vehicle
-                continue
-            if other_vehicle.depart_time > self._step:
-                # vehicle did not start yet
                 continue
             if other_vehicle.lane != lane:
                 # skip other lane
@@ -445,10 +439,6 @@ class Simulator:
             self._adjust_lane(vehicle)
 
     def _adjust_lane(self, vehicle: Vehicle):
-        if vehicle.depart_time > self._step:
-            # vehicle did not start yet
-            return
-
         # decide upon and perform a lane change for this vehicle
         if vehicle.blocked_front:
             if vehicle.lane < self.number_of_lanes - 1:
@@ -470,10 +460,6 @@ class Simulator:
             self._adjust_speed(vehicle)
 
     def _adjust_speed(self, vehicle: Vehicle):
-        if vehicle.depart_time > self._step:
-            # vehicle did not start yet
-            return
-
         LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
         predecessor = self._get_predecessor(vehicle)
         new_speed = vehicle.new_speed(predecessor.speed if predecessor else -1, predecessor.rear_position if predecessor else -1)
@@ -522,9 +508,6 @@ class Simulator:
             self._check_collision(vehicle)
 
     def _check_collision(self, vehicle: Vehicle):
-        if vehicle.depart_time > self._step:
-            # vehicle did not start yet
-            return
         # check for crashes of this vehicle with any other vehicle
         for other_vehicle in self._vehicles.values():
             if vehicle is other_vehicle:
@@ -532,9 +515,6 @@ class Simulator:
                 continue
             if vehicle.lane != other_vehicle.lane:
                 # we do not care about other lanes
-                continue
-            if other_vehicle.depart_time > self._step:
-                # other vehicle did not start yet
                 continue
             if self.has_collision(vehicle, other_vehicle):
                 sys.exit(f"collision between {vehicle.vid} ({vehicle.position}-{vehicle.rear_position},{vehicle.lane}) and {other_vehicle.vid} ({other_vehicle.position}-{other_vehicle.rear_position},{other_vehicle.lane})")
@@ -909,9 +889,6 @@ class Simulator:
     def _update_gui(self):
         import traci
         for vehicle in self._vehicles.values():
-            if vehicle.depart_time > self._step:
-                # vehicle did not start yet
-                continue
             # update vehicles
             traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
             traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID=f'edge_0_0_{vehicle.lane}')
