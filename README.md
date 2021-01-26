@@ -19,8 +19,9 @@ This tool is in active development and has not been published yet.
 ### Dependencies
 
 - Python3 (tested with 3.6.9)
+- argparse (argusment parsing, tested with 1.4.0)
+- pandas (mobility data handling, tested with 1.1.5)
 - tqdm (progress bar, tested with 4.48.2)
-- pandas (mobility data handling, tested with 1.1.0)
 - opt. SUMO (tested with >= 1.1.0)
 - opt. matplotlib (tested with 3.3.0)
 - opt. seaborn (tested with 0.10.1)
