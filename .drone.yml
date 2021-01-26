@@ -19,7 +19,6 @@ steps:
 - name: unittests
   image: python
   commands:
-    - pip3 install --upgrade funcy
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade ortools
     - pip3 install --upgrade pandas
@@ -56,7 +55,6 @@ steps:
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
-      - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
       - pip3 install --upgrade pandas
         # we are testing both vehicle types
@@ -66,7 +64,6 @@ steps:
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
-      - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
       - pip3 install --upgrade pandas
         # we are testing both vehicle types
@@ -76,7 +73,6 @@ steps:
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
-      - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
       - pip3 install --upgrade pandas
         # we are testing both vehicle types
@@ -86,7 +82,6 @@ steps:
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
-      - pip3 install --upgrade funcy
       - pip3 install --upgrade tqdm
       - pip3 install --upgrade ortools
       - pip3 install --upgrade pandas
@@ -109,7 +104,6 @@ steps:
   commands:
     - apt update
     - apt install time
-    - pip3 install --upgrade funcy
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade matplotlib
     - pip3 install --upgrade pandas
@@ -121,7 +115,6 @@ steps:
   commands:
     - apt update
     - apt install time
-    - pip3 install --upgrade funcy
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade matplotlib
     - pip3 install --upgrade pandas
@@ -133,7 +126,6 @@ steps:
   commands:
     - apt update
     - apt install time
-    - pip3 install --upgrade funcy
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade matplotlib
     - pip3 install --upgrade pandas
@@ -172,7 +164,6 @@ steps:
   commands:
     - apt update
     - apt install time
-    - pip3 install --upgrade funcy
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade pandas
     - pip3 install --upgrade ortools

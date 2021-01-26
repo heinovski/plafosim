@@ -15,7 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import funcy  # TODO get rid of this dependency
 import logging
 import os
 import pandas as pd
@@ -1027,9 +1026,9 @@ class Simulator:
     def __str__(self) -> str:
         """Return a nice string representation of a simulator instance"""
 
-        sim_dict = self.__dict__
-        sim_dict = funcy.omit(sim_dict, '_vehicles')
-        sim_dict = funcy.omit(sim_dict, '_infrastructures')
+        sim_dict = self.__dict__.copy()
+        sim_dict.pop('_vehicles')
+        sim_dict.pop('_infrastructures')
         sim_dict.update({'current_number_of_vehicles': len(self._vehicles)})
         sim_dict.update({'current_number_of_infrastructures': len(self._infrastructures)})
         return str(sim_dict)

@@ -19,7 +19,6 @@ This tool is in active development and has not been published yet.
 ### Dependencies
 
 - Python3 (tested with 3.6.9)
-- funcy (argument parsing, tested with 1.14)
 - tqdm (progress bar, tested with 4.48.2)
 - pandas (mobility data handling, tested with 1.1.0)
 - opt. SUMO (tested with >= 1.1.0)
