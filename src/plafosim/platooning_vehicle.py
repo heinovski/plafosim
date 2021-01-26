@@ -261,6 +261,11 @@ class PlatooningVehicle(Vehicle):
             #######################################
 
             ### HACK FOR CACC ###
+            # avoid to calculation
+            if gap_to_predecessor == self._cacc_spacing and self.speed == speed_leader and self.speed == speed_predecessor:
+                LOG.debug(f"{self.vid} does not need to calcucate a CACC new speed")
+                return self.speed
+            LOG.debug(f"{self.vid} needs to calculate a new CACC speed")
             u = self._acc_acceleration(speed_leader, gap_to_predecessor, self.desired_gap)
             #####################
 
