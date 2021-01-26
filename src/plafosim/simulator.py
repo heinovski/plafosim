@@ -283,17 +283,13 @@ class Simulator:
             # implicitly search on current lane of vehicle
             lane = vehicle.lane
         predecessor = None  # there is no predecessor so far
-        for other_vehicle in self._vehicles.values():
-            if other_vehicle is vehicle:
-                # skip the vehicle
-                continue
-            if other_vehicle.lane != lane:
-                # skip other lane
-                continue
-            if other_vehicle.position < vehicle.position:
-                # vehicle is not in front of us
-                # this means we consider all vehicles that are at least as far as we are
-                continue
+        candiates = [
+            v for v in self._vehicles.values() if
+            v is not vehicle and  # not this vehicle
+            v.lane == lane and  # correct lane
+            v.position >= vehicle.position  # in front this vehicle
+        ]
+        for other_vehicle in candiates:
             # we do not check for collisions here because this method is also called within an update step
             if predecessor is None or other_vehicle.rear_position < predecessor.rear_position:
                 # the current vehicle is closer to us than the previous predecessor
@@ -305,16 +301,13 @@ class Simulator:
             # implicitly search on current lane of vehicle
             lane = vehicle.lane
         successor = None  # there is no successor so far
-        for other_vehicle in self._vehicles.values():
-            if other_vehicle is vehicle:
-                # skip the vehicle
-                continue
-            if other_vehicle.lane != lane:
-                # skip other lane
-                continue
-            if other_vehicle.position > vehicle.position:
-                # vehicle is not behind us
-                continue
+        candiates = [
+            v for v in self._vehicles.values() if
+            v is not vehicle and  # not this vehicle
+            v.lane == lane and  # correct lane
+            v.position <= vehicle.position  # behind this vehicle
+        ]
+        for other_vehicle in candiates:
             # we do not check for collisions here because this method is also called within an update step
             if successor is None or other_vehicle.position > successor.position:
                 # the current vehicle is closer to us than the previous successor
