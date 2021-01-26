@@ -692,7 +692,7 @@ class Simulator:
             if collision:
                 if depart_lane == self.number_of_lanes - 1:
                     # reached maximum number of lanes already
-                    sys.exit(f"{vid} crashed at start into {vehicle.vid}")
+                    sys.exit(f"{vid} crashed at start into another vehicle")
                 depart_lane = depart_lane + 1
                 LOG.warn(f"Increased depart lane for {vid} to avoid a collision")
 
