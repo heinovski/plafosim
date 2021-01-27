@@ -360,7 +360,6 @@ class PlatooningVehicle(Vehicle):
             with open(self._simulator._result_base_filename + '_platoon_formation.csv', 'a') as f:
                 f.write(f"{self.vid},{self._candidates_found},{self._candidates_filtered}\n")
 
-
     def _action(self, step: int):
         """Trigger concrete actions of a PlatooningVehicle"""
 
