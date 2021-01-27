@@ -15,7 +15,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 import logging
 
 from .formation_algorithm import FormationAlgorithm
@@ -40,9 +39,6 @@ class SpeedPosition(FormationAlgorithm):
         self._alpha = alpha
         self._speed_deviation_threshold = speed_deviation_threshold
         self._position_deviation_threshold = position_deviation_threshold
-
-        self._candidates_found = 0
-        self._candidates_filtered = 0
 
     @property
     def alpha(self) -> float:
@@ -96,6 +92,9 @@ class SpeedPosition(FormationAlgorithm):
         # get all available vehicles from the platoon table to find available platoons
         for platoon in self._owner._get_available_platoons():
 
+            # another candidate vehicle/platoon
+            self._owner._candidates_found += 1
+
             # calculate deviation values
             ds = self._ds(self._owner, platoon)
             dp = self._dp(self._owner, platoon)
@@ -103,16 +102,19 @@ class SpeedPosition(FormationAlgorithm):
             # TODO HACK for skipping platoons in front of us
             if self._owner.position > platoon.rear_position:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
+                self._owner._candidates_filtered += 1
                 continue
 
             # remove platoon if not in speed range
             if ds > self._speed_deviation_threshold * self._owner.desired_speed:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
+                self._owner._candidates_filtered += 1
                 continue
 
             # remove platoon if not in position range
             if dp > self._position_deviation_threshold:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
+                self._owner._candidates_filtered += 1
                 continue
 
             # calculate deviation/cost
@@ -161,16 +163,22 @@ class SpeedPosition(FormationAlgorithm):
                 # filter vehicles that are technically not able to do platooning
                 if not isinstance(other_vehicle, PlatooningVehicle):
                     continue
+
+                # another candidate vehicle/platoon
+                vehicle._candidates_found += 1
+
                 # filter vehicles which are not available to become a new leader
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.platoon_role != PlatoonRole.NONE and other_vehicle.platoon_role != PlatoonRole.LEADER:
                     # we can only join an existing platoon or built a new one
                     LOG.debug(f"{vehicle.vid} is not available")
+                    vehicle._candidates_filtered += 1
                     continue
                 # filter vehicles which are already in a maneuver
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.in_maneuver:
                     LOG.debug(f"{vehicle.vid} is not available")
+                    vehicle._candidates_filtered += 1
                     continue
 
                 platoon = other_vehicle.platoon
@@ -185,16 +193,19 @@ class SpeedPosition(FormationAlgorithm):
                 # TODO HACK for skipping vehicles in front of us
                 if vehicle.position > platoon.rear_position:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
+                    vehicle._candidates_filtered += 1
                     continue
 
                 # remove platoon if not in speed range
                 if ds > self._speed_deviation_threshold * vehicle.desired_speed:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
+                    vehicle._candidates_filtered += 1
                     continue
 
                 # remove platoon if not in position range
                 if dp > self._position_deviation_threshold:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
+                    vehicle._candidates_filtered += 1
                     continue
 
                 # calculate deviation/cost
@@ -277,16 +288,22 @@ class SpeedPosition(FormationAlgorithm):
                 # filter vehicles that are technically not able to do platooning
                 if not isinstance(other_vehicle, PlatooningVehicle):
                     continue
+
+                # another candidate vehicle/platoon
+                vehicle._candidates_found += 1
+
                 # filter vehicles which are not available to become a new leader
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.platoon_role != PlatoonRole.NONE and other_vehicle.platoon_role != PlatoonRole.LEADER:
                     # we can only join an existing platoon or built a new one
                     LOG.debug(f"{other_vehicle.vid} is not available")
+                    vehicle._candidates_filtered += 1
                     continue
                 # filter vehicles which are already in a maneuver
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.in_maneuver:
                     LOG.debug(f"{other_vehicle.vid} is not available")
+                    vehicle._candidates_filtered += 1
                     continue
 
                 platoon = other_vehicle.platoon
@@ -311,10 +328,12 @@ class SpeedPosition(FormationAlgorithm):
                     if ds > self._speed_deviation_threshold * vehicle.desired_speed:
                         LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference ({ds})")
                         fx = infinity
+                        vehicle._candidates_filtered += 1
                     # remove platoon if not in position range
                     elif dp > self._position_deviation_threshold:
                         LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference ({dp})")
                         fx = infinity
+                        vehicle._candidates_filtered += 1
                     else:
                         # calculate deviation/cost
                         LOG.debug(f"Considering platoon {platoon.platoon_id} for vehicle {vehicle.vid}")

@@ -106,6 +106,10 @@ class PlatooningVehicle(Vehicle):
         self._leaves_successful = 0
         self._leaves_aborted = 0
 
+        # formation statistics
+        self._candidates_found = 0
+        self._candidates_filtered = 0
+
     @property
     def acc_headway_time(self) -> float:
         return self._acc_headway_time
@@ -352,6 +356,10 @@ class PlatooningVehicle(Vehicle):
             with open(self._simulator._result_base_filename + '_platoon_maneuvers.csv', 'a') as f:
                 f.write(f"{self.vid},{self._joins_attempted},{self._joins_succesful},{self._joins_aborted},{self._leaves_attempted},{self._leaves_successful},{self._leaves_aborted}\n")
 
+        if self._simulator._record_platoon_formation:
+            with open(self._simulator._result_base_filename + '_platoon_formation.csv', 'a') as f:
+                f.write(f"{self.vid},{self._candidates_found},{self._candidates_filtered}\n")
+
 
     def _action(self, step: int):
         """Trigger concrete actions of a PlatooningVehicle"""
@@ -419,10 +427,6 @@ class PlatooningVehicle(Vehicle):
 
         LOG.info(f"{self.vid} is trying to join platoon {platoon_id} (leader {leader_id})")
         self._joins_attempted += 1
-
-
-        # TODO make sure to set all platoon speed related values
-        # TODO make sure to use them as your new defaults
 
         self.in_maneuver = True
 
