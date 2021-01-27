@@ -114,6 +114,7 @@ class Simulator:
             record_vehicle_changes: bool = False,
             record_emission_traces: bool = False,
             record_platoon_trips: bool = True,
+            record_platoon_maneuvers: bool = True,
             record_platoon_traces: bool = False,
             record_platoon_changes: bool = False,
             record_prefilled: bool = False):
@@ -238,6 +239,7 @@ class Simulator:
         self._record_vehicle_changes = record_vehicle_changes  # whether to record vehicle lane changes
         self._record_emission_traces = record_emission_traces  # whether to record emission traces
         self._record_platoon_trips = record_platoon_trips  # whether to record platoon trips
+        self._record_platoon_maneuvers = record_platoon_maneuvers  # whether to record platoon maneuvers
         self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
         self._record_prefilled = record_prefilled  # whether to record results for pre-filled vehicles
@@ -850,6 +852,11 @@ class Simulator:
             # create output file for platoon trips
             with open(self._result_base_filename + '_platoon_trips.csv', 'w') as f:
                 f.write("id,timeInPlatoon,distanceInPlatoon,platoonTimeRatio,platoonDistanceRatio\n")
+
+        if self._record_platoon_maneuvers:
+            # create output file for platoon maneuvers
+            with open(self._result_base_filename + '_platoon_maneuvers.csv', 'w') as f:
+                f.write("id,joins_attempted,joins_succesful,joins_aborted,leaves_attempted,leaves_successful,leaves_aborted\n")
 
         if self._record_platoon_traces:
             # create output file for platoon traces

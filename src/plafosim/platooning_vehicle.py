@@ -92,10 +92,19 @@ class PlatooningVehicle(Vehicle):
         else:
             self._formation_algorithm = None
 
+        # platoon statistics
         self._last_platoon_join_time = -1
         self._time_in_platoon = 0
         self._last_platoon_join_position = -1
         self._distance_in_platoon = 0
+
+        # maneuver statistics
+        self._joins_attempted = 0
+        self._joins_succesful = 0
+        self._joins_aborted = 0
+        self._leaves_attempted = 0
+        self._leaves_successful = 0
+        self._leaves_aborted = 0
 
     @property
     def acc_headway_time(self) -> float:
@@ -339,6 +348,11 @@ class PlatooningVehicle(Vehicle):
             with open(self._simulator._result_base_filename + '_platoon_trips.csv', 'a') as f:
                 f.write(f"{self.vid},{self.time_in_platoon},{self.distance_in_platoon},{platoon_time_ratio},{platoon_distance_ratio}\n")
 
+        if self._simulator._record_platoon_maneuvers:
+            with open(self._simulator._result_base_filename + '_platoon_maneuvers.csv', 'a') as f:
+                f.write(f"{self.vid},{self._joins_attempted},{self._joins_succesful},{self._joins_aborted},{self._leaves_attempted},{self._leaves_successful},{self._leaves_aborted}\n")
+
+
     def _action(self, step: int):
         """Trigger concrete actions of a PlatooningVehicle"""
 
@@ -404,6 +418,8 @@ class PlatooningVehicle(Vehicle):
         assert(not self.is_in_platoon())
 
         LOG.info(f"{self.vid} is trying to join platoon {platoon_id} (leader {leader_id})")
+        self._joins_attempted += 1
+
 
         # TODO make sure to set all platoon speed related values
         # TODO make sure to use them as your new defaults
@@ -432,11 +448,13 @@ class PlatooningVehicle(Vehicle):
         if new_position - self.length < 0:
             # we cannot join since we would be outside of the road
             LOG.warning(f"{self.vid} is too close to the begining of the road!")
+            self._joins_aborted += 1
             return
 
         if leader.in_maneuver:
             LOG.warning(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
             self.in_maneuver = False
+            self._joins_aborted += 1
             return
 
         # update the leader
@@ -497,6 +515,7 @@ class PlatooningVehicle(Vehicle):
         leader._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
         leader._last_platoon_join_position = leader.position
+        self._joins_succesful += 1
 
     def _correct_position(self, front: Vehicle, successor: Vehicle):
         # NOTE: we assume that self is the newly joined vehicle
@@ -544,6 +563,7 @@ class PlatooningVehicle(Vehicle):
         assert(self.is_in_platoon())
 
         LOG.info(f"{self.vid} is trying to leave platoon {self.platoon.platoon_id} (leader {self.platoon.leader.vid})")
+        self._leaves_attempted += 1
 
         self.in_maneuver = True
 
@@ -564,10 +584,12 @@ class PlatooningVehicle(Vehicle):
                     traci.vehicle.setColor(str(follower.vid), follower._color)
 
                 # statistics
+                follower._leaves_attempted += 1
                 assert(follower._last_platoon_join_time >= 0)
                 follower._time_in_platoon = follower.time_in_platoon + (follower._simulator.step - follower._last_platoon_join_time)
                 assert(follower._last_platoon_join_position >= 0)
                 follower._distance_in_platoon = follower.distance_in_platoon + (follower.position - follower._last_platoon_join_position)
+                follower._leaves_successful += 1
             else:
                 # tell the second vehicle in the platoon to become the new leader
                 new_leader = self.platoon.formation[1]
@@ -594,10 +616,12 @@ class PlatooningVehicle(Vehicle):
                     traci.vehicle.setColor(str(leader.vid), leader._color)
 
                 # statistics
+                leader._leaves_attempted += 1
                 assert(leader._last_platoon_join_time >= 0)
                 leader._time_in_platoon = leader.time_in_platoon + (leader._simulator.step - leader._last_platoon_join_time)
                 assert(leader._last_platoon_join_position >= 0)
                 leader._distance_in_platoon = leader.distance_in_platoon + (leader.position - leader._last_platoon_join_position)
+                leader._leaves_successful += 1
         else:
             # leave in the middle
             LOG.warning("Leave from the middle of a platoon is not yet properly implemented!")
@@ -631,6 +655,7 @@ class PlatooningVehicle(Vehicle):
         self._time_in_platoon = self.time_in_platoon + (self._simulator.step - self._last_platoon_join_time)
         assert(self._last_platoon_join_position >= 0)
         self._distance_in_platoon = self.distance_in_platoon + (self.position - self._last_platoon_join_position)
+        self._leaves_successful += 1
 
     def _advertise(self):
         """Maintain regular sending of platoon advertisements"""
