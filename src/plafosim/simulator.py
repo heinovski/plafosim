@@ -60,7 +60,7 @@ class Simulator:
     def __init__(
             self,
             road_length: int = 100 * 1000,
-            number_of_lanes: int = 4,
+            number_of_lanes: int = 3,
             depart_interval: int = 1000,
             arrival_interval: int = 1000,
             pre_fill: bool = False,
