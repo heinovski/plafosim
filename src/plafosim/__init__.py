@@ -17,7 +17,6 @@
 
 from .cf_model import CF_Model  # noqa 401
 from .formation_algorithm import FormationAlgorithm  # noqa 401
-from .formation_algorithm import SpeedPosition  # noqa 401
 from .infrastructure import Infrastructure  # noqa 401
 from .message import AbortManeuver  # noqa 401
 from .message import JoinFormationAck  # noqa 401
@@ -38,6 +37,7 @@ from .platoon import Platoon  # noqa 401
 from .platooning_vehicle import PlatooningVehicle  # noqa 401
 from .platoon_role import PlatoonRole  # noqa 401
 from .simulator import Simulator  # noqa 401
+from .speed_position import SpeedPosition  # noqa 401
 from .util import acceleration2speed  # noqa 401
 from .util import distance2speed  # noqa 401
 from .util import get_crashed_vehicles  # noqa 401

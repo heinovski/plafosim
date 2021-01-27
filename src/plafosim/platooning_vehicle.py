@@ -19,10 +19,10 @@ import logging
 import sys
 
 from .cf_model import CF_Model
-from .formation_algorithm import SpeedPosition
 from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
+from .speed_position import SpeedPosition
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
