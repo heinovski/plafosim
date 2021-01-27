@@ -103,7 +103,7 @@ class Simulator:
             lane_changes: bool = True,
             collisions: bool = True,
             random_seed: int = -1,
-            log_level: int = 'warn',
+            log_level: int = 'warning',
             gui: bool = False,
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
@@ -136,10 +136,10 @@ class Simulator:
         self._max_speed = max_speed  # the maximum driving speed # FIXME not used
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
         if acc_headway_time < 1.0:
-            LOG.warn("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
+            LOG.warning("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
         self._cacc_spacing = cacc_spacing  # the constant spacing for CACC
         if cacc_spacing < 5.0:
-            LOG.warn("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
+            LOG.warning("Values for CACC spacing lower than 5.0m are not recommended to avoid crashes!")
         self._penetration_rate = penetration_rate  # the penetration rate of platooning vehicles
 
         # trip properties
@@ -365,10 +365,10 @@ class Simulator:
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
-            LOG.warn(f"{vehicle.vid} only change to adjacent lane!")
+            LOG.warning(f"{vehicle.vid} only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
-            LOG.warn(f"Adjusted target lane of {vehicle.vid} to {target_lane} (from {old_target_lane})")
+            LOG.warning(f"Adjusted target lane of {vehicle.vid} to {target_lane} (from {old_target_lane})")
 
         if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon():
             # followers are not allowed to change the lane on their one
@@ -687,7 +687,7 @@ class Simulator:
                     # reached maximum number of lanes already
                     sys.exit(f"{vid} crashed at start into another vehicle")
                 depart_lane = depart_lane + 1
-                LOG.warn(f"Increased depart lane for {vid} to avoid a collision")
+                LOG.warning(f"Increased depart lane for {vid} to avoid a collision")
                 # we need to check again
 
         desired_speed = self._get_desired_speed()
@@ -863,7 +863,7 @@ class Simulator:
 
     def _initialize_gui(self):
         sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-        sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'warn']
+        sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'warning']
 
         import traci
         traci.start(sumoCmd)
@@ -920,7 +920,7 @@ class Simulator:
         if not self._running:
             self._running = True
         else:
-            LOG.warn("Simulation is already running!")
+            LOG.warning("Simulation is already running!")
 
         self._initialize_result_recording()
 
@@ -1037,7 +1037,7 @@ class Simulator:
         """Clean up the simulation"""
 
         if self._running:
-            LOG.warn("Finish called during simulation!")
+            LOG.warning("Finish called during simulation!")
             return
 
         # write some general information about the simulation

@@ -230,7 +230,7 @@ class Vehicle:
             gap_to_predecessor = predecessor_rear_position - self.position
             LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
             if gap_to_predecessor < 0:
-                LOG.warn(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
+                LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
             LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
             LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
@@ -367,7 +367,7 @@ class Vehicle:
         """Clean up the instance of the vehicle"""
 
         if (self.position < self.arrival_position):
-            LOG.warn(f"{self.vid}'s finish method was called even though it did not arrive yet!")
+            LOG.warning(f"{self.vid}'s finish method was called even though it did not arrive yet!")
             return
 
         # TODO should we avoid logging if the mimimum trip length has not been fulfilled?
@@ -436,4 +436,4 @@ class Vehicle:
     def _receive_Message(self, message: Message):
         """Handle a message of concrete type Message"""
 
-        LOG.warn(f"{self.vid} received non-sense message {message}")
+        LOG.warning(f"{self.vid} received non-sense message {message}")

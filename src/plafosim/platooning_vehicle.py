@@ -143,7 +143,7 @@ class PlatooningVehicle(Vehicle):
     def in_maneuver(self, var: bool):
         if self._in_maneuver and var:
             # we can only start a new maneuver if we are not already in one
-            LOG.warn(f"{self.vid} is already in a meneuver")
+            LOG.warning(f"{self.vid} is already in a meneuver")
             return
         self._in_maneuver = var
 
@@ -168,7 +168,7 @@ class PlatooningVehicle(Vehicle):
                 gap_to_predecessor = predecessor_rear_position - self.position
                 LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
                 if gap_to_predecessor < 0:
-                    LOG.warn(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
+                    LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
                 LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
                 LOG.debug(f"{self.vid}'s desired speed {self.desired_speed}")
                 LOG.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}")
@@ -250,7 +250,7 @@ class PlatooningVehicle(Vehicle):
             gap_to_predecessor = predecessor_rear_position - self.position
             LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
             if gap_to_predecessor < 0:
-                LOG.warn(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
+                LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
             LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
             LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
 
@@ -422,7 +422,7 @@ class PlatooningVehicle(Vehicle):
         # TODO join at arbitrary positions
         # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
         if self.position >= leader.platoon.rear_position:
-            LOG.warn(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
+            LOG.warning(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
             self.in_maneuver = False
             return
 
@@ -431,11 +431,11 @@ class PlatooningVehicle(Vehicle):
 
         if new_position - self.length < 0:
             # we cannot join since we would be outside of the road
-            LOG.warn(f"{self.vid} is too close to the begining of the road!")
+            LOG.warning(f"{self.vid} is too close to the begining of the road!")
             return
 
         if leader.in_maneuver:
-            LOG.warn(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
+            LOG.warning(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
             self.in_maneuver = False
             return
 
@@ -522,7 +522,7 @@ class PlatooningVehicle(Vehicle):
                 old_position = vehicle.position
                 vehicle._position = should_max_position
                 assert(vehicle.position >= 0)
-                LOG.warn(f"adjusted position of {vehicle.vid} to {vehicle.position} (from {old_position})")
+                LOG.warning(f"adjusted position of {vehicle.vid} to {vehicle.position} (from {old_position})")
             if new_successor is self or new_successor is None:
                 return
             self._correct_position(successor.platoon.last, new_successor)
@@ -531,7 +531,7 @@ class PlatooningVehicle(Vehicle):
             old_position = successor.position
             successor._position = should_max_position
             assert(successor.position >= 0)
-            LOG.warn(f"adjusted position of {successor.vid} to {successor.position} (from {old_position})")
+            LOG.warning(f"adjusted position of {successor.vid} to {successor.position} (from {old_position})")
             if new_successor is self or new_successor is None:
                 return
             self._correct_position(successor, new_successor)
@@ -576,7 +576,7 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"{new_leader.vid} became leader of platoon {new_leader.platoon.platoon_id}")
         elif self is self.platoon.last:
             # leave at back
-            LOG.warn("Leave from back of a platoon is not yet properly implemented!")
+            LOG.warning("Leave from back of a platoon is not yet properly implemented!")
 
             # TODO check whether it is safe to leave
 
@@ -600,7 +600,7 @@ class PlatooningVehicle(Vehicle):
                 leader._distance_in_platoon = leader.distance_in_platoon + (leader.position - leader._last_platoon_join_position)
         else:
             # leave in the middle
-            LOG.warn("Leave from the middle of a platoon is not yet properly implemented!")
+            LOG.warning("Leave from the middle of a platoon is not yet properly implemented!")
 
             # TODO check wether is is safe to leave
             # TODO the leader needs to all other vehicles to make space
