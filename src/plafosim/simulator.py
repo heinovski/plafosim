@@ -870,7 +870,7 @@ class Simulator:
 
     def _initialize_gui(self):
         sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-        sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'warning']
+        sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'warn']
 
         import traci
         traci.start(sumoCmd)
