@@ -434,13 +434,23 @@ class PlatooningVehicle(Vehicle):
         # correct leader of that platoon
         assert(leader.vid == leader.platoon.leader.vid)
 
-        # TODO joint at front
-        # TODO join at arbitrary positions
-        # FIXME HACK TO ONLY ALLOW JOINING AT THE BACK
-        if self.position >= leader.platoon.rear_position:
-            LOG.warning(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
+        # HACK for determining the join position
+        if self.position > leader.platoon.position:
+            # TODO join at front
+            LOG.warning(f"{self.vid} is in front of the target platoon {platoon_id} ({leader_id})")
+            LOG.warning("Join at the front of a platoon is not yet implemented!")
             self.in_maneuver = False
+            self._joins_aborted += 1
             return
+        elif self.position > leader.platoon.last.position:
+            # TODO join at (arbitrary position) in the middle
+            LOG.warning(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
+            LOG.warning("Join at arbitrary positions of a platoon is not yet implemented!")
+            self.in_maneuver = False
+            self._joins_aborted += 1
+            return
+
+        # join at back
 
         last = leader.platoon.last
         new_position = last.rear_position - self._cacc_spacing
