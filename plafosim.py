@@ -110,7 +110,7 @@ def main():
         type=lambda x: bool(strtobool(x)),
         default=False,
         choices=(True, False),
-        help="Whether the vehicle should depart with its desired speed. Overrides random-depart-speed")
+        help="Whether the vehicle should depart with its desired speed. Overrides --random-depart-speed")
     trip.add_argument(
         '--depart-flow',
         type=lambda x: bool(strtobool(x)),
