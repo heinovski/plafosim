@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.9.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.0) - 2021-02-11
+* Added all leave cases (simplified) (#206)
+* Added formation statistics
+* Added make space before a teleporting during a join (#232)
+* Added maneuver statistics (#226)
+* Added profile run to CI
+* Added statistics for optimal solver (#230)
+* Added switch for actions
+* Added util module
+* Added vectorized collision checks with pandas (#208)
+* Added vectorized position updates with pandas (#211)
+* Fixed additional CACC calculation (#212)
+* Fixed generation of random depart speed (#254)
+* Fixed leaving in the middle of a platoon (#241)
+* Fixed obsolete depart_time check (#209)
+* Fixed platoon time metrics (#234)
+* Fixed randomness when using prefill and GUI
+* Fixed record statistics if actions disabled (#237)
+* Improved code and project structure
+* Removed duplicated CACC execution in between steps (#238)
+* Updated cf model
+* Updated comparison script (#228)
+* Updated error messages
+* Updated generation of trips (#252)
+* Updated insert collision checks
+* Updated join maneuver
+* Updated log messages
+* Updated new speed calculations
+* Updated parameters for simulator
+* Updated position correction after teleport
+* Updated result recording (#222, #223)
+* Updated warnings
+
 ## [v0.8.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.8.0) - 2020-12-03
 * Added communication range between vehicles (#167)
 * Added desired headway time
