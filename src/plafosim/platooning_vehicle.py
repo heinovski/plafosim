@@ -507,8 +507,12 @@ class PlatooningVehicle(Vehicle):
 
         # update the leader
         leader.in_maneuver = True
+        if not leader.is_in_platoon():
+            # only if leader was alone before
+            LOG.info(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
+            leader._last_platoon_join_time = self._simulator.step
+            leader._last_platoon_join_position = leader.position
         leader._platoon_role = PlatoonRole.LEADER
-        LOG.debug(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
 
         platoon_successor = self._simulator._get_successor(last)
 
@@ -560,9 +564,7 @@ class PlatooningVehicle(Vehicle):
         leader.in_maneuver = False
 
         self._last_platoon_join_time = self._simulator.step
-        leader._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
-        leader._last_platoon_join_position = leader.position
         self._joins_succesful += 1
 
     def _correct_position(self, front: Vehicle, successor: Vehicle):
