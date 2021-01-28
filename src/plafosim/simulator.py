@@ -891,8 +891,12 @@ class Simulator:
                 color = (255, 126, 0)
                 traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
         # draw pre-filled vehicles
+        # save internal state of random number generator
+        state = random.getstate()
         for vehicle in self._vehicles.values():
             self._add_gui_vehicle(vehicle)
+        # restore internal state of random number generator to not influence the determinsim of the simulation
+        random.setstate(state)
 
     def _update_gui(self):
         import traci
@@ -920,6 +924,10 @@ class Simulator:
             vehicle._color = color
             # restore internal state of random number generator to not influence the determinsim of the simulation
             if not (self._pre_fill and self._step == 0):
+                # By disabling the reset of the random state when using pre-fill and in the first time step,
+                # we achieve a (deterministic) random color for all pre-filled vehicles.
+                # Otherweise, when resetting the state step 0, all pre-filled vehicles did not have a random color
+                # (instead they had the same), since the RNG did not pick any other numbers since the last color pick.
                 random.setstate(state)
             traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
             traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
