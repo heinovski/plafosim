@@ -936,6 +936,7 @@ class Simulator:
                     "distanceInPlatoon,"
                     "platoonTimeRatio,"
                     "platoonDistanceRatio,"
+                    "numberOfPlatoons,"
                     "\n"
                 )
 

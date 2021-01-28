@@ -97,6 +97,7 @@ class PlatooningVehicle(Vehicle):
         self._time_in_platoon = 0
         self._last_platoon_join_position = -1
         self._distance_in_platoon = 0
+        self._number_platoons = 0
 
         # maneuver statistics
         self._joins_attempted = 0
@@ -357,6 +358,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self.distance_in_platoon},"
                     f"{platoon_time_ratio},"
                     f"{platoon_distance_ratio},"
+                    f"{self._number_platoons},"
                     "\n"
                 )
 
@@ -512,6 +514,7 @@ class PlatooningVehicle(Vehicle):
             LOG.info(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
             leader._last_platoon_join_time = self._simulator.step
             leader._last_platoon_join_position = leader.position
+            leader._number_platoons += 1
         leader._platoon_role = PlatoonRole.LEADER
 
         platoon_successor = self._simulator._get_successor(last)
@@ -566,6 +569,7 @@ class PlatooningVehicle(Vehicle):
         self._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
         self._joins_succesful += 1
+        self._number_platoons += 1
 
     def _correct_position(self, front: Vehicle, successor: Vehicle):
         # NOTE: we assume that self is the newly joined vehicle
