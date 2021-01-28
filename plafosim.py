@@ -198,6 +198,8 @@ def main():
     results = parser.add_argument_group('result recording properties')
     results.add_argument('--result-base-filename', type=str, default='results',
                          help="The base filename of the result files")
+    results.add_argument('--record-end-trace', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to record another trace item at the trip end")
     results.add_argument('--record-vehicle-trips', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to record vehicle trips")
     results.add_argument('--record-vehicle-emissions', type=lambda x: bool(strtobool(x)), default=True,
@@ -272,6 +274,7 @@ def main():
         args.gui_delay / 1000,
         args.track_vehicle,
         args.result_base_filename,
+        args.record_end_trace,
         args.record_vehicle_trips,
         args.record_vehicle_emissions,
         args.record_vehicle_traces,

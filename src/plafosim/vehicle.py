@@ -384,8 +384,6 @@ class Vehicle:
             LOG.warning(f"{self.vid}'s finish method was called even though it did not arrive yet!")
             return
 
-        # TODO should we avoid logging if the mimimum trip length has not been fulfilled?
-
         e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
         time_loss = self.travel_time - round(e_travel_time)
         travel_time_ratio = round(self.travel_time / e_travel_time, 2)
@@ -394,9 +392,17 @@ class Vehicle:
 
         LOG.info(f"{self.vid} arrived at {self.position}m,{self.lane} with {self.speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {time_loss}s, {travel_time_ratio * 100}% of expected duration")
 
+        # statistic recording
+
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
             return
+
+        if self._simulator._record_end_trace:
+            # call trace recording once again
+            self._statistics()
+
+        # TODO should we avoid logging if the mimimum trip length has not been fulfilled?
 
         if self._simulator._record_vehicle_trips:
             with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:

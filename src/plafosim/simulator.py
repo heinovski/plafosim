@@ -108,6 +108,7 @@ class Simulator:
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
             result_base_filename: str = 'results',
+            record_end_trace: bool = True,
             record_vehicle_trips: bool = True,
             record_vehicle_emissions: bool = True,
             record_vehicle_traces: bool = False,
@@ -234,6 +235,7 @@ class Simulator:
 
         # result recording properties
         self._result_base_filename = result_base_filename  # the base filename of the result files
+        self._record_end_trace = record_end_trace  # whether to record another trace item at the trip end
         self._record_vehicle_trips = record_vehicle_trips  # whether to record vehicles trips
         self._record_vehicle_emissions = record_vehicle_emissions  # whether to record vehicle emissions
         self._record_vehicle_traces = record_vehicle_traces  # whether to record vehicle traces

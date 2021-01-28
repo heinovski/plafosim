@@ -50,6 +50,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --step-length 1 \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
+    --record-end-trace false \
     --record-vehicle-trips true \
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
