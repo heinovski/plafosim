@@ -155,7 +155,7 @@ class Simulator:
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to depart with the desired driving speed
         if random_depart_position and not depart_desired:
-            sys.exit("random-depart-position is only possible in conjunction with depart-desired!")
+            sys.exit("ERROR: random-depart-position is only possible in conjunction with depart-desired!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         self._depart_method = depart_method  # the departure method to use
         self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
@@ -165,34 +165,34 @@ class Simulator:
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         self._minimum_trip_length = minimum_trip_length  # the minimum trip length
         if minimum_trip_length > road_length:
-            sys.exit("Minimum trip length cannot be bigger than the length of the entire road!")
+            sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
 
         # communication properties
         self._communication_range = communication_range  # the maximum communication range between two vehicles
         if communication_range == -1:
             self._communication_range = road_length
         if self._communication_range <= 0:
-            sys.exit("Communication range has to be > 0!")
+            sys.exit("ERROR: Communication range has to be > 0!")
 
         # platoon properties
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
         if start_as_platoon:
             if penetration_rate < 1.0:
-                sys.exit("The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                sys.exit("ERROR: The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
             if formation_algorithm is not None:
-                sys.exit("A formation algorithm cannot be used when all starting as one platoon!")
+                sys.exit("ERROR: A formation algorithm cannot be used when all starting as one platoon!")
             if depart_flow:
-                sys.exit("Vehicles can not spawn in a flow when starting as one platoon!")
+                sys.exit("ERROR: Vehicles can not spawn in a flow when starting as one platoon!")
             if random_depart_position:
-                sys.exit("Vehicles can not have random departure positions when starting as one platoon!")
+                sys.exit("ERROR: Vehicles can not have random departure positions when starting as one platoon!")
             if random_depart_lane:
-                sys.exit("Vehicles can not have random departure lanes when starting as one platoon!")
+                sys.exit("ERROR: Vehicles can not have random departure lanes when starting as one platoon!")
             if random_arrival_position:
-                sys.exit("Vehicles can not have random arrival posiition when starting as one platoon!")
+                sys.exit("ERROR: Vehicles can not have random arrival posiition when starting as one platoon!")
 
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures == 0:
-            sys.exit("When using a centralized strategy at least 1 infrastructure is needed!")
+            sys.exit("ERROR: When using a centralized strategy at least 1 infrastructure is needed!")
         self._formation_strategy = formation_strategy  # the formation strategy to use
         self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
 
@@ -200,7 +200,7 @@ class Simulator:
         # TODO find a different solution for algorithm specific parameters
         self._execution_interval = execution_interval  # the interval between two iterations of a formation algorithm
         if execution_interval <= 0:
-            sys.exit("Execution interval has to be at least 1 second!")
+            sys.exit("ERROR: Execution interval has to be at least 1 second!")
         self._alpha = alpha  # the weight of the speed deviation
         self._speed_deviation_threshold = speed_deviation_threshold  # the maximum deviation from the desired driving speed
         self._position_deviation_threshold = position_deviation_threshold  # the maximum deviation from the current position
@@ -225,7 +225,7 @@ class Simulator:
         self._gui = gui  # whether to show a live sumo-gui
         if gui:
             if 'SUMO_HOME' not in os.environ:
-                sys.exit("please declare environment variable 'SUMO_HOME'")
+                sys.exit("ERROR: Environment variable 'SUMO_HOME' was not declared!")
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
             sys.path.append(tools)
 
@@ -503,7 +503,7 @@ class Simulator:
         if crashed_vehicles:
             for v in crashed_vehicles:
                 print(f"{v}: {vdf.loc[v].position}:{vdf.loc[v].length},{vdf.loc[v].lane}")
-            sys.exit(f"There were collisions with the following vehicles {crashed_vehicles}!")
+            sys.exit(f"ERROR: There were collisions with the following vehicles {crashed_vehicles}!")
 
     @staticmethod
     def has_collision(vehicle1: TV, vehicle2: TV) -> bool:
@@ -635,9 +635,9 @@ class Simulator:
             spawn = self.step % round(spawn_interval) == 0
         elif self._depart_method == "fixed" and self.step == self._depart_fixed_time:
             # we create all of the vehicles now
-            sys.exit("depart method fixed is not yet implemented!")
+            sys.exit("ERROR: depart method fixed is not yet implemented!")
         else:
-            sys.exit("Unknown depart method!")
+            sys.exit("ERROR: Unknown depart method!")
 
         if spawn:
             depart_time = self.step

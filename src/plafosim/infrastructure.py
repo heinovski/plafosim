@@ -47,7 +47,7 @@ class Infrastructure:
             if formation_algorithm == "speedposition":
                 self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
             else:
-                sys.exit(f"Unkown formation algorithm {formation_algorithm}!")
+                sys.exit(f"ERROR: Unkown formation algorithm {formation_algorithm}!")
             self._execution_interval = execution_interval
 
             # initialize timer
