@@ -974,6 +974,7 @@ class Simulator:
                     "rear_position,"
                     "lane,speed,size,"
                     "length,"
+                    "desired_speed,"
                     "\n"
                 )
 

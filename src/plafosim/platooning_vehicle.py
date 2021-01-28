@@ -423,6 +423,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self.platoon.speed},"
                     f"{self.platoon.size},"
                     f"{self.platoon.length},"
+                    f"{self.platoon.desired_speed},"
                     "\n"
                 )
 
