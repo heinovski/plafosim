@@ -350,15 +350,36 @@ class PlatooningVehicle(Vehicle):
         # TODO log savings from platoon?
         if self._simulator._record_platoon_trips:
             with open(self._simulator._result_base_filename + '_platoon_trips.csv', 'a') as f:
-                f.write(f"{self.vid},{self.time_in_platoon},{self.distance_in_platoon},{platoon_time_ratio},{platoon_distance_ratio}\n")
+                f.write(
+                    f"{self.vid},"
+                    f"{self.time_in_platoon},"
+                    f"{self.distance_in_platoon},"
+                    f"{platoon_time_ratio},"
+                    f"{platoon_distance_ratio},"
+                    "\n"
+                )
 
         if self._simulator._record_platoon_maneuvers:
             with open(self._simulator._result_base_filename + '_platoon_maneuvers.csv', 'a') as f:
-                f.write(f"{self.vid},{self._joins_attempted},{self._joins_succesful},{self._joins_aborted},{self._leaves_attempted},{self._leaves_successful},{self._leaves_aborted}\n")
+                f.write(
+                    f"{self.vid},"
+                    f"{self._joins_attempted},"
+                    f"{self._joins_succesful},"
+                    f"{self._joins_aborted},"
+                    f"{self._leaves_attempted},"
+                    f"{self._leaves_successful},"
+                    f"{self._leaves_aborted},"
+                    "\n"
+                )
 
         if self._simulator._record_platoon_formation:
             with open(self._simulator._result_base_filename + '_platoon_formation.csv', 'a') as f:
-                f.write(f"{self.vid},{self._candidates_found},{self._candidates_filtered}\n")
+                f.write(
+                    f"{self.vid},"
+                    f"{self._candidates_found},"
+                    f"{self._candidates_filtered},"
+                    "\n"
+                )
 
     def _action(self, step: int):
         """Trigger concrete actions of a PlatooningVehicle"""
@@ -391,7 +412,18 @@ class PlatooningVehicle(Vehicle):
         if self._platoon_role == PlatoonRole.LEADER and self._simulator._record_platoon_traces:
             # write statistics about this platoon
             with open(self._simulator._result_base_filename + '_platoon_traces.csv', 'a') as f:
-                f.write(f"{self._simulator.step},{self.platoon.platoon_id},{self.platoon.leader.vid},{self.platoon.position},{self.platoon.rear_position},{self.platoon.lane},{self.platoon.speed},{self.platoon.size},{self.platoon.length}\n")
+                f.write(
+                    f"{self._simulator.step},"
+                    f"{self.platoon.platoon_id},"
+                    f"{self.platoon.leader.vid},"
+                    f"{self.platoon.position},"
+                    f"{self.platoon.rear_position},"
+                    f"{self.platoon.lane},"
+                    f"{self.platoon.speed},"
+                    f"{self.platoon.size},"
+                    f"{self.platoon.length},"
+                    "\n"
+                )
 
     def _get_available_platoons(self):
         # HACK FOR AVOIDING MAINTAINING A NEIGHBORTABLE (for now)

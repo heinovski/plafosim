@@ -402,7 +402,16 @@ class Simulator:
                         if self._record_platoon_changes:
                             # log lane change
                             with open(self._result_base_filename + '_platoon_changes.csv', 'a') as f:
-                                f.write(f"{self.step},{member.vid},{member.position},{source_lane},{target_lane},{member.speed},{reason}\n")
+                                f.write(
+                                    f"{self.step},"
+                                    f"{member.vid},"
+                                    f"{member.position},"
+                                    f"{source_lane},"
+                                    f"{target_lane},"
+                                    f"{member.speed},"
+                                    f"{reason},"
+                                    "\n"
+                                )
 
                     return abs(lane_diff) <= 1
                 LOG.debug(f"{vehicle.vid}'s lane change is not safe")
@@ -420,7 +429,16 @@ class Simulator:
             if self._record_vehicle_changes:
                 # log lane change
                 with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
-                    f.write(f"{self.step},{vehicle.vid},{vehicle.position},{source_lane},{target_lane},{vehicle.speed},{reason}\n")
+                    f.write(
+                        f"{self.step},"
+                        f"{vehicle.vid},"
+                        f"{vehicle.position},"
+                        f"{source_lane},"
+                        f"{target_lane},"
+                        f"{vehicle.speed},"
+                        f"{reason}"
+                        "\n"
+                    )
 
             return abs(lane_diff) <= 1
         LOG.debug(f"{vehicle.vid}'s lane change is not safe")
@@ -829,52 +847,147 @@ class Simulator:
         if self._record_vehicle_trips:
             # create output file for vehicle trips
             with open(self._result_base_filename + '_vehicle_trips.csv', 'w') as f:
-                f.write("id,depart,departLane,departPos,departSpeed,arrival,arrivalLane,arrivalPos,arrivalSpeed,duration,routeLength,timeLoss,desiredSpeed,estimatedTravelTime,travelTimeRatio,avgDrivingSpeed,avgDeviationDesiredSpeed\n")
+                f.write(
+                    "id,"
+                    "depart,"
+                    "departLane,"
+                    "departPos,"
+                    "departSpeed,"
+                    "arrival,"
+                    "arrivalLane,"
+                    "arrivalPos,"
+                    "arrivalSpeed,"
+                    "duration,"
+                    "routeLength,"
+                    "timeLoss,"
+                    "desiredSpeed,"
+                    "estimatedTravelTime,"
+                    "travelTimeRatio,"
+                    "avgDrivingSpeed,"
+                    "avgDeviationDesiredSpeed,"
+                    "\n"
+                )
 
         if self._record_vehicle_emissions:
             # create output file for vehicle emissions
             with open(self._result_base_filename + '_vehicle_emissions.csv', 'w') as f:
-                f.write("id,CO,CO2,HC,PMx,NOx,fuel\n")
+                f.write(
+                    "id,"
+                    "CO,"
+                    "CO2,"
+                    "HC,"
+                    "PMx,"
+                    "NOx,"
+                    "fuel,"
+                    "\n"
+                )
 
         if self._record_vehicle_traces:
             # create output file for vehicle traces
             with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
-                f.write("step,id,position,lane,speed,duration,routeLength\n")
+                f.write(
+                    "step,"
+                    "id,"
+                    "position,"
+                    "lane,"
+                    "speed,"
+                    "duration,"
+                    "routeLength,"
+                    "\n"
+                )
 
         if self._record_vehicle_changes:
             # create output file for vehicle lane changes
             with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
-                f.write("step,id,position,from,to,speed,reason\n")
+                f.write(
+                    "step,"
+                    "id,"
+                    "position,"
+                    "from,"
+                    "to,"
+                    "speed,"
+                    "reason,"
+                    "\n"
+                )
 
         if self._record_emission_traces:
             # create output file for emission traces
             with open(self._result_base_filename + '_emission_traces.csv', 'w') as f:
-                f.write("step,id,CO,CO2,HC,PMx,NOx,fuel\n")
+                f.write(
+                    "step,"
+                    "id,"
+                    "CO,"
+                    "CO2,"
+                    "HC,"
+                    "PMx,"
+                    "NOx,"
+                    "fuel,"
+                    "\n"
+                )
 
         if self._record_platoon_trips:
             # create output file for platoon trips
             with open(self._result_base_filename + '_platoon_trips.csv', 'w') as f:
-                f.write("id,timeInPlatoon,distanceInPlatoon,platoonTimeRatio,platoonDistanceRatio\n")
+                f.write(
+                    "id,"
+                    "timeInPlatoon,"
+                    "distanceInPlatoon,"
+                    "platoonTimeRatio,"
+                    "platoonDistanceRatio,"
+                    "\n"
+                )
 
         if self._record_platoon_maneuvers:
             # create output file for platoon maneuvers
             with open(self._result_base_filename + '_platoon_maneuvers.csv', 'w') as f:
-                f.write("id,joins_attempted,joins_succesful,joins_aborted,leaves_attempted,leaves_successful,leaves_aborted\n")
+                f.write(
+                    "id,"
+                    "joins_attempted,"
+                    "joins_succesful,"
+                    "joins_aborted,"
+                    "leaves_attempted,"
+                    "leaves_successful,"
+                    "leaves_aborted,"
+                    "\n"
+                )
 
         if self._record_platoon_formation:
             # create output file for platoon formation
             with open(self._result_base_filename + '_platoon_formation.csv', 'w') as f:
-                f.write("id,candidates_found,candidates_filtered\n")
+                f.write(
+                    "id,"
+                    "candidates_found,"
+                    "candidates_filtered,"
+                    "\n"
+                )
 
         if self._record_platoon_traces:
             # create output file for platoon traces
             with open(self._result_base_filename + '_platoon_traces.csv', 'w') as f:
-                f.write("step,id,leader,position,rear_position,lane,speed,size,length\n")
+                f.write(
+                    "step,"
+                    "id,"
+                    "leader,"
+                    "position,"
+                    "rear_position,"
+                    "lane,speed,size,"
+                    "length,"
+                    "\n"
+                )
 
         if self._record_platoon_changes:
             # create output file for platoon lane changes
             with open(self._result_base_filename + '_platoon_changes.csv', 'w') as f:
-                f.write("step,id,position,from,to,speed,reason\n")
+                f.write(
+                    "step,"
+                    "id,"
+                    "position,"
+                    "from,"
+                    "to,"
+                    "speed,"
+                    "reason,"
+                    "\n"
+                )
 
     def _initialize_gui(self):
         sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')

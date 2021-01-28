@@ -306,7 +306,16 @@ class Vehicle:
         if self._simulator._record_vehicle_traces:
             # mobility/trip statistics
             with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
-                f.write(f"{self._simulator.step},{self.vid},{self.position},{self.lane},{self.speed},{self.travel_time},{self.travel_distance}\n")
+                f.write(
+                    f"{self._simulator.step},"
+                    f"{self.vid},"
+                    f"{self.position},"
+                    f"{self.lane},"
+                    f"{self.speed},"
+                    f"{self.travel_time},"
+                    f"{self.travel_distance},"
+                    "\n"
+                )
 
         self._calculate_emissions()
 
@@ -338,7 +347,10 @@ class Vehicle:
 
         if self._simulator._record_emission_traces:
             with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
-                f.write(f"{self._simulator.step},{self.vid}")
+                f.write(
+                    f"{self._simulator.step},"
+                    f"{self.vid}"
+                )
 
         for variable in self._emissions.keys():
             scale = 3.6
@@ -352,7 +364,9 @@ class Vehicle:
 
             if self._simulator._record_emission_traces:
                 with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
-                    f.write(f",{round(value, 2)}")
+                    f.write(
+                        f",{round(value, 2)}"
+                    )
 
         if self._simulator._record_emission_traces:
             with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
@@ -386,12 +400,40 @@ class Vehicle:
 
         if self._simulator._record_vehicle_trips:
             with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
-                f.write(f"{self.vid},{self.depart_time},{self.depart_lane},{self.depart_position},{self.depart_speed},{self._simulator.step},{self.lane},{self.position},{self.speed},{self.travel_time},{self.travel_distance},{time_loss},{self.desired_speed},{e_travel_time},{travel_time_ratio},{average_driving_speed},{average_deviation_desired_speed}\n")
+                f.write(
+                    f"{self.vid},"
+                    f"{self.depart_time},"
+                    f"{self.depart_lane},"
+                    f"{self.depart_position},"
+                    f"{self.depart_speed},"
+                    f"{self._simulator.step},"
+                    f"{self.lane},"
+                    f"{self.position},"
+                    f"{self.speed},"
+                    f"{self.travel_time},"
+                    f"{self.travel_distance},"
+                    f"{time_loss},"
+                    f"{self.desired_speed},"
+                    f"{e_travel_time},"
+                    f"{travel_time_ratio},"
+                    f"{average_driving_speed},"
+                    f"{average_deviation_desired_speed},"
+                    "\n"
+                )
 
         if self._simulator._record_vehicle_emissions:
             with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
                 # TODO log estimated emissions?
-                f.write(f"{self.vid},{self._emissions['co']},{self._emissions['co2']},{self._emissions['hc']},{self._emissions['pmx']},{self._emissions['nox']},{self._emissions['fuel']}\n")
+                f.write(
+                    f"{self.vid},"
+                    f"{self._emissions['co']},"
+                    f"{self._emissions['co2']},"
+                    f"{self._emissions['hc']},"
+                    f"{self._emissions['pmx']},"
+                    f"{self._emissions['nox']},"
+                    f"{self._emissions['fuel']},"
+                    "\n"
+                )
 
     def __str__(self) -> str:
         """Return a nice string representation of a vehicle instance"""
