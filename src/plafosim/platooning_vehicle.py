@@ -435,6 +435,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self.platoon.length},"
                     f"{self.platoon.desired_speed},"
                     f"{self.platoon_role.name},"
+                    f"{self.platoon.get_member_index(self)},"
                     "\n"
                 )
 

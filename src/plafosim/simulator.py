@@ -980,6 +980,7 @@ class Simulator:
                     "length,"
                     "desired_speed,"
                     "platoon_role,"
+                    "platoon_position,"
                     "\n"
                 )
 
