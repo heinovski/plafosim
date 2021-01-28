@@ -319,6 +319,7 @@ class SpeedPosition(FormationAlgorithm):
                     # TODO HACK for skipping vehicles in front of us
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                     fx = infinity
+                    vehicle._candidates_filtered += 1
                 else:
                     # calculate deviation values
                     ds = self._ds(vehicle, platoon)
