@@ -963,6 +963,9 @@ class Simulator:
                     "id,"
                     "candidatesFound,"
                     "candidatesFiltered,"
+                    "candidatesFilteredManeuver,"
+                    "candidatesFilteredSpeed,"
+                    "candidatesFilteredPosition,"
                     "\n"
                 )
 

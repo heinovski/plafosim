@@ -112,6 +112,9 @@ class PlatooningVehicle(Vehicle):
         # formation statistics
         self._candidates_found = 0
         self._candidates_filtered = 0
+        self._candidates_filtered_maneuver = 0
+        self._candidates_filtered_speed = 0
+        self._candidates_filtered_position = 0
 
     @property
     def acc_headway_time(self) -> float:
@@ -388,6 +391,9 @@ class PlatooningVehicle(Vehicle):
                     f"{self.vid},"
                     f"{self._candidates_found},"
                     f"{self._candidates_filtered},"
+                    f"{self._candidates_filtered_maneuver},"
+                    f"{self._candidates_filtered_speed},"
+                    f"{self._candidates_filtered_position},"
                     "\n"
                 )
 
