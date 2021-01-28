@@ -93,8 +93,10 @@ class PlatooningVehicle(Vehicle):
             self._formation_algorithm = None
 
         # platoon statistics
+        self._first_platoon_join_time = -1
         self._last_platoon_join_time = -1
         self._time_in_platoon = 0
+        self._first_platoon_join_position = -1
         self._last_platoon_join_position = -1
         self._distance_in_platoon = 0
         self._number_platoons = 0
@@ -362,6 +364,8 @@ class PlatooningVehicle(Vehicle):
                     f"{platoon_time_ratio},"
                     f"{platoon_distance_ratio},"
                     f"{self._number_platoons},"
+                    f"{self._first_platoon_join_time - self._depart_time},"  # NOTE: this produces wrong values when prefilled
+                    f"{self._first_platoon_join_position - self._depart_position},"  # NOTE: this produces wrong values when prefilled
                     "\n"
                 )
 
@@ -517,6 +521,10 @@ class PlatooningVehicle(Vehicle):
             LOG.info(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
             leader._last_platoon_join_time = self._simulator.step
             leader._last_platoon_join_position = leader.position
+            if leader._first_platoon_join_time == -1:
+                leader._first_platoon_join_time = self._simulator.step
+                assert(leader._first_platoon_join_position == -1)
+                leader._first_platoon_join_position = self.position
             leader._number_platoons += 1
         leader._platoon_role = PlatoonRole.LEADER
 
@@ -571,6 +579,10 @@ class PlatooningVehicle(Vehicle):
 
         self._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
+        if self._first_platoon_join_time == -1:
+            self._first_platoon_join_time = self._simulator.step
+            assert(self._first_platoon_join_position == -1)
+            self._first_platoon_join_position = self.position
         self._joins_succesful += 1
         self._number_platoons += 1
 
