@@ -947,12 +947,12 @@ class Simulator:
             with open(self._result_base_filename + '_platoon_maneuvers.csv', 'w') as f:
                 f.write(
                     "id,"
-                    "joins_attempted,"
-                    "joins_succesful,"
-                    "joins_aborted,"
-                    "leaves_attempted,"
-                    "leaves_successful,"
-                    "leaves_aborted,"
+                    "joinsAttempted,"
+                    "joinsSuccesful,"
+                    "joinsAborted,"
+                    "leavesAttempted,"
+                    "leavesSuccessful,"
+                    "leavesAborted,"
                     "\n"
                 )
 
@@ -961,8 +961,8 @@ class Simulator:
             with open(self._result_base_filename + '_platoon_formation.csv', 'w') as f:
                 f.write(
                     "id,"
-                    "candidates_found,"
-                    "candidates_filtered,"
+                    "candidatesFound,"
+                    "candidatesFiltered,"
                     "\n"
                 )
 
@@ -975,12 +975,14 @@ class Simulator:
                     "platoon,"
                     "leader,"
                     "position,"
-                    "rear_position,"
-                    "lane,speed,size,"
+                    "rearPosition,"
+                    "lane,"
+                    "speed,"
+                    "size,"
                     "length,"
-                    "desired_speed,"
-                    "platoon_role,"
-                    "platoon_position,"
+                    "desiredSpeed,"
+                    "platoonRole,"
+                    "platoonPosition,"
                     "\n"
                 )
 
