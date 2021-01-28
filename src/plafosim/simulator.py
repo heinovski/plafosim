@@ -689,9 +689,10 @@ class Simulator:
                 # can we avoid the collision by switching the departure lane?
                 if depart_lane == self.number_of_lanes - 1:
                     # reached maximum number of lanes already
-                    sys.exit(f"{vid} crashed at start into another vehicle")
+                    # TODO delay insertion of vehicle
+                    sys.exit(f"ERROR: Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Delaying insertion of vehicles is not (yet) implemtend!")
                 depart_lane = depart_lane + 1
-                LOG.warning(f"Increased depart lane for {vid} to avoid a collision")
+                LOG.warning(f"Increased depart lane for {vid} to avoid a collision (now lane {depart_lane})")
                 # we need to check again
 
         desired_speed = self._get_desired_speed()
