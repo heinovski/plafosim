@@ -979,6 +979,7 @@ class Simulator:
                     "lane,speed,size,"
                     "length,"
                     "desired_speed,"
+                    "platoon_role,"
                     "\n"
                 )
 
