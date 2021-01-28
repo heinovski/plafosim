@@ -341,7 +341,8 @@ class PlatooningVehicle(Vehicle):
         platoon_time_ratio = round(self.time_in_platoon / self.travel_time, 2)
         platoon_distance_ratio = round(self.distance_in_platoon / self.travel_distance, 2)
 
-        LOG.info(f"{self.vid} drove {self.time_in_platoon}s ({self.distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100} ({platoon_distance_ratio * 100})")
+        LOG.info(f"{self.vid} drove {self.time_in_platoon}s ({self.distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100}% ({platoon_distance_ratio * 100}%) of the trip")
+
 
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles

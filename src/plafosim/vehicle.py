@@ -392,7 +392,7 @@ class Vehicle:
         average_driving_speed = round(self.travel_distance / self.travel_time, 1)
         average_deviation_desired_speed = round(self._desired_speed - average_driving_speed, 1)
 
-        LOG.info(f"{self.vid} arrived at {self.position}, {self.lane} with {self.speed}, took {self.travel_time}, {self.travel_distance}, {time_loss} {travel_time_ratio * 100}")
+        LOG.info(f"{self.vid} arrived at {self.position}m,{self.lane} with {self.speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {time_loss}s, {travel_time_ratio * 100}% of expected duration")
 
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
