@@ -410,11 +410,12 @@ class PlatooningVehicle(Vehicle):
             # we do not record statistics for pre-filled vehicles
             return
 
-        if self._platoon_role == PlatoonRole.LEADER and self._simulator._record_platoon_traces:
-            # write statistics about this platoon
+        if self._simulator._record_platoon_traces:
+            # write statistics about the current platoon
             with open(self._simulator._result_base_filename + '_platoon_traces.csv', 'a') as f:
                 f.write(
                     f"{self._simulator.step},"
+                    f"{self.vid},"
                     f"{self.platoon.platoon_id},"
                     f"{self.platoon.leader.vid},"
                     f"{self.platoon.position},"

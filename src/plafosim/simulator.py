@@ -969,6 +969,7 @@ class Simulator:
                 f.write(
                     "step,"
                     "id,"
+                    "platoon,"
                     "leader,"
                     "position,"
                     "rear_position,"
