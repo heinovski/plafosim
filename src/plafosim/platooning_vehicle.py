@@ -581,6 +581,7 @@ class PlatooningVehicle(Vehicle):
         leader._platoon_role = PlatoonRole.LEADER
 
         platoon_successor = self._simulator._get_successor(last)
+        LOG.debug(f"{self.vid}'s new position is {new_position} (between {last.vid} and {platoon_successor.vid})")
 
         # teleport the vehicle
         current_position = self.position
