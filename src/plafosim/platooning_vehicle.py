@@ -455,7 +455,7 @@ class PlatooningVehicle(Vehicle):
 
         if self._simulator._record_platoon_traces:
             # write statistics about the current platoon
-            with open('{self._simulator._result_base_filename}_platoon_traces.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_platoon_traces.csv', 'a') as f:
                 f.write(
                     f"{self._simulator.step},"
                     f"{self.vid},"
