@@ -103,7 +103,7 @@ class SpeedPosition(FormationAlgorithm):
             if self._owner.position > platoon.rear_position:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                 self._owner._candidates_filtered += 1
-                self._owner._candidates_filtered_position += 1
+                self._owner._candidates_filtered_front += 1
                 continue
 
             # remove platoon if not in speed range
@@ -198,7 +198,7 @@ class SpeedPosition(FormationAlgorithm):
                 if vehicle.position > platoon.rear_position:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                     vehicle._candidates_filtered += 1
-                    vehicle._candidates_filtered_position += 1
+                    vehicle._candidates_filtered_front += 1
                     continue
 
                 # remove platoon if not in speed range
@@ -326,9 +326,9 @@ class SpeedPosition(FormationAlgorithm):
                 elif vehicle.position > platoon.rear_position:
                     # TODO HACK for skipping vehicles in front of us
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
-                    vehicle._candidates_filtered_position += 1
                     fx = infinity
                     vehicle._candidates_filtered += 1
+                    vehicle._candidates_filtered_front += 1
                 else:
                     # calculate deviation values
                     ds = self._ds(vehicle, platoon)

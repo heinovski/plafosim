@@ -979,7 +979,8 @@ class Simulator:
                     "candidatesFiltered,"
                     "candidatesFilteredManeuver,"
                     "candidatesFilteredSpeed,"
-                    "candidatesFilteredPosition"
+                    "candidatesFilteredPosition,"
+                    "candidatesFilteredFront"
                     "\n"
                 )
 
