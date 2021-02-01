@@ -105,9 +105,23 @@ class PlatooningVehicle(Vehicle):
         self._joins_attempted = 0
         self._joins_succesful = 0
         self._joins_aborted = 0
+        self._joins_aborted_front = 0
+        self._joins_aborted_arbitrary = 0
+        self._joins_aborted_road_begin = 0
+        self._joins_aborted_leader_maneuver = 0
+        self._joins_front = 0
+        self._joins_arbitrary = 0
+        self._joins_back = 0
+        self._joins_teleport_position = 0
+        self._joins_teleport_lane = 0
+        self._joins_teleport_speed = 0
+        self._joins_correct_position = 0
         self._leaves_attempted = 0
         self._leaves_successful = 0
         self._leaves_aborted = 0
+        self._leaves_front = 0
+        self._leaves_arbitrary = 0
+        self._leaves_back = 0
 
         # formation statistics
         self._candidates_found = 0
@@ -379,9 +393,23 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_attempted},"
                     f"{self._joins_succesful},"
                     f"{self._joins_aborted},"
+                    f"{self._joins_aborted_front},"
+                    f"{self._joins_aborted_arbitrary},"
+                    f"{self._joins_aborted_road_begin},"
+                    f"{self._joins_aborted_leader_maneuver},"
+                    f"{self._joins_front},"
+                    f"{self._joins_arbitrary},"
+                    f"{self._joins_back},"
+                    f"{self._joins_teleport_position},"
+                    f"{self._joins_teleport_lane},"
+                    f"{self._joins_teleport_speed},"
+                    f"{self._joins_correct_position},"
                     f"{self._leaves_attempted},"
                     f"{self._leaves_successful},"
                     f"{self._leaves_aborted},"
+                    f"{self._leaves_front},"
+                    f"{self._leaves_arbitrary},"
+                    f"{self._leaves_back},"
                     "\n"
                 )
 
@@ -493,19 +521,24 @@ class PlatooningVehicle(Vehicle):
         if self.position > leader.platoon.position:
             # TODO join at front
             LOG.warning(f"{self.vid} is in front of the target platoon {platoon_id} ({leader_id})")
+            self._joins_front += 1
             LOG.warning("Join at the front of a platoon is not yet implemented!")
             self.in_maneuver = False
             self._joins_aborted += 1
+            self._joins_aborted_front += 1
             return
         elif self.position > leader.platoon.last.position:
             # TODO join at (arbitrary position) in the middle
             LOG.warning(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
+            self._joins_arbitrary += 1
             LOG.warning("Join at arbitrary positions of a platoon is not yet implemented!")
             self.in_maneuver = False
             self._joins_aborted += 1
+            self._joins_aborted_arbitrary += 1
             return
 
         # join at back
+        self._joins_back += 1
 
         last = leader.platoon.last
         new_position = last.rear_position - self._cacc_spacing
@@ -514,12 +547,14 @@ class PlatooningVehicle(Vehicle):
             # we cannot join since we would be outside of the road
             LOG.warning(f"{self.vid} is too close to the begining of the road!")
             self._joins_aborted += 1
+            self._joins_aborted_road_begin += 1
             return
 
         if leader.in_maneuver:
             LOG.warning(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
             self.in_maneuver = False
             self._joins_aborted += 1
+            self._joins_aborted_leader_maneuver += 1
             return
 
         # update the leader
@@ -544,16 +579,19 @@ class PlatooningVehicle(Vehicle):
         if current_position != new_position:
             self._position = new_position
             LOG.info(f"{self.vid} teleported to {self.position} (from {current_position})")
+            self._joins_teleport_position += 1
         current_lane = self.lane
         new_lane = leader.lane
         if current_lane != new_lane:
             self._lane = new_lane
             LOG.info(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
+            self._joins_teleport_lane += 1
         current_speed = self.speed
         new_speed = last.speed
         if current_speed != new_speed:
             self._speed = new_speed
             LOG.info(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
+            self._joins_teleport_speed += 1
 
         # we also need to check interfering vehicles!
         self._correct_position(self, platoon_successor)
@@ -608,6 +646,7 @@ class PlatooningVehicle(Vehicle):
             return
         # the position of the successor needs to be adjusted
         LOG.debug(f"We need to adjust the position of vehicle {successor.vid}")
+        self._joins_correct_position += 1
         # check whether vehicle was platoon leader
         if isinstance(successor, PlatooningVehicle) and successor.is_in_platoon():
             assert(successor.platoon_role == PlatoonRole.LEADER)
@@ -636,6 +675,7 @@ class PlatooningVehicle(Vehicle):
         # just leave, without any communication
 
         if self.platoon.size == 1:
+            LOG.warning(f"Cannot leave when driving indiviudally ({self.vid})")
             return
         assert(self.is_in_platoon())
 
@@ -646,6 +686,7 @@ class PlatooningVehicle(Vehicle):
 
         if self is self.platoon.leader:
             # leave at front
+            self._leaves_front += 1
 
             if self.platoon.size == 2:
                 # tell the only follower to drive individually
@@ -667,6 +708,7 @@ class PlatooningVehicle(Vehicle):
                 assert(follower._last_platoon_join_position >= 0)
                 follower._distance_in_platoon = follower.distance_in_platoon + (follower.position - follower._last_platoon_join_position)
                 follower._leaves_successful += 1
+                follower._leaves_back += 1
             else:
                 # tell the second vehicle in the platoon to become the new leader
                 new_leader = self.platoon.formation[1]
@@ -676,6 +718,7 @@ class PlatooningVehicle(Vehicle):
         elif self is self.platoon.last:
             # leave at back
             LOG.warning("Leave from back of a platoon is not yet properly implemented!")
+            self._leaves_back += 1
 
             # TODO check whether it is safe to leave
 
@@ -699,9 +742,11 @@ class PlatooningVehicle(Vehicle):
                 assert(leader._last_platoon_join_position >= 0)
                 leader._distance_in_platoon = leader.distance_in_platoon + (leader.position - leader._last_platoon_join_position)
                 leader._leaves_successful += 1
+                leader._leaves_front += 1
         else:
             # leave in the middle
             LOG.warning("Leave from the middle of a platoon is not yet properly implemented!")
+            self._leaves_arbitrary += 1
 
             # TODO check wether is is safe to leave
             # TODO the leader needs to all other vehicles to make space
