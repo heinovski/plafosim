@@ -38,10 +38,14 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
 parser.add_argument('--experiment', type=str, default='cc',
                     help="The name of the experiment to use for all result files")
+parser.add_argument('--vehicles', type=int, default=100,
+                    help="The number of vehicles to compare.")
 parser.add_argument('--desired-speed', type=float, default=36.0, help="The desired speed to use for the comparison")
 parser.add_argument('--arrival-position', type=int, default=100000,
                     help="The arrival position to use for the comparison")
 args = parser.parse_args()
+
+error = False
 
 # Read runtimes
 
@@ -61,12 +65,22 @@ sumo_trips = sumo_trips.astype({'arrivalLane': int, 'departLane': int, 'id': int
 # add desired speed to data frame
 sumo_trips = sumo_trips.assign(desiredSpeed=lambda x: x.speedFactor * args.desired_speed)
 sumo_trips = sumo_trips.set_index('id').sort_index()
+assert(sumo_trips.index.is_unique)
+assert(len(sumo_trips.index == args.vehicles))
 
 plafosim_trips = pandas.read_csv('%s_vehicle_trips.csv' % args.experiment)
 plafosim_trips = plafosim_trips.set_index('id').sort_index()
+assert(plafosim_trips.index.is_unique)
+assert(len(plafosim_trips.index == args.vehicles))
+# assert same vehicles
+assert(list(sumo_trips.index) == list(plafosim_trips.index))
 
 plafosim_emissions = pandas.read_csv('%s_vehicle_emissions.csv' % args.experiment)
 plafosim_emissions = plafosim_emissions.set_index('id').sort_index()
+assert(plafosim_emissions.index.is_unique)
+assert(len(plafosim_emissions.index == args.vehicles))
+# assert same vehicles
+assert(list(sumo_trips.index) == list(plafosim_emissions.index))
 
 # Read traces
 
@@ -85,12 +99,16 @@ sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
 sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
 sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
 sumo_traces.sort_values(by='step', inplace=True)
+assert(len(sumo_traces.id.unique()) == args.vehicles)
 
 plafosim_traces = pandas.read_csv(
     '%s_vehicle_traces.csv' %
     args.experiment, usecols=[
         'step', 'id', 'position', 'lane', 'speed'])
 plafosim_traces.sort_values(by='step', inplace=True)
+assert(len(plafosim_traces.id.unique()) == args.vehicles)
+# assert same vehicles
+assert(sorted(list(sumo_traces.id.unique())) == sorted(list(plafosim_traces.id.unique())))
 
 # Read lane-changes
 
@@ -106,25 +124,21 @@ sumo_changes = pandas.read_csv(
         'change_time',
         'change_to'])
 sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
-
 sumo_changes.dropna(inplace=True)
 sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
 sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
 sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
 sumo_changes.sort_values(by='step', inplace=True)
+assert(len(sumo_changes.id.unique()) <= args.vehicles)
 
 plafosim_changes = pandas.read_csv('%s_vehicle_changes.csv' % args.experiment)
 plafosim_changes.sort_values(by='step', inplace=True)
-
-# get the number of (finished) vehicles
-ids = frozenset(sumo_trips.index).intersection(plafosim_trips.index)
-number_of_vehicles = len(ids)
-error = False
+assert(len(plafosim_changes.id.unique()) <= args.vehicles)
 
 # Evalute runtime
 
 pl.figure()
-pl.title("Runtime for %d Vehicles" % number_of_vehicles)
+pl.title("Runtime for %d Vehicles" % args.vehicles)
 data = runtimes.reset_index().melt('simulator', var_name='kind').set_index('simulator')
 # does not work because of imcompatibility between matplotlib and seaborn
 # seaborn.scatterplot(data=data, x='kind', y='value', hue='simulator')
@@ -206,7 +220,7 @@ print("Plotting trips/emissions/traces...")
 # boxplot with desired driving speed
 
 pl.figure()
-pl.title("Desired Driving Speed for %d Vehicles" % number_of_vehicles)
+pl.title("Desired Driving Speed for %d Vehicles" % args.vehicles)
 pl.boxplot([sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True, labels=['sumo', 'plasfosim'])
 # seaborn.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
 pl.xlabel("simulator")
@@ -216,7 +230,7 @@ pl.savefig('%s_desired_speed.png' % args.experiment)
 # ecdfplot with desired driving speed
 
 fig, ax = pl.subplots()
-pl.title("Desired Driving Speed for %d Vehicles" % number_of_vehicles)
+pl.title("Desired Driving Speed for %d Vehicles" % args.vehicles)
 seaborn.ecdfplot(
     sumo_trips.desiredSpeed,
     label='sumo',
@@ -238,12 +252,12 @@ for label in trip_diff_labels:
     data = diff_trips[label]
 
     pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
     pl.boxplot(data, showmeans=True)
     pl.savefig('%s_diff_%s_box.png' % (args.experiment, label))
 
     pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
     seaborn.ecdfplot(
         data,
     )
@@ -372,12 +386,12 @@ for label in trip_diff_labels:
 #    idata = diff_emissions[label]
 #
 #    pl.figure()
-#    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+#    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
 #    pl.boxplot(data, showmeans=True)
 #    pl.savefig('%s_diff_%s_box.png' % (args.experiment, label))
 #
 #    pl.figure()
-#    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, number_of_vehicles))
+#    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
 #    seaborn.ecdfplot(
 #        data,
 #    )
@@ -392,7 +406,7 @@ for label in lifetime_labels:
     data = merged_traces[label]
 
     fig, ax = pl.subplots()
-    pl.title("Average %s for %d Vehicles" % (label, number_of_vehicles))
+    pl.title("Average %s for %d Vehicles" % (label, args.vehicles))
     # TODO check ci or disable bootstrapping
     seaborn.lineplot(
         data=merged_traces,
@@ -465,7 +479,7 @@ for label in lifetime_diff_labels:
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
-    pl.title("Average Deviation to Sumo in %s during Trip for %d Vehicles" % (lal, number_of_vehicles))
+    pl.title("Average Deviation to Sumo in %s during Trip for %d Vehicles" % (lal, args.vehicles))
 
     seaborn.lineplot(
         data=merged_traces,
