@@ -305,7 +305,7 @@ class Vehicle:
 
         if self._simulator._record_vehicle_traces:
             # mobility/trip statistics
-            with open(self._simulator._result_base_filename + '_vehicle_traces.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_vehicle_traces.csv', 'a') as f:
                 f.write(
                     f"{self._simulator.step},"
                     f"{self.vid},"
@@ -346,7 +346,7 @@ class Vehicle:
             return
 
         if self._simulator._record_emission_traces:
-            with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_emission_traces.csv', 'a') as f:
                 f.write(
                     f"{self._simulator.step},"
                     f"{self.vid}"
@@ -363,13 +363,13 @@ class Vehicle:
             self._emissions[variable] += value
 
             if self._simulator._record_emission_traces:
-                with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
+                with open(f'{self._simulator._result_base_filename}_emission_traces.csv', 'a') as f:
                     f.write(
                         f",{round(value, 2)}"
                     )
 
         if self._simulator._record_emission_traces:
-            with open(self._simulator._result_base_filename + '_emission_traces.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_emission_traces.csv', 'a') as f:
                 f.write("\n")
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
@@ -405,7 +405,7 @@ class Vehicle:
         # TODO should we avoid logging if the mimimum trip length has not been fulfilled?
 
         if self._simulator._record_vehicle_trips:
-            with open(self._simulator._result_base_filename + '_vehicle_trips.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_vehicle_trips.csv', 'a') as f:
                 f.write(
                     f"{self.vid},"
                     f"{self.depart_time},"
@@ -428,7 +428,7 @@ class Vehicle:
                 )
 
         if self._simulator._record_vehicle_emissions:
-            with open(self._simulator._result_base_filename + '_vehicle_emissions.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_vehicle_emissions.csv', 'a') as f:
                 # TODO log estimated emissions?
                 f.write(
                     f"{self.vid},"

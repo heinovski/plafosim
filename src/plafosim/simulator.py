@@ -403,7 +403,7 @@ class Simulator:
 
                         if self._record_platoon_changes:
                             # log lane change
-                            with open(self._result_base_filename + '_platoon_changes.csv', 'a') as f:
+                            with open(f'{self._result_base_filename}_platoon_changes.csv', 'a') as f:
                                 f.write(
                                     f"{self.step},"
                                     f"{member.vid},"
@@ -430,7 +430,7 @@ class Simulator:
 
             if self._record_vehicle_changes:
                 # log lane change
-                with open(self._result_base_filename + '_vehicle_changes.csv', 'a') as f:
+                with open(f'{self._result_base_filename}_vehicle_changes.csv', 'a') as f:
                     f.write(
                         f"{self.step},"
                         f"{vehicle.vid},"
@@ -842,13 +842,13 @@ class Simulator:
 
     def _initialize_result_recording(self):
         # write some general information about the simulation
-        with open(self._result_base_filename + '_general.out', 'w') as f:
-            f.write("simulation start: " + time.asctime(time.localtime(time.time())) + '\n')
-            f.write("parameters" + str(self) + '\n')
+        with open(f'{self._result_base_filename}_general.out', 'w') as f:
+            f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
+            f.write(f"parameters {str(self)}\n")
 
         if self._record_vehicle_trips:
             # create output file for vehicle trips
-            with open(self._result_base_filename + '_vehicle_trips.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_vehicle_trips.csv', 'w') as f:
                 f.write(
                     "id,"
                     "depart,"
@@ -872,7 +872,7 @@ class Simulator:
 
         if self._record_vehicle_emissions:
             # create output file for vehicle emissions
-            with open(self._result_base_filename + '_vehicle_emissions.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_vehicle_emissions.csv', 'w') as f:
                 f.write(
                     "id,"
                     "CO,"
@@ -886,7 +886,7 @@ class Simulator:
 
         if self._record_vehicle_traces:
             # create output file for vehicle traces
-            with open(self._result_base_filename + '_vehicle_traces.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_vehicle_traces.csv', 'w') as f:
                 f.write(
                     "step,"
                     "id,"
@@ -900,7 +900,7 @@ class Simulator:
 
         if self._record_vehicle_changes:
             # create output file for vehicle lane changes
-            with open(self._result_base_filename + '_vehicle_changes.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_vehicle_changes.csv', 'w') as f:
                 f.write(
                     "step,"
                     "id,"
@@ -914,7 +914,7 @@ class Simulator:
 
         if self._record_emission_traces:
             # create output file for emission traces
-            with open(self._result_base_filename + '_emission_traces.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_emission_traces.csv', 'w') as f:
                 f.write(
                     "step,"
                     "id,"
@@ -929,7 +929,7 @@ class Simulator:
 
         if self._record_platoon_trips:
             # create output file for platoon trips
-            with open(self._result_base_filename + '_platoon_trips.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_platoon_trips.csv', 'w') as f:
                 f.write(
                     "id,"
                     "timeInPlatoon,"
@@ -944,7 +944,7 @@ class Simulator:
 
         if self._record_platoon_maneuvers:
             # create output file for platoon maneuvers
-            with open(self._result_base_filename + '_platoon_maneuvers.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_platoon_maneuvers.csv', 'w') as f:
                 f.write(
                     "id,"
                     "joinsAttempted,"
@@ -972,7 +972,7 @@ class Simulator:
 
         if self._record_platoon_formation:
             # create output file for platoon formation
-            with open(self._result_base_filename + '_platoon_formation.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_platoon_formation.csv', 'w') as f:
                 f.write(
                     "id,"
                     "candidatesFound,"
@@ -985,7 +985,7 @@ class Simulator:
 
         if self._record_platoon_traces:
             # create output file for platoon traces
-            with open(self._result_base_filename + '_platoon_traces.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_platoon_traces.csv', 'w') as f:
                 f.write(
                     "step,"
                     "id,"
@@ -1005,7 +1005,7 @@ class Simulator:
 
         if self._record_platoon_changes:
             # create output file for platoon lane changes
-            with open(self._result_base_filename + '_platoon_changes.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_platoon_changes.csv', 'w') as f:
                 f.write(
                     "step,"
                     "id,"
@@ -1205,8 +1205,8 @@ class Simulator:
             return
 
         # write some general information about the simulation
-        with open(self._result_base_filename + '_general.out', 'a') as f:
-            f.write("simulation end: " + time.asctime(time.localtime(time.time())) + '\n')
+        with open(f'{self._result_base_filename}_general.out', 'a') as f:
+            f.write(f"simulation end: {time.asctime(time.localtime(time.time()))}\n")
 
         if self._gui:
             import traci
