@@ -433,6 +433,110 @@ for label in trip_diff_labels:
             l_max = -0.166667
         else:
             sys.exit(f"Unknown label {label}!")
+    elif args.experiment == "cc_single":
+        # limits were set with seed 1337 on commit a4e496fb79a4f2e0dbea4f6ce139340e6cfb0166
+        if label == 'desiredSpeed':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrival':
+            l_mean = 7.0
+            l_std = 0.0
+            l_min = 7.0
+            l_25 = 7.0
+            l_50 = 7.0
+            l_75 = 7.0
+            l_max = 7.0
+        elif label == 'arrivalLane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrivalSpeed':
+            l_mean = -0.11
+            l_std = 0.0
+            l_min = -0.11
+            l_25 = -0.11
+            l_50 = -0.11
+            l_75 = -0.11
+            l_max = -0.11
+        elif label == 'duration':
+            l_mean = 7.0
+            l_std = 0.0
+            l_min = 7.0
+            l_25 = 7.0
+            l_50 = 7.0
+            l_75 = 7.0
+            l_max = 7.0
+        elif label == 'timeLoss':
+            l_mean = -0.396667
+            l_std = 0.0
+            l_min = -0.396667
+            l_25 = -0.396667
+            l_50 = -0.396667
+            l_75 = -0.396667
+            l_max = -0.396667
+        else:
+            sys.exit(f"Unknown label {label}!")
+    elif args.experiment == "acc_single":
+        # limits were set with seed 1337 on commit a4e496fb79a4f2e0dbea4f6ce139340e6cfb0166
+        if label == 'desiredSpeed':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrival':
+            l_mean = 7.0
+            l_std = 0.0
+            l_min = 7.0
+            l_25 = 7.0
+            l_50 = 7.0
+            l_75 = 7.0
+            l_max = 7.0
+        elif label == 'arrivalLane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrivalSpeed':
+            l_mean = -0.11
+            l_std = 0.0
+            l_min = -0.11
+            l_25 = -0.11
+            l_50 = -0.11
+            l_75 = -0.11
+            l_max = -0.11
+        elif label == 'duration':
+            l_mean = 7.0
+            l_std = 0.0
+            l_min = 7.0
+            l_25 = 7.0
+            l_50 = 7.0
+            l_75 = 7.0
+            l_max = 7.0
+        elif label == 'timeLoss':
+            l_mean = -0.396667
+            l_std = 0.0
+            l_min = -0.396667
+            l_25 = -0.396667
+            l_50 = -0.396667
+            l_75 = -0.396667
+            l_max = -0.396667
+        else:
+            sys.exit(f"Unknown label {label}!")
     else:
         sys.exit(f"Unknown experiment {args.experiment}!")
 
@@ -528,6 +632,24 @@ for label in lifetime_labels:
             l_50 = 0.0
             l_75 = 0.0
             l_max = 0.0
+        elif args.experiment == "cc_single":
+            # limits were set with seed 1337 on commit a4e496fb79a4f2e0dbea4f6ce139340e6cfb0166
+            l_mean = -0.045160
+            l_std = 1.574704
+            l_min = -36.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 0.110000
+            l_max = 0.110000
+        elif args.experiment == "acc_single":
+            # limits were set with seed 1337 on commit a4e496fb79a4f2e0dbea4f6ce139340e6cfb0166
+            l_mean = -0.045160
+            l_std = 1.574704
+            l_min = -36.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 0.110000
+            l_max = 0.110000
         else:
             sys.exit(f"Unknown experiment {args.experiment}!")
 
@@ -649,6 +771,62 @@ for label in lifetime_diff_labels:
             l_50 = 0.0
             l_75 = 0.0
             l_max = 300.39
+        elif label == 'diff_sumo_lane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        else:
+            sys.exit(f"Unknown label {label}!")
+    elif args.experiment == "cc_single":
+        # limits were set with seed 1337 on commit a4e496fb79a4f2e0dbea4f6ce139340e6cfb0166
+        if label == 'diff_sumo_speed':
+            l_mean = -0.109406
+            l_std = 0.008064
+            l_min = -0.110000
+            l_25 = -0.110000
+            l_50 = -0.110000
+            l_75 = -0.110000
+            l_max = 0.000000
+        elif label == 'diff_sumo_position':
+            l_mean = -133.243659
+            l_std = 88.108793
+            l_min = -285.870000
+            l_25 = -209.530000
+            l_50 = -133.190000
+            l_75 = -56.850000
+            l_max = 17.850000
+        elif label == 'diff_sumo_lane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        else:
+            sys.exit(f"Unknown label {label}!")
+    elif args.experiment == "acc_single":
+        # limits were set with seed 1337 on commit a4e496fb79a4f2e0dbea4f6ce139340e6cfb0166
+        if label == 'diff_sumo_speed':
+            l_mean = -0.109406
+            l_std = 0.008064
+            l_min = -0.110000
+            l_25 = -0.110000
+            l_50 = -0.110000
+            l_75 = -0.110000
+            l_max = 0.000000
+        elif label == 'diff_sumo_position':
+            l_mean = -133.243659
+            l_std = 88.108793
+            l_min = -285.870000
+            l_25 = -209.530000
+            l_50 = -133.190000
+            l_75 = -56.850000
+            l_max = 17.850000
         elif label == 'diff_sumo_lane':
             l_mean = 0.0
             l_std = 0.0

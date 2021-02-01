@@ -123,6 +123,7 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
+    - ./scripts/test-cf-model-cc.sh 1337
     - ./scripts/test-cc-driving.sh 1337
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cc*.csv cc*.png"
 - name: ACC
@@ -146,6 +147,7 @@ steps:
     - pip3 install --upgrade pandas
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
+    - ./scripts/test-cf-model-acc.sh 1337
     - ./scripts/test-acc-driving.sh 1337
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR acc*.csv acc*.png"
 - name: CACC
