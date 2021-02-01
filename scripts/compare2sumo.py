@@ -111,29 +111,35 @@ assert(len(plafosim_traces.id.unique()) == args.vehicles)
 assert(sorted(list(sumo_traces.id.unique())) == sorted(list(plafosim_traces.id.unique())))
 
 # Read lane-changes
+try:
+    sumo_changes = pandas.read_csv(
+        '%s-changes.csv' %
+        args.experiment,
+        usecols=[
+            'change_from',
+            'change_id',
+            'change_pos',
+            'change_reason',
+            'change_speed',
+            'change_time',
+            'change_to'])
+    sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
+    sumo_changes.dropna(inplace=True)
+    sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
+    sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
+    sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
+    sumo_changes.sort_values(by='step', inplace=True)
+    assert(len(sumo_changes.id.unique()) <= args.vehicles)
+except pandas.errors.EmptyDataError:
+    print("No changes detected for SUMO")
 
-sumo_changes = pandas.read_csv(
-    '%s-changes.csv' %
-    args.experiment,
-    usecols=[
-        'change_from',
-        'change_id',
-        'change_pos',
-        'change_reason',
-        'change_speed',
-        'change_time',
-        'change_to'])
-sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
-sumo_changes.dropna(inplace=True)
-sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
-sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
-sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
-sumo_changes.sort_values(by='step', inplace=True)
-assert(len(sumo_changes.id.unique()) <= args.vehicles)
-
-plafosim_changes = pandas.read_csv('%s_vehicle_changes.csv' % args.experiment)
-plafosim_changes.sort_values(by='step', inplace=True)
-assert(len(plafosim_changes.id.unique()) <= args.vehicles)
+try:
+    plafosim_changes = pandas.read_csv('%s_vehicle_changes.csv' % args.experiment)
+    plafosim_changes.sort_values(by='step', inplace=True)
+    assert(len(plafosim_changes.id.unique()) <= args.vehicles)
+except pandas.errors.EmptyDataError:
+    print("No changes detected for PlaFoSim")
+# TODO use changes
 
 # Evalute runtime
 
