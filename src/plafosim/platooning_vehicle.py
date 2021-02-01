@@ -414,7 +414,7 @@ class PlatooningVehicle(Vehicle):
                 )
 
         if self._simulator._record_platoon_formation:
-            with open('{self._simulator._result_base_filename}_platoon_formation.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_platoon_formation.csv', 'a') as f:
                 f.write(
                     f"{self.vid},"
                     f"{self._candidates_found},"
