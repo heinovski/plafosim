@@ -36,7 +36,7 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
-parser.add_argument('--experiment', type=str, default='cc',
+parser.add_argument('experiment', type=str,
                     help="The name of the experiment to use for all result files")
 parser.add_argument('--vehicles', type=int, default=100,
                     help="The number of vehicles to compare.")

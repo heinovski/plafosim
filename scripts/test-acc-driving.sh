@@ -76,4 +76,4 @@ $SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissio
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-traces.xml -o $experiment-traces.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-changes.xml -o $experiment-changes.csv -s ','
 
-$ROOT/scripts/compare2sumo.py --experiment $experiment --vehicles 100 --desired-speed 36 --arrival-position 100000
+$ROOT/scripts/compare2sumo.py $experiment --vehicles 100 --desired-speed 36 --arrival-position 100000
