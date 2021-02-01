@@ -411,7 +411,7 @@ class Simulator:
                                     f"{source_lane},"
                                     f"{target_lane},"
                                     f"{member.speed},"
-                                    f"{reason},"
+                                    f"{reason}"
                                     "\n"
                                 )
 
@@ -866,7 +866,7 @@ class Simulator:
                     "estimatedTravelTime,"
                     "travelTimeRatio,"
                     "avgDrivingSpeed,"
-                    "avgDeviationDesiredSpeed,"
+                    "avgDeviationDesiredSpeed"
                     "\n"
                 )
 
@@ -880,7 +880,7 @@ class Simulator:
                     "HC,"
                     "PMx,"
                     "NOx,"
-                    "fuel,"
+                    "fuel"
                     "\n"
                 )
 
@@ -894,7 +894,7 @@ class Simulator:
                     "lane,"
                     "speed,"
                     "duration,"
-                    "routeLength,"
+                    "routeLength"
                     "\n"
                 )
 
@@ -908,7 +908,7 @@ class Simulator:
                     "from,"
                     "to,"
                     "speed,"
-                    "reason,"
+                    "reason"
                     "\n"
                 )
 
@@ -923,7 +923,7 @@ class Simulator:
                     "HC,"
                     "PMx,"
                     "NOx,"
-                    "fuel,"
+                    "fuel"
                     "\n"
                 )
 
@@ -938,7 +938,7 @@ class Simulator:
                     "platoonDistanceRatio,"
                     "numberOfPlatoons,"
                     "timeUntilFirstPlatoon,"
-                    "distanceUntilFirstPlatoon,"
+                    "distanceUntilFirstPlatoon"
                     "\n"
                 )
 
@@ -966,7 +966,7 @@ class Simulator:
                     "leavesAborted,"
                     "leavesFront,"
                     "leavesArbitrary,"
-                    "leavesBack,"
+                    "leavesBack"
                     "\n"
                 )
 
@@ -979,7 +979,7 @@ class Simulator:
                     "candidatesFiltered,"
                     "candidatesFilteredManeuver,"
                     "candidatesFilteredSpeed,"
-                    "candidatesFilteredPosition,"
+                    "candidatesFilteredPosition"
                     "\n"
                 )
 
@@ -999,7 +999,7 @@ class Simulator:
                     "length,"
                     "desiredSpeed,"
                     "platoonRole,"
-                    "platoonPosition,"
+                    "platoonPosition"
                     "\n"
                 )
 
@@ -1013,7 +1013,7 @@ class Simulator:
                     "from,"
                     "to,"
                     "speed,"
-                    "reason,"
+                    "reason"
                     "\n"
                 )
 

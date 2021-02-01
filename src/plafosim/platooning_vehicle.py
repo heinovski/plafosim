@@ -382,7 +382,7 @@ class PlatooningVehicle(Vehicle):
                     f"{platoon_distance_ratio},"
                     f"{self._number_platoons},"
                     f"{self._first_platoon_join_time - self._depart_time},"  # NOTE: this produces wrong values when prefilled
-                    f"{self._first_platoon_join_position - self._depart_position},"  # NOTE: this produces wrong values when prefilled
+                    f"{self._first_platoon_join_position - self._depart_position}"  # NOTE: this produces wrong values when prefilled
                     "\n"
                 )
 
@@ -409,7 +409,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._leaves_aborted},"
                     f"{self._leaves_front},"
                     f"{self._leaves_arbitrary},"
-                    f"{self._leaves_back},"
+                    f"{self._leaves_back}"
                     "\n"
                 )
 
@@ -421,7 +421,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._candidates_filtered},"
                     f"{self._candidates_filtered_maneuver},"
                     f"{self._candidates_filtered_speed},"
-                    f"{self._candidates_filtered_position},"
+                    f"{self._candidates_filtered_position}"
                     "\n"
                 )
 
@@ -469,7 +469,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self.platoon.length},"
                     f"{self.platoon.desired_speed},"
                     f"{self.platoon_role.name},"
-                    f"{self.platoon.get_member_index(self)},"
+                    f"{self.platoon.get_member_index(self)}"
                     "\n"
                 )
 

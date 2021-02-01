@@ -313,7 +313,7 @@ class Vehicle:
                     f"{self.lane},"
                     f"{self.speed},"
                     f"{self.travel_time},"
-                    f"{self.travel_distance},"
+                    f"{self.travel_distance}"
                     "\n"
                 )
 
@@ -423,7 +423,7 @@ class Vehicle:
                     f"{e_travel_time},"
                     f"{travel_time_ratio},"
                     f"{average_driving_speed},"
-                    f"{average_deviation_desired_speed},"
+                    f"{average_deviation_desired_speed}"
                     "\n"
                 )
 
@@ -437,7 +437,7 @@ class Vehicle:
                     f"{self._emissions['hc']},"
                     f"{self._emissions['pmx']},"
                     f"{self._emissions['nox']},"
-                    f"{self._emissions['fuel']},"
+                    f"{self._emissions['fuel']}"
                     "\n"
                 )
 
