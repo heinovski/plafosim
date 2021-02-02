@@ -894,7 +894,8 @@ class Simulator:
                     "lane,"
                     "speed,"
                     "duration,"
-                    "routeLength"
+                    "routeLength,"
+                    "desiredSpeed"
                     "\n"
                 )
 

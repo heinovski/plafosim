@@ -313,7 +313,8 @@ class Vehicle:
                     f"{self.lane},"
                     f"{self.speed},"
                     f"{self.travel_time},"
-                    f"{self.travel_distance}"
+                    f"{self.travel_distance},"
+                    f"{self.desired_speed}"
                     "\n"
                 )
 
