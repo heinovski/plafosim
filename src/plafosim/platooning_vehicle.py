@@ -696,6 +696,7 @@ class PlatooningVehicle(Vehicle):
             if self.platoon.size == 2:
                 # tell the only follower to drive individually
                 follower = self.platoon.last
+                LOG.debug(f"Only {follower.vid} is left in the platoon {self.platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
                 follower._platoon = Platoon(follower.vid, [follower], follower.desired_speed)
@@ -730,6 +731,7 @@ class PlatooningVehicle(Vehicle):
             if self.platoon.size == 2:
                 # tell the current leader to drive individually
                 leader = self.platoon.leader
+                LOG.debug(f"Only the current leader {leader.vid} is left in the platoon {self.platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 leader._platoon_role = PlatoonRole.NONE
                 leader._cf_model = CF_Model.ACC
                 leader._platoon = Platoon(leader.vid, [leader], leader.desired_speed)
