@@ -396,7 +396,7 @@ class Simulator:
                     # perform lane change for all vehicles in this platoon
                     for member in vehicle.platoon.formation:
                         assert(member.lane == source_lane)
-                        LOG.info(f"{member.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
+                        LOG.debug(f"{member.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
                         # switch to adjacent lane
                         member._lane = target_lane
@@ -423,7 +423,7 @@ class Simulator:
 
         # check adjacent lane is free
         if self.is_lane_change_safe(vehicle, target_lane):
-            LOG.info(f"{vehicle.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
+            LOG.debug(f"{vehicle.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
             # switch to adjacent lane
             vehicle._lane = target_lane

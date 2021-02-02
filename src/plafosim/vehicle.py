@@ -237,7 +237,7 @@ class Vehicle:
             LOG.debug(f"{self.vid}'s safe speed {safe_speed}")
 
             if safe_speed < new_speed:
-                LOG.info(f"{self.vid} is blocked by a slow vehicle!")
+                LOG.debug(f"{self.vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
                 new_speed = max(safe_speed, self.speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can

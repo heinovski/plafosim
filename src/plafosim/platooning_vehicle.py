@@ -264,7 +264,7 @@ class PlatooningVehicle(Vehicle):
                     LOG.debug(f"{self.vid}'s ACC new speed {new_speed}")
 
                 if new_speed < self.desired_speed and u <= 0:
-                    LOG.info(f"{self.vid} is blocked by slow vehicle!")
+                    LOG.debug(f"{self.vid} is blocked by slow vehicle!")
                     self._blocked_front = True
                 else:
                     self._blocked_front = False
