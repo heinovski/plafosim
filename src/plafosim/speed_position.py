@@ -386,6 +386,7 @@ class SpeedPosition(FormationAlgorithm):
             if variable.solution_value() > 0:
                 mapping = decision_variables[variable.index()]
                 LOG.debug(f"{mapping['vid']} was assigned to platoon {mapping['pid']} (leader {mapping['lid']}) with cost {mapping['cost']}")
+                # HACK for oracle knowledge
                 leader = self._owner._simulator._vehicles[mapping['lid']]
                 vehicle = self._owner._simulator._vehicles[mapping['vid']]
                 target_platoon = leader.platoon
