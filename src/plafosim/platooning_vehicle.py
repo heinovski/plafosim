@@ -709,9 +709,9 @@ class PlatooningVehicle(Vehicle):
                 # statistics
                 follower._leaves_attempted += 1
                 assert(follower._last_platoon_join_time >= 0)
-                follower._time_in_platoon = follower.time_in_platoon + (follower._simulator.step - follower._last_platoon_join_time)
+                follower._time_in_platoon += follower._simulator.step - follower._last_platoon_join_time
                 assert(follower._last_platoon_join_position >= 0)
-                follower._distance_in_platoon = follower.distance_in_platoon + (follower.position - follower._last_platoon_join_position)
+                follower._distance_in_platoon += follower.position - follower._last_platoon_join_position
                 follower._leaves_successful += 1
                 follower._leaves_back += 1
             else:
@@ -743,9 +743,9 @@ class PlatooningVehicle(Vehicle):
                 # statistics
                 leader._leaves_attempted += 1
                 assert(leader._last_platoon_join_time >= 0)
-                leader._time_in_platoon = leader.time_in_platoon + (leader._simulator.step - leader._last_platoon_join_time)
+                leader._time_in_platoon += leader._simulator.step - leader._last_platoon_join_time
                 assert(leader._last_platoon_join_position >= 0)
-                leader._distance_in_platoon = leader.distance_in_platoon + (leader.position - leader._last_platoon_join_position)
+                leader._distance_in_platoon += leader.position - leader._last_platoon_join_position
                 leader._leaves_successful += 1
                 leader._leaves_front += 1
         else:
@@ -779,9 +779,9 @@ class PlatooningVehicle(Vehicle):
         self.in_maneuver = False
 
         assert(self._last_platoon_join_time >= 0)
-        self._time_in_platoon = self.time_in_platoon + (self._simulator.step - self._last_platoon_join_time)
+        self._time_in_platoon += self._simulator.step - self._last_platoon_join_time
         assert(self._last_platoon_join_position >= 0)
-        self._distance_in_platoon = self.distance_in_platoon + (self.position - self._last_platoon_join_position)
+        self._distance_in_platoon += self.position - self._last_platoon_join_position
         self._leaves_successful += 1
 
     def _advertise(self):
