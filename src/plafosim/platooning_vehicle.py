@@ -376,8 +376,17 @@ class PlatooningVehicle(Vehicle):
             # we do not record statistics for pre-filled vehicles
             return
 
-        time_until_first_platoon = self._first_platoon_join_time - self._depart_time  # NOTE: this produces wrong values when prefilled
-        distance_until_first_platoon = self._first_platoon_join_position - self._depart_position  # NOTE: this produces wrong values when prefilled
+        if self._first_platoon_join_time == -1:
+            # was not set yet (no platoon)
+            assert(self._first_platoon_join_position == -1)
+            time_until_first_platoon = None
+            distance_until_first_platoon = None
+        else:
+            time_until_first_platoon = self._first_platoon_join_time - self.depart_time  # NOTE: this produces wrong values when prefilled
+            assert(time_until_first_platoon >= 0)
+            assert(self._first_platoon_join_position != -1)
+            distance_until_first_platoon = self._first_platoon_join_position - self.depart_position  # NOTE: this produces wrong values when prefilled
+            assert(distance_until_first_platoon >= 0)
 
         # TODO log savings from platoon?
         if self._simulator._record_platoon_trips:
@@ -688,8 +697,10 @@ class PlatooningVehicle(Vehicle):
             leader._last_platoon_join_time = self._simulator.step
             leader._last_platoon_join_position = leader.position
             if leader._first_platoon_join_time == -1:
+                # was not set before
                 leader._first_platoon_join_time = self._simulator.step
                 assert(leader._first_platoon_join_position == -1)
+                # was not set before
                 leader._first_platoon_join_position = self.position
             leader._number_platoons += 1
         leader._platoon_role = PlatoonRole.LEADER
@@ -724,8 +735,10 @@ class PlatooningVehicle(Vehicle):
         self._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
         if self._first_platoon_join_time == -1:
+            # was not set before
             self._first_platoon_join_time = self._simulator.step
             assert(self._first_platoon_join_position == -1)
+            # was not set before
             self._first_platoon_join_position = self.position
         self._joins_succesful += 1
         self._number_platoons += 1
