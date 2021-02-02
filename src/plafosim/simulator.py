@@ -119,6 +119,7 @@ class Simulator:
             record_platoon_formation: bool = False,
             record_platoon_traces: bool = False,
             record_platoon_changes: bool = False,
+            record_infrastructure_assignments: bool = False,
             record_prefilled: bool = False):
         """Initialize a simulator instance"""
 
@@ -246,6 +247,7 @@ class Simulator:
         self._record_platoon_formation = record_platoon_formation  # whether to record platoon formation
         self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
+        self._record_infrastructure_assignments = record_infrastructure_assignments  # whether to record infrastructure assignments
         self._record_prefilled = record_prefilled  # whether to record results for pre-filled vehicles
 
         # TODO log generation parameters
@@ -1017,6 +1019,21 @@ class Simulator:
                     "to,"
                     "speed,"
                     "reason"
+                    "\n"
+                )
+
+        if self._record_infrastructure_assignments:
+            # create output file for infrastructure assignments
+            with open(f'{self._result_base_filename}_infrastructure_assignments.csv', 'w') as f:
+                f.write(
+                    "id,"
+                    "assignmentsSolved,"
+                    "assigmentsNotSolveable,"
+                    "assignmentsNone,"
+                    "assignmentsSelf,"
+                    "assignmentsCandidateJoinedAlready,"
+                    "assingmentsVehicleBecameLeader,"
+                    "assignmentsSuccessful,"
                     "\n"
                 )
 

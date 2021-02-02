@@ -40,6 +40,15 @@ class SpeedPosition(FormationAlgorithm):
         self._speed_deviation_threshold = speed_deviation_threshold
         self._position_deviation_threshold = position_deviation_threshold
 
+        # statistics
+        self._assignments_solved = 0
+        self._assigments_not_solveable = 0
+        self._assignments_none = 0
+        self._assignments_self = 0
+        self._assignments_candidate_joined_already = 0
+        self._assingments_vehicle_became_leader = 0
+        self._assignments_successful = 0
+
     @property
     def alpha(self) -> float:
         return self._alpha
@@ -78,6 +87,30 @@ class SpeedPosition(FormationAlgorithm):
                 self._do_formation_centralized()
         else:
             self._do_formation_distributed()
+
+    def finish(self):
+        # write statistics
+        if not self._owner._simulator._record_platoon_formation:
+            return
+        if self._owner._formation_kind != 'optimal':
+            return
+
+        from .infrastructure import Infrastructure
+        assert(isinstance(self._owner, Infrastructure))
+
+        if self._owner._simulator._record_infrastructure_assignments:
+            with open(f'{self._owner._simulator._result_base_filename}_infrastructure_assignments.csv', 'a') as f:
+                f.write(
+                    f"{self._owner.iid},"
+                    f"{self._assignments_solved},"
+                    f"{self._assigments_not_solveable},"
+                    f"{self._assignments_none},"
+                    f"{self._assignments_self},"
+                    f"{self._assignments_candidate_joined_already},"
+                    f"{self._assingments_vehicle_became_leader},"
+                    f"{self._assignments_successful}"
+                    "\n"
+                )
 
     def _do_formation_distributed(self):
         # we can only run the algorithm if we are not yet in a platoon
@@ -367,13 +400,16 @@ class SpeedPosition(FormationAlgorithm):
         LOG.info(f"{self._owner.iid} is running the solver for {solver.NumConstraints()} vehicles and {solver.NumVariables()} possible assignments")
 
         result_status = solver.Solve()
+        self._assignments_solved += 1
 
         if result_status >= solver.INFEASIBLE:
             LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
+            self._assigments_not_solveable += 1
             return
 
         if objective.Value() == 0:
             LOG.warning(f"{self._owner.iid} made no assignment!")
+            self._assignments_none += 1
             return
 
         LOG.info(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
@@ -393,11 +429,14 @@ class SpeedPosition(FormationAlgorithm):
                 if vehicle.platoon.platoon_id == mapping['pid']:
                     # self-assignment
                     LOG.debug(f"{vehicle.vid} keeps driving individually")
+                    self._assignments_self += 1
+                    self._assignments_successful += 1
                     continue
                 if target_platoon.platoon_id != mapping['pid']:
                     # meanwhile, the leader became a platoon member
                     assert(leader.is_in_platoon() and leader.platoon_role == PlatoonRole.FOLLOWER)
                     LOG.warning(f"{vehicle.vid}'s assigned platoon {mapping['pid']} (leader {leader.vid}) meanwhile joined another platoon {target_platoon.platoon_id}! {vehicle.vid} is joining this platoon transitively")
+                    self._assignments_candidate_joined_already += 1
                 else:
                     assert(not leader.is_in_platoon() or leader.platoon_role == PlatoonRole.LEADER)
                 # let vehicle join platoon
@@ -405,9 +444,11 @@ class SpeedPosition(FormationAlgorithm):
                     # meanwhile, we became a platoon leader
                     assert(vehicle.platoon_role == PlatoonRole.LEADER)
                     LOG.warning(f"{vehicle.vid} meanwhile became the leader of platoon {vehicle.platoon.platoon_id}. Hence, no assignment is possible/necessary anymore")
+                    self._assingments_vehicle_became_leader += 1
                     continue
                 assert(not vehicle.in_maneuver)
                 assert(not leader.in_maneuver)
 
                 # actual join
                 vehicle._join(target_platoon.platoon_id, target_platoon.leader.vid)
+                self._assignments_successful += 1

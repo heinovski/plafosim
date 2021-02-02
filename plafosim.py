@@ -220,6 +220,8 @@ def main():
                          choices=(True, False), help="Whether to record platoon traces")
     results.add_argument('--record-platoon-changes', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record platoon lane changes")
+    results.add_argument('--record-infrastructure-assignments', type=lambda x: bool(strtobool(x)), default=False,
+                         choices=(True, False), help="Whether to record infrastructure assignments")
     results.add_argument('--record-prefilled', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether to record results for pre-filled vehicles")
 
@@ -285,6 +287,7 @@ def main():
         args.record_platoon_formation,
         args.record_platoon_traces,
         args.record_platoon_changes,
+        args.record_infrastructure_assignments,
         args.record_prefilled
     )
 
