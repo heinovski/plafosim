@@ -403,7 +403,7 @@ class SpeedPosition(FormationAlgorithm):
                 if vehicle.is_in_platoon():
                     # meanwhile, we became a platoon leader
                     assert(vehicle.platoon_role == PlatoonRole.LEADER)
-                    LOG.warning(f"{vehicle.vid} meanwhile became the leader of platoon {vehicle.platoon.platoon_id}. This would require a platoon merge which is not yet implemented!")
+                    LOG.warning(f"{vehicle.vid} meanwhile became the leader of platoon {vehicle.platoon.platoon_id}. Hence, no assignment is possible/necessary anymore")
                     continue
                 assert(not vehicle.in_maneuver)
                 assert(not leader.in_maneuver)
