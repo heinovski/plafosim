@@ -38,3 +38,6 @@ class FormationAlgorithm(ABC):
     @abstractmethod
     def do_formation(self):
         sys.exit("ERROR: There shouldn't be an instance of this abstract base class!")
+
+    def finish(self):
+        pass

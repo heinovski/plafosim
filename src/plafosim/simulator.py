@@ -1214,12 +1214,23 @@ class Simulator:
         with open(f'{self._result_base_filename}_general.out', 'a') as f:
             f.write(f"simulation end: {time.asctime(time.localtime(time.time()))}\n")
 
+        # call finish on infrastructures
+        for instrastructure in self._infrastructures.values():
+            instrastructure.finish()
+            if self._gui:
+                import traci
+                traci.polygon.remove(str(instrastructure.iid))
+
+        # call finish on remaining vehicles?
+        for vehicle in self._vehicles.values():
+            # we do not want to write statistics for not finished vehicles
+            # therefore, we do not call finish here
+            if self._gui:
+                import traci
+                traci.vehicle.remove(str(vehicle.vid), 2)
+            # remove from vehicles
+            del vehicle
+
         if self._gui:
             import traci
-            # remove all infrastructures
-            for iid in traci.polygon.getIDList():
-                traci.polygon.remove(iid)
-            # remove all vehicles
-            for vid in traci.vehicle.getIDList():
-                traci.vehicle.remove(vid, 2)
             traci.close(False)

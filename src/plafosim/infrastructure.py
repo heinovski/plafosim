@@ -100,3 +100,9 @@ class Infrastructure:
             neighbors.append(vehicle)
 
         return neighbors
+
+    def finish(self):
+        """Clean up the instance of the infrastructure"""
+
+        if self._formation_algorithm is not None:
+            self._formation_algorithm.finish()
