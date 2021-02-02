@@ -382,7 +382,7 @@ class Vehicle:
         """Clean up the instance of the vehicle"""
 
         if (self.position < self.arrival_position):
-            LOG.warning(f"{self.vid}'s finish method was called even though it did not arrive yet!")
+            LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
             return
 
         e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
