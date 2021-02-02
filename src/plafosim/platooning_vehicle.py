@@ -372,6 +372,9 @@ class PlatooningVehicle(Vehicle):
 
         # TODO should we avoid logging if the mimimum trip length has not been fulfilled?
 
+        time_until_first_platoon = self._first_platoon_join_time - self._depart_time  # NOTE: this produces wrong values when prefilled
+        distance_until_first_platoon = self._first_platoon_join_position - self._depart_position  # NOTE: this produces wrong values when prefilled
+
         # TODO log savings from platoon?
         if self._simulator._record_platoon_trips:
             with open(f'{self._simulator._result_base_filename}_platoon_trips.csv', 'a') as f:
@@ -382,8 +385,8 @@ class PlatooningVehicle(Vehicle):
                     f"{platoon_time_ratio},"
                     f"{platoon_distance_ratio},"
                     f"{self._number_platoons},"
-                    f"{self._first_platoon_join_time - self._depart_time},"  # NOTE: this produces wrong values when prefilled
-                    f"{self._first_platoon_join_position - self._depart_position}"  # NOTE: this produces wrong values when prefilled
+                    f"{time_until_first_platoon},"
+                    f"{distance_until_first_platoon}"
                     "\n"
                 )
 
