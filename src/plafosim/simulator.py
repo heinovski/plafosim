@@ -1158,6 +1158,10 @@ class Simulator:
                 traci.simulationStep(self.step)
                 assert(traci.simulation.getTime() == float(self.step))
 
+        # We reach this point only by setting self._running to False
+        # which is only done by calling self.stop()
+        # which already calls self.finish().
+        # Hence, we do not have to do anything anymore.
         return self.step
 
     def _get_vehicles_df(self) -> pd.DataFrame:
