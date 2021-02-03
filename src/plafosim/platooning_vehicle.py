@@ -628,6 +628,7 @@ class PlatooningVehicle(Vehicle):
         self.in_maneuver = False
         leader.in_maneuver = False
 
+        # the last time we joined is now
         self._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self.position
         if self._first_platoon_join_time == -1:
