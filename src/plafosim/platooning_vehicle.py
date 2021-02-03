@@ -698,7 +698,6 @@ class PlatooningVehicle(Vehicle):
             # we copy all parameters from the platoon (for now)
             # thus, the follower now drives as fast as the already existing platoon (i.e., only the leader in the worst case)
             vehicle._platoon = leader.platoon
-            self._simulator._adjust_speed(vehicle)  # FIXME duplicated execution of CACC
 
         # set color of vehicle
         if self._simulator._gui:
@@ -744,7 +743,6 @@ class PlatooningVehicle(Vehicle):
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
                 follower._platoon = Platoon(follower.vid, [follower], follower.desired_speed)
-                self._simulator._adjust_speed(follower)  # FIXME duplicated execution of CACC
 
                 # reset color of vehicle
                 if self._simulator._gui:
@@ -779,7 +777,6 @@ class PlatooningVehicle(Vehicle):
                 leader._platoon_role = PlatoonRole.NONE
                 leader._cf_model = CF_Model.ACC
                 leader._platoon = Platoon(leader.vid, [leader], leader.desired_speed)
-                self._simulator._adjust_speed(leader)  # FIXME duplicated execution of CACC
 
                 # reset color of vehicle
                 if self._simulator._gui:
@@ -809,7 +806,6 @@ class PlatooningVehicle(Vehicle):
         # update formation for all members
         for vehicle in self.platoon.formation:
             vehicle._platoon = self.platoon  # TODO superfluous?
-            self._simulator._adjust_speed(vehicle)  # FIXME duplicated execution of CACC
 
         # leave
         LOG.info(f"{self.vid} left platoon {self.platoon.platoon_id} (leader {self.platoon.leader.vid})")
