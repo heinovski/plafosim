@@ -353,6 +353,10 @@ class PlatooningVehicle(Vehicle):
         return super()._calculate_emission(a, v, f, scale) * (1.0 - emission_change)
 
     def finish(self):
+        if (self.position < self.arrival_position):
+            LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
+            return
+
         super().finish()
 
         # clean up platoon
