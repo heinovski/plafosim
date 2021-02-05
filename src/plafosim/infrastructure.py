@@ -69,6 +69,13 @@ class Infrastructure:
     def action(self, step: int):
         """Trigger actions of a infrastructure"""
 
+        # What has to be triggered periodically?
+        if self._simulator._actions:
+            self._action(step)
+
+    def _action(self, step: int):
+        """Trigger concrete actions of a infrastructure"""
+
         LOG.info(f"{self.iid} was triggered")
 
         if self._formation_algorithm is not None:

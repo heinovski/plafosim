@@ -275,7 +275,8 @@ class Vehicle:
             self._statistics()
 
             # What has to be triggered periodically?
-            self._action(step)
+            if self._simulator._actions:
+                self._action(step)
 
     def _action(self, step: int):
         """Trigger concrete actions of a Vehicle"""

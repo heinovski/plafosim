@@ -1118,11 +1118,10 @@ class Simulator:
             if self._gui:
                 self._update_gui()
 
-            if self._actions:
-                # call regular actions on vehicles
-                self._call_vehicle_actions()
-                # call regular actions on infrastructure
-                self._call_infrastructure_actions()
+            # call regular actions on vehicles
+            self._call_vehicle_actions()
+            # call regular actions on infrastructure
+            self._call_infrastructure_actions()
 
             # perform lane changes (for all vehicles)
             if self._lane_changes:
