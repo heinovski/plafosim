@@ -109,6 +109,8 @@ class PlatooningVehicle(Vehicle):
         self._joins_aborted_arbitrary = 0
         self._joins_aborted_road_begin = 0
         self._joins_aborted_leader_maneuver = 0
+        self._joins_aborted_no_space = 0
+
         self._joins_front = 0
         self._joins_arbitrary = 0
         self._joins_back = 0
@@ -405,6 +407,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_aborted_arbitrary},"
                     f"{self._joins_aborted_road_begin},"
                     f"{self._joins_aborted_leader_maneuver},"
+                    f"{self._joins_aborted_no_space},"
                     f"{self._joins_front},"
                     f"{self._joins_arbitrary},"
                     f"{self._joins_back},"
@@ -638,6 +641,7 @@ class PlatooningVehicle(Vehicle):
                     LOG.warning(f"Could not make enough space to teleport vehicle {self.vid}!")
                     self.in_maneuver = False
                     self._joins_aborted += 1
+                    self._joins_aborted_no_space += 1
                     return
 
                 # we need to rember this vehicle

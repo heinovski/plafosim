@@ -955,6 +955,7 @@ class Simulator:
                     "joinsAbortedArbitrary,"
                     "joinsAbortedRoadBegin,"
                     "joinsAbortedLeaderManeuver,"
+                    "joinsAbortedNoSpace,"
                     "joinsFront,"
                     "joinsArbitrary,"
                     "joinsBack,"
