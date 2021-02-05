@@ -269,6 +269,7 @@ class Vehicle:
             # we started (right now)
             self._start()
 
+            # log status information
             LOG.info(self.info())
 
             # log periodic statistics
