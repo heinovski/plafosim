@@ -262,22 +262,18 @@ class Vehicle:
     def action(self, step: int):
         """Trigger actions of a vehicle"""
 
-        if step < self.depart_time:
-            # we did not start yet
-            return
-        else:
-            # we started (right now)
-            self._start()
+        # we started (right now)
+        self._start()
 
-            # log status information
-            LOG.info(self.info())
+        # log status information
+        LOG.info(self.info())
 
-            # log periodic statistics
-            self._statistics()
+        # log periodic statistics
+        self._statistics()
 
-            # What has to be triggered periodically?
-            if self._simulator._actions:
-                self._action(step)
+        # What has to be triggered periodically?
+        if self._simulator._actions:
+            self._action(step)
 
     def _action(self, step: int):
         """Trigger concrete actions of a Vehicle"""
