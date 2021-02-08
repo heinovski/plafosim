@@ -484,12 +484,14 @@ class Simulator:
             self._adjust_speed(vehicle)
 
     def _adjust_speed(self, vehicle: Vehicle):
+        LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
         LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
         predecessor = self._get_predecessor(vehicle)
         new_speed = vehicle.new_speed(predecessor.speed if predecessor else -1, predecessor.rear_position if predecessor else -1)
         vehicle._acceleration = new_speed - vehicle.speed
-        LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
         vehicle._speed = new_speed
+        LOG.debug(f"{vehicle.vid}'s new acceleration: {vehicle.acceleration}")
+        LOG.debug(f"{vehicle.vid}'s new speed {vehicle.speed}")
 
     def _remove_arrived_vehicles(self, vdf: pd.DataFrame):
         # find arrived vehicles
