@@ -275,7 +275,7 @@ class PlatooningVehicle(Vehicle):
 
         elif self._cf_model is CF_Model.CACC:
             assert(self.is_in_platoon())
-            assert(self.platoon_role is not PlatoonRole.LEADER)  # only followers can use CACC
+            assert(self.platoon_role is PlatoonRole.FOLLOWER)  # only followers can use CACC
 
             # sanity checks for front vehicle in platoon
             assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
