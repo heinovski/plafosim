@@ -113,6 +113,12 @@ class Platoon:
         else:
             return None
 
+    def get_back(self, vehicle: 'PlatooningVehicle'):
+        if vehicle is not self.last:
+            return self.formation[self.get_member_index(vehicle) + 1]
+        else:
+            return None
+
     def update_desired_speed(self):
         old_desired_speed = self.desired_speed
         self._desired_speed = min(mean([v._desired_speed for v in self.formation]), self.max_speed)
