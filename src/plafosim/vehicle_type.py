@@ -63,3 +63,6 @@ class VehicleType:
     def cc_headway_time(self) -> float:
         """Returns the desired headway time of a vehicle type"""
         return self._cc_headway_time
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
