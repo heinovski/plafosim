@@ -61,8 +61,7 @@ class Simulator:
             self,
             road_length: int = 100 * 1000,
             number_of_lanes: int = 3,
-            depart_interval: int = 1000,
-            arrival_interval: int = 1000,
+            ramp_interval: int = 1000,
             pre_fill: bool = False,
             number_of_vehicles: int = 100,
             vehicle_density: int = 0,
@@ -129,8 +128,7 @@ class Simulator:
         # road network properties
         self._road_length = road_length  # the length of the road
         self._number_of_lanes = number_of_lanes  # the number of lanes
-        self._depart_interval = depart_interval  # the distance between departure positions
-        self._arrival_interval = arrival_interval  # the distance between arrival positions
+        self._ramp_interval = ramp_interval  # the distance between any two on-/off-ramps
 
         # vehicle properties
         self._vehicles = {}  # the list (dict) of vehicles in the simulation
@@ -591,15 +589,15 @@ class Simulator:
             if self._random_arrival_position:
                 # we cannot use the minimum trip time here since, the pre-generation is supposed to produce a snapshot of a realistic simulation
                 # but we can assume that a vehicle has to drive a least to the next exit ramp
-                min_arrival = min(depart_position + self._arrival_interval, self._road_length)
-                min_arrival_ramp = min_arrival + (self._arrival_interval - min_arrival) % self._arrival_interval
+                min_arrival = min(depart_position + self._ramp_interval, self._road_length)
+                min_arrival_ramp = min_arrival + (self._ramp_interval - min_arrival) % self._ramp_interval
                 assert(min_arrival_ramp >= 0)
                 assert(min_arrival_ramp <= self._road_length)
                 if min_arrival_ramp == self._road_length:
                     # exit at end
                     arrival_position = self._road_length
                 else:
-                    arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._arrival_interval)
+                    arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._ramp_interval)
                     assert(arrival_position > depart_position)
             else:
                 arrival_position = self._road_length
@@ -680,14 +678,14 @@ class Simulator:
         # TODO remove duplicated code
         if self._random_depart_position:
             max_depart = self._road_length - self._minimum_trip_length
-            max_depart_ramp = max_depart - (self._depart_interval + max_depart) % self._depart_interval
+            max_depart_ramp = max_depart - (self._ramp_interval + max_depart) % self._ramp_interval
             assert(max_depart_ramp <= self._road_length)
             assert(max_depart_ramp >= 0)
             if max_depart_ramp == 0:
                 # start at beginning
                 depart_position = length  # equql to departPos="base" in SUMO
             else:
-                depart_position = random.randrange(0, max_depart_ramp, self._depart_interval)  # TODO length (base)
+                depart_position = random.randrange(0, max_depart_ramp, self._ramp_interval)  # TODO length (base)
         else:
             depart_position = length  # equal to departPos="base" in SUMO
 
@@ -732,14 +730,14 @@ class Simulator:
         # TODO remove duplicated code
         if self._random_arrival_position:
             min_arrival = depart_position + self._minimum_trip_length
-            min_arrival_ramp = min_arrival + (self._arrival_interval - min_arrival) % self._arrival_interval
+            min_arrival_ramp = min_arrival + (self._ramp_interval - min_arrival) % self._ramp_interval
             assert(min_arrival_ramp >= 0)
             assert(min_arrival_ramp <= self._road_length)
             if min_arrival_ramp == self._road_length:
                 # exit at end
                 arrival_position = self._road_length
             else:
-                arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._arrival_interval)
+                arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._ramp_interval)
         else:
             arrival_position = self._road_length
 
