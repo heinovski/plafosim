@@ -773,10 +773,7 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"{new_leader.vid} became leader of platoon {new_leader.platoon.platoon_id}")
         elif self is self.platoon.last:
             # leave at back
-            LOG.warning("Leave from back of a platoon is not yet properly implemented!")
             self._leaves_back += 1
-
-            # TODO check whether it is safe to leave
 
             if self.platoon.size == 2:
                 # tell the current leader to drive individually
