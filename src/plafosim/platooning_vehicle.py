@@ -456,6 +456,14 @@ class PlatooningVehicle(Vehicle):
 
         return f"{super().info()}, platoon {self.platoon.platoon_id if self.is_in_platoon() else None}"
 
+    def __str__(self) -> str:
+        """Return a nice string representation of a platooning vehicle"""
+
+        self_dict = self.__dict__.copy()
+        self_dict.update({'_vehicle_type': str(self._vehicle_type)})  # use str representation of vehicle type
+        self_dict.update({'_platoon': str(self._platoon)})  # use str representation of platoon
+        return str(self_dict)
+
     def _statistics(self):
         """Write continuous statistics"""
 
