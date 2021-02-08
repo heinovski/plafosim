@@ -441,9 +441,11 @@ class Vehicle:
                 )
 
     def __str__(self) -> str:
-        """Return a nice string representation of a vehicle instance"""
+        """Return a nice string representation of a vehicle"""
 
-        return str(self.__dict__)
+        self_dict = self.__dict__.copy()
+        self_dict.update({'_vehicle_type': str(self._vehicle_type)})  # use str representation of vehicle type
+        return str(self_dict)
 
     def _transmit(self, destination_vid: int, message: Message) -> bool:
         """Transmit a message of type Message"""
