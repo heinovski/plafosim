@@ -119,4 +119,4 @@ class Platoon:
         LOG.debug(f"Updated platoon {self.platoon_id}'s desired speed to {self.desired_speed} (from {old_desired_speed})")
 
     def __str__(self) -> str:
-        return f"platoon {self.platoon_id}: {self.member_ids}"
+        return f"{self.platoon_id}: {self.member_ids}"
