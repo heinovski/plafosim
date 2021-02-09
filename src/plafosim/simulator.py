@@ -677,7 +677,9 @@ class Simulator:
 
         # TODO remove duplicated code
         if self._random_depart_position:
-            max_depart = self._road_length - self._minimum_trip_length
+            # maximum theoretical depart position
+            # a vehicle has to drive at least the distance between two ramps
+            max_depart = self._road_length - max(self._minimum_trip_length, self._ramp_interval)
             max_depart_ramp = max_depart - (self._ramp_interval + max_depart) % self._ramp_interval
             assert(max_depart_ramp <= self._road_length)
             assert(max_depart_ramp >= 0)
