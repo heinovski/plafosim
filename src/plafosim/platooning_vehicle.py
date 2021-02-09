@@ -541,18 +541,20 @@ class PlatooningVehicle(Vehicle):
         if self.position > leader.platoon.position:
             # TODO join at front
             LOG.warning(f"{self.vid} is in front of the target platoon {platoon_id} ({leader_id})")
-            self._joins_front += 1
             LOG.warning("Join at the front of a platoon is not yet implemented!")
             self.in_maneuver = False
+
+            self._joins_front += 1
             self._joins_aborted += 1
             self._joins_aborted_front += 1
             return
         elif self.position > leader.platoon.last.position:
             # TODO join at (arbitrary position) in the middle
             LOG.warning(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
-            self._joins_arbitrary += 1
             LOG.warning("Join at arbitrary positions of a platoon is not yet implemented!")
             self.in_maneuver = False
+
+            self._joins_arbitrary += 1
             self._joins_aborted += 1
             self._joins_aborted_arbitrary += 1
             return
@@ -566,6 +568,8 @@ class PlatooningVehicle(Vehicle):
         if new_position - self.length < 0:
             # we cannot join since we would be outside of the road
             LOG.warning(f"{self.vid}'s new position is too close to the begining of the road!")
+            self.in_maneuver = False
+
             self._joins_aborted += 1
             self._joins_aborted_road_begin += 1
             return
@@ -573,6 +577,7 @@ class PlatooningVehicle(Vehicle):
         if leader.in_maneuver:
             LOG.warning(f"{self.vid}'s new leader {leader_id} was already in a maneuver")
             self.in_maneuver = False
+
             self._joins_aborted += 1
             self._joins_aborted_leader_maneuver += 1
             return
