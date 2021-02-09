@@ -268,7 +268,7 @@ class Vehicle:
         # log status information
         LOG.info(self.info())
 
-        # log periodic statistics
+        # record periodic statistics
         self._statistics()
 
         # What has to be triggered periodically?

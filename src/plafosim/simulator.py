@@ -41,7 +41,7 @@ LOG = logging.getLogger(__name__)
 # you just reach your arrival_position
 # position is in the middle of the front bumper
 # a vehicle ends at position + length
-# crash detection does not work with steps greater than 1
+# crash detection does not work with step length greater than 1
 
 # vehicle properties
 length = 4  # m # TODO make parameter
@@ -690,7 +690,7 @@ class Simulator:
             depart_position = length  # equal to departPos="base" in SUMO
 
         # TODO remove duplicated code
-        # check whether the can actually be inserted
+        # check whether the vehicle can actually be inserted
         # assume we have a collision to check at least once
         collision = bool(self._vehicles)
         while collision:
