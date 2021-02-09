@@ -806,8 +806,36 @@ class PlatooningVehicle(Vehicle):
             LOG.warning("Leave from the middle of a platoon is not yet properly implemented!")
             self._leaves_arbitrary += 1
 
-            # TODO check wether is is safe to leave
-            # TODO the leader needs to all other vehicles to make space
+            # we do not need to switch lanes if we arrived
+            if self.position < self.arrival_position:
+                # leave the formation by changing the lane
+                # TODO this looks strange in the GUI, since we do this before actually leaving the formation
+                self._platoon_role = PlatoonRole.LEAVER
+                self._cf_model = CF_Model.ACC
+                if not self._simulator._change_lane(self, self.lane + 1, "maneuver"):
+                    # could not leave the platoon
+                    sys.exit(f"ERROR: Could not move vehicle {self.vid} to the adjacent lane to leave the platoon {self.platoon.platoon_id}!")  # TODO this could be just a return in future to let the leaver try again
+
+            # move all remaning platoon members further to the front
+            front = self.platoon.get_front(self)
+            for vehicle in self.platoon.formation[self.platoon.get_member_index(self) + 1:]:
+                follower_gap = front.rear_position - vehicle.position
+                gap_error = follower_gap - vehicle._cacc_spacing
+                LOG.debug(f"The open gap between {front.vid} and {vehicle.vid} is {follower_gap}m (error of {gap_error}m)")
+                if gap_error <= 0:
+                    LOG.debug("We do not need to do anything")
+                    front = vehicle
+                    continue
+                if vehicle.position >= vehicle.arrival_position:
+                    LOG.debug(f"We are not moving {vehicle.vid} because it arrived as well")
+                    continue
+                LOG.debug(f"Moving follower {vehicle.vid} from {vehicle.position} by {gap_error}m ")
+                vehicle._position += gap_error
+                LOG.debug(f"{vehicle.vid} is not at {vehicle.position}")
+                follower_gap = front.rear_position - vehicle.position
+                assert(follower_gap == vehicle._cacc_spacing)
+                front = vehicle
+                assert(self._simulator._get_predecessor(vehicle) in vehicle.platoon.formation)
 
         # leave the platoon
         self.platoon._formation.remove(self)
