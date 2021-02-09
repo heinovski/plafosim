@@ -491,15 +491,8 @@ class Simulator:
         LOG.debug(f"{vehicle.vid}'s new acceleration: {vehicle.acceleration}")
         LOG.debug(f"{vehicle.vid}'s new speed {vehicle.speed}")
 
-    def _remove_arrived_vehicles(self, vdf: pd.DataFrame):
-        # find arrived vehicles
-        arrived_vehicles = vdf[
-            (vdf.position >= vdf.arrival_position)
-        ].index.values
-
+    def _remove_arrived_vehicles(self, arrived_vehicles: list):
         for vid in arrived_vehicles:
-            # write back the position for this vehicle in order to correctly record trip statistics
-            self._vehicles[vid]._position = vdf.loc[vid, 'position']
             # call finish on arrived vehicle
             self._vehicles[vid].finish()
             # remove arrived vehicle from gui
@@ -508,11 +501,6 @@ class Simulator:
                 traci.vehicle.remove(str(vid), 2)
             # remove from vehicles
             del self._vehicles[vid]
-
-        # remove arrived vehicles from dataframe
-        vdf = vdf.drop(arrived_vehicles)
-
-        return vdf
 
     @staticmethod
     def _check_collisions(vdf: pd.DataFrame):
@@ -1149,23 +1137,34 @@ class Simulator:
             # adjust speed (of all vehicles)
             self._adjust_speeds()
 
-            # BEGIN VECTORIZATION PART - CONVERT LIST OF OBJECTS TO DATAFRAME
+            # BEGIN VECTORIZATION PART
+            # convert dict of vehicles to dataframe
             vdf = self._get_vehicles_df()
 
             # adjust positions (of all vehicles)
             vdf = update_position(vdf, self._step_length)
 
-            # remove arrived vehicles
-            vdf = self._remove_arrived_vehicles(vdf)
+            # convert dataframe back to dict of vehicles
+            self._write_back_vehicles_df(vdf)
+
+            # get arrived vehicles
+            arrived_vehicles = vdf[
+                (vdf.position >= vdf.arrival_position)
+            ].index.values
+
+            # remove arrived vehicles from dataframe
+            vdf = vdf.drop(arrived_vehicles)
 
             # do collision check (for all vehicles)
+            # without arrived vehicles
             if self._collisions:
                 self._check_collisions(vdf)
 
-            assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
+            # remove arrived vehicles from dict and do finish
+            self._remove_arrived_vehicles(arrived_vehicles)
 
-            # CONVERT DATAFRAME BACK TO LIST OF OBJECTS
-            self._write_back_vehicles_df(vdf)
+            # make sure that everything is correct
+            assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
 
             del vdf
             # END VECTORIZATION PART
@@ -1200,6 +1199,9 @@ class Simulator:
         )
 
     def _write_back_vehicles_df(self, vdf: pd.DataFrame):
+        # make sure that everything is correct
+        assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
+
         for row in vdf.itertuples():
             # update all fields within the data that we updated with pandas
             vehicle = self._vehicles[row.Index]
