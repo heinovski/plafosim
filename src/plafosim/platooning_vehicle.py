@@ -166,10 +166,10 @@ class PlatooningVehicle(Vehicle):
         return self.platoon_role is not PlatoonRole.NONE
 
     def get_front_gap(self) -> float:
-        return self._simulator._get_predecessor_rear_position(self.vid) - self.position
+        return self._simulator._get_predecessor_rear_position(self) - self.position
 
     def get_front_speed(self) -> float:
-        return self._simulator._get_predecessor_speed(self.vid)
+        return self._simulator._get_predecessor_speed(self)
 
     @property
     def in_maneuver(self) -> bool:
