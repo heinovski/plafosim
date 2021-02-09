@@ -117,7 +117,7 @@ def use_read():
 
     with open(args.trace_file, 'r') as file:
         for line in file:
-            lstep, vid, position, lane, speed, duration, routeLength = line.strip(' ').split(',')
+            lstep, vid, position, lane, speed, duration, routeLength, desiredSpeed = line.strip(' ').split(',')
             if lstep == "step":
                 continue
             if int(lstep) < step:
