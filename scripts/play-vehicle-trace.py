@@ -47,6 +47,10 @@ parser.add_argument('--gui-delay', type=int, default=0,
 parser.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
 parser.add_argument('--log-level', type=str, default="warn",
                     choices=["warn", "info", "debug"], help="Whether to enable debug output")
+parser.add_argument('--start', type=int, default=0,
+                    help="The first step to re-play from the trace file")
+parser.add_argument('--end', type=int, default=-1,
+                    help="The last step to re-play from the trace file. -1 is no limit")
 args = parser.parse_args()
 
 # TODO add custom filter that prepends the log entry with the step time
@@ -91,10 +95,11 @@ def use_pandas():
     import pandas
     traces = pandas.read_csv(args.trace_file)
 
-    step = traces.step.min()
-    traci.simulationStep(step)
+    min_step = max(traces.step.min(), args.start)
+    max_step = min(traces.step.max(), args.end) if args.end != -1 else traces.step.max()
+    traci.simulationStep(min_step)
 
-    for step in tqdm(range(traces.step.min(), traces.step.max()), desc="Trace progress", unit='step'):
+    for step in tqdm(range(min_step, max_step), desc="Trace progress", unit='step'):
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
             if str(vehicle.id) not in traci.vehicle.getIDList():
@@ -124,6 +129,12 @@ def use_read():
                 sys.exit("Step number is not increasing!")
             elif int(lstep) > step:
                 # next step
+                if int(lstep) < args.start:
+                    # we start later
+                    continue
+                if args.end != -1 and int(lstep) > args.end:
+                    # we are done
+                    return
                 traci.simulationStep(step)
                 step = int(lstep)
 
