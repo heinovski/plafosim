@@ -38,16 +38,12 @@ Use the following script to run a simulation
 
 ```python3 plafosim.py```
 
-or simply
-
-```./plafosim.py```
-
 ### Advanced Simulation Control
 
 You can use a variety of different parameters to customize your simulation.
 E.g., use the parameter `vehicles` to configure the number of vehicles in the simulation
 
-```./plafosim.py --vehicles 1000```
+```python3 plafosim.py --vehicles 1000```
 
 The available parameters are grouped into different categories:
 
@@ -66,13 +62,13 @@ The available parameters are grouped into different categories:
 
 You can see the complete list of available parameters in the help by running
 
-```./plafosim.py -h, --help```
+```python3 plafosim.py -h, --help```
 
 ### Live GUI
 
 You can get a very simple live GUI based on SUMO by using the parameter `gui`
 
-```./plafosim.py --gui true```
+```python3 plafosim.py --gui true```
 
 More options for the live GUI can be found within the ``gui properties`` section of the help.
 
@@ -81,12 +77,8 @@ More options for the live GUI can be found within the ``gui properties`` section
 The simulation writes a trace for every simulated vehicle to a trace file (default `results_vehicle_traces.csv`).
 You can view it by using a corresponding script that is shipped within this repository
 
-```python3 ./scripts/play-vehicle-trace.py results_vehicle_traces.csv sumocfg/freeway.sumo.cfg```
-
-or simply
-
-```./scripts/play-vehicle-trace.py results_vehicle_traces.csv sumocfg/freeway.sumo.cfg```
+```python3 scripts/play-vehicle-trace.py results_vehicle_traces.csv```
 
 To see all options of this script, run
 
-```./scripts/play-vehicle-trace.py -h, --help```
+```python3 scripts/play-vehicle-trace.py -h, --help```
