@@ -693,7 +693,8 @@ class Simulator:
                     # we do not care about other lanes
                     continue
                 # do we have a collision?
-                tv = TV(depart_position, depart_position - vtype.length, depart_lane)
+                # avoid being inserted in between two platoon members by also considering the min gap
+                tv = TV(depart_position + min_gap, depart_position - vtype.length, depart_lane)
                 otv = TV(other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane)
                 collision = collision or self.has_collision(tv, otv)
 
