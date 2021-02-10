@@ -376,8 +376,6 @@ class PlatooningVehicle(Vehicle):
             # we do not record statistics for pre-filled vehicles
             return
 
-        # TODO should we avoid logging if the mimimum trip length has not been fulfilled?
-
         time_until_first_platoon = self._first_platoon_join_time - self._depart_time  # NOTE: this produces wrong values when prefilled
         distance_until_first_platoon = self._first_platoon_join_position - self._depart_position  # NOTE: this produces wrong values when prefilled
 
