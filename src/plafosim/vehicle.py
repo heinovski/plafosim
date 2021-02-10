@@ -382,8 +382,6 @@ class Vehicle:
         if (self.position < self.arrival_position):
             LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
             return
-        # by this check, we should also already avoid logging if the mimimum trip length has not been fulfilled
-        assert(self.travel_distance >= self._simulator._minimum_trip_length)
 
         e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
         time_loss = self.travel_time - round(e_travel_time)
@@ -398,6 +396,9 @@ class Vehicle:
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
             return
+
+        # by this check, we should also already avoid logging if the mimimum trip length has not been fulfilled
+        assert(self.travel_distance >= self._simulator._minimum_trip_length)
 
         if self._simulator._record_end_trace:
             # call trace recording once again
