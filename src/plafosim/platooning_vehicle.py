@@ -204,26 +204,26 @@ class PlatooningVehicle(Vehicle):
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different models
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
-                LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+                LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}m")
                 if gap_to_predecessor < 0:
-                    LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
-                LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
-                LOG.debug(f"{self.vid}'s desired speed {self.desired_speed}")
-                LOG.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}")
+                    LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
+                LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}m")
+                LOG.debug(f"{self.vid}'s desired speed {self.desired_speed}m/s")
+                LOG.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}m/s")
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.desired_gap)
 
-                LOG.debug(f"{self.vid}'s ACC safe speed {self.speed + u}")
+                LOG.debug(f"{self.vid}'s ACC safe speed {self.speed + u}m/s")
 
                 u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-                LOG.debug(f"{self.vid}'s ACC max acceleration speed {self.speed + u}")
+                LOG.debug(f"{self.vid}'s ACC max acceleration speed {self.speed + u}m/s")
 
                 u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
-                LOG.debug(f"{self.vid}'s ACC max deceleration speed {self.speed + u}")
+                LOG.debug(f"{self.vid}'s ACC max deceleration speed {self.speed + u}m/s")
 
                 new_speed = self.speed + u
                 new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-                LOG.debug(f"{self.vid}'s ACC max possible speed {new_speed}")
+                LOG.debug(f"{self.vid}'s ACC max possible speed {new_speed}m/s")
 
                 # make sure we do not drive backwards
                 if (new_speed < 0):
@@ -232,7 +232,7 @@ class PlatooningVehicle(Vehicle):
                 if self.is_in_platoon():
                     assert(self.platoon_role is PlatoonRole.LEADER)
 
-                    LOG.debug(f"{self.vid}'s ACC new individual speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s ACC new individual speed {new_speed}m/s")
 
                     # make sure that the leader uses the platoon's parameters for ACC
 
@@ -245,13 +245,13 @@ class PlatooningVehicle(Vehicle):
                     # only drive as fast as the maximum speed of the individual platoon members
                     new_speed = min(new_speed, self.platoon.max_speed)
 
-                    LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}m/s")
 
                     # only drive as fast as the platoon's desired speed
                     new_speed = min(new_speed, self.platoon.desired_speed)
-                    LOG.debug(f"{self.vid}'s CACC desired speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s CACC desired speed {new_speed}m/s")
 
-                    LOG.debug(f"{self.vid}'s CACC new speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s CACC new speed {new_speed}m/s")
 
                     # HACK for avoiding communication for platoon management
                     # update all my followers
@@ -263,9 +263,9 @@ class PlatooningVehicle(Vehicle):
                         follower._speed = new_speed
                 else:
                     new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
-                    LOG.debug(f"{self.vid}'s ACC desired speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s ACC desired speed {new_speed}m/s")
 
-                    LOG.debug(f"{self.vid}'s ACC new speed {new_speed}")
+                    LOG.debug(f"{self.vid}'s ACC new speed {new_speed}m/s")
 
                 if new_speed < self.desired_speed and u <= 0:
                     LOG.debug(f"{self.vid} is blocked by slow vehicle!")
@@ -286,11 +286,11 @@ class PlatooningVehicle(Vehicle):
             assert(self.platoon.get_front(self) is self._simulator._get_predecessor(self))
 
             gap_to_predecessor = predecessor_rear_position - self.position
-            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}m")
             if gap_to_predecessor < 0:
-                LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
-            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
-            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
+                LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
+            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}m")
+            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}m/s")
 
             ### HACK FOR AVOIDING COMMUNICATION ###
             # acceleration_predecessor = self.platoon.get_front(self).acceleration
@@ -307,19 +307,19 @@ class PlatooningVehicle(Vehicle):
             u = self._acc_acceleration(speed_leader, gap_to_predecessor, self.desired_gap)
             #####################
 
-            LOG.debug(f"{self.vid}'s CACC safe speed {self.speed + u}")
+            LOG.debug(f"{self.vid}'s CACC safe speed {self.speed + u}m/s")
 
             u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-            LOG.debug(f"{self.vid}'s CACC max acceleration speed {self.speed + u}")
+            LOG.debug(f"{self.vid}'s CACC max acceleration speed {self.speed + u}m/s")
 
             u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
-            LOG.debug(f"{self.vid}'s CACC max deceleration speed {self.speed + u}")
+            LOG.debug(f"{self.vid}'s CACC max deceleration speed {self.speed + u}m/s")
 
             new_speed = self.speed + u
             new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-            LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}")
+            LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}m/s")
 
-            LOG.debug(f"{self.vid}'s CACC new speed {new_speed}")
+            LOG.debug(f"{self.vid}'s CACC new speed {new_speed}m/s")
 
             # make sure we do not drive backwards
             if (new_speed < 0):
@@ -528,7 +528,7 @@ class PlatooningVehicle(Vehicle):
 
             # filter based on communication range
             if abs(vehicle.position - self.position) > self._communication_range:
-                LOG.debug(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range})")
+                LOG.debug(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range}m)")
                 continue
 
             platoons.append(vehicle.platoon)
@@ -714,7 +714,7 @@ class PlatooningVehicle(Vehicle):
         new_speed = last.speed
         if current_speed != new_speed:
             self._speed = new_speed
-            LOG.info(f"{self.vid} changed speed to {self.speed} (from {current_speed})")
+            LOG.info(f"{self.vid} changed speed to {self.speed}m/s (from {current_speed}m/s)")
             self._joins_teleport_speed += 1
 
         # update the leader

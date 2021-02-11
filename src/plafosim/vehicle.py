@@ -207,7 +207,7 @@ class Vehicle:
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
         """Calculate the new speed for a vehicle using the kraus model"""
 
-        LOG.debug(f"{self.vid}'s desired speed is {self.desired_speed}")
+        LOG.debug(f"{self.vid}'s desired speed is {self.desired_speed}m/s")
 
         new_speed = -1
         # do we need to adjust our speed?
@@ -215,33 +215,33 @@ class Vehicle:
         if diff_to_desired > 0:
             # we need to accelerate
             new_speed = min(self.speed + min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
-            LOG.debug(f"{self.vid} wants to accelerate to {new_speed}")
+            LOG.debug(f"{self.vid} wants to accelerate to {new_speed}m/s")
         elif diff_to_desired < 0:
             # we need to decelerate
             new_speed = max(self.speed + max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
-            LOG.debug(f"{self.vid} wants to decelerate to {new_speed}")
+            LOG.debug(f"{self.vid} wants to decelerate to {new_speed}m/s")
         else:
             new_speed = self.speed
-            LOG.debug(f"{self.vid} keeps the speed of {new_speed}")
+            LOG.debug(f"{self.vid} keeps the speed of {new_speed}m/s")
 
         # vsafe
         if speed_predecessor >= 0 and predecessor_rear_position >= 0:
             # we have a predecessor
             gap_to_predecessor = predecessor_rear_position - self.position
-            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}")
+            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}m")
             if gap_to_predecessor < 0:
-                LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor})")
-            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}")
-            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}")
+                LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
+            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}m/s")
+            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}m")
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
-            LOG.debug(f"{self.vid}'s safe speed {safe_speed}")
+            LOG.debug(f"{self.vid}'s safe speed {safe_speed}m/s")
 
             if safe_speed < new_speed:
                 LOG.debug(f"{self.vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
                 new_speed = max(safe_speed, self.speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
-                LOG.debug(f"{self.vid}'s new speed after safe speed is {new_speed}")
+                LOG.debug(f"{self.vid}'s new speed after safe speed is {new_speed}m/s")
             else:
                 self._blocked_front = False
         else:
@@ -255,7 +255,7 @@ class Vehicle:
         if (new_speed < 0):
             new_speed = 0
 
-        LOG.debug(f"{self.vid}'s new speed is {new_speed}")
+        LOG.debug(f"{self.vid}'s new speed is {new_speed}m/s")
 
         return new_speed
 
