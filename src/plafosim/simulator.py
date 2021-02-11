@@ -251,6 +251,8 @@ class Simulator:
         self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
         self._record_infrastructure_assignments = record_infrastructure_assignments  # whether to record infrastructure assignments
+        if record_prefilled:
+            LOG.warning("Recording results for pre-filled vehicles is not recommended to avoid broken statistics!")
         self._record_prefilled = record_prefilled  # whether to record results for pre-filled vehicles
 
         # TODO log generation parameters
