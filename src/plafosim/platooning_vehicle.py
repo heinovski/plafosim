@@ -665,7 +665,7 @@ class PlatooningVehicle(Vehicle):
         assert(new_position >= 0)
         if current_position != new_position:
             self._position = new_position
-            LOG.info(f"{self.vid} teleported to {self.position} (from {current_position})")
+            LOG.info(f"{self.vid} teleported to {self.position} (from {current_position}, {self.position - current_position}m)")
             self._joins_teleport_position += 1
         current_lane = self.lane
         new_lane = leader.lane
