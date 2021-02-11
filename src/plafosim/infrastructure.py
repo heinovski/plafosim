@@ -76,13 +76,13 @@ class Infrastructure:
     def _action(self, step: int):
         """Trigger concrete actions of a infrastructure"""
 
-        LOG.info(f"{self.iid} was triggered")
+        LOG.info(f"{self.iid} was triggered at {step}")
 
         if self._formation_algorithm is not None:
             if step >= self._last_formation_step + self._execution_interval:
                 # search for a platoon (depending on the algorithm)
                 self._formation_algorithm.do_formation()
-                self._last_execution_step = step
+                self._last_formation_step = step
 
     def _get_neighbors(self):
         neighbors = []

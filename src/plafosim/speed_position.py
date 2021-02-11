@@ -80,7 +80,7 @@ class SpeedPosition(FormationAlgorithm):
 
         from .infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
-            LOG.info(f"{self._owner.iid} is running formation algorithm {self.name} ({self._owner._formation_kind})")
+            LOG.info(f"{self._owner.iid} is running formation algorithm {self.name} ({self._owner._formation_kind}) at {self._owner._simulator.step}")
             if self._owner._formation_kind == 'optimal':
                 self._do_formation_optimal()
             else:
