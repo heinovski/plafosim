@@ -749,7 +749,8 @@ class Simulator:
         desired_speed = self._get_desired_speed()
 
         if self._random_depart_speed:
-            depart_speed = random.randrange(0, self._desired_speed, 1)
+            # make sure to also include the desired speed itself
+            depart_speed = random.randrange(0, self._desired_speed + 1, 1)
         else:
             depart_speed = 0
 
