@@ -291,8 +291,8 @@ class Vehicle:
     def info(self):
         """Return info of a Vehicle"""
 
-        e_remaining_travel_time = round((self.arrival_position - self.position) / self.speed, 1)
-        return f"{self.vid} at {self.position}-{self.rear_position}, {self.lane} with {self.speed}, takes {e_remaining_travel_time}s to reach {self.arrival_position}"
+        estimated_remaining_travel_time = round((self.arrival_position - self.position) / self.speed if self.speed > 0 else self.desired_speed, 1)
+        return f"{self.vid} at {self.position}-{self.rear_position}, {self.lane} with {self.speed}, takes {estimated_remaining_travel_time}s to reach {self.arrival_position}"
 
     def _statistics(self):
         """Write continuous statistics"""
