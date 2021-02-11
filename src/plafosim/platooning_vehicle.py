@@ -701,7 +701,7 @@ class PlatooningVehicle(Vehicle):
                 leader._first_platoon_join_time = self._simulator.step
                 assert(leader._first_platoon_join_position == -1)
                 # was not set before
-                leader._first_platoon_join_position = self.position
+                leader._first_platoon_join_position = leader.position
             leader._number_platoons += 1
         leader._platoon_role = PlatoonRole.LEADER
 
