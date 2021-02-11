@@ -384,7 +384,9 @@ class Vehicle:
             return
 
         expected_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
+        assert(self.travel_time != 0)
         time_loss = self.travel_time - round(expected_travel_time)
+        assert(expected_travel_time != 0)
         travel_time_ratio = round(self.travel_time / expected_travel_time, 2)
         average_driving_speed = round(self.travel_distance / self.travel_time, 1)
         average_deviation_desired_speed = round(self._desired_speed - average_driving_speed, 1)
@@ -399,6 +401,9 @@ class Vehicle:
 
         # by this check, we should also already avoid logging if the mimimum trip length has not been fulfilled
         assert(self.travel_distance >= self._simulator._minimum_trip_length)
+
+        assert(travel_time_ratio >= 0)
+        assert(average_driving_speed >= 0)
 
         if self._simulator._record_end_trace:
             # call trace recording once again
