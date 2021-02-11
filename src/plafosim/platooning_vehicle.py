@@ -108,6 +108,8 @@ class PlatooningVehicle(Vehicle):
         self._joins_aborted_front = 0
         self._joins_aborted_arbitrary = 0
         self._joins_aborted_road_begin = 0
+        self._joins_aborted_trip_begin = 0
+        self._joins_aborted_trip_end = 0
         self._joins_aborted_leader_maneuver = 0
         self._joins_aborted_no_space = 0
 
@@ -413,6 +415,8 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_aborted_front},"
                     f"{self._joins_aborted_arbitrary},"
                     f"{self._joins_aborted_road_begin},"
+                    f"{self._joins_aborted_trip_begin},"
+                    f"{self._joins_aborted_trip_end},"
                     f"{self._joins_aborted_leader_maneuver},"
                     f"{self._joins_aborted_no_space},"
                     f"{self._joins_front},"
@@ -571,6 +575,8 @@ class PlatooningVehicle(Vehicle):
 
         last = leader.platoon.last
         new_position = last.rear_position - self._cacc_spacing
+        assert(new_position >= 0)
+        assert(new_position <= self._simulator.road_length)
 
         if new_position - self.length < 0:
             # we cannot join since we would be outside of the road
@@ -579,6 +585,24 @@ class PlatooningVehicle(Vehicle):
 
             self._joins_aborted += 1
             self._joins_aborted_road_begin += 1
+            return
+
+        if new_position < self.depart_position:
+            LOG.warning(f"{self.vid}'s new position is before its depart position!")
+            self.in_maneuver = False
+
+            self._joins_aborted += 1
+            self._joins_aborted_trip_begin += 1
+            return
+        # TODO should we also avoid teleporting backwards at all?
+        # for now this is allowed to simulate decelerating and waiting for the platoon for pass futher
+
+        if new_position >= self.arrival_position:
+            LOG.warning(f"{self.vid}'s new position is outside of its trip!")
+            self.in_maneuver = False
+
+            self._joins_aborted += 1
+            self._joins_aborted_trip_end += 1
             return
 
         if leader.in_maneuver:
@@ -671,7 +695,6 @@ class PlatooningVehicle(Vehicle):
 
         # teleport the vehicle
         current_position = self.position
-        assert(new_position >= 0)
         if current_position != new_position:
             self._position = new_position
             LOG.info(f"{self.vid} teleported to {self.position} (from {current_position}, {self.position - current_position}m)")
