@@ -883,7 +883,7 @@ class Simulator:
                     "routeLength,"
                     "timeLoss,"
                     "desiredSpeed,"
-                    "estimatedTravelTime,"
+                    "expecteTravelTime,"
                     "travelTimeRatio,"
                     "avgDrivingSpeed,"
                     "avgDeviationDesiredSpeed"

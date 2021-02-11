@@ -383,9 +383,9 @@ class Vehicle:
             LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
             return
 
-        e_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
-        time_loss = self.travel_time - round(e_travel_time)
-        travel_time_ratio = round(self.travel_time / e_travel_time, 2)
+        expected_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
+        time_loss = self.travel_time - round(expected_travel_time)
+        travel_time_ratio = round(self.travel_time / expected_travel_time, 2)
         average_driving_speed = round(self.travel_distance / self.travel_time, 1)
         average_deviation_desired_speed = round(self._desired_speed - average_driving_speed, 1)
 
@@ -420,7 +420,7 @@ class Vehicle:
                     f"{self.travel_distance},"
                     f"{time_loss},"
                     f"{self.desired_speed},"
-                    f"{e_travel_time},"
+                    f"{expected_travel_time},"
                     f"{travel_time_ratio},"
                     f"{average_driving_speed},"
                     f"{average_deviation_desired_speed}"
