@@ -557,7 +557,8 @@ class Simulator:
                     # actual calculation of position and lane
                     # always use random position for pre-filled vehicle
                     # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
-                    depart_position = random.randrange(length, self.road_length, round(length + min_gap))
+                    # make sure to also include the end of the road itself
+                    depart_position = random.randrange(length, self.road_length + 1, round(length + min_gap))
                     # always use random lane for pre-filled vehicle
                     depart_lane = random.randrange(0, self.number_of_lanes, 1)
 
@@ -580,22 +581,7 @@ class Simulator:
             # always use desired speed for pre-fill vehicles
             depart_speed = desired_speed
 
-            # TODO remove duplicated code
-            if self._random_arrival_position:
-                # we cannot use the minimum trip time here since, the pre-generation is supposed to produce a snapshot of a realistic simulation
-                # but we can assume that a vehicle has to drive a least to the next exit ramp
-                min_arrival = min(depart_position + self._ramp_interval, self._road_length)
-                min_arrival_ramp = min_arrival + (self._ramp_interval - min_arrival) % self._ramp_interval
-                assert(min_arrival_ramp >= 0)
-                assert(min_arrival_ramp <= self._road_length)
-                if min_arrival_ramp == self._road_length:
-                    # exit at end
-                    arrival_position = self._road_length
-                else:
-                    arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._ramp_interval)
-                    assert(arrival_position > depart_position)
-            else:
-                arrival_position = self._road_length
+            arrival_position = self._get_arrival_position(depart_position, prefill=True)
 
             self._add_vehicle(
                 vid,
@@ -621,6 +607,65 @@ class Simulator:
             desired_speed = self._desired_speed
 
         return desired_speed
+
+    def _get_depart_position(self) -> int:
+        # NOTE: this should only be called for non-prefilled vehicles
+        if self._random_depart_position:
+            # set maximum theoretical depart position
+            # make sure that the vehicles can drive for at least the minimum length of a trip
+            # and at least for one ramp
+            max_depart = self._road_length - max(self._minimum_trip_length, self._ramp_interval)
+            max_depart_ramp = max_depart - (self._ramp_interval + max_depart) % self._ramp_interval
+            assert(max_depart_ramp <= self._road_length)
+            assert(max_depart_ramp >= 0)
+            if max_depart_ramp == 0:
+                # start at beginning
+                depart_position = length  # equal to departPos="base" in SUMO
+            else:
+                depart_position = random.randrange(0, max_depart_ramp, self._ramp_interval)  # TODO length (base)
+            assert(depart_position <= max_depart_ramp)
+        else:
+            # simply start at beginning
+            depart_position = length  # equal to departPos="base" in SUMO
+
+        assert(depart_position >= 0)
+        assert(depart_position <= self.road_length)
+
+        return depart_position
+
+    def _get_arrival_position(self, depart_position: int, prefill: bool = False) -> int:
+        if self._random_arrival_position:
+            # set minimum theoretical arrival position
+            if prefill:
+                # We cannot use the minimum trip time here,
+                # since the pre-generation is supposed to produce a snapshot of a realistic simulation.
+                # But we can assume that a vehicle has to drive at least 1m
+                min_arrival = depart_position + 1
+            else:
+                # make sure that the vehicles drive at least for the minimum length of a trip
+                # and at least for one ramp
+                min_arrival = depart_position + max(self._minimum_trip_length, self._ramp_interval)
+            min_arrival_ramp = min_arrival + (self._ramp_interval - min_arrival) % self._ramp_interval
+            assert(min_arrival_ramp >= 0)
+            assert(min_arrival_ramp <= self._road_length)
+            if min_arrival % self._ramp_interval == 0:
+                assert(min_arrival == min_arrival_ramp)
+            if min_arrival_ramp == self._road_length:
+                # avoid empty randrange
+                # exit at end
+                arrival_position = self._road_length
+            else:
+                # make sure to also include the end of the road itself
+                arrival_position = random.randrange(min_arrival_ramp, self._road_length + 1, self._ramp_interval)
+            assert(arrival_position >= min_arrival_ramp)
+        else:
+            # simply drive until the end
+            arrival_position = self._road_length
+
+        assert(arrival_position <= self._road_length)
+        assert(arrival_position > depart_position)
+
+        return arrival_position
 
     def _spawn_vehicle(self):
 
@@ -670,21 +715,7 @@ class Simulator:
         else:
             depart_lane = 0
 
-        # TODO remove duplicated code
-        if self._random_depart_position:
-            # maximum theoretical depart position
-            # a vehicle has to drive at least the distance between two ramps
-            max_depart = self._road_length - max(self._minimum_trip_length, self._ramp_interval)
-            max_depart_ramp = max_depart - (self._ramp_interval + max_depart) % self._ramp_interval
-            assert(max_depart_ramp <= self._road_length)
-            assert(max_depart_ramp >= 0)
-            if max_depart_ramp == 0:
-                # start at beginning
-                depart_position = length  # equql to departPos="base" in SUMO
-            else:
-                depart_position = random.randrange(0, max_depart_ramp, self._ramp_interval)  # TODO length (base)
-        else:
-            depart_position = length  # equal to departPos="base" in SUMO
+        depart_position = self._get_depart_position()
 
         # TODO remove duplicated code
         # check whether the vehicle can actually be inserted
@@ -725,19 +756,7 @@ class Simulator:
         if self._depart_desired:
             depart_speed = desired_speed
 
-        # TODO remove duplicated code
-        if self._random_arrival_position:
-            min_arrival = depart_position + self._minimum_trip_length
-            min_arrival_ramp = min_arrival + (self._ramp_interval - min_arrival) % self._ramp_interval
-            assert(min_arrival_ramp >= 0)
-            assert(min_arrival_ramp <= self._road_length)
-            if min_arrival_ramp == self._road_length:
-                # exit at end
-                arrival_position = self._road_length
-            else:
-                arrival_position = random.randrange(min_arrival_ramp, self._road_length, self._ramp_interval)
-        else:
-            arrival_position = self._road_length
+        arrival_position = self._get_arrival_position(depart_position)
 
         vehicle = self._add_vehicle(
             vid,
