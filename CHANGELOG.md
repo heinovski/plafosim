@@ -23,7 +23,7 @@
 * Updated cf model
 * Updated comparison script (#228)
 * Updated error messages
-* Updated generation of trips (#252)
+* Updated generation of trips (#252, #256)
 * Updated insert collision checks
 * Updated join maneuver
 * Updated log messages
