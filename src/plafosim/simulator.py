@@ -741,7 +741,7 @@ class Simulator:
         LOG.debug(f"Spawning vehicle {vid} at {depart_position}-{depart_position - vtype.length},{depart_lane} with {depart_speed}")
 
         # TODO remove duplicated code
-        # check whether the vehicle can actually be inserted
+        # check whether the vehicle can actually be inserted safely
         # assume we have a collision to check at least once
         collision = bool(self._vehicles)
         while collision:
@@ -755,8 +755,17 @@ class Simulator:
                     continue
                 # do we have a collision?
                 # avoid being inserted in between two platoon members by also considering the min gap
-                tv = TV(depart_position + vtype.min_gap, depart_position - vtype.length, depart_lane)
-                otv = TV(other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane)
+                # TODO use the desired headway time for safe insertion on another lane
+                tv = TV(
+                    depart_position + vtype.min_gap,  # front collider
+                    depart_position - vtype.length,  # rear collider
+                    depart_lane
+                )
+                otv = TV(
+                    other_vehicle.position + other_vehicle.min_gap,  # front collider
+                    other_vehicle.rear_position,  # rear collider
+                    other_vehicle.lane
+                )
                 collision = collision or self.has_collision(tv, otv)
 
             if collision:
