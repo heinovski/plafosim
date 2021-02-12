@@ -400,7 +400,9 @@ class Vehicle:
             return
 
         # by this check, we should also already avoid logging if the mimimum trip length has not been fulfilled
-        assert(self.travel_distance >= self._simulator._minimum_trip_length)
+        # HACK: adding length here to cope for departPos="base"
+        # TODO we might need to travel 'length' more than arrival position
+        assert(self.travel_distance >= self._simulator._minimum_trip_length - self.length)
 
         assert(travel_time_ratio >= 0)
         assert(average_driving_speed >= 0)
