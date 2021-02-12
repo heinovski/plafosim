@@ -44,13 +44,21 @@ LOG = logging.getLogger(__name__)
 # crash detection does not work with step length greater than 1
 
 # vehicle properties
-length = 4  # m # TODO make parameter
-max_speed = 55  # m/s # TODO make parameter
-max_acceleration = 2.5  # m/s # TODO make parameter
-max_deceleration = 15  # m/s # TODO make parameter
-min_gap = 2.5  # m # TODO make parameter
-desired_headway_time = 1.0  # s # TODO make parameter
-vtype = VehicleType("car", length, max_speed, max_acceleration, max_deceleration, min_gap, desired_headway_time)  # TODO support multiple vtypes
+_length = 4  # m # TODO make parameter
+_max_speed = 55  # m/s # TODO make parameter
+_max_acceleration = 2.5  # m/s # TODO make parameter
+_max_deceleration = 15  # m/s # TODO make parameter
+_min_gap = 2.5  # m # TODO make parameter
+_desired_headway_time = 1.0  # s # TODO make parameter
+vtype = VehicleType(
+    "car",
+    _length,
+    _max_speed,
+    _max_acceleration,
+    _max_deceleration,
+    _min_gap,
+    _desired_headway_time
+)  # TODO support multiple vtypes
 TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
 
 
@@ -547,7 +555,7 @@ class Simulator:
 
             # TODO remove duplicated code
             if self._start_as_platoon:
-                depart_position = (number_of_vehicles - vid) * (length + self._cacc_spacing)
+                depart_position = (number_of_vehicles - vid) * (vtype.length + self._cacc_spacing)
                 depart_lane = 0
             else:
                 # assume we have a collision to check at least once
@@ -558,7 +566,7 @@ class Simulator:
                     # always use random position for pre-filled vehicle
                     # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
                     # make sure to also include the end of the road itself
-                    depart_position = random.randrange(length, self.road_length + 1, round(length + min_gap))
+                    depart_position = random.randrange(vtype.length, self.road_length + 1, round(vtype.length + vtype.min_gap))
                     # always use random lane for pre-filled vehicle
                     depart_lane = random.randrange(0, self.number_of_lanes, 1)
 
@@ -732,7 +740,7 @@ class Simulator:
                     continue
                 # do we have a collision?
                 # avoid being inserted in between two platoon members by also considering the min gap
-                tv = TV(depart_position + min_gap, depart_position - vtype.length, depart_lane)
+                tv = TV(depart_position + vtype.min_gap, depart_position - vtype.length, depart_lane)
                 otv = TV(other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane)
                 collision = collision or self.has_collision(tv, otv)
 
