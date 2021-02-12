@@ -566,6 +566,7 @@ class Simulator:
                     # always use random position for pre-filled vehicle
                     # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
                     # make sure to also include the end of the road itself
+                    # consider length, equal to departPos="base" in SUMO
                     depart_position = random.randrange(vtype.length, self.road_length + 1, round(vtype.length + vtype.min_gap))
                     # always use random lane for pre-filled vehicle
                     depart_lane = random.randrange(0, self.number_of_lanes, 1)
@@ -628,13 +629,13 @@ class Simulator:
             assert(max_depart_ramp >= 0)
             if max_depart_ramp == 0:
                 # start at beginning
-                depart_position = length  # equal to departPos="base" in SUMO
+                depart_position = 0
             else:
-                depart_position = random.randrange(0, max_depart_ramp, self._ramp_interval)  # TODO length (base)
+                depart_position = random.randrange(0, max_depart_ramp, self._ramp_interval)
             assert(depart_position <= max_depart_ramp)
         else:
             # simply start at beginning
-            depart_position = length  # equal to departPos="base" in SUMO
+            depart_position = 0
 
         assert(depart_position >= 0)
         assert(depart_position <= self.road_length)
@@ -724,6 +725,8 @@ class Simulator:
             depart_lane = 0
 
         depart_position = self._get_depart_position()
+        arrival_position = self._get_arrival_position(depart_position)
+        depart_position += vtype.length  # equal to departPos="base" in SUMO
 
         # TODO remove duplicated code
         # check whether the vehicle can actually be inserted
@@ -764,8 +767,6 @@ class Simulator:
 
         if self._depart_desired:
             depart_speed = desired_speed
-
-        arrival_position = self._get_arrival_position(depart_position)
 
         vehicle = self._add_vehicle(
             vid,
