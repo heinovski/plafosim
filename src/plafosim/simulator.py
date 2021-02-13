@@ -717,7 +717,6 @@ class Simulator:
             return
 
         vid = self._last_vehicle_id + 1
-        LOG.debug(f"Spawning vehicle {vid}")
 
         if self._random_depart_lane:
             depart_lane = random.randrange(0, self.number_of_lanes, 1)
@@ -727,6 +726,19 @@ class Simulator:
         depart_position = self._get_depart_position()
         arrival_position = self._get_arrival_position(depart_position)
         depart_position += vtype.length  # equal to departPos="base" in SUMO
+
+        desired_speed = self._get_desired_speed()
+
+        if self._random_depart_speed:
+            # make sure to also include the desired speed itself
+            depart_speed = random.randrange(0, self._desired_speed + 1, 1)
+        else:
+            depart_speed = 0
+
+        if self._depart_desired:
+            depart_speed = desired_speed
+
+        LOG.debug(f"Spawning vehicle {vid} at {depart_position}-{depart_position - vtype.length},{depart_lane} with {depart_speed}")
 
         # TODO remove duplicated code
         # check whether the vehicle can actually be inserted
@@ -756,17 +768,6 @@ class Simulator:
                 depart_lane = depart_lane + 1
                 LOG.warning(f"Increased depart lane for {vid} to avoid a collision (now lane {depart_lane})")
                 # we need to check again
-
-        desired_speed = self._get_desired_speed()
-
-        if self._random_depart_speed:
-            # make sure to also include the desired speed itself
-            depart_speed = random.randrange(0, self._desired_speed + 1, 1)
-        else:
-            depart_speed = 0
-
-        if self._depart_desired:
-            depart_speed = desired_speed
 
         vehicle = self._add_vehicle(
             vid,
