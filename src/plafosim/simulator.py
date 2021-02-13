@@ -567,7 +567,7 @@ class Simulator:
                     # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
                     # make sure to also include the end of the road itself
                     # consider length, equal to departPos="base" in SUMO
-                    depart_position = random.randrange(vtype.length, self.road_length + 1, round(vtype.length + vtype.min_gap))
+                    depart_position = random.uniform(vtype.length, self.road_length)
                     # always use random lane for pre-filled vehicle
                     depart_lane = random.randrange(0, self.number_of_lanes, 1)
 
@@ -581,8 +581,8 @@ class Simulator:
                         if other_vehicle.lane != depart_lane:
                             # we do not care about other lanes
                             continue
-                        tv = TV(depart_position, depart_position - vtype.length, depart_lane)
-                        otv = TV(other_vehicle.position, other_vehicle.rear_position, other_vehicle.lane)
+                        tv = TV(depart_position + vtype.min_gap, depart_position - vtype.length, depart_lane)
+                        otv = TV(other_vehicle.position + other_vehicle.min_gap, other_vehicle.rear_position, other_vehicle.lane)
                         collision = collision or self.has_collision(tv, otv)
 
             desired_speed = self._get_desired_speed()
