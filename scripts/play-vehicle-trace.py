@@ -62,7 +62,7 @@ sys.path.append(tools)
 import traci
 
 sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-sumoCmd = [sumoBinary, '-Q', '-c', args.sumo_config, '--collision.action', 'warn']
+sumoCmd = [sumoBinary, '-Q', '-c', args.sumo_config, '--collision.action', 'none']
 
 traci.start(sumoCmd)
 
