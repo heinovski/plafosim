@@ -604,7 +604,7 @@ class Simulator:
                 self._communication_range
             )
 
-            LOG.debug(f"Generated vehicle {vid}")
+            LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype.length},{depart_lane} with {depart_speed}")
 
     def _get_desired_speed(self) -> float:
         if self._random_desired_speed:
