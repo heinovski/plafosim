@@ -866,7 +866,7 @@ class Simulator:
                                             self._position_deviation_threshold)
             self._infrastructures[iid] = infrastructure
 
-            LOG.info(f"Generated infrastructure {infrastructure}")
+            LOG.info(f"Generated infrastructure {infrastructure} at {position}")
 
             last_infrastructure_id = iid
 
