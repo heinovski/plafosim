@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.9.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.0) - 2021-02-11
+## [0.9.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.0) - 2021-02-15
 * Added all leave cases (simplified) (#206)
 * Added formation statistics
 * Added make space before a teleporting during a join (#232)
