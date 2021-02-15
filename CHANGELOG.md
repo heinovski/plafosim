@@ -12,6 +12,7 @@
 * Added vectorized collision checks with pandas (#208)
 * Added vectorized position updates with pandas (#211)
 * Fixed additional CACC calculation (#212)
+* Fixed depart position for pre-filled vehicles
 * Fixed generation of random depart speed (#254)
 * Fixed leaving in the middle of a platoon (#241)
 * Fixed obsolete depart_time check (#209)
