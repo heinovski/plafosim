@@ -773,7 +773,7 @@ class Simulator:
                 if depart_lane == self.number_of_lanes - 1:
                     # reached maximum number of lanes already
                     # TODO delay insertion of vehicle
-                    LOG.error(f"Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Delaying insertion of vehicles is not (yet) implemented!")
+                    LOG.warning(f"Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Vehicle {vid} will not be spawned, since delaying insertion of vehicles is not (yet) implemented!")
                     return  # do not insert this vehicle but also do not abort the simulation
                 depart_lane = depart_lane + 1
                 LOG.info(f"Increased depart lane for {vid} to avoid a collision (now lane {depart_lane})")
