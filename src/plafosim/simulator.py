@@ -386,7 +386,7 @@ class Simulator:
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
-            LOG.warning(f"{vehicle.vid} only change to adjacent lane!")
+            LOG.warning(f"{vehicle.vid} can only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
             LOG.info(f"Adjusted target lane of {vehicle.vid} to {target_lane} (from {old_target_lane})")
