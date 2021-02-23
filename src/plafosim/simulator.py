@@ -31,7 +31,9 @@ from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
 from .util import addLoggingLevel
-from .util import get_crashed_vehicles, update_position
+from .util import get_crashed_vehicles
+from .util import speed2distance
+from .util import update_position
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
@@ -999,9 +1001,9 @@ class Simulator:
                 if other_vehicle._lane != depart_lane:
                     # we do not care about other lanes
                     continue
+
                 # do we have a collision?
                 # avoid being inserted in between two platoon members by also considering the min gap
-                # TODO use the desired headway time for safe insertion on another lane
                 tv = TV(
                     depart_position + vtype._min_gap,  # front collider
                     depart_position - vtype._length,  # rear collider
@@ -1012,7 +1014,21 @@ class Simulator:
                     other_vehicle.rear_position,  # rear collider
                     other_vehicle._lane
                 )
-                collision = collision or self.has_collision(tv, otv)
+
+                # would it be unsafe to insert the vehicle?
+                # we use the same safety checks as in the lane change
+                unsafe = False
+                if other_vehicle._position <= depart_position:
+                    # unsafe if the other vehicle cannot reach the safe speed within the next simulation step
+                    safe_speed = other_vehicle._safe_speed(depart_speed, depart_position - vtype._length - other_vehicle._position, other_vehicle.desired_gap, other_vehicle.min_gap)
+                    unsafe = other_vehicle._speed - safe_speed >= other_vehicle.max_deceleration
+                else:
+                    # unsafe if the new vehicle cannot reach the safe speed within the next simulation step
+                    safe_speed = other_vehicle._safe_speed(other_vehicle._speed, other_vehicle.rear_position - depart_position, speed2distance(vtype._cc_headway_time * depart_speed, self._step_length), vtype._min_gap)
+                    unsafe = depart_speed - safe_speed >= vtype.max_deceleration
+
+                # do we have a "collision" (now or in the next step)?
+                collision = collision or self.has_collision(tv, otv) or unsafe
 
             if collision:
                 # can we avoid the collision by switching the departure lane?
