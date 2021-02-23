@@ -842,7 +842,6 @@ class PlatooningVehicle(Vehicle):
                 leader._leaves_front += 1
         else:
             # leave in the middle
-            LOG.warning("Leave from the middle of a platoon is not yet properly implemented!")
             self._leaves_arbitrary += 1
 
             # we do not need to switch lanes if we arrived
