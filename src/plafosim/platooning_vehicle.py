@@ -130,7 +130,9 @@ class PlatooningVehicle(Vehicle):
         # formation statistics
         self._candidates_found = 0
         self._candidates_filtered = 0
+        self._candidates_filtered_follower = 0
         self._candidates_filtered_maneuver = 0
+        self._candidates_filtered_self = 0
         self._candidates_filtered_speed = 0
         self._candidates_filtered_position = 0
         self._candidates_filtered_front = 0
@@ -446,7 +448,9 @@ class PlatooningVehicle(Vehicle):
                     f"{self.vid},"
                     f"{self._candidates_found},"
                     f"{self._candidates_filtered},"
+                    f"{self._candidates_filtered_follower},"
                     f"{self._candidates_filtered_maneuver},"
+                    f"{self._candidates_filtered_self},"
                     f"{self._candidates_filtered_speed},"
                     f"{self._candidates_filtered_position},"
                     f"{self._candidates_filtered_front}"

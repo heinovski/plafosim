@@ -338,6 +338,7 @@ class SpeedPosition(FormationAlgorithm):
                     # we can only join an existing platoon or built a new one
                     LOG.debug(f"{other_vehicle.vid} is not available")
                     vehicle._candidates_filtered += 1
+                    vehicle._candidates_filtered_follower += 1
                     continue
                 # filter vehicles which are already in a maneuver
                 # we only have this information due to oracle knowledge in the centralized version
@@ -356,6 +357,8 @@ class SpeedPosition(FormationAlgorithm):
                 if platoon is vehicle.platoon:
                     fx = individual
                     LOG.debug(f"Considering driving individually for vehicle {vehicle.vid}")
+                    vehicle._candidates_filtered += 1
+                    vehicle._candidates_filtered_self += 1
                 elif vehicle.position > platoon.rear_position:
                     # TODO HACK for skipping vehicles in front of us
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
