@@ -556,7 +556,7 @@ class PlatooningVehicle(Vehicle):
         # HACK for determining the join position
         if self.position > leader.platoon.position:
             # TODO join at front
-            LOG.warning(f"{self.vid} is in front of the target platoon {platoon_id} ({leader_id})")
+            LOG.info(f"{self.vid} is in front of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at the front of a platoon is not yet implemented!")
             self.in_maneuver = False
 
@@ -566,7 +566,7 @@ class PlatooningVehicle(Vehicle):
             return
         elif self.position > leader.platoon.last.position:
             # TODO join at (arbitrary position) in the middle
-            LOG.warning(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
+            LOG.info(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at arbitrary positions of a platoon is not yet implemented!")
             self.in_maneuver = False
 

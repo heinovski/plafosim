@@ -389,7 +389,7 @@ class Simulator:
             LOG.warning(f"{vehicle.vid} only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
-            LOG.warning(f"Adjusted target lane of {vehicle.vid} to {target_lane} (from {old_target_lane})")
+            LOG.info(f"Adjusted target lane of {vehicle.vid} to {target_lane} (from {old_target_lane})")
 
         if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon():
             # followers are not allowed to change the lane on their one
@@ -776,7 +776,7 @@ class Simulator:
                     LOG.error(f"Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Delaying insertion of vehicles is not (yet) implemented!")
                     return  # do not insert this vehicle but also do not abort the simulation
                 depart_lane = depart_lane + 1
-                LOG.warning(f"Increased depart lane for {vid} to avoid a collision (now lane {depart_lane})")
+                LOG.info(f"Increased depart lane for {vid} to avoid a collision (now lane {depart_lane})")
                 # we need to check again
 
         vehicle = self._add_vehicle(
