@@ -207,13 +207,14 @@ class SpeedPosition(FormationAlgorithm):
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.platoon_role != PlatoonRole.NONE and other_vehicle.platoon_role != PlatoonRole.LEADER:
                     # we can only join an existing platoon or built a new one
-                    LOG.debug(f"{vehicle.vid} is not available")
+                    LOG.debug(f"{other_vehicle.vid} is not available")
                     vehicle._candidates_filtered += 1
+                    vehicle._candidates_filtered_follower += 1
                     continue
                 # filter vehicles which are already in a maneuver
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.in_maneuver:
-                    LOG.debug(f"{vehicle.vid} is not available")
+                    LOG.debug(f"{other_vehicle.vid} is already in a maneuver")
                     vehicle._candidates_filtered += 1
                     vehicle._candidates_filtered_maneuver += 1
                     continue
@@ -343,7 +344,7 @@ class SpeedPosition(FormationAlgorithm):
                 # filter vehicles which are already in a maneuver
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.in_maneuver:
-                    LOG.debug(f"{other_vehicle.vid} is not available")
+                    LOG.debug(f"{other_vehicle.vid} is already in a maneuver")
                     vehicle._candidates_filtered += 1
                     vehicle._candidates_filtered_maneuver += 1
                     continue
