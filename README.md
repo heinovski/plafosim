@@ -64,6 +64,28 @@ You can see the complete list of available parameters in the help by running
 
 ```python3 plafosim.py -h, --help```
 
+### Examples
+
+```
+# Configure a 100km freeway with ramps at every 10km
+python3 plafosim.py --road-length 100 --ramp-interval 10000
+
+# Configure random (normally distributed) desired driving speed of 130km/h
+python3 plafosim.py --random-driving-speed true --desired-speed 36
+
+# Configure random trips for 500 vehicles
+python3 plafosim.py --vehicles 500 --random-depart-position true --random-arrival-position true --depart-desired true
+
+# Pre fill the freeway with 1000 vehicles
+python3 plafosim.py --vehicles 1000 --pre fill true
+
+# Configure 50% of the vehicles with Advanced Cruise Control (ACC) and a headway time of 1.5s
+python3 plafosim.py --penetration 0.5 --acc-headway-time 1.5
+
+# Enable a simple, distributed platoon formation algorithm [1] in order to form platoons every 30s
+python3 plafosim.py --formation-algorithm speedposition --formation-strategy distributed --execution-interval 30
+```
+
 ### Live GUI
 
 You can get a very simple live GUI based on SUMO by using the parameter `gui`
@@ -82,3 +104,7 @@ You can view it by using a corresponding script that is shipped within this repo
 To see all options of this script, run
 
 ```python3 scripts/play-vehicle-trace.py -h, --help```
+
+## References
+
+[1] Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
