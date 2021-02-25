@@ -34,13 +34,13 @@ Currently, only command-line is thorougly tested and thus completely available t
 
 ### Command-line
 
-Use the following script to run a simulation
+Use the following command to run a simulation with the default configuration
 
 ```python3 plafosim.py```
 
 ### Advanced Simulation Control
 
-You can use a variety of different parameters to customize your simulation.
+You can use a variety of different parameters to customize the scenario and the simulation itself.
 E.g., use the parameter `vehicles` to configure the number of vehicles in the simulation
 
 ```python3 plafosim.py --vehicles 1000```
