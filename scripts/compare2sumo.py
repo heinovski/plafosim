@@ -273,7 +273,7 @@ for label in trip_diff_labels:
     d = data.describe()
 
     if args.experiment == "acc":
-        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+        # limits were set seed with 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'desiredSpeed':
             l_mean = 0.443730
             l_std = 5.233829
@@ -324,7 +324,7 @@ for label in trip_diff_labels:
             l_max = 51.750000
 
     else:
-        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+        # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         assert(args.experiment == "cc")
         if label == 'desiredSpeed':
             l_mean = 0.443730
@@ -441,7 +441,7 @@ for label in lifetime_labels:
         d = data.describe()
 
         if args.experiment == "acc":
-            # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+            # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
             l_mean = -0.817673
             l_std = 2.355079
             l_min = -45.360000
@@ -450,7 +450,7 @@ for label in lifetime_labels:
             l_75 = 0.000000
             l_max = 0.300000
         else:
-            # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+            # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
             assert(args.experiment == "cc")
             l_mean = -0.092872
             l_std = 1.662458
@@ -503,7 +503,7 @@ for label in lifetime_diff_labels:
     d = data.describe()
 
     if args.experiment == "acc":
-        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+        # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'diff_sumo_speed':
             l_mean = 1.301589
             l_std = 4.255137
@@ -529,7 +529,7 @@ for label in lifetime_diff_labels:
             l_75 = 1.000000
             l_max = 3.000000
     else:
-        # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+        # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         assert(args.experiment == "cc")
         if label == 'diff_sumo_speed':
             l_mean = 433.044838
