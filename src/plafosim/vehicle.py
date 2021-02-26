@@ -383,7 +383,7 @@ class Vehicle:
             LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
             return
 
-        expected_travel_time = (self.arrival_position - self.depart_position) / self.desired_speed
+        expected_travel_time = (self.arrival_position - self.depart_position) / self._desired_speed  # make sure to use the individual desired speed
         assert(self.travel_time != 0)
         time_loss = self.travel_time - round(expected_travel_time)
         assert(expected_travel_time != 0)
