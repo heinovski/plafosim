@@ -94,7 +94,7 @@ You can get a very simple live GUI based on SUMO by using the parameter `gui`
 
 More options for the live GUI can be found within the ``gui properties`` section of the help.
 
-## Re-Playing a Simulation Run
+## Re-Playing a Simulation
 
 The simulation writes a trace for every simulated vehicle to a trace file (default `results_vehicle_traces.csv`).
 You can view it by using a corresponding script that is shipped within this repository
