@@ -369,9 +369,11 @@ class PlatooningVehicle(Vehicle):
         if self.is_in_platoon():
             self._leave()
 
-        assert(self.travel_time != 0)
-        assert(self.travel_distance != 0)
+        assert(self.travel_time > 0)
+        assert(self.time_in_platoon >= 0)
         platoon_time_ratio = round(self.time_in_platoon / self.travel_time, 1)
+        assert(self.travel_distance > 0)
+        assert(self.distance_in_platoon >= 0)
         platoon_distance_ratio = round(self.distance_in_platoon / self.travel_distance, 1)
 
         LOG.info(f"{self.vid} drove {self.time_in_platoon}s ({self.distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100}% ({platoon_distance_ratio * 100}%) of the trip")
