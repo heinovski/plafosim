@@ -315,13 +315,14 @@ for label in trip_diff_labels:
             l_75 = 51.500000
             l_max = 929.000000
         elif label == 'timeLoss':
-            l_mean = -76.270600
-            l_std = 121.250862
+            l_mean = -76.342600
+            l_std = 121.286826
             l_min = -414.530000
-            l_25 = -113.902500
-            l_50 = -17.330000
-            l_75 = -4.377500
-            l_max = 51.850000
+            l_25 = -114.177500
+            l_50 = -17.430000
+            l_75 = -3.927500
+            l_max = 51.750000
+
     else:
         # limits were set seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         assert(args.experiment == "cc")
@@ -366,13 +367,13 @@ for label in trip_diff_labels:
             l_75 = 246.750000
             l_max = 1308.000000
         elif label == 'timeLoss':
-            l_mean = 1.423600
-            l_std = 5.655546
-            l_min = -9.150000
-            l_25 = -2.005000
-            l_50 = 0.590000
-            l_75 = 3.847500
-            l_max = 26.340000
+            l_mean = 1.351600
+            l_std = 5.688248
+            l_min = -9.050000
+            l_25 = -2.157500
+            l_50 = 0.485000
+            l_75 = 4.022500
+            l_max = 26.140000
 
     if \
             abs(d['mean']) > ceil(abs(l_mean)) \
