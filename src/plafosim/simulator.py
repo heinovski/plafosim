@@ -263,6 +263,10 @@ class Simulator:
             LOG.warning("Recording results for pre-filled vehicles is not recommended to avoid broken statistics!")
         self._record_prefilled = record_prefilled  # whether to record results for pre-filled vehicles
 
+        # statistics
+        self._avg_number_vehicles = 0
+        self._values_in_avg_number_vehicles = 0
+
         # TODO log generation parameters
         self._pre_fill = pre_fill
         if pre_fill:
@@ -1235,6 +1239,12 @@ class Simulator:
         # Hence, we do not have to do anything anymore.
         return self.step
 
+    def _statistics(self):
+        self._avg_number_vehicles = (
+            (self._values_in_avg_number_vehicles * self._avg_number_vehicles + len(self._vehicles)) /
+            (self._values_in_avg_number_vehicles + 1)
+        )
+
     def _get_vehicles_df(self) -> pd.DataFrame:
         if not self._vehicles:
             return pd.DataFrame()
@@ -1286,6 +1296,7 @@ class Simulator:
         # write some general information about the simulation
         with open(f'{self._result_base_filename}_general.out', 'a') as f:
             f.write(f"simulation end: {time.asctime(time.localtime(time.time()))}\n")
+            f.write(f"average number of vehicles: {self._avg_number_vehicles}\n")
 
         # call finish on infrastructures
         for instrastructure in self._infrastructures.values():
