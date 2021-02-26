@@ -385,9 +385,9 @@ class Vehicle:
 
         expected_travel_time = (self.arrival_position - self.depart_position) / self._desired_speed  # make sure to use the individual desired speed
         assert(self.travel_time != 0)
-        time_loss = self.travel_time - round(expected_travel_time)
+        time_loss = self.travel_time - round(expected_travel_time, 1)
         assert(expected_travel_time != 0)
-        travel_time_ratio = round(self.travel_time / expected_travel_time, 2)
+        travel_time_ratio = round(self.travel_time / expected_travel_time, 1)
         average_driving_speed = round(self.travel_distance / self.travel_time, 1)
         average_deviation_desired_speed = round(average_driving_speed - self._desired_speed, 1)
 
