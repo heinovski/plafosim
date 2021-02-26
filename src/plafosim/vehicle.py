@@ -388,7 +388,7 @@ class Vehicle:
         time_loss = self.travel_time - round(expected_travel_time, 1)
         assert(expected_travel_time != 0)
         travel_time_ratio = round(self.travel_time / expected_travel_time, 1)
-        average_driving_speed = round(self.travel_distance / self.travel_time, 1)
+        average_driving_speed = round(self.travel_distance / self.travel_time, 1)  # FIXME this also contains teleports
         average_deviation_desired_speed = round(average_driving_speed - self._desired_speed, 1)
 
         LOG.info(f"{self.vid} arrived at {self.position}m,{self.lane} with {self.speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {time_loss}s, {travel_time_ratio * 100}% of expected duration")
