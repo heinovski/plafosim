@@ -219,6 +219,7 @@ class SpeedPosition(FormationAlgorithm):
                     vehicle._candidates_filtered += 1
                     vehicle._candidates_filtered_follower += 1
                     continue
+
                 # filter vehicles which are already in a maneuver
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.in_maneuver:
@@ -351,6 +352,7 @@ class SpeedPosition(FormationAlgorithm):
                     vehicle._candidates_filtered += 1
                     vehicle._candidates_filtered_follower += 1
                     continue
+
                 # filter vehicles which are already in a maneuver
                 # we only have this information due to oracle knowledge in the centralized version
                 if other_vehicle.in_maneuver:
