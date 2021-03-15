@@ -122,7 +122,7 @@ class SpeedPosition(FormationAlgorithm):
 
         found_candidates = []
 
-        # get all available vehicles from the platoon table to find available platoons
+        # get all available platoons or platoon candidates
         for platoon in self._owner._get_available_platoons():
 
             # another candidate vehicle/platoon
@@ -191,7 +191,7 @@ class SpeedPosition(FormationAlgorithm):
                 LOG.debug(f"{vehicle.vid} is already in a maneuver")
                 continue
 
-            # select all available candidates
+            # get all available platoons or platoon candidates
             for other_vehicle in self._owner._simulator._vehicles.values():
                 # filter same car because we assume driving alone is worse than to do platooning
                 if other_vehicle is vehicle:
@@ -324,7 +324,7 @@ class SpeedPosition(FormationAlgorithm):
             # allow a vehicle to be assigned to exactly one platoon
             constraint_one_target_platoon = solver.RowConstraint(1, 1, f"one platoon: {vehicle.vid}")
 
-            # select all available candidates
+            # get all available platoons or platoon candidates
             for other_vehicle in self._owner._simulator._vehicles.values():
                 # filter vehicles that are technically not able to do platooning
                 if not isinstance(other_vehicle, PlatooningVehicle):
