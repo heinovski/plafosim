@@ -116,10 +116,12 @@ class SpeedPosition(FormationAlgorithm):
         # we can only run the algorithm if we are not yet in a platoon
         # because this algorithm does not support changing the platoon later on
         if self._owner.platoon_role != PlatoonRole.NONE:
+            LOG.debug(f"{self._owner.vid} is already in a platoon")
             return
 
         # only if not currently in a maneuver
         if self._owner.in_maneuver:
+            LOG.debug(f"{self._owner.vid} is already in a maneuver")
             return
 
         LOG.info(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
@@ -185,6 +187,7 @@ class SpeedPosition(FormationAlgorithm):
         for vehicle in self._owner._simulator._vehicles.values():
             # filter vehicles that are technically not able to do platooning
             if not isinstance(vehicle, PlatooningVehicle):
+                LOG.debug(f"{vehicle.vid} is not capable of platooning")
                 continue
             # filter vehicles which are already in a platoon
             if vehicle.platoon_role != PlatoonRole.NONE:
@@ -202,6 +205,7 @@ class SpeedPosition(FormationAlgorithm):
                     continue
                 # filter vehicles that are technically not able to do platooning
                 if not isinstance(other_vehicle, PlatooningVehicle):
+                    LOG.debug(f"{other_vehicle.vid} is not capable of platooning")
                     continue
 
                 # another candidate vehicle/platoon
@@ -315,6 +319,7 @@ class SpeedPosition(FormationAlgorithm):
 
             # filter vehicles that are technically not able to do platooning
             if not isinstance(vehicle, PlatooningVehicle):
+                LOG.debug(f"{vehicle.vid} is not capable of platooning")
                 continue
             # filter vehicles which are already in a platoon
             if vehicle.platoon_role != PlatoonRole.NONE:
@@ -332,6 +337,7 @@ class SpeedPosition(FormationAlgorithm):
             for other_vehicle in self._owner._simulator._vehicles.values():
                 # filter vehicles that are technically not able to do platooning
                 if not isinstance(other_vehicle, PlatooningVehicle):
+                    LOG.debug(f"{other_vehicle.vid} is not capable of platooning")
                     continue
 
                 # another candidate vehicle/platoon
