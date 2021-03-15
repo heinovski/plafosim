@@ -118,6 +118,10 @@ class SpeedPosition(FormationAlgorithm):
         if self._owner.platoon_role != PlatoonRole.NONE:
             return
 
+        # only if not currently in a maneuver
+        if self._owner.in_maneuver:
+            return
+
         LOG.info(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
 
         found_candidates = []
