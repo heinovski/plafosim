@@ -1026,11 +1026,7 @@ class Simulator:
                     "candidatesFound,"
                     "candidatesFiltered,"
                     "candidatesFilteredFollower,"
-                    "candidatesFilteredManeuver,"
-                    "candidatesFilteredSelf,"
-                    "candidatesFilteredSpeed,"
-                    "candidatesFilteredPosition,"
-                    "candidatesFilteredFront"
+                    "candidatesFilteredManeuver"
                     "\n"
                 )
 

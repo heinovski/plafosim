@@ -131,9 +131,6 @@ class SpeedPosition(FormationAlgorithm):
         # get all available platoons or platoon candidates
         for platoon in self._owner._get_available_platoons():
 
-            # another candidate vehicle/platoon
-            self._owner._candidates_found += 1
-
             # calculate deviation values
             ds = self._ds(self._owner, platoon)
             dp = self._dp(self._owner, platoon)
@@ -141,22 +138,16 @@ class SpeedPosition(FormationAlgorithm):
             # TODO HACK for skipping platoons in front of us
             if self._owner.position > platoon.rear_position:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
-                self._owner._candidates_filtered += 1
-                self._owner._candidates_filtered_front += 1
                 continue
 
             # remove platoon if not in speed range
             if ds > self._speed_deviation_threshold * self._owner.desired_speed:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
-                self._owner._candidates_filtered += 1
-                self._owner._candidates_filtered_speed += 1
                 continue
 
             # remove platoon if not in position range
             if dp > self._position_deviation_threshold:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
-                self._owner._candidates_filtered += 1
-                self._owner._candidates_filtered_position += 1
                 continue
 
             # calculate deviation/cost
@@ -169,6 +160,9 @@ class SpeedPosition(FormationAlgorithm):
         if len(found_candidates) == 0:
             LOG.debug(f"{self._owner.vid} has no candidates")
             return
+
+        # the number of candidates found in this iteration
+        self._owner._candidates_found += len(found_candidates)
 
         # find best candidate to join
         # pick the platoon with the lowest deviation
@@ -208,8 +202,7 @@ class SpeedPosition(FormationAlgorithm):
                     LOG.debug(f"{other_vehicle.vid} is not capable of platooning")
                     continue
 
-                # another candidate vehicle/platoon
-                vehicle._candidates_found += 1
+                # here, the logic similar to the distributed approach begins
 
                 # filter vehicles which are not available to become a new leader
                 # we only have this information due to oracle knowledge in the centralized version
@@ -240,22 +233,16 @@ class SpeedPosition(FormationAlgorithm):
                 # TODO HACK for skipping vehicles in front of us
                 if vehicle.position > platoon.rear_position:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
-                    vehicle._candidates_filtered += 1
-                    vehicle._candidates_filtered_front += 1
                     continue
 
                 # remove platoon if not in speed range
                 if ds > self._speed_deviation_threshold * vehicle.desired_speed:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
-                    vehicle._candidates_filtered += 1
-                    vehicle._candidates_filtered_speed += 1
                     continue
 
                 # remove platoon if not in position range
                 if dp > self._position_deviation_threshold:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
-                    vehicle._candidates_filtered += 1
-                    vehicle._candidates_filtered_position += 1
                     continue
 
                 # calculate deviation/cost
@@ -264,6 +251,7 @@ class SpeedPosition(FormationAlgorithm):
                 # add platoon to list
                 all_found_candidates.append({'vid': vehicle.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
                 LOG.info(f"{vehicle.vid} found applicable candidate {platoon.platoon_id}")
+                vehicle._candidates_found += 1
 
         if len(all_found_candidates) == 0:
             LOG.debug(f"{self._owner.iid} found no possible matches")
@@ -341,8 +329,7 @@ class SpeedPosition(FormationAlgorithm):
                     LOG.debug(f"{other_vehicle.vid} is not capable of platooning")
                     continue
 
-                # another candidate vehicle/platoon
-                vehicle._candidates_found += 1
+                # here, the logic similar to the distributed approach begins
 
                 # filter vehicles which are not available to become a new leader
                 # we only have this information due to oracle knowledge in the centralized version
@@ -370,14 +357,10 @@ class SpeedPosition(FormationAlgorithm):
                 if platoon is vehicle.platoon:
                     fx = individual
                     LOG.debug(f"Considering driving individually for vehicle {vehicle.vid}")
-                    vehicle._candidates_filtered += 1
-                    vehicle._candidates_filtered_self += 1
                 elif vehicle.position > platoon.rear_position:
                     # TODO HACK for skipping vehicles in front of us
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                     fx = infinity
-                    vehicle._candidates_filtered += 1
-                    vehicle._candidates_filtered_front += 1
                 else:
                     # calculate deviation values
                     ds = self._ds(vehicle, platoon)
@@ -387,18 +370,15 @@ class SpeedPosition(FormationAlgorithm):
                     if ds > self._speed_deviation_threshold * vehicle.desired_speed:
                         LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference ({ds})")
                         fx = infinity
-                        vehicle._candidates_filtered += 1
-                        vehicle._candidates_filtered_speed += 1
                     # remove platoon if not in position range
                     elif dp > self._position_deviation_threshold:
                         LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference ({dp})")
                         fx = infinity
-                        vehicle._candidates_filtered += 1
-                        vehicle._candidates_filtered_position += 1
                     else:
                         # calculate deviation/cost
                         LOG.debug(f"Considering platoon {platoon.platoon_id} for vehicle {vehicle.vid}")
                         fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
+                        vehicle._candidates_found += 1
 
                 # define (0,1) decision variable for assignment of vehicle to platoon
                 variable = solver.IntVar(0, 1, f"{vehicle.vid} -> {platoon.platoon_id}")
