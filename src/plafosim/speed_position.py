@@ -295,7 +295,7 @@ class SpeedPosition(FormationAlgorithm):
 
         import sys
         infinity = sys.float_info.max  # does work
-        individual = 1e+19
+        individual = 1e+19  # magic big number for driving individually
 
         objective = solver.Objective()
         objective.SetMinimization()
