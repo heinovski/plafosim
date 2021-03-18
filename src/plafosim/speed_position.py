@@ -280,12 +280,12 @@ class SpeedPosition(FormationAlgorithm):
             # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
             vehicle._join(best['pid'], best['lid'])
 
-            # remove all matches from the list of possible matches that would include
+            # remove all matches from the list of possible matches that would include the selected vehicle
             def is_available(x: dict) -> bool:
-                return (x['vid'] != best['vid'] and  # noqa 504 # obviously this vehicle does not search anymore
-                        x['lid'] != best['vid'] and  # noqa 504 # this vehicle is not applicable as leader anymore
-                        x['vid'] != best['lid'])  # the leader is not searching anymore
-#                            x['lid'] != best['lid'])  # the leader is still available  # TODO
+                return (x['vid'] != best['vid'] and  # noqa 504 # this vehicle does not search anymore
+                        x['lid'] != best['vid'] and  # noqa 504 # this vehicle will not be applicable as leader anymore # TODO what about transitive joins?
+                        x['vid'] != best['lid'])  # the other vehicle is not searching anymore, since it will become a leader
+            # it still possible to join the other vehicles (which will become a leader now)
 
             all_found_candidates = [x for x in all_found_candidates if is_available(x)]
 
