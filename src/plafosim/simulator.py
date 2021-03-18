@@ -1087,13 +1087,20 @@ class Simulator:
         traci.start(sumoCmd)
 
         # draw infrastructures
+        y = 280
+        width = 20
+        color = (0, 0, 255)
         for infrastructure in self._infrastructures.values():
             # add infrastructure
             if (str(infrastructure.iid)) not in traci.polygon.getIDList():
-                y = 230
-                width = 10
-                color = (255, 126, 0)
-                traci.polygon.add(str(infrastructure.iid), [(infrastructure.position, y), (infrastructure.position + width, y), (infrastructure.position + width, y + width), (infrastructure.position, y + width)], color, fill=True)
+                traci.polygon.add(f"rsu-{str(infrastructure.iid)}", [
+                    (infrastructure.position - width / 2, y),  # bottom left
+                    (infrastructure.position + width / 2, y),  # bottom right
+                    (infrastructure.position + width / 2, y + width),  # top right
+                    (infrastructure.position - width / 2, y + width)  # top left
+                ], color, fill=True)
+                traci.poi.add(f"RSU {infrastructure.iid}", x=infrastructure.position, y=y + width + 10, color=(51, 128, 51))
+
         # draw pre-filled vehicles
         # save internal state of random number generator
         state = random.getstate()
