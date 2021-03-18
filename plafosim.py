@@ -143,6 +143,8 @@ def main():
     platoon = parser.add_argument_group('platoon properties')
     platoon.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether vehicles should automatically start as one platoon")
+    platoon.add_argument('--maximum-teleport-distance', type=int, default=-1,
+                         help="Maximum teleport distance in m")
     platoon.add_argument('--formation-algorithm', type=str, default=None,
                          choices=["speedposition"], help="The formation algorithm to use")
     platoon.add_argument('--formation-strategy', type=str, default="distributed",
@@ -254,6 +256,7 @@ def main():
         args.minimum_trip_length * 1000,
         args.communication_range,
         args.start_as_platoon,
+        args.maximum_teleport_distance,
         args.formation_algorithm,
         args.formation_strategy,
         args.formation_centralized_kind,

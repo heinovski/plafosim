@@ -111,6 +111,7 @@ class PlatooningVehicle(Vehicle):
         self._joins_aborted_trip_begin = 0
         self._joins_aborted_trip_end = 0
         self._joins_aborted_leader_maneuver = 0
+        self._joins_aborted_teleport_threshold = 0
         self._joins_aborted_no_space = 0
 
         self._joins_front = 0
@@ -422,6 +423,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_aborted_trip_begin},"
                     f"{self._joins_aborted_trip_end},"
                     f"{self._joins_aborted_leader_maneuver},"
+                    f"{self._joins_aborted_teleport_threshold},"
                     f"{self._joins_aborted_no_space},"
                     f"{self._joins_front},"
                     f"{self._joins_arbitrary},"
@@ -613,6 +615,15 @@ class PlatooningVehicle(Vehicle):
 
             self._joins_aborted += 1
             self._joins_aborted_leader_maneuver += 1
+            return
+
+        if abs(new_position - self.position) > self._simulator._maximum_teleport_distance:
+            # the vehicle is too far away to be teleported
+            LOG.warning(f"{self.vid} is too far away from the target platoon to realistically do a teleport!")
+            self.in_maneuver = False
+
+            self._joins_aborted += 1
+            self._joins_aborted_teleport_threshold += 1
             return
 
         platoon_successor = self._simulator._get_successor(last)

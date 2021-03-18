@@ -96,6 +96,7 @@ class Simulator:
             minimum_trip_length: int = 0,
             communication_range: int = 1000,
             start_as_platoon: bool = False,
+            maximum_teleport_distance: int = -1,
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',
             formation_centralized_kind: str = 'greedy',
@@ -197,6 +198,15 @@ class Simulator:
                 sys.exit("ERROR: Vehicles can not have random departure lanes when starting as one platoon!")
             if random_arrival_position:
                 sys.exit("ERROR: Vehicles can not have random arrival posiition when starting as one platoon!")
+        if maximum_teleport_distance == -1:
+            self._maximum_teleport_distance = self._road_length
+            LOG.warning("No maximum teleport distance configured! The vehicle behavior may be unrealistic!")
+        else:
+            if maximum_teleport_distance >= self._ramp_interval:
+                LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports to the next ramp! ")
+            if maximum_teleport_distance >= minimum_trip_length:
+                LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports of the minimum tip length!")
+            self._maximum_teleport_distance = maximum_teleport_distance  # maximum teleport distance
 
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures == 0:
@@ -1001,6 +1011,7 @@ class Simulator:
                     "joinsAbortedTripBegin,"
                     "joinsAbortedTripEnd,"
                     "joinsAbortedLeaderManeuver,"
+                    "joinsAbortedTeleportThreshhold,"
                     "joinsAbortedNoSpace,"
                     "joinsFront,"
                     "joinsArbitrary,"
