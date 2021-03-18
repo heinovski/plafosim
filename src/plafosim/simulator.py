@@ -1086,6 +1086,20 @@ class Simulator:
         import traci
         traci.start(sumoCmd)
 
+        # draw ramps
+        y = 241
+        color = (0, 0, 0)
+        width = 4
+        height = 150
+        for x in range(0, self._road_length + 1, self._ramp_interval):
+            traci.polygon.add(f"ramp-{x}", [
+                (x - width / 2, y),  # top left
+                (x + width / 2, y),  # top right
+                (x + width / 2, y - height),  # bottom right
+                (x - width / 2, y - height)   # bottom left
+            ], color, fill=True)
+            traci.poi.add(f"Ramp at {x}m", x=x, y=y - height - 10, color=(51, 128, 51))
+
         # draw infrastructures
         y = 280
         width = 20
