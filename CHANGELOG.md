@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.1) - 2021-03-19
+* Added drawing ramps and road end (#253)
+* Added maximum teleport distance (#267)
+* Fixed candidate metrics (#266)
+
 ## [0.9.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.0) - 2021-03-04
 * Added all leave cases (simplified) (#206)
 * Added formation statistics
