@@ -93,6 +93,8 @@ You can get a very simple live GUI based on SUMO by using the parameter `gui`
 
 ```python3 plafosim.py --gui true```
 
+![](doc/gui.png)
+
 More options for the live GUI can be found within the ``gui properties`` section of the help.
 
 ## Re-Playing a Simulation
