@@ -1,12 +1,31 @@
 # Platoon Formation Simulator (PlaFoSim)
 
-[PlaFoSim](https://www.plafosim.de) - A simple (and flexible) simulator for platoon formation.
-
 [![Build Status](https://ci.tkn.tu-berlin.de/api/badges/CCS/plafosim/status.svg)](https://ci.tkn.tu-berlin.de/CCS/plafosim)
 [![Test Coverage](https://plafosim.de/coverage/coverage.svg)](https://ci.tkn.tu-berlin.de/CCS/plafosim)
 
+[PlaFoSim](https://www.plafosim.de) - A simple (and flexible) simulator for platoon formation.
+
+The idea of PlaFoSim is to simulate the process of forming platoons from individually driven vehicle.
+While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is more abstract. That is V2V use an Unit Disc Model (UDM) and maneuvers are implemented by teleports.
+<table>
+<tr>
+<td>Scenario</td>
+<td>Advertisement</td>
+<td>Assignment</td>
+<td>Maneuver</td>
+</tr>
+<tr>
+<td><img src="doc/scenario.png" /></td>
+<td><img src="doc/advertisement.png" /></td>
+<td><img src="doc/assignment.png" /></td>
+<td><img src="doc/maneuver.png" /></td>
+</tr>
+</table>
+
 This tool is in active development and has not been published yet.
 For more information, contact Julian Heinovski ([heinovski@ccs-labs.org](mailto:heinovski@ccs-labs.org)).
+
+---
 
 ## Quickstart
 
