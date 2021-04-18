@@ -8,7 +8,7 @@
 This tool is in active development and has not been published yet.
 For more information, contact [Julian Heinovski <heinovski@ccs-labs.org>](mailto:heinovski@ccs-labs.org).
 
-### Quickstart
+## Quickstart
 
 ```./plafosim.py```
 
@@ -17,11 +17,11 @@ For more information, contact [Julian Heinovski <heinovski@ccs-labs.org>](mailto
 - Install Python3 (tested with 3.6.9)
 - Optionally install SUMO (tested with >= 1.1.0)
 - Clone the repository
-- Install the minimum requirements (for running a simulation)
+- Install the minimum requirements (for running a simulation):
 ```
 pip3 install -r requirements.txt
 ```
-- Install the optional requirements (for testing and CI)
+- Install the optional requirements (for testing and CI):
 ```
 pip3 install -r requirements.opt.txt
 ```
@@ -33,14 +33,14 @@ Currently, only command-line is thorougly tested and thus completely available t
 
 ### Command-line
 
-Use the following command to run a simulation with the default configuration
+Use the following command to run a simulation with the default configuration:
 
 ```python3 plafosim.py```
 
 ### Advanced Simulation Control
 
 You can use a variety of different parameters to customize the scenario and the simulation itself.
-E.g., use the parameter `vehicles` to configure the number of vehicles in the simulation
+E.g., use the parameter `vehicles` to configure the number of vehicles in the simulation:
 
 ```python3 plafosim.py --vehicles 1000```
 
@@ -59,7 +59,7 @@ The available parameters are grouped into different categories:
 - result recording properties
 ```
 
-You can see the complete list of available parameters in the help by running
+You can see the complete list of available parameters in the help:
 
 ```python3 plafosim.py -h, --help```
 
@@ -87,7 +87,7 @@ python3 plafosim.py --formation-algorithm speedposition --formation-strategy dis
 
 ### Live GUI
 
-You can get a very simple live GUI based on SUMO by using the parameter `gui`
+You can get a very simple live GUI based on SUMO by using the parameter `gui`:
 
 ```python3 plafosim.py --gui true```
 
@@ -98,11 +98,11 @@ More options for the live GUI can be found within the ``gui properties`` section
 ## Re-Playing a Simulation
 
 The simulation writes a trace for every simulated vehicle to a trace file (default `results_vehicle_traces.csv`).
-You can view it by using a corresponding script that is shipped within this repository
+You can view it by using a corresponding script that is shipped within this repository:
 
 ```python3 scripts/play-vehicle-trace.py results_vehicle_traces.csv```
 
-To see all options of this script, run
+To see all options of this script, run:
 
 ```python3 scripts/play-vehicle-trace.py -h, --help```
 
