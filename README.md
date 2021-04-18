@@ -6,7 +6,7 @@
 [![Test Coverage](https://plafosim.de/coverage/coverage.svg)](https://ci.tkn.tu-berlin.de/CCS/plafosim)
 
 This tool is in active development and has not been published yet.
-For more information, contact [Julian Heinovski <heinovski@ccs-labs.org>](mailto:heinovski@ccs-labs.org).
+For more information, contact [Julian Heinovski (heinovski@ccs-labs.org)](mailto:heinovski@ccs-labs.org).
 
 ## Quickstart
 
