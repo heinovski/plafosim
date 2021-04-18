@@ -14,19 +14,17 @@ For more information, contact [Julian Heinovski <heinovski@ccs-labs.org>](mailto
 
 ## Installation
 
-- Install the dependencies listed below
+- Install Python3 (tested with 3.6.9)
+- Optionally install SUMO (tested with >= 1.1.0)
 - Clone the repository
-
-### Dependencies
-
-- Python3 (tested with 3.6.9)
-- argparse (argusment parsing, tested with 1.4.0)
-- pandas (mobility data handling, tested with 1.1.5)
-- tqdm (progress bar, tested with 4.48.2)
-- opt. SUMO (tested with >= 1.1.0)
-- opt. matplotlib (tested with 3.3.0)
-- opt. seaborn (tested with 0.10.1)
-- opt. statsmodels (tested with 0.11.1)
+- Install the minimum requirements (for running a simulation)
+```
+pip3 install -r requirements.txt
+```
+- Install the optional requirements (for testing and CI)
+```
+pip3 install -r requirements.opt.txt
+```
 
 ## Running a Simulation
 
