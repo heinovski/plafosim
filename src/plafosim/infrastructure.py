@@ -37,6 +37,30 @@ class Infrastructure:
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
+        # TODO remove Speed Position specific values
+        """
+        Parameters
+        ----------
+        simulator : Simulator
+            The global simulator object
+        iid : int
+            The id of the infrastructure
+        position : int
+            The position (x) of the infrastructure
+        formation_algorithm : str
+            The platoon formation (i.e., assignment calculation) algorithm to run
+        formation_kind : str
+            The ??
+        execution_interval : int
+            The execution interval for the formation algorithm
+        alpha : float
+            The alpha value for the Speed Position formation algorithm
+        speed_deviation_threshold : float
+            The max. speed deviation for the Speed Position formation algorithm
+        position_deviation_threshold : int
+            The max. position deviation for the Speed Position formation algorithm
+        """
+
         self._simulator = simulator  # the simulator
         self._iid = iid  # the id of the infrastructure
         self._position = position  # the x position of the infrastructure
@@ -58,23 +82,39 @@ class Infrastructure:
 
     @property
     def iid(self) -> int:
-        """Return the id of a infrastructure"""
+        """Returns the id of an infrastructure."""
+
         return self._iid
 
     @property
     def position(self) -> int:
-        """Return the position of a infrastructure"""
+        """Returns the position of an infrastructure."""
+
         return self._position
 
     def action(self, step: int):
-        """Trigger actions of a infrastructure"""
+        """
+        Triggers actions of an infrastructure
+
+        Parameters
+        ----------
+        step : int
+            The current simulation step
+        """
 
         # What has to be triggered periodically?
         if self._simulator._actions:
             self._action(step)
 
     def _action(self, step: int):
-        """Trigger concrete actions of a infrastructure"""
+        """
+        Triggers concrete actions of an infrastructure.
+
+        Parameters
+        ----------
+        step : int
+            The current simulation step
+        """
 
         LOG.info(f"{self.iid} was triggered at {step}")
 
@@ -102,7 +142,7 @@ class Infrastructure:
         return neighbors
 
     def finish(self):
-        """Clean up the instance of the infrastructure"""
+        """Cleans up the instance of the infrastructure"""
 
         if self._formation_algorithm is not None:
             self._formation_algorithm.finish()
