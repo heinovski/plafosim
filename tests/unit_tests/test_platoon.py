@@ -42,6 +42,6 @@ def test_creation():
     assert(platoon.position == 0)
     # TODO rear_position
     # TODO length
-    assert(platoon.get_members() == [1, 2, 3])
+    assert(platoon.member_ids == [1, 2, 3])
     assert(platoon.get_member_index(v2) == 1)
     assert(platoon.get_front(v3) is v2)
