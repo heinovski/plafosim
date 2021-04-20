@@ -27,13 +27,24 @@ LOG = logging.getLogger(__name__)
 
 
 class Platoon:
-    """A collection of parameters for a concrete platoon"""
+    """A collection of parameters for a specific platoon."""
 
     def __init__(
             self,
             platoon_id: int,
             formation: list,
             desired_speed: float):
+        """
+        Parameters
+        ----------
+        platoon_id : int
+            The id of the platoon
+        formation : list
+            The list of PlatooningVehicles within the platoon
+        desired_speed : float
+            The platoon's desired driving speed
+        """
+
         self._platoon_id = platoon_id  # the id of the platoon
         #TODO convert to dict?
         self._formation = formation  # the current formation of the platoon
@@ -41,88 +52,164 @@ class Platoon:
 
     @property
     def platoon_id(self) -> int:
+        """Returns the id of the platoon."""
+
         return self._platoon_id
 
     @property
     def leader(self) -> 'PlatooningVehicle':
+        """Returns the leading PlatoonVehicle of the platoon."""
+
         return self.formation[0]
 
     @property
     def last(self) -> 'PlatooningVehicle':
+        """Returns the last PlatooningVehicle of the platoon."""
+
         return self.formation[-1]
 
     @property
     def formation(self) -> list:
+        """Returns the complete formation of the platoon."""
+
         return self._formation
 
     @property
     def member_ids(self) -> list:
+        """Returns the ids of all platoon members."""
+
         return [x.vid for x in self.formation]
 
     @property
     def desired_speed(self) -> float:
+        """Returns the desired driving speed of the platoon."""
+
         return self._desired_speed
 
     @property
     def speed(self) -> float:
+        """Returns the current driving speed of the platoon."""
+
         # HACK for keeping the speed up to date
         return self.leader.speed
 
     @property
     def lane(self) -> int:
+        """Returns the current lane of the platoon."""
+
         # HACK for keeping the lane up to date
         return self.leader.lane
 
     @property
     def max_speed(self) -> float:
+        """
+        Returns the maximum speed of the platoon.
+
+        The maximum speed is based on the slowest vehicle within the platoon.
+        """
+
         return min(self.formation, key=lambda x: x.max_speed).max_speed
 
     @property
     def max_acceleration(self) -> float:
+        """
+        Returns the maximum acceleration of the platoon.
+
+        The maximum acceleration is based on the slowest vehicle within the platoon.
+        """
+
         return min(self.formation, key=lambda x: x.max_acceleration).max_acceleration
 
     @property
     def max_deceleration(self) -> float:
+        """
+        Returns the maximum deceleration of the platoon.
+
+        The maximum deceleration is based on the slowest vehicle within the platoon.
+        """
+
         return min(self.formation, key=lambda x: x.max_deceleration).max_deceleration
 
     @property
     def size(self) -> int:
+        """Returns the size of the platoon."""
+
         return len(self.formation)
 
     @property
     def position(self) -> int:
+        """Returns the current position of the platoon."""
+
+        # HACK for keeping the position up to date
         return self.leader.position
 
     @property
     def rear_position(self) -> int:
+        """Returns the current rear position of the platoon."""
+
+        # HACK for keeping the rear position up to date
         return self.last.rear_position
 
     @property
     def length(self) -> float:
+        """Returns the length of the platoon."""
+
         return self.position - self.rear_position
 
-    def get_members(self) -> list:
-        return [vehicle.vid for vehicle in self.formation]
-
     def get_member_index(self, vehicle: 'PlatooningVehicle') -> int:
+        """
+        Returns the index of a member within the platoon.
+
+        Parameters
+        ----------
+        vehicle : PlatooningVehicle
+            The considered vehicle within the platoon.
+        """
+
         return self.formation.index(vehicle)
 
     def get_front(self, vehicle: 'PlatooningVehicle'):
+        """
+        Returns the PlatooningVehicle in the front.
+
+        Parameters
+        ----------
+        vehicle : PlatooningVehicle
+            The considered vehicle within the platoon.
+        """
+
         if vehicle is not self.leader:
             return self.formation[self.get_member_index(vehicle) - 1]
         else:
             return None
 
     def get_back(self, vehicle: 'PlatooningVehicle'):
+        """
+        Returns the PlatooningVehicle in the back.
+
+        Parameters
+        ----------
+        vehicle : PlatooningVehicle
+            The considered vehicle within the platoon.
+        """
+
         if vehicle is not self.last:
             return self.formation[self.get_member_index(vehicle) + 1]
         else:
             return None
 
     def update_desired_speed(self):
+        """
+        Update the desired driving speed of the platoon.
+
+        This is based on the desired driving speed of all members.
+        """
+
         old_desired_speed = self.desired_speed
         self._desired_speed = min(mean([v._desired_speed for v in self.formation]), self.max_speed)
         LOG.debug(f"Updated platoon {self.platoon_id}'s desired speed to {self.desired_speed} (from {old_desired_speed})")
 
     def __str__(self) -> str:
+        """Returns the str representation of the platoon."""
+
         return f"{self.platoon_id}: {self.member_ids}"
