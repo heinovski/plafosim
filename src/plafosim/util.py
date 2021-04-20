@@ -20,26 +20,96 @@ import pandas as pd
 
 
 def assert_index_equal(a, b):
+    """
+    Ensures the indeces of two Sequences/DataFrames are equal.
+
+    Parameters
+    ----------
+    a : pandas.Sequence / pandas.DataFrame
+    b : pandas.Sequence / pandas.DataFrame
+    """
+
     assert(list(a.index) == list(b.index))
 
 
 def speed2distance(speed: float, time_interval: float = 1.0) -> float:
+    """
+    Converts a driving speed to a distance driven within a given time interval.
+
+    Parameters
+    ----------
+    speed : float
+        The speed to be converted
+    time_interval : float, optional
+        The time to consider
+    """
+
     return speed * time_interval
 
 
 def distance2speed(distance: float, time_interval: float = 1.0) -> float:
+    """
+    Converts a driven distance to a driving speed for a given time interval.
+
+    Parameters
+    ----------
+    distance : float
+        The distance to be converted
+    time_interval : float, optional
+        The time to consider
+    """
+
     return distance / time_interval
 
 
 def acceleration2speed(acceleration: float, time_interval: float = 1.0) -> float:
+    """
+    Converts an acceleration to a driving speed for a given time interval.
+
+    Parameters
+    ----------
+    acceleration : float
+        The acceleration to be converted
+    time_interval : float, optional
+        The time to consider
+    """
+
     return acceleration * time_interval
 
 
 def speed2acceleration(speed_from: float, speed_to: float, time_interval: float = 1.0) -> float:
+    """
+    Converts a speed range to an acceleration within a given time interval.
+
+    Parameters
+    ----------
+    speed_from : float
+        The initial speed
+    speed_to : float
+        The target speed
+    time_interval : float, optional
+        The time to consider
+    """
+
     return (speed_to - speed_from) / time_interval
 
 
 def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
+    """
+    Returns the clipped positions (i.e., by arrival position) of vehicles within a pandas DataFrame.
+
+    Parameters
+    ----------
+    position : pandas.Series
+        The series containing the positions to be clipped
+        index: vid
+        columns: [position, length, lane, ..]
+    vdf : pandas.DataFrame
+        The dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    """
+
     assert_index_equal(position, vdf)
 
     clipped_position = pd.Series(
@@ -53,10 +123,23 @@ def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
     return clipped_position
 
 
-# krauss - single lane traffic
-# adjust position (move)
-# x(t + step_size) = x(t) + v(t)*step_size
 def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
+    """
+    Updates the position of vehicles within a pandas DataFrame.
+
+    This is based on Krauss' single lane traffic:
+    adjust position (move)
+    x(t + step_size) = x(t) + v(t)*step_size
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    step_length : int
+        The length of the simulated step
+    """
     position = vdf.position + (vdf.speed * step_length)
     vdf['position'] = clip_position(position, vdf)
     return vdf
@@ -64,8 +147,14 @@ def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
 
 def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
     """
-    index: vid
-    columns: [position, length, lane, ..]
+    Returns the list of crashed vehicles' ids
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
     """
 
     # sort vehicles by their position
