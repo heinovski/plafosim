@@ -19,7 +19,7 @@ from enum import Enum
 
 
 class PlatoonRole(Enum):
-    """A collection of available platoon roles"""
+    """A collection of available platoon roles."""
 
     NONE = 0  # corresponds to driving individually
     LEADER = 1  # corresponds to being the leader of a platoon
