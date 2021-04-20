@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.2) - 2021-04-20
+* Added requirements.txt
+* Added version argument
+* Updated comments
+* Updated README
+
 ## [0.9.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.1) - 2021-03-19
 * Added drawing ramps and road end (#253)
 * Added maximum teleport distance (#267)
