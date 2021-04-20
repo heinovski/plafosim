@@ -19,8 +19,35 @@
 class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
-    def __init__(self, name: str, length: int, max_speed: float, max_acceleration: float, max_deceleration: float, min_gap: float, cc_headway_time: float):
-        """Initializes a vehicle type"""
+    def __init__(
+            self, name: str,
+            length: int,
+            max_speed: float,
+            max_acceleration: float,
+            max_deceleration: float,
+            min_gap: float,
+            cc_headway_time: float):
+        """
+        Initializes a specific vehicle type.
+
+        Parameters
+        ----------
+        name : str
+            The name of the vehicle type
+        length : int
+            The length of the vehicle type
+        max_speed : float
+            The maximum speed of the vehicle type
+        max_acceleration : float
+            The maximum acceleration of the vehicle type
+        max_deceleration : float
+            The maximum deceleration of the vehicle type
+        min_gap : float
+            The minimum safety gap to the vehicle in front of the vehicle type
+        cc_headway_time : float
+            The CC headway time of the vehicle type
+        """
+
         self._name = name  # the name of a vehicle type
         self._length = length  # the length of a vehicle type
         self._max_speed = max_speed  # the maximum speed of a vehicle type
@@ -31,38 +58,47 @@ class VehicleType:
 
     @property
     def name(self) -> str:
-        """Returns the name of a vehicle type"""
+        """Returns the name of a vehicle type."""
+
         return self._name
 
     @property
     def length(self) -> int:
-        """Returns the length of a vehicle type"""
+        """Returns the length of a vehicle type."""
+
         return self._length
 
     @property
     def max_speed(self) -> float:
-        """Returns the maximum speed of a vehicle type"""
+        """Returns the maximum speed of a vehicle type."""
+
         return self._max_speed
 
     @property
     def max_acceleration(self) -> float:
-        """Returns the maximum acceleration of a vehicle type"""
+        """Returns the maximum acceleration of a vehicle type."""
+
         return self._max_acceleration
 
     @property
     def max_deceleration(self) -> float:
-        """Returns the maximum deceleration of a vehicle type"""
+        """Returns the maximum deceleration of a vehicle type."""
+
         return self._max_deceleration
 
     @property
     def min_gap(self) -> float:
-        """Returns the minimum gap of a vehicle type"""
+        """Returns the minimum gap of a vehicle type."""
+
         return self._min_gap
 
     @property
     def cc_headway_time(self) -> float:
-        """Returns the desired headway time of a vehicle type"""
+        """Returns the desired headway time of a vehicle type."""
+
         return self._cc_headway_time
 
     def __str__(self) -> str:
+        """Returns the str representation of a vehicle type."""
+
         return str(self.__dict__)
