@@ -63,7 +63,7 @@ TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
 
 
 class Simulator:
-    """A collection of parameters and information of the simulator"""
+    """A collection of parameters and information of the simulator."""
 
     def __init__(
             self,
@@ -129,7 +129,7 @@ class Simulator:
             record_platoon_changes: bool = False,
             record_infrastructure_assignments: bool = False,
             record_prefilled: bool = False):
-        """Initialize a simulator instance"""
+        """Initializes a simulator instance."""
 
         # TODO add custom filter that prepends the log entry with the step time
         logging.basicConfig(level=log_level, format="%(levelname)s [%(name)s]: %(message)s")
@@ -286,33 +286,53 @@ class Simulator:
 
     @property
     def road_length(self) -> int:
+        """Returns the road length."""
+
         return self._road_length
 
     @property
     def number_of_lanes(self) -> int:
+        """Returns the number of lanes."""
+
         return self._number_of_lanes
 
     @property
     def step_length(self) -> int:
+        """Returns the length of a simulation step."""
+
         return self._step_length
 
     @property
     def step(self) -> int:
+        """Returns the current simulation step."""
+
         return self._step
 
     def _call_vehicle_actions(self):
-        """Trigger actions of all vehicles"""
+        """Triggers actions on all vehicles in the simulation."""
 
         for vehicle in self._vehicles.values():
             vehicle.action(self.step)
 
     def _call_infrastructure_actions(self):
-        """Trigger actions of all instrastructures"""
+        """Triggers actions on all instrastructures in the simulation."""
 
         for instrastructure in self._infrastructures.values():
             instrastructure.action(self.step)
 
     def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
+        """
+        Returns the preceeding vehicle for a given vehicle on a given lane.
+
+        Parameters
+        ----------
+        vehicle : Vehicle
+            The vehicle to consider
+        lane : int, optional
+            The lane to consider.
+            A lane of -1 indicates the vehicle's current lane.
+        """
+
         if lane == -1:
             # implicitly search on current lane of vehicle
             lane = vehicle.lane
@@ -331,6 +351,18 @@ class Simulator:
         return predecessor
 
     def _get_successor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
+        """
+        Returns the succeding vehicle for a given vehicle on a given lane.
+
+        Parameters
+        ----------
+        vehicle : Vehicle
+            The vehicle to consider
+        lane : int, optional
+            The lane to consider.
+            A lane of -1 indicates the vehicle's current lane.
+        """
+
         if lane == -1:
             # implicitly search on current lane of vehicle
             lane = vehicle.lane
@@ -349,6 +381,18 @@ class Simulator:
         return successor
 
     def _get_predecessor_rear_position(self, vehicle: Vehicle, lane: int = -1) -> float:
+        """
+        Returns the rear position of the preceeding vehicle for a given vehicle on a given lane.
+
+        Parameters
+        ----------
+        vehicle : Vehicle
+            The vehicle to consider
+        lane : int, optional
+            The lane to consider.
+            A lane of -1 indicates the vehicle's current lane.
+        """
+
         p = self._get_predecessor(vehicle, lane)
         if p is None:
             return -1
@@ -356,6 +400,18 @@ class Simulator:
             return p.rear_position
 
     def _get_predecessor_speed(self, vehicle: Vehicle, lane: int = -1) -> float:
+        """
+        Returns the speed of the preceeding vehicle for a given vehicle on a given lane.
+
+        Parameters
+        ----------
+        vehicle : Vehicle
+            The vehicle to consider
+        lane : int, optional
+            The lane to consider.
+            A lane of -1 indicates the vehicle's current lane.
+        """
+
         p = self._get_predecessor(vehicle, lane)
         if p is None:
             return -1
@@ -363,6 +419,17 @@ class Simulator:
             return p.speed
 
     def is_lane_change_safe(self, vehicle: Vehicle, target_lane: int) -> bool:
+        """
+        Determines whether a lane change for a given vehicle is safe.
+
+        Parameters
+        ----------
+        vehicle :  Vehicle
+            The vehicle to change lanes
+        target_lane : int
+            The target lane for the lane change
+        """
+
         if vehicle.lane == target_lane:
             return True
 
@@ -393,6 +460,28 @@ class Simulator:
 
     # TODO move to vehicle?
     def _change_lane(self, vehicle: Vehicle, target_lane: int, reason: str) -> bool:
+        """
+        Performs a lane change for a given vehicle.
+
+        This is baed on Krauss' multi lane traffic:
+        lane-change
+        congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
+        favorable(right->left) = (v_safe < v_max) and (not congested)
+        favorable(left->right) = (v_safe >= v_max) and (v^0_safe >= v_max)
+        if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
+        for vehicles on the right lane:
+        if (v > v^0_safe) and (not congested) then v <- v^0_safe
+
+        Parameters
+        ----------
+        vehicle :  Vehicle
+            The vehicle to change lanes
+        target_lane : int
+            The target lane for the lane change
+        reason : str
+            The reason for the lane change
+        """
+
         source_lane = vehicle.lane
         if source_lane == target_lane:
             return True
@@ -475,22 +564,42 @@ class Simulator:
         LOG.debug(f"{vehicle.vid}'s lane change is not safe")
         return False
 
-    # kraus - multi lane traffic
-    # lane-change
-    # congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
-    # favorable(right->left) = (v_safe < v_max) and (not congested)
-    # favorable(left->right) = (v_safe >= v_max) and (v^0_safe >= v_max)
-    # if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
-    # for vehicles on the right lane:
-    # if (v > v^0_safe) and (not congested) then v <- v^0_safe
     def _change_lanes(self):
-        """Do lane changes for all vehicles"""
+        """
+        Does lane changes for all vehicles in the simulation.
+
+        This is baed on Krauss' multi lane traffic:
+        lane-change
+        congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
+        favorable(right->left) = (v_safe < v_max) and (not congested)
+        favorable(left->right) = (v_safe >= v_max) and (v^0_safe >= v_max)
+        if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
+        for vehicles on the right lane:
+        if (v > v^0_safe) and (not congested) then v <- v^0_safe
+        """
 
         for vehicle in self._vehicles.values():
             self._adjust_lane(vehicle)
 
     def _adjust_lane(self, vehicle: Vehicle):
-        # decide upon and perform a lane change for this vehicle
+        """
+        Decides upon and performs a lane change for a given vehicle.
+
+        This is baed on Krauss' multi lane traffic:
+        lane-change
+        congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
+        favorable(right->left) = (v_safe < v_max) and (not congested)
+        favorable(left->right) = (v_safe >= v_max) and (v^0_safe >= v_max)
+        if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
+        for vehicles on the right lane:
+        if (v > v^0_safe) and (not congested) then v <- v^0_safe
+
+        Parameters
+        ----------
+        vehicle :  Vehicle
+            The vehicle to be adjusted
+        """
+
         if vehicle.blocked_front:
             if vehicle.lane < self.number_of_lanes - 1:
                 target_lane = vehicle.lane + 1
@@ -505,12 +614,25 @@ class Simulator:
                 self._change_lane(vehicle, target_lane, "keepRight")
 
     def _adjust_speeds(self):
-        """Do speed adjustments for all vehicles"""
+        """
+        Updates the speed (i.e., acceleration & speed) of all vehicles in the simulation.
+
+        This does not (yet) use a vectorized approach.
+        """
 
         for vehicle in sorted(self._vehicles.values(), key=lambda x: x.position, reverse=True):
             self._adjust_speed(vehicle)
 
     def _adjust_speed(self, vehicle: Vehicle):
+        """
+        Updates the speed (i.e., acceleration & speed) of a given vehicle.
+
+        Parameters
+        ----------
+        vehicle: Vehicle
+            The vehicle to be updated
+        """
+
         LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
         LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
         predecessor = self._get_predecessor(vehicle)
@@ -521,6 +643,15 @@ class Simulator:
         LOG.debug(f"{vehicle.vid}'s new speed {vehicle.speed}")
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
+        """
+        Removes arrived vehicles from the simulation.
+
+        Parameters
+        ----------
+        arrived_vehicles : list
+            The ids of arrived vehicles
+        """
+
         for vid in arrived_vehicles:
             # call finish on arrived vehicle
             self._vehicles[vid].finish()
@@ -533,7 +664,7 @@ class Simulator:
 
     @staticmethod
     def _check_collisions(vdf: pd.DataFrame):
-        """Do collision checks for all vehicles"""
+        """Does collision checks for all vehicles in the simulation."""
 
         if vdf.empty:
             return
@@ -547,13 +678,19 @@ class Simulator:
     @staticmethod
     def has_collision(vehicle1: TV, vehicle2: TV) -> bool:
         """
-        TV(position, rear_position, lane)
+        Checks for a collision between two vehicles.
+
+        Parameters
+        ----------
+        vehicle1 : TV(position, rear_position, lane)
+        vehicle2 : TV(position, rear_position, lane)
         """
         assert(vehicle1 is not vehicle2)
         assert(vehicle1.lane == vehicle2.lane)
         return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
 
     def _generate_vehicles(self):
+        """Adds prefilled vehicles to the simulation."""
 
         if self._vehicle_density > 0:
             number_of_vehicles = round(self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes)
@@ -621,6 +758,8 @@ class Simulator:
             LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype.length},{depart_lane} with {depart_speed}")
 
     def _get_desired_speed(self) -> float:
+        """Returns a (random) depart speed."""
+
         if self._random_desired_speed:
             # normal distribution
             desired_speed = self._desired_speed * random.normalvariate(1.0, self._speed_variation)
@@ -632,6 +771,12 @@ class Simulator:
         return desired_speed
 
     def _get_depart_position(self) -> int:
+        """
+        Returns a (random) depart position for a given depart position.
+
+        This considers the ramp interval, road length, and minimum trip length.
+        """
+
         # NOTE: this should only be called for non-prefilled vehicles
         if self._random_depart_position:
             # set maximum theoretical depart position
@@ -657,6 +802,19 @@ class Simulator:
         return depart_position
 
     def _get_arrival_position(self, depart_position: int, prefill: bool = False) -> int:
+        """
+        Returns a (random) arrival position for a given depart position.
+
+        This considers the ramp interval, road length, and minimum trip length.
+
+        Parameters
+        ----------
+        depart_position : int
+            The depart position to consider
+        prefill : bool, optional
+            Whether the trip is for a prefilled vehicle
+        """
+
         if self._random_arrival_position:
             # set minimum theoretical arrival position
             if prefill:
@@ -691,6 +849,7 @@ class Simulator:
         return arrival_position
 
     def _spawn_vehicle(self):
+        """Spawns a vehicle within the simulation."""
 
         if self._vehicle_density > 0:
             number_of_vehicles = self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes
@@ -825,6 +984,31 @@ class Simulator:
             depart_time,
             communication_range
     ):
+        """
+        Adds a vehicle to the simulation based on the given parameters.
+
+        Parameters
+        ----------
+        vid : int
+            The id of the vehicle
+        vtype : VehicleType
+            The vehicle type of the vehicle
+        depart_position : int
+            The depart position of the vehicle
+        arrival_position : int
+            The arrival position of the vehicle
+        desired_speed : float
+            The desired driving speed of the vehicle
+        depart_lane : int
+            The depart lane of the vehicle
+        depart_speed : float
+            The depart speed of the vehicle
+        depart_time : int
+            The depart time of the vehicle
+        communication_range : int
+            The maximum communication range of the vehicle
+        """
+
         # choose vehicle "type" depending on the penetration rate
         if random.random() <= self._penetration_rate:
             vehicle = PlatooningVehicle(
@@ -866,7 +1050,7 @@ class Simulator:
         return vehicle
 
     def _generate_infrastructures(self, number_of_infrastructures: int):
-        """Generate infrastructures for the simulation"""
+        """Generates infrastructures for the simulation."""
 
         if number_of_infrastructures <= 0:
             return
@@ -895,6 +1079,8 @@ class Simulator:
             last_infrastructure_id = iid
 
     def _initialize_result_recording(self):
+        """Creates output files for all (enabled) statistics and writes the headers."""
+
         # write some general information about the simulation
         with open(f'{self._result_base_filename}_general.out', 'w') as f:
             f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
@@ -1091,6 +1277,8 @@ class Simulator:
                 )
 
     def _initialize_gui(self):
+        """Initializes the GUI via TraCI."""
+
         sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
         sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'none']
 
@@ -1148,6 +1336,8 @@ class Simulator:
         random.setstate(state)
 
     def _update_gui(self):
+        """Updates the GUI via TraCI."""
+
         import traci
         for vehicle in self._vehicles.values():
             # update vehicles
@@ -1163,6 +1353,15 @@ class Simulator:
         time.sleep(self._gui_delay)
 
     def _add_gui_vehicle(self, vehicle: Vehicle):
+        """
+        Adds a vehicle to the GUI via TraCI.
+
+        Parameters
+        ----------
+        vehicle : Vehicle
+            The vehicle to add to the GUI
+        """
+
         import traci
         if str(vehicle.vid) not in traci.vehicle.getIDList():
             traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
@@ -1186,7 +1385,12 @@ class Simulator:
                 traci.gui.setZoom("View #0", 1000000)
 
     def run(self):
-        """Run the simulation with the specified parameters"""
+        """
+        Main simulation method.
+        Runs the simulation with the specified parameters until it is stopped.
+
+        This is based on Krauss' multi lane traffic.
+        """
 
         if not self._running:
             self._running = True
@@ -1281,12 +1485,16 @@ class Simulator:
         return self.step
 
     def _statistics(self):
+        """Calculates some period statistics."""
+
         self._avg_number_vehicles = (
             (self._values_in_avg_number_vehicles * self._avg_number_vehicles + len(self._vehicles)) /
             (self._values_in_avg_number_vehicles + 1)
         )
 
     def _get_vehicles_df(self) -> pd.DataFrame:
+        """Returns a pandas dataframe from the internal data structure."""
+
         if not self._vehicles:
             return pd.DataFrame()
         return (
@@ -1302,6 +1510,17 @@ class Simulator:
         )
 
     def _write_back_vehicles_df(self, vdf: pd.DataFrame):
+        """
+        Writes back the vehicle updates from a given pandas dataframe to the internal data structure.
+
+        Parameters
+        ----------
+        vdf : pandas.DataFrame
+            The dataframe containing the vehicles as rows
+            index: vid
+            columns: [position, length, lane, ..]
+        """
+
         # make sure that everything is correct
         assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
 
@@ -1311,14 +1530,21 @@ class Simulator:
             vehicle._position = row.position
 
     def stop(self, msg: str):
-        """Stop the simulation with the given message"""
+        """
+        Stops the simulation with the given message.
+
+        Parameters
+        ----------
+        msg : str
+            The message to show after stopping the simulation
+        """
 
         self._running = False
         print(f"\n{msg}")
         self.finish()
 
     def __str__(self) -> str:
-        """Return a nice string representation of a simulator instance"""
+        """Returns a str representation of a simulator instance."""
 
         sim_dict = self.__dict__.copy()
         sim_dict.pop('_vehicles')
@@ -1328,7 +1554,7 @@ class Simulator:
         return str(sim_dict)
 
     def finish(self):
-        """Clean up the simulation"""
+        """Cleans up the simulation."""
 
         if self._running:
             LOG.warning("Finish called during simulation!")
