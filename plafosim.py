@@ -24,7 +24,7 @@ from timeit import default_timer as timer
 
 from src.plafosim import Simulator
 
-VERSION = "0.9.1"
+VERSION = "0.9.2"
 
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
