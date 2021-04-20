@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2020 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=CustomFormatter, allow_abbrev=False, description="""
     Platoon Formation Simulator (PlaFoSim) -- A simple simulator for platoon formation.
 
-    Copyright (c) 2020 Julian Heinovski <heinovski@ccs-labs.org>
+    Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
     This program comes with ABSOLUTELY NO WARRANTY.
     This is free software, and you are welcome to redistribute it under certain conditions.
     """)
