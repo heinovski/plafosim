@@ -206,6 +206,7 @@ class SpeedPosition(FormationAlgorithm):
 
                 # filter vehicles which are not available to become a new leader
                 # we only have this information due to oracle knowledge in the centralized version
+                # we use this to replace management of neighbors and their advertisements
                 if other_vehicle.platoon_role != PlatoonRole.NONE and other_vehicle.platoon_role != PlatoonRole.LEADER:
                     # we can only join an existing platoon or built a new one
                     LOG.debug(f"{other_vehicle.vid} is not available")
@@ -333,6 +334,7 @@ class SpeedPosition(FormationAlgorithm):
 
                 # filter vehicles which are not available to become a new leader
                 # we only have this information due to oracle knowledge in the centralized version
+                # we use this to replace management of neighbors and their advertisements
                 if other_vehicle.platoon_role != PlatoonRole.NONE and other_vehicle.platoon_role != PlatoonRole.LEADER:
                     # we can only join an existing platoon or built a new one
                     LOG.debug(f"{other_vehicle.vid} is not available")
