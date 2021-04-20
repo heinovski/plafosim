@@ -24,6 +24,8 @@ from timeit import default_timer as timer
 
 from src.plafosim import Simulator
 
+VERSION = "0.9.1"
+
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter,
@@ -44,6 +46,9 @@ def main():
     This program comes with ABSOLUTELY NO WARRANTY.
     This is free software, and you are welcome to redistribute it under certain conditions.
     """)
+
+    # miscellaneous
+    parser.add_argument('--version', action='version', version=f'%(prog)s {VERSION}')
 
     # road network properties
     road = parser.add_argument_group('road network properties')
