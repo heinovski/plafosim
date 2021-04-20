@@ -19,7 +19,11 @@ from enum import Enum
 
 
 class Message:
-    """A collection of general data for an arbitrary message"""
+    """"
+    A collection of general data for an arbitrary message.
+
+    Messages are in general not used at the moment.
+    """
 
     def __init__(self, origin: int, destination: int, data=None):
         self._origin = origin  # id of the originiator of this message
