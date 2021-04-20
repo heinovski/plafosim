@@ -17,7 +17,11 @@
 
 
 class NeighborData:
-    """Collection of information from a single neighbor"""
+    """
+    Collection of information from a single neighbor to be used within a NeighborTable.
+
+    Neighbor tables are in general not used at the moment.
+    """
 
     def __init__(self,
                  vid: int,
@@ -93,7 +97,11 @@ class NeighborData:
 
 # TODO some abstract base class and an additional oracle neighbortable
 class NeighborTable:
-    """Collection of information from neighbors, received via communcation"""
+    """
+    Collection of information from neighbors, received via communcation.
+
+    Neighbor tables are in general not used at the moment.
+    """
 
     def __init__(self, validity_time: int):
         """Initialze a neighbor table instance"""
