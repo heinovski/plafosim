@@ -318,7 +318,7 @@ class Vehicle:
 
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
         """
-        Calculate the new speed for a vehicle using the kraus model.
+        Calculates the new speed for a vehicle using the kraus model.
 
         This is a simple and dumb calculation for the safe speed of a vehicle.
         The calculation is is based on Krauss' single lane traffic:
@@ -468,15 +468,18 @@ class Vehicle:
         # TODO current gap to front
 
     def _calculate_emissions(self):
-        # Computes the emitted pollutant amount using the given speed and acceleration
-        #
-        # As the functions are defining emissions in g/hour, the function's result is normed
-        # by 3.6 (seconds in an hour/1000) yielding mg/s. For fuel ml/s is returned.
-        # Negative acceleration results directly in zero emission.
-        #
-        # The amount emitted by the given emission class when moving with the given velocity and acceleration [mg/s or ml/s]
-        #
-        # SUMO: The current default model is HBEFA3/PC_G_EU4 (a gasoline powered Euro norm 4 passenger car modeled using the HBEFA3 based model).
+        """
+        Calculates the emitted pollutant amount using the given speed and acceleration.
+
+        As the functions are defining emissions in g/hour, the function's result is normed
+        by 3.6 (seconds in an hour/1000) yielding mg/s. For fuel ml/s is returned.
+        Negative acceleration results directly in zero emission.
+
+        The amount emitted by the given emission class when moving with the given velocity and acceleration [mg/s or ml/s]
+
+        SUMO: The current default model is HBEFA3/PC_G_EU4 (a gasoline powered Euro norm 4 passenger car modeled using the HBEFA3 based model).
+        """
+
         emission_factors = {
             'co': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
             'co2': [9449, 938.4, 0.0, -467.1, 28.26, 0.0],
@@ -485,7 +488,7 @@ class Vehicle:
             'nox': [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
             'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0]
         }
-        diesel = False  # TODO make paramemter of vehicle type
+        diesel = False  # TODO make parameter of vehicle type
 
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
@@ -539,7 +542,11 @@ class Vehicle:
         return max((f[0] + f[1] * a * v + f[2] * a * a * v + f[3] * v + f[4] * v * v + f[5] * v * v * v) / scale, 0.0)
 
     def finish(self):
-        """Cleans up the instance of the vehicle."""
+        """
+        Cleans up the instance of the vehicle.
+
+        This includes mostly statistic recording.
+        """
 
         if (self.position < self.arrival_position):
             LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
@@ -688,7 +695,7 @@ class Vehicle:
 
     def _receive_Message(self, message: Message):
         """
-        Handles a message of a specific type of Message.
+        Handles a message of the specific type Message.
 
         Messgaes are in general not used at the moment.
 
