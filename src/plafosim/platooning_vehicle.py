@@ -34,7 +34,7 @@ LOG = logging.getLogger(__name__)
 
 
 class PlatooningVehicle(Vehicle):
-    """A vehicle that has platooning functionality enabled"""
+    """A vehicle that has platooning functionality."""
 
     def __init__(
             self,
@@ -55,6 +55,40 @@ class PlatooningVehicle(Vehicle):
             alpha: float,
             speed_deviation_threshold: float,
             position_deviation_threshold: int):
+        """
+        Initializes a platooning vehicle instance.
+
+        Parameters
+        ----------
+        simulator : Simulator
+            The global simulator object
+        vid : int
+            The id of the vehicle
+        vehicle_type : VehicleType
+            The vehicle type of the vehicle
+        depart_position : int
+            The depart position of the vehicle
+        arrival_position : int
+            The arrival position of the vehicle
+        desired_speed : float
+            The desired driving speed of the vehicle
+        depart_lane : int
+            The depart lane of the vehicle
+        depart_speed : float
+            The depart speed of the vehicle
+        depart_time : int
+            The depart time of the vehicle
+        communication_range : int
+            The maximum communication range of the vehicle
+        acc_headway_time: float,
+        cacc_spacing: float,
+        formation_algorithm: str,
+        execution_interval: int,
+        alpha: float,
+        speed_deviation_threshold: float,
+        position_deviation_threshold: int):
+        """
+
         super().__init__(
             simulator,
             vid,
@@ -91,6 +125,8 @@ class PlatooningVehicle(Vehicle):
 
         else:
             self._formation_algorithm = None
+
+        ## statistics
 
         # platoon statistics
         self._first_platoon_join_time = -1
@@ -136,48 +172,99 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def acc_headway_time(self) -> float:
+        """Returns the ACC headway time of the vehicle."""
+
         return self._acc_headway_time
 
     @property
     def desired_headway_time(self) -> float:
+        """
+        Returns the desired headway time of the vehicle.
+
+        This is based on the currently active car following model.
+        """
+
         if self.cf_model == CF_Model.ACC or self.cf_model == CF_Model.CACC:
             return self.acc_headway_time
         return super().desired_headway_time
 
     @property
     def desired_speed(self) -> float:
-        # return desired speed of platoon if in platoon
+        """
+        Returns the desired driving speed of the vehicle.
+
+        If the vehicle is in a platoon, it returns the desired driving speed of the entire platoon.
+        """
+
         return self.platoon.desired_speed if self.is_in_platoon() else self._desired_speed
 
     @property
     def desired_gap(self) -> float:
+        """
+        Returns the desired gap of the vehicle.
+
+        This is based on the currently active car following model.
+        """
         if self.cf_model == CF_Model.CACC:
             return self._cacc_spacing
         return super().desired_gap
 
     @property
     def platoon_role(self) -> PlatoonRole:
+        """Returns the current platoon role of the vehicle."""
+
         return self._platoon_role
 
     @property
     def platoon(self) -> Platoon:
+        """Returns the platoon of the vehicle."""
+
         return self._platoon
 
     def is_in_platoon(self) -> bool:
+        """
+        Returns whether the vehicle currently is in a platoon.
+
+        This is based on the current PlatoonRole.
+        """
+
         return self.platoon_role is not PlatoonRole.NONE
 
     def get_front_gap(self) -> float:
+        """
+        Returns the gap to the vehicle in the front.
+
+        This imitates a measurement of the front radar sensor.
+        """
+
         return self._simulator._get_predecessor_rear_position(self) - self.position
 
     def get_front_speed(self) -> float:
+        """
+        Returns the speed to the vehicle in the front.
+
+        This imitates a measurement of the front radar sensor.
+        """
+
         return self._simulator._get_predecessor_speed(self)
 
     @property
     def in_maneuver(self) -> bool:
+        """Returns whether the vehicle is currently in a maneuver."""
+
         return self._in_maneuver
 
     @in_maneuver.setter
     def in_maneuver(self, var: bool):
+        """
+        Sets the maneuver status of the vehicle.
+
+        Parameters
+        ----------
+        var : bool
+            The maneuver status
+        """
+
         if self._in_maneuver and var:
             # we can only start a new maneuver if we are not already in one
             LOG.warning(f"{self.vid} is already in a maneuver")
@@ -186,19 +273,48 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def time_in_platoon(self) -> int:
+        """Returns the travelled time within platoons."""
+
         return self._time_in_platoon
 
     @property
     def distance_in_platoon(self) -> float:
+        """Returns the travelled distance within platoons."""
+
         return self._distance_in_platoon
 
     def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
-        """Helper method to calculate the ACC acceleration based on the given parameters"""
+        """
+        s Helper method to calculate the ACC acceleration based on the given parameters.
 
-        # Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
+        This is based on:
+        R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012
+        Equation 6.18
+
+        Parameters
+        ----------
+        speed_predecessor : float
+            The driving speed of the vehicle in the front
+        predecessor_rear_position : float
+            The rear position of the vehicle in the front
+        desired_gap : float
+            The desired gap to the front vehicle
+        """
+
         return -1.0 / self.desired_headway_time * (self.speed - desired_speed + self._acc_lambda * (-gap_to_predecessor + desired_gap))
 
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
+        """
+        Calculates the new speed for a vehicle using the currently active car following model.
+
+        Parameters
+        ----------
+        speed_predecessor : float
+            The driving speed of the vehicle in the front
+        predecessor_rear_position : float
+            The rear position of the vehicle in the front
+        """
+
         if self._cf_model is CF_Model.ACC:
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different models
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
@@ -330,10 +446,24 @@ class PlatooningVehicle(Vehicle):
         return super().new_speed(speed_predecessor, predecessor_rear_position)
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
+        """
+        Calculates the emitted pollutant amount using the given speed and acceleration.
+
+        Parameters
+        ----------
+        a : float
+            The current acceleration
+        v : float
+            The current speed
+        f : list
+            The emission factors to use for current emission variable to be calculated
+        scale : float
+            The scale to normalize the calculated value
+        """
+
         # calculate impact of platooning on air drag based on
         # Charles-Henri Bruneau, Khodor Khadra and Iraj Mortazavi, "Flow analysis of square-back simplified vehicles in platoon," International Journal of Heat and Fluid Flow, vol. 66, pp. 43–59, August 2017.
         # Table 5: d = L, vehicle length = 4m, distance = 5m
-
         air_drag_change = 0.0
         if self._platoon_role == PlatoonRole.LEADER:
             # savings by followers
@@ -355,6 +485,12 @@ class PlatooningVehicle(Vehicle):
         return super()._calculate_emission(a, v, f, scale) * (1.0 - emission_change)
 
     def finish(self):
+        """
+        Cleans up the instance of the PlatooningVehicle.
+
+        This includes leaving the platoon and mostly statistics recording.
+        """
+
         if (self.position < self.arrival_position):
             LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
             return
@@ -453,7 +589,14 @@ class PlatooningVehicle(Vehicle):
                 )
 
     def _action(self, step: int):
-        """Trigger concrete actions of a PlatooningVehicle"""
+        """
+        Triggers specific actions of a PlatooningVehicle.
+
+        Parameters
+        ----------
+        step : int
+            The current simulation step
+        """
 
         super()._action(step)
 
@@ -466,13 +609,13 @@ class PlatooningVehicle(Vehicle):
                 self._formation_algorithm.do_formation()
                 self._last_execution_step = step
 
-    def info(self):
-        """Return info of a PlatooningVehicle"""
+    def info(self) -> str:
+        """Returns information about the PlatooningVehicle."""
 
         return f"{super().info()}, platoon {self.platoon.platoon_id if self.is_in_platoon() else None}"
 
     def __str__(self) -> str:
-        """Return a nice string representation of a platooning vehicle"""
+        """Returns the str representation of the platooning vehicle."""
 
         self_dict = self.__dict__.copy()
         self_dict.update({'_vehicle_type': str(self._vehicle_type)})  # use str representation of vehicle type
@@ -480,7 +623,7 @@ class PlatooningVehicle(Vehicle):
         return str(self_dict)
 
     def _statistics(self):
-        """Write continuous statistics"""
+        """Writes continuous statistics."""
 
         super()._statistics()
 
@@ -509,6 +652,12 @@ class PlatooningVehicle(Vehicle):
                 )
 
     def _get_available_platoons(self):
+        """
+        Returns the available platoon candidates of the vehicle.
+
+        This imitates neighbor maintenance by using a neighbor table.
+        """
+
         # HACK FOR AVOIDING MAINTAINING A NEIGHBORTABLE (for now)
         platoons = []
         for vehicle in self._simulator._vehicles.values():
@@ -535,7 +684,11 @@ class PlatooningVehicle(Vehicle):
         return platoons
 
     def _join(self, platoon_id: int, leader_id: int):
-        # just join, without any communication
+        """
+        Lets a vehicle join a platoon.
+
+        Communication and fine-grained maneuver control is out-of-scope and thus omitted.
+        """
 
         assert(not self.is_in_platoon())
 
@@ -584,7 +737,7 @@ class PlatooningVehicle(Vehicle):
 
         if new_position - self.length < 0:
             # we cannot join since we would be outside of the road
-            LOG.warning(f"{self.vid}'s new position would be too close to the begining of the road! Aborting the join maneuver!")
+            LOG.warning(f"{self.vid}'s new position would be too close to the beginning of the road! Aborting the join maneuver!")
             self.in_maneuver = False
 
             self._joins_aborted += 1
@@ -599,7 +752,7 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted_trip_begin += 1
             return
         # TODO should we also avoid teleporting backwards at all?
-        # for now this is allowed to simulate decelerating and waiting for the platoon for pass futher
+        # for now this is allowed to simulate decelerating and waiting for the platoon for pass further
 
         if new_position >= self.arrival_position:
             LOG.warning(f"{self.vid}'s new position would be outside of its trip! Aborting the join maneuver")
@@ -670,7 +823,7 @@ class PlatooningVehicle(Vehicle):
                     # gap between vehicle we move now and its successor
                     current_back_gap = current_vehicle.rear_position - current_successor.position
                     LOG.debug(f"{current_vehicle.vid}'s back gap is {current_back_gap}m")
-                    # avaiable space we could utilize during the move
+                    # available space we could utilize during the move
                     current_possible_space = current_back_gap - current_successor.min_gap
                     LOG.debug(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
                 else:
@@ -701,7 +854,7 @@ class PlatooningVehicle(Vehicle):
                     self._joins_aborted_no_space += 1
                     return
 
-                # we need to rember this vehicle
+                # we need to remember this vehicle
                 already_moved_vehicles.append(current_vehicle)
                 current_vehicle = current_successor
                 LOG.debug(f"We still require {still_required_space}m")
@@ -780,7 +933,11 @@ class PlatooningVehicle(Vehicle):
         self._number_platoons += 1
 
     def _leave(self):
-        # just leave, without any communication
+        """
+        Lets a vehicle leave a platoon.
+
+        Communication and fine-grained maneuver control is out-of-scope and thus omitted.
+        """
 
         if self.platoon.size == 1:
             LOG.warning(f"Can not leave when driving indiviudally ({self.vid})!")
@@ -911,7 +1068,11 @@ class PlatooningVehicle(Vehicle):
         self._leaves_successful += 1
 
     def _advertise(self):
-        """Maintain regular sending of platoon advertisements"""
+        """
+        Maintains regular sending of platoon advertisements.
+
+        Advertisement are in general not used at the moment.
+        """
 
         return  # TODO this is not necessary as a perfect communication guarantees information
 
@@ -921,7 +1082,11 @@ class PlatooningVehicle(Vehicle):
             self._last_advertisement_step = self._simulator.step
 
     def _send_advertisements(self):
-        """Transmit a broadcast to advertise as platoon"""
+        """
+        Transmit a broadcast to advertise as platoon.
+
+        Advertisement are in general not used at the moment.
+        """
 
         for vehicle in self._simulator._vehicles.values():
             self._transmit(-1, PlatoonAdvertisement(
@@ -937,7 +1102,16 @@ class PlatooningVehicle(Vehicle):
             ))
 
     def _handle_message(self, message: Message):
-        """Handle a message of arbitrary type Message"""
+        """
+        Handles a message of arbitrary type Message.
+
+        Messgaes are in general not used at the moment.
+
+        Parameters
+        ----------
+        message : Message
+            The message to be handled
+        """
 
         func = self.__class__.__dict__.get(
             '_receive_' + message.__class__.__name__,
@@ -945,7 +1119,16 @@ class PlatooningVehicle(Vehicle):
         return func(self, message)
 
     def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
-        """Handle a message of concrete type PlatoonAdvertisement"""
+        """
+        Handles a message of the specific type PlatoonAdvertisement.
+
+        Messgaes are in general not used at the moment.
+
+        Parameters
+        ----------
+        advertisement : PlatoonAdvertisement
+            The advertisement to be received
+        """
 
         # TODO add contents to the neighbor table
         LOG.info(f"{self.vid} received an advertisement from {advertisement.origin}")
