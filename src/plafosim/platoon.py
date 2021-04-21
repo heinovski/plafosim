@@ -16,10 +16,9 @@
 #
 
 import logging
-
 from statistics import mean
-
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from .platooning_vehicle import PlatooningVehicle  # noqa 401
 

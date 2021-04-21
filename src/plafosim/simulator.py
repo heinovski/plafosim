@@ -17,21 +17,20 @@
 
 import logging
 import os
-import pandas as pd
 import random
 import re
 import sys
 import time
-
 from collections import namedtuple
 from math import copysign
+
+import pandas as pd
 from tqdm import tqdm
 
 from .infrastructure import Infrastructure
-from .platooning_vehicle import PlatooningVehicle
 from .platoon_role import PlatoonRole
-from .util import get_crashed_vehicles
-from .util import update_position
+from .platooning_vehicle import PlatooningVehicle
+from .util import get_crashed_vehicles, update_position
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 

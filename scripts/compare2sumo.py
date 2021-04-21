@@ -17,13 +17,13 @@
 #
 
 import argparse
+import re
+import sys
+from math import ceil
+
 import matplotlib.pyplot as pl
 import pandas
-import re
 import seaborn
-import sys
-
-from math import ceil
 
 
 # Read parameters

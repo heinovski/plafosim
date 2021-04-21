@@ -16,14 +16,14 @@
 #
 
 import logging
+from typing import TYPE_CHECKING
 
 from .formation_algorithm import FormationAlgorithm
 from .platoon_role import PlatoonRole
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .platooning_vehicle import PlatooningVehicle  # noqa 401
     from .platooning_vehicle import Platoon  # noqa 401
+    from .platooning_vehicle import PlatooningVehicle  # noqa 401
 
 LOG = logging.getLogger(__name__)
 
@@ -177,6 +177,7 @@ class SpeedPosition(FormationAlgorithm):
         all_found_candidates = []
 
         from .platooning_vehicle import PlatooningVehicle  # noqa 811
+
         # select all searching vehicles
         for vehicle in self._owner._simulator._vehicles.values():
             # filter vehicles that are technically not able to do platooning
@@ -304,6 +305,7 @@ class SpeedPosition(FormationAlgorithm):
         decision_variables = {}
 
         from .platooning_vehicle import PlatooningVehicle  # noqa 811
+
         # select all searching vehicles
         for vehicle in self._owner._simulator._vehicles.values():
 

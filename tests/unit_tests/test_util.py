@@ -17,11 +17,13 @@
 
 import pandas as pd
 
-from plafosim import get_crashed_vehicles
-from plafosim import speed2distance
-from plafosim import distance2speed
-from plafosim import acceleration2speed
-from plafosim import speed2acceleration
+from plafosim import (
+    acceleration2speed,
+    distance2speed,
+    get_crashed_vehicles,
+    speed2acceleration,
+    speed2distance,
+)
 
 
 def test_speed2distance():

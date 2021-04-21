@@ -18,7 +18,6 @@
 
 import argparse
 import logging
-
 from distutils.util import strtobool
 from timeit import default_timer as timer
 

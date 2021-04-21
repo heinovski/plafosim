@@ -25,7 +25,6 @@ import time
 
 from tqdm import tqdm
 
-
 if 'SUMO_HOME' not in os.environ:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 

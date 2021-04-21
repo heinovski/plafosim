@@ -16,15 +16,13 @@
 #
 
 import logging
+from typing import TYPE_CHECKING
 
 from .cf_model import CF_Model
 from .message import Message
-from .util import acceleration2speed
-from .util import distance2speed
-from .util import speed2distance
+from .util import acceleration2speed, distance2speed, speed2distance
 from .vehicle_type import VehicleType
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .simulator import Simulator  # noqa 401
 

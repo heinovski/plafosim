@@ -19,7 +19,7 @@ import logging
 import sys
 
 #from .simulator import Simulator  # TODO fix circular import
-from .platooning_vehicle import SpeedPosition, PlatooningVehicle
+from .platooning_vehicle import PlatooningVehicle, SpeedPosition
 
 LOG = logging.getLogger(__name__)
 

@@ -15,8 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim import PlatooningVehicle
-from plafosim import Platoon
+from plafosim import Platoon, PlatooningVehicle
 
 
 def test_creation():

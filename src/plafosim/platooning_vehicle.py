@@ -17,6 +17,7 @@
 
 import logging
 import sys
+from typing import TYPE_CHECKING
 
 from .cf_model import CF_Model
 from .message import Message, PlatoonAdvertisement
@@ -26,7 +27,6 @@ from .speed_position import SpeedPosition
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .simulator import Simulator  # noqa 401
 
