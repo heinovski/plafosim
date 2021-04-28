@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.3) - 2021-04-28
+* Updated copyright headers
+* Updated dependencies
+* Updated documentation
+
 ## [0.9.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.2) - 2021-04-20
 * Added requirements.txt
 * Added version argument
