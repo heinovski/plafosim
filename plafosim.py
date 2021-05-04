@@ -147,7 +147,7 @@ def main():
     platoon = parser.add_argument_group('platoon properties')
     platoon.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether vehicles should automatically start as one platoon")
-    platoon.add_argument('--maximum-teleport-distance', type=int, default=-1,
+    platoon.add_argument('--maximum-teleport-distance', type=int, default=2000,
                          help="Maximum teleport distance in m")
     platoon.add_argument('--formation-algorithm', type=str, default=None,
                          choices=["speedposition"], help="The formation algorithm to use")

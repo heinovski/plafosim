@@ -95,7 +95,7 @@ class Simulator:
             minimum_trip_length: int = 0,
             communication_range: int = 1000,
             start_as_platoon: bool = False,
-            maximum_teleport_distance: int = -1,
+            maximum_teleport_distance: int = 2000,
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',
             formation_centralized_kind: str = 'greedy',
