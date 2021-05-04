@@ -321,7 +321,7 @@ class Simulator:
 
     def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         """
-        Returns the preceeding vehicle for a given vehicle on a given lane.
+        Returns the preceding (i.e., front) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -351,7 +351,7 @@ class Simulator:
 
     def _get_successor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         """
-        Returns the succeding vehicle for a given vehicle on a given lane.
+        Returns the succeeding (i.e., back) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -381,7 +381,7 @@ class Simulator:
 
     def _get_predecessor_rear_position(self, vehicle: Vehicle, lane: int = -1) -> float:
         """
-        Returns the rear position of the preceeding vehicle for a given vehicle on a given lane.
+        Returns the rear position of the preceding (i.e., front) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -400,7 +400,7 @@ class Simulator:
 
     def _get_predecessor_speed(self, vehicle: Vehicle, lane: int = -1) -> float:
         """
-        Returns the speed of the preceeding vehicle for a given vehicle on a given lane.
+        Returns the speed of the preceding (i.e., front) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -462,7 +462,7 @@ class Simulator:
         """
         Performs a lane change for a given vehicle.
 
-        This is baed on Krauss' multi lane traffic:
+        This is based on Krauss' multi lane traffic:
         lane-change
         congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
         favorable(right->left) = (v_safe < v_max) and (not congested)
@@ -567,7 +567,7 @@ class Simulator:
         """
         Does lane changes for all vehicles in the simulation.
 
-        This is baed on Krauss' multi lane traffic:
+        This is based on Krauss' multi lane traffic:
         lane-change
         congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
         favorable(right->left) = (v_safe < v_max) and (not congested)
@@ -584,7 +584,7 @@ class Simulator:
         """
         Decides upon and performs a lane change for a given vehicle.
 
-        This is baed on Krauss' multi lane traffic:
+        This is based on Krauss' multi lane traffic:
         lane-change
         congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
         favorable(right->left) = (v_safe < v_max) and (not congested)
@@ -689,7 +689,7 @@ class Simulator:
         return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
 
     def _generate_vehicles(self):
-        """Adds prefilled vehicles to the simulation."""
+        """Adds pre-filled vehicles to the simulation."""
 
         if self._vehicle_density > 0:
             number_of_vehicles = round(self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes)
@@ -714,7 +714,7 @@ class Simulator:
                     collision = False
                     # actual calculation of position and lane
                     # always use random position for pre-filled vehicle
-                    # we do not consider depart interval here since this is supposed to be a snapshot from an ealier point of simulation
+                    # we do not consider depart interval here since this is supposed to be a snapshot from an earlier point of simulation
                     # make sure to also include the end of the road itself
                     # consider length, equal to departPos="base" in SUMO
                     depart_position = random.uniform(vtype.length, self.road_length)
@@ -776,7 +776,7 @@ class Simulator:
         This considers the ramp interval, road length, and minimum trip length.
         """
 
-        # NOTE: this should only be called for non-prefilled vehicles
+        # NOTE: this should only be called for non-pre-filled vehicles
         if self._random_depart_position:
             # set maximum theoretical depart position
             # make sure that the vehicles can drive for at least the minimum length of a trip
@@ -811,7 +811,7 @@ class Simulator:
         depart_position : int
             The depart position to consider
         prefill : bool, optional
-            Whether the trip is for a prefilled vehicle
+            Whether the trip is for a pre-filled vehicle
         """
 
         if self._random_arrival_position:
@@ -1331,7 +1331,7 @@ class Simulator:
         state = random.getstate()
         for vehicle in self._vehicles.values():
             self._add_gui_vehicle(vehicle)
-        # restore internal state of random number generator to not influence the determinsim of the simulation
+        # restore internal state of random number generator to not influence the determinism of the simulation
         random.setstate(state)
 
     def _update_gui(self):
@@ -1369,11 +1369,11 @@ class Simulator:
             color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
             traci.vehicle.setColor(str(vehicle.vid), color)
             vehicle._color = color
-            # restore internal state of random number generator to not influence the determinsim of the simulation
+            # restore internal state of random number generator to not influence the determinism of the simulation
             if not (self._pre_fill and self._step == 0):
                 # By disabling the reset of the random state when using pre-fill and in the first time step,
                 # we achieve a (deterministic) random color for all pre-filled vehicles.
-                # Otherweise, when resetting the state step 0, all pre-filled vehicles did not have a random color
+                # Otherwise, when resetting the state step 0, all pre-filled vehicles did not have a random color
                 # (instead they had the same), since the RNG did not pick any other numbers since the last color pick.
                 random.setstate(state)
             traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
