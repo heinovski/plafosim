@@ -53,7 +53,7 @@ def main():
     road = parser.add_argument_group('road network properties')
     road.add_argument('--road-length', type=int, default=100, help="The length of the road in km")
     road.add_argument('--lanes', type=int, default=3, help="The number of lanes")
-    road.add_argument('--ramp-interval', type=int, default=1000,
+    road.add_argument('--ramp-interval', type=int, default=5000,
                       help="The distance between any two on-/off-ramps in m")
     road.add_argument(
         '--pre-fill', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
