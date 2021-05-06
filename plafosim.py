@@ -149,6 +149,9 @@ def main():
                          choices=(True, False), help="Whether vehicles should automatically start as one platoon")
     platoon.add_argument('--maximum-teleport-distance', type=int, default=2000,
                          help="Maximum teleport distance in m")
+    platoon.add_argument('--update-desired-speed', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether to update the platoon's desired driving speed to the average speed of all members after the formation changed."
+                         )
     platoon.add_argument('--formation-algorithm', type=str, default=None,
                          choices=["speedposition"], help="The formation algorithm to use")
     platoon.add_argument('--formation-strategy', type=str, default="distributed",
@@ -261,6 +264,7 @@ def main():
         args.communication_range,
         args.start_as_platoon,
         args.maximum_teleport_distance,
+        args.update_desired_speed,
         args.formation_algorithm,
         args.formation_strategy,
         args.formation_centralized_kind,

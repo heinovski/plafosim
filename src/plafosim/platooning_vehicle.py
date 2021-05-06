@@ -899,7 +899,8 @@ class PlatooningVehicle(Vehicle):
         # update all members
         leader.platoon._formation.append(self)
         # update the desired speed of the platoon to the average of all platoom members
-        leader.platoon.update_desired_speed()
+        if self._simulator._update_desired_speed:
+            leader.platoon.update_desired_speed()
 
         # switch to CACC
         self._cf_model = CF_Model.CACC
@@ -1042,7 +1043,8 @@ class PlatooningVehicle(Vehicle):
 
         # leave the platoon
         self.platoon._formation.remove(self)
-        self.platoon.update_desired_speed()
+        if self._simulator._update_desired_speed:
+            self.platoon.update_desired_speed()
 
         # update formation for all members
         for vehicle in self.platoon.formation:

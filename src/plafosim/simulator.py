@@ -96,6 +96,7 @@ class Simulator:
             communication_range: int = 1000,
             start_as_platoon: bool = False,
             maximum_teleport_distance: int = 2000,
+            update_desired_speed: bool = True,
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',
             formation_centralized_kind: str = 'greedy',
@@ -206,7 +207,7 @@ class Simulator:
             if maximum_teleport_distance >= minimum_trip_length and minimum_trip_length > 0:
                 LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports beyond the minimum trip length!")
             self._maximum_teleport_distance = maximum_teleport_distance  # maximum teleport distance
-
+        self._update_desired_speed = update_desired_speed  # whether to update the platoon's desired driving speed to the average speed of all members after the formation changed
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures == 0:
             sys.exit("ERROR: When using a centralized strategy at least 1 infrastructure is needed!")
