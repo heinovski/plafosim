@@ -1497,11 +1497,10 @@ class Simulator:
         if not self._vehicles:
             return pd.DataFrame()
         return (
-            pd.DataFrame([
-                dict(
-                    **v.__dict__,
-                    length=v.length
-                )
+            pd.DataFrame([dict(
+                **v.__dict__,
+                length=v.length
+            )
                 for v in self._vehicles.values()
             ])
             .rename(columns=lambda x: re.sub('^_', '', x))
@@ -1565,11 +1564,11 @@ class Simulator:
             f.write(f"average number of vehicles: {self._avg_number_vehicles}\n")
 
         # call finish on infrastructures
-        for instrastructure in self._infrastructures.values():
-            instrastructure.finish()
+        for infrastructure in self._infrastructures.values():
+            infrastructure.finish()
             if self._gui:
                 import traci
-                traci.polygon.remove(str(instrastructure.iid))
+                traci.polygon.remove(str(infrastructure.iid))
 
         # call finish on remaining vehicles?
         for vehicle in self._vehicles.values():

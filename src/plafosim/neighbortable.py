@@ -35,7 +35,7 @@ class NeighborData:
                  platoon_position_back: float,
                  timestamp: int,
                  valid: bool = True):
-        """Initialize a neighrbor data instance"""
+        """Initialize a neighbor data instance"""
 
         self._vid = vid  # the id of the neighbor
         self._originator_id = originator_id  # the id the originator of this information
@@ -98,13 +98,13 @@ class NeighborData:
 # TODO some abstract base class and an additional oracle neighbortable
 class NeighborTable:
     """
-    Collection of information from neighbors, received via communcation.
+    Collection of information from neighbors, received via communication.
 
     Neighbor tables are in general not used at the moment.
     """
 
     def __init__(self, validity_time: int):
-        """Initialze a neighbor table instance"""
+        """Initialize a neighbor table instance"""
 
         self.neighbors = []  # the list of neighbors in the table
         self._validity_time = validity_time  # the time an entry in the table is valid
