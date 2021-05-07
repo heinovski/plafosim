@@ -196,7 +196,7 @@ class Simulator:
             if random_depart_lane:
                 sys.exit("ERROR: Vehicles can not have random departure lanes when starting as one platoon!")
             if random_arrival_position:
-                sys.exit("ERROR: Vehicles can not have random arrival posiition when starting as one platoon!")
+                sys.exit("ERROR: Vehicles can not have random arrival position when starting as one platoon!")
         if maximum_teleport_distance == -1:
             self._maximum_teleport_distance = self._road_length
             LOG.warning("No maximum teleport distance configured! The vehicle behavior may be unrealistic!")
@@ -229,7 +229,7 @@ class Simulator:
         self._step = 0  # the current simulation step in s
         assert(step_length > 0)
         if step_length != 1:
-            LOG.warning("Values for step length other than 1s are not yet porperly implemented and tested!")
+            LOG.warning("Values for step length other than 1s are not yet properly implemented and tested!")
         if step_length < 1.0:
             LOG.warning("Values for step length small than 1s are not recommended in order to avoid crashes!")
         self._step_length = step_length  # the length of a simulation step
@@ -314,10 +314,10 @@ class Simulator:
             vehicle.action(self.step)
 
     def _call_infrastructure_actions(self):
-        """Triggers actions on all instrastructures in the simulation."""
+        """Triggers actions on all infrastructures in the simulation."""
 
-        for instrastructure in self._infrastructures.values():
-            instrastructure.action(self.step)
+        for infrastructure in self._infrastructures.values():
+            infrastructure.action(self.step)
 
     def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         """
@@ -1102,7 +1102,7 @@ class Simulator:
                     "routeLength,"
                     "timeLoss,"
                     "desiredSpeed,"
-                    "expecteTravelTime,"
+                    "expectedTravelTime,"
                     "travelTimeRatio,"
                     "avgDrivingSpeed,"
                     "avgDeviationDesiredSpeed"
@@ -1188,7 +1188,7 @@ class Simulator:
                 f.write(
                     "id,"
                     "joinsAttempted,"
-                    "joinsSuccesful,"
+                    "joinsSuccessful,"
                     "joinsAborted,"
                     "joinsAbortedFront,"
                     "joinsAbortedArbitrary,"
@@ -1196,7 +1196,7 @@ class Simulator:
                     "joinsAbortedTripBegin,"
                     "joinsAbortedTripEnd,"
                     "joinsAbortedLeaderManeuver,"
-                    "joinsAbortedTeleportThreshhold,"
+                    "joinsAbortedTeleportThreshold,"
                     "joinsAbortedNoSpace,"
                     "joinsFront,"
                     "joinsArbitrary,"
@@ -1266,11 +1266,11 @@ class Simulator:
                 f.write(
                     "id,"
                     "assignmentsSolved,"
-                    "assigmentsNotSolveable,"
+                    "assignmentsNotSolvable,"
                     "assignmentsNone,"
                     "assignmentsSelf,"
                     "assignmentsCandidateJoinedAlready,"
-                    "assingmentsVehicleBecameLeader,"
+                    "assignmentsVehicleBecameLeader,"
                     "assignmentsSuccessful,"
                     "\n"
                 )
