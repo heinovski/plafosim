@@ -436,7 +436,7 @@ class Vehicle:
     def info(self) -> str:
         """Returns information about the vehicle."""
 
-        estimated_remaining_travel_time = round((self.arrival_position - self.position) / self.speed if self.speed > 0 else self.desired_speed, 1)
+        estimated_remaining_travel_time = (self.arrival_position - self.position) / self.speed if self.speed > 0 else self.desired_speed
         return f"{self.vid} at {self.position}-{self.rear_position}, {self.lane} with {self.speed}, takes {estimated_remaining_travel_time}s to reach {self.arrival_position}"
 
     def _statistics(self):
@@ -512,7 +512,7 @@ class Vehicle:
             if self._simulator._record_emission_traces:
                 with open(f'{self._simulator._result_base_filename}_emission_traces.csv', 'a') as f:
                     f.write(
-                        f",{round(value, 2)}"
+                        f",{value}"
                     )
 
         if self._simulator._record_emission_traces:
@@ -552,11 +552,12 @@ class Vehicle:
 
         expected_travel_time = (self.arrival_position - self.depart_position) / self._desired_speed  # make sure to use the individual desired speed
         assert(self.travel_time != 0)
-        time_loss = self.travel_time - round(expected_travel_time, 1)
+        time_loss = self.travel_time - expected_travel_time
         assert(expected_travel_time != 0)
-        travel_time_ratio = round(self.travel_time / expected_travel_time, 1)
-        average_driving_speed = round(self.travel_distance / self.travel_time, 1)  # FIXME this also contains teleports
-        average_deviation_desired_speed = round(average_driving_speed - self._desired_speed, 1)
+        travel_time_ratio = self.travel_time / expected_travel_time
+        # FIXME this also contains teleports
+        average_driving_speed = self.travel_distance / self.travel_time
+        average_deviation_desired_speed = average_driving_speed - self._desired_speed
 
         LOG.info(f"{self.vid} arrived at {self.position}m,{self.lane} with {self.speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {time_loss}s, {travel_time_ratio * 100}% of expected duration")
 
