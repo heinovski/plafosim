@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.9.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.4) - 2021-05-10
+## [v0.9.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.4) - 2021-05-10
 * Added flag for updating a platoon's desired speed after a maneuver
 * Fixed a lot of typos
 * Fixed vehicle moving while join maneuver
@@ -9,23 +9,23 @@
 * Updated documentation
 * Updated maximum teleport distance
 
-## [0.9.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.3) - 2021-04-28
+## [v0.9.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.3) - 2021-04-28
 * Updated copyright headers
 * Updated dependencies
 * Updated documentation
 
-## [0.9.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.2) - 2021-04-20
+## [v0.9.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.2) - 2021-04-20
 * Added requirements.txt
 * Added version argument
 * Updated comments
 * Updated README
 
-## [0.9.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.1) - 2021-03-19
+## [v0.9.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.1) - 2021-03-19
 * Added drawing ramps and road end (#253)
 * Added maximum teleport distance (#267)
 * Fixed candidate metrics (#266)
 
-## [0.9.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.0) - 2021-03-04
+## [v0.9.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.0) - 2021-03-04
 * Added all leave cases (simplified) (#206)
 * Added formation statistics
 * Added make space before a teleporting during a join (#232)
