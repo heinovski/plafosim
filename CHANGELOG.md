@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.4) - 2021-05-10
+* Added flag for updating a platoon's desired speed after a maneuver
+* Fixed a lot of typos
+* Fixed vehicle moving while join maneuver
+* Removed all rounding to fix metrics
+* Updated default parameters
+* Updated documentation
+* Updated maximum teleport distance
+
 ## [0.9.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.3) - 2021-04-28
 * Updated copyright headers
 * Updated dependencies
