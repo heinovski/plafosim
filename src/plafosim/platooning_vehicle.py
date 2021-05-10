@@ -780,7 +780,7 @@ class PlatooningVehicle(Vehicle):
             return
 
         platoon_successor = self._simulator._get_successor(last)
-        if platoon_successor is None:
+        if not platoon_successor or platoon_successor is self:
             LOG.debug(f"{self.vid}'s new position is {new_position} (behind {last.vid})")
         else:
             LOG.debug(f"{self.vid}'s new position is {new_position} (between {last.vid} and {platoon_successor.vid})")
@@ -818,7 +818,17 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"We are checking vehicle {current_vehicle.vid} for a possible move")
                 # successor of the vehicle we are moving now
                 current_successor = self._simulator._get_successor(current_vehicle)
-                if current_successor is not None:
+                if current_vehicle is self:
+                    # we cannot move the current vehicle as we are going to teleport it soon
+                    # we need to select the next successor
+                    LOG.debug(f"We cannot move {current_vehicle.vid} as this is the joiner!")
+                    current_vehicle = current_successor
+                    continue
+                if current_successor is self:
+                    # we cannot consider the joiner as successor, thus we need to select the next successor
+                    LOG.debug("We are skipping the joiner as successor")
+                    current_successor = self._simulator._get_successor(self)
+                if current_successor:
                     LOG.debug(f"The successor of vehicle {current_vehicle.vid} is {current_successor.vid}")
                     # gap between vehicle we move now and its successor
                     current_back_gap = current_vehicle.rear_position - current_successor.position
