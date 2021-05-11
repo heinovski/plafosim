@@ -42,7 +42,7 @@ class SpeedPosition(FormationAlgorithm):
 
         # statistics
         self._assignments_solved = 0
-        self._assigments_not_solveable = 0
+        self._assignments_not_solvable = 0
         self._assignments_none = 0
         self._assignments_self = 0
         self._assignments_candidate_joined_already = 0
@@ -103,7 +103,7 @@ class SpeedPosition(FormationAlgorithm):
                 f.write(
                     f"{self._owner.iid},"
                     f"{self._assignments_solved},"
-                    f"{self._assigments_not_solveable},"
+                    f"{self._assignments_not_solvable},"
                     f"{self._assignments_none},"
                     f"{self._assignments_self},"
                     f"{self._assignments_candidate_joined_already},"
@@ -404,7 +404,7 @@ class SpeedPosition(FormationAlgorithm):
 
         if result_status >= solver.INFEASIBLE:
             LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
-            self._assigments_not_solveable += 1
+            self._assignments_not_solvable += 1
             return
 
         if objective.Value() == 0:
