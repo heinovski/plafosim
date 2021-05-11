@@ -69,7 +69,7 @@ class SpeedPosition(FormationAlgorithm):
             # we are in front of the platoon
             return abs(vehicle.rear_position - platoon.position)
         else:
-            # we are behind the platoo
+            # we are behind the platoon
             return abs(platoon.rear_position - vehicle.position)
 
     def _cost_speed_position(self, ds: float, dp: int, alpha: float, beta: float):
