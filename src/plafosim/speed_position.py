@@ -126,6 +126,8 @@ class SpeedPosition(FormationAlgorithm):
 
         LOG.info(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
 
+        self._owner._formation_iterations += 1
+
         found_candidates = []
 
         # get all available platoons or platoon candidates
@@ -192,6 +194,8 @@ class SpeedPosition(FormationAlgorithm):
             if vehicle.in_maneuver:
                 LOG.debug(f"{vehicle.vid} is already in a maneuver")
                 continue
+
+            vehicle._formation_iterations += 1
 
             # get all available platoons or platoon candidates
             for other_vehicle in self._owner._simulator._vehicles.values():
@@ -321,6 +325,8 @@ class SpeedPosition(FormationAlgorithm):
             if vehicle.in_maneuver:
                 LOG.debug(f"{vehicle.vid} is already in a maneuver")
                 continue
+
+            vehicle._formation_iterations += 1
 
             # allow a vehicle to be assigned to exactly one platoon
             constraint_one_target_platoon = solver.RowConstraint(1, 1, f"one platoon: {vehicle.vid}")

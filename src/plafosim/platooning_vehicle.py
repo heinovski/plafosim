@@ -165,6 +165,7 @@ class PlatooningVehicle(Vehicle):
         self._leaves_back = 0
 
         # formation statistics
+        self._formation_iterations = 0
         self._candidates_found = 0
         self._candidates_filtered = 0
         self._candidates_filtered_follower = 0
@@ -581,6 +582,7 @@ class PlatooningVehicle(Vehicle):
             with open(f'{self._simulator._result_base_filename}_platoon_formation.csv', 'a') as f:
                 f.write(
                     f"{self.vid},"
+                    f"{self._formation_iterations},"
                     f"{self._candidates_found},"
                     f"{self._candidates_filtered},"
                     f"{self._candidates_filtered_follower},"
