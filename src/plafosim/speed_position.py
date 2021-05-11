@@ -159,12 +159,12 @@ class SpeedPosition(FormationAlgorithm):
             found_candidates.append({'vid': self._owner.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
             LOG.info(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
 
+        # the number of candidates found in this iteration
+        self._owner._candidates_found += len(found_candidates)
+
         if len(found_candidates) == 0:
             LOG.debug(f"{self._owner.vid} has no candidates")
             return
-
-        # the number of candidates found in this iteration
-        self._owner._candidates_found += len(found_candidates)
 
         # find best candidate to join
         # pick the platoon with the lowest deviation
@@ -258,6 +258,8 @@ class SpeedPosition(FormationAlgorithm):
                 all_found_candidates.append({'vid': vehicle.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
                 LOG.info(f"{vehicle.vid} found applicable candidate {platoon.platoon_id}")
                 vehicle._candidates_found += 1
+
+            # end vehicle
 
         if len(all_found_candidates) == 0:
             LOG.debug(f"{self._owner.iid} found no possible matches")
@@ -401,6 +403,8 @@ class SpeedPosition(FormationAlgorithm):
 
                 # add decision variable from vehicle to platoon with corresponding cost to the row sum
                 objective.SetCoefficient(variable, fx)
+
+            # end vehicle
 
         # run the solver to calculate the optimal assignments
         LOG.info(f"{self._owner.iid} is running the solver for {solver.NumConstraints()} vehicles and {solver.NumVariables()} possible assignments")

@@ -531,6 +531,9 @@ class PlatooningVehicle(Vehicle):
             # we do not record statistics for pre-filled vehicles
             return
 
+        candidates_found_avg = self._candidates_found / self._formation_iterations if self._formation_iterations > 0 else 0
+        candidates_filtered_avg = self._candidates_filtered / self._formation_iterations if self._formation_iterations > 0 else 0
+
         assert(platoon_time_ratio >= 0)
         assert(platoon_distance_ratio >= 0)
 
@@ -600,7 +603,9 @@ class PlatooningVehicle(Vehicle):
                     f"{self.vid},"
                     f"{self._formation_iterations},"
                     f"{self._candidates_found},"
+                    f"{candidates_found_avg},"
                     f"{self._candidates_filtered},"
+                    f"{candidates_filtered_avg},"
                     f"{self._candidates_filtered_follower},"
                     f"{self._candidates_filtered_maneuver}"
                     "\n"
