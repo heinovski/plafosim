@@ -734,10 +734,8 @@ class PlatooningVehicle(Vehicle):
 
         last = leader.platoon.last
         new_position = last.rear_position - self._cacc_spacing
-        assert(new_position >= 0)
-        assert(new_position <= self._simulator.road_length)
 
-        if new_position - self.length < 0:
+        if new_position < self.length:
             # we cannot join since we would be outside of the road
             LOG.warning(f"{self.vid}'s new position would be too close to the beginning of the road! Aborting the join maneuver!")
             self.in_maneuver = False
@@ -780,6 +778,9 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted += 1
             self._joins_aborted_teleport_threshold += 1
             return
+
+        assert(new_position >= self.length)
+        assert(new_position <= self._simulator.road_length)
 
         platoon_successor = self._simulator._get_successor(last)
         if not platoon_successor or platoon_successor is self:
