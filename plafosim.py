@@ -149,6 +149,8 @@ def main():
                          choices=(True, False), help="Whether vehicles should automatically start as one platoon")
     platoon.add_argument('--maximum-teleport-distance', type=int, default=2000,
                          help="The maximum teleport distance in m. A value of -1 disables the check")
+    platoon.add_argument('--maximum-approach-time', type=int, default=60,
+                         help="The maximum time for approaching a platoon during a join maneuver in s. A value of -1 disables the check")
     platoon.add_argument('--update-desired-speed', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to update the platoon's desired driving speed to the average speed of all members after the formation changed."
                          )
@@ -264,6 +266,7 @@ def main():
         args.communication_range,
         args.start_as_platoon,
         args.maximum_teleport_distance,
+        args.maximum_approach_time,
         args.update_desired_speed,
         args.formation_algorithm,
         args.formation_strategy,

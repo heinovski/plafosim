@@ -148,6 +148,7 @@ class PlatooningVehicle(Vehicle):
         self._joins_aborted_trip_end = 0
         self._joins_aborted_leader_maneuver = 0
         self._joins_aborted_teleport_threshold = 0
+        self._joins_aborted_approaching = 0
         self._joins_aborted_no_space = 0
 
         self._joins_front = 0
@@ -561,6 +562,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_aborted_trip_end},"
                     f"{self._joins_aborted_leader_maneuver},"
                     f"{self._joins_aborted_teleport_threshold},"
+                    f"{self._joins_aborted_approaching},"
                     f"{self._joins_aborted_no_space},"
                     f"{self._joins_front},"
                     f"{self._joins_arbitrary},"
@@ -778,6 +780,41 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted += 1
             self._joins_aborted_teleport_threshold += 1
             return
+
+        # consider the actual approaching duration
+        initial_distance = new_position - self.position
+        if initial_distance > 0:
+            # we need to approach the platoon
+            total_approach_time = -1
+            if self.speed <= leader.platoon.speed:
+                # we need to accelerate to approach the platoon
+                time_accleration = (self.max_speed - self.speed) / self.max_acceleration
+                time_deceleration = (self.max_speed - leader.platoon.speed) / self.max_deceleration
+                distance_acceleration = (self.speed + self.max_speed) / 2 * time_accleration
+                distance_deceleration = (self.max_speed + leader.platoon.speed) / 2 * time_deceleration
+                distance_max_speed = initial_distance - (distance_acceleration + distance_deceleration)
+                time_max_speed = distance_max_speed / self.max_speed
+                total_approach_time = time_accleration + time_max_speed + time_deceleration
+            else:
+                # we need to decelerate to approach the platoon
+                time_deceleration = (self.speed - leader.platoon.speed) / self.max_deceleration
+                distance_deceleration = (self.speed + leader.platoon.speed) / 2 * time_deceleration
+                distance_current_speed = initial_distance - distance_deceleration
+                time_current_speed = distance_current_speed / self.speed
+                total_approach_time = time_current_speed + time_deceleration
+
+            assert(total_approach_time != -1)
+            if total_approach_time > self._simulator._maximum_appraoch_time:
+                # approaching the platoon would take to0 long
+                LOG.warning(f"It would take too long ({total_approach_time}s) for {self.vid} to approach the platoon {leader.platoon.platoon_id} ({leader.vid})! Aborting the join maneuver!")
+                self.in_maneuver = False
+
+                self._joins_aborted += 1
+                self._joins_aborted_approaching += 1
+                return
+        else:
+            # we do not need to consider this case as our error is only between 0m and cacc_spacing
+            pass
 
         assert(new_position >= self.length)
         assert(new_position <= self._simulator.road_length)
