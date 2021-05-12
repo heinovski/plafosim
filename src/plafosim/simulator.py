@@ -209,7 +209,7 @@ class Simulator:
                 LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports beyond the minimum trip length!")
             self._maximum_teleport_distance = maximum_teleport_distance  # maximum teleport distance
         if maximum_approach_time == -1:
-            LOG.warning(f"No maximum approach timeout configured! The vehicle behavior may be unrealistic!")
+            LOG.warning("No maximum approach timeout configured! The vehicle behavior may be unrealistic!")
             self._maximum_appraoch_time = float('inf')
         else:
             self._maximum_appraoch_time = maximum_approach_time  # maximum approach time
