@@ -1204,6 +1204,7 @@ class Simulator:
                     "joinsAbortedTripBegin,"
                     "joinsAbortedTripEnd,"
                     "joinsAbortedLeaderManeuver,"
+                    "joinsAbortedMaxSpeed,"
                     "joinsAbortedTeleportThreshold,"
                     "joinsAbortedApproaching,"
                     "joinsAbortedNoSpace,"

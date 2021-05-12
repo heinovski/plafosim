@@ -147,6 +147,7 @@ class PlatooningVehicle(Vehicle):
         self._joins_aborted_trip_begin = 0
         self._joins_aborted_trip_end = 0
         self._joins_aborted_leader_maneuver = 0
+        self._joins_aborted_max_speed = 0
         self._joins_aborted_teleport_threshold = 0
         self._joins_aborted_approaching = 0
         self._joins_aborted_no_space = 0
@@ -561,6 +562,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_aborted_trip_begin},"
                     f"{self._joins_aborted_trip_end},"
                     f"{self._joins_aborted_leader_maneuver},"
+                    f"{self._joins_aborted_max_speed},"
                     f"{self._joins_aborted_teleport_threshold},"
                     f"{self._joins_aborted_approaching},"
                     f"{self._joins_aborted_no_space},"
@@ -770,6 +772,15 @@ class PlatooningVehicle(Vehicle):
 
             self._joins_aborted += 1
             self._joins_aborted_leader_maneuver += 1
+            return
+
+        if self.max_speed <= leader.platoon.speed:
+            # we will never be able to approach the platoon
+            LOG.warning(f"{self.vid}'s maximum speed is too low such that it can never reach the platoon! Aborting the join maneuver!")
+            self.in_maneuver = False
+
+            self._joins_aborted += 1
+            self._joins_aborted_max_speed += 1
             return
 
         if abs(new_position - self.position) > self._simulator._maximum_teleport_distance:
