@@ -752,7 +752,7 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted_trip_begin += 1
             return
         # TODO should we also avoid teleporting backwards at all?
-        # for now this is allowed to simulate decelerating and waiting for the platoon for pass further
+        # for now this is allowed to simulate decelerating and waiting for the platoon for passing further
 
         if new_position >= self.arrival_position:
             LOG.warning(f"{self.vid}'s new position would be outside of its trip! Aborting the join maneuver")
