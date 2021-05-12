@@ -141,14 +141,14 @@ def main():
     # communication properties
     communication = parser.add_argument_group('communication properties')
     communication.add_argument('--communication-range', type=int, default=1000,
-                               help="The maximum communication range between two vehicles in m. A value of -1 disables the communication range checks")
+                               help="The maximum communication range between two vehicles in m. A value of -1 disables the communication range check")
 
     # platoon properties
     platoon = parser.add_argument_group('platoon properties')
     platoon.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether vehicles should automatically start as one platoon")
     platoon.add_argument('--maximum-teleport-distance', type=int, default=2000,
-                         help="Maximum teleport distance in m")
+                         help="The maximum teleport distance in m. A value of -1 disables the check")
     platoon.add_argument('--update-desired-speed', type=lambda x: bool(strtobool(x)), default=True,
                          choices=(True, False), help="Whether to update the platoon's desired driving speed to the average speed of all members after the formation changed."
                          )
