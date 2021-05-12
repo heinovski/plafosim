@@ -772,7 +772,7 @@ class PlatooningVehicle(Vehicle):
 
         if abs(new_position - self.position) > self._simulator._maximum_teleport_distance:
             # the vehicle is too far away to be teleported
-            LOG.warning(f"{self.vid} is too far away from the target platoon to realistically do a teleport!")
+            LOG.warning(f"{self.vid} is too far away from the target platoon to realistically do a teleport! Aborting the join maneuver!")
             self.in_maneuver = False
 
             self._joins_aborted += 1
