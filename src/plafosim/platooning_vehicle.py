@@ -884,7 +884,7 @@ class PlatooningVehicle(Vehicle):
                     # gap between vehicle we move now and its successor
                     current_back_gap = current_vehicle.rear_position - current_successor.position
                     LOG.debug(f"{current_vehicle.vid}'s back gap is {current_back_gap}m")
-                    # available space we could utilize during the move
+                    # available space we could gain during the move of the current vehicle closer to its successor (deceleration)
                     current_possible_space = current_back_gap - current_successor.min_gap
                     LOG.debug(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
                 else:
@@ -897,30 +897,37 @@ class PlatooningVehicle(Vehicle):
                 # space we are actually gaining during this move
                 current_gained_space = min(still_required_space, current_possible_space)
                 LOG.debug(f"We will gain {current_gained_space}m by moving vehicle {current_vehicle.vid}")
-                # can we move of the current vehicle?
+                # the actual gain by moving the current vehicle
                 if current_gained_space > 0:
+                    # we do gain
                     # move the current vehicle
                     current_vehicle._position -= current_gained_space
-                    LOG.debug(f"We moved vehicle {current_vehicle.vid} to {current_vehicle.position}")
+                    LOG.debug(f"We moved vehicle {current_vehicle.vid} to {current_vehicle.position} and gained {current_gained_space}m")
                     # move the previous vehicle(s) as well to keep the correct spacings between them
                     for v in already_moved_vehicles:
                         v._position -= current_gained_space
-                        LOG.debug(f"We moved vehicle {v.vid} to {v.position} as well")
+                        LOG.debug(f"We moved vehicle {v.vid} by the same distance to {v.position}")
                     # how much space do we still need?
                     still_required_space -= current_gained_space
                 else:
-                    LOG.warning(f"Could not make enough space to teleport vehicle {self.vid}! Aborting the join maneuver!")
-                    self.in_maneuver = False
-                    self._joins_aborted += 1
-                    self._joins_aborted_no_space += 1
-                    return
+                    # we do not move the current vehicle and check again with its follower
+                    LOG.debug(f"We can not move vehicle {current_vehicle.vid}")
 
                 # we need to remember this vehicle
                 already_moved_vehicles.append(current_vehicle)
                 current_vehicle = current_successor
                 LOG.debug(f"We still require {still_required_space}m")
 
-            assert(still_required_space <= 0)
+            if still_required_space > 0:
+                # we still require some space for the teleport but do not have any more vehicles to move
+                # we need to abort the maneuver
+                # unfortunately, we move some vehicles already but this is colleteral damage?
+                # NOTE: will this produce a collsion as we did not move the joiner?
+                LOG.warning(f"Could not make enough space to teleport vehicle {self.vid}! Aborting the join maneuver!")
+                self.in_maneuver = False
+                self._joins_aborted += 1
+                self._joins_aborted_no_space += 1
+                return
 
         # teleport the vehicle
         current_position = self.position
