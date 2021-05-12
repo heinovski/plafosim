@@ -814,9 +814,8 @@ class PlatooningVehicle(Vehicle):
             already_moved_vehicles = []
             # vehicle we are moving next
             current_vehicle = platoon_successor
-            # we need to do act to make space
-            while still_required_space > 0:
-                assert(current_vehicle)
+            # we need to act to make space
+            while still_required_space > 0 and current_vehicle:
                 # move vehicle until min gap to its successor is reached
                 LOG.debug(f"We are checking vehicle {current_vehicle.vid} for a possible move")
                 # successor of the vehicle we are moving now
@@ -871,6 +870,8 @@ class PlatooningVehicle(Vehicle):
                 already_moved_vehicles.append(current_vehicle)
                 current_vehicle = current_successor
                 LOG.debug(f"We still require {still_required_space}m")
+
+            assert(still_required_space <= 0)
 
         # teleport the vehicle
         current_position = self.position
