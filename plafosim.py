@@ -202,6 +202,7 @@ def main():
     gui.add_argument('--gui-delay', type=int, default=0,
                      help="The delay used in every simulation step to visualize the current network state in ms")
     gui.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
+    gui.add_argument('--sumo-config', type=str, default="sumocfg/freeway.sumo.cfg", help="The name of the SUMO config file")
 
     # result recording properties
     results = parser.add_argument_group('result recording properties')
@@ -286,6 +287,7 @@ def main():
         args.gui,
         args.gui_delay / 1000,
         args.track_vehicle,
+        args.sumo_config,
         args.result_base_filename,
         args.record_end_trace,
         args.record_vehicle_trips,

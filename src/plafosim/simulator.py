@@ -116,6 +116,7 @@ class Simulator:
             gui: bool = False,
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
+            gui_sumo_config: str = "sumocfg/freeway.sumo.cfg",
             result_base_filename: str = 'results',
             record_end_trace: bool = True,
             record_vehicle_trips: bool = False,
@@ -261,6 +262,7 @@ class Simulator:
 
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
+        self._gui_sumo_config = gui_sumo_config  # the name of the SUMO config file
 
         # result recording properties
         self._result_base_filename = result_base_filename  # the base filename of the result files
@@ -1290,7 +1292,7 @@ class Simulator:
         """Initializes the GUI via TraCI."""
 
         sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-        sumoCmd = [sumoBinary, "-Q", "-c", "sumocfg/freeway.sumo.cfg", '--collision.action', 'none']
+        sumoCmd = [sumoBinary, '-Q', '-c', self._gui_sumo_config, '--collision.action', 'none']
 
         import traci
         traci.start(sumoCmd)
