@@ -16,6 +16,7 @@
 #
 
 import logging
+import math
 import sys
 from typing import TYPE_CHECKING
 
@@ -1108,7 +1109,8 @@ class PlatooningVehicle(Vehicle):
                 vehicle._position += gap_error
                 LOG.debug(f"{vehicle.vid} is not at {vehicle.position}")
                 follower_gap = front.rear_position - vehicle.position
-                assert(follower_gap == vehicle._cacc_spacing)
+                # avoid issues due to floating point precision
+                assert(math.isclose(follower_gap, vehicle._cacc_spacing))
                 front = vehicle
                 assert(self._simulator._get_predecessor(vehicle) in vehicle.platoon.formation)
 
