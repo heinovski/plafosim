@@ -379,6 +379,7 @@ class PlatooningVehicle(Vehicle):
 
                         LOG.debug(f"{self.vid} is updating speed of its follower {follower.vid}")
                         follower._speed = new_speed
+                        follower._acceleration = new_speed - self.speed
                 else:
                     new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
                     LOG.debug(f"{self.vid}'s ACC desired speed {new_speed}m/s")
