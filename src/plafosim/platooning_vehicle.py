@@ -348,6 +348,10 @@ class PlatooningVehicle(Vehicle):
                 if (new_speed < 0):
                     new_speed = 0
 
+                # avoid issues due to floating point precision
+                if math.isclose(new_speed, self.speed):
+                    new_speed = self.speed
+
                 if self.is_in_platoon():
                     assert(self.platoon_role is PlatoonRole.LEADER)
 
@@ -444,6 +448,10 @@ class PlatooningVehicle(Vehicle):
             # make sure we do not drive backwards
             if (new_speed < 0):
                 new_speed = 0
+
+            # avoid issues due to floating point precision
+            if math.isclose(new_speed, self.speed):
+                new_speed = self.speed
 
             return new_speed
 

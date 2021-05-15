@@ -16,6 +16,7 @@
 #
 
 import logging
+import math
 from typing import TYPE_CHECKING
 
 from .cf_model import CF_Model
@@ -384,6 +385,10 @@ class Vehicle:
         # make sure we do not drive backwards
         if (new_speed < 0):
             new_speed = 0
+
+        # avoid issues due to floating point precision
+        if math.isclose(new_speed, self.speed):
+            new_speed = self.speed
 
         LOG.debug(f"{self.vid}'s new speed is {new_speed}m/s")
 
