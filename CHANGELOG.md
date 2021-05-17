@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.9.5](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.5) - 2021-05-17
+* Added argument for sumo gui config
+* Added average candidate metric (#276)
+* Added checking the maximum speed
+* Added maximum approach time
+* Added metric for formation iterations
+* Fixed issues due to floating precision (#275)
+* Fixed release names in changelog
+* Updated argument help
+* Updated CACC calculation
+
 ## [v0.9.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.4) - 2021-05-10
 * Added flag for updating a platoon's desired speed after a maneuver
 * Fixed a lot of typos
