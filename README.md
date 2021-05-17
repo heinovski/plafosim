@@ -1,6 +1,6 @@
 # Platoon Formation Simulator (PlaFoSim)
 
-[![Version](https://img.shields.io/badge/version-v0.9.4-blue)](https://img.shields.io/badge/version-v0.9.4-blue)
+[![Version](https://img.shields.io/badge/version-v0.9.5-blue)](https://img.shields.io/badge/version-v0.9.5-blue)
 [![Build Status](https://ci.tkn.tu-berlin.de/api/badges/CCS/plafosim/status.svg)](https://ci.tkn.tu-berlin.de/CCS/plafosim)
 [![Test Coverage](https://plafosim.de/coverage/coverage.svg)](https://ci.tkn.tu-berlin.de/CCS/plafosim)
 
