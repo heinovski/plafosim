@@ -1174,7 +1174,7 @@ class Simulator:
                     "CO2,"
                     "HC,"
                     "NOx,"
-                    "PM,"
+                    "PMx,"
                     "fuel"
                     "\n"
                 )
@@ -1218,7 +1218,7 @@ class Simulator:
                     "CO2,"
                     "HC,"
                     "NOx,"
-                    "PM,"
+                    "PMx,"
                     "fuel"
                     "\n"
                 )

@@ -108,7 +108,7 @@ class Vehicle:
             'co2': 0,  # the total CO2 (Kohlendioxid) emission in mg
             'hc': 0,  # the total HC (Kohlenwasserstoffe) emission in mg
             'nox': 0,  # the total NOx (Stickoxide) emission in mg
-            'pm': 0,  # the total PM (Partikel) emission in mg
+            'pmx': 0,  # the total PM (Partikel) emission in mg
             'fuel': 0,  # the total mKr (Kraftstoffverbrauch) emission in mg
         }
 
@@ -492,7 +492,7 @@ class Vehicle:
             'co': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
             'hc': [2.923, 0.1113, 0.0, -0.3476, 0.01032, 0.0],
             'nox': [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
-            'pm': [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
+            'pmx': [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
             'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0],
         }
         diesel = False  # TODO make parameter of vehicle type
@@ -625,7 +625,7 @@ class Vehicle:
                     f"{self._emissions['co2']},"
                     f"{self._emissions['hc']},"
                     f"{self._emissions['nox']},"
-                    f"{self._emissions['pm']},"
+                    f"{self._emissions['pmx']},"
                     f"{self._emissions['fuel']}"
                     "\n"
                 )
