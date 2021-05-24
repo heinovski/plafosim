@@ -104,11 +104,11 @@ class Vehicle:
 
         # statistics
         self._emissions = {
-            'co': 0,  # the total CO (Kohlenmonoxid) emission in mg
-            'co2': 0,  # the total CO2 (Kohlendioxid) emission in mg
-            'hc': 0,  # the total HC (Kohlenwasserstoffe) emission in mg
-            'nox': 0,  # the total NOx (Stickoxide) emission in mg
-            'pmx': 0,  # the total PM (Partikel) emission in mg
+            'CO': 0,  # the total CO (Kohlenmonoxid) emission in mg
+            'CO2': 0,  # the total CO2 (Kohlendioxid) emission in mg
+            'HC': 0,  # the total HC (Kohlenwasserstoffe) emission in mg
+            'NOx': 0,  # the total NOx (Stickoxide) emission in mg
+            'PMx': 0,  # the total PM (Partikel) emission in mg
             'fuel': 0,  # the total mKr (Kraftstoffverbrauch) emission in mg
         }
 
@@ -488,11 +488,11 @@ class Vehicle:
         """
 
         emission_factors = {
-            'co2': [9449, 938.4, 0.0, -467.1, 28.26, 0.0],
-            'co': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
-            'hc': [2.923, 0.1113, 0.0, -0.3476, 0.01032, 0.0],
-            'nox': [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
-            'pmx': [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
+            'CO': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
+            'CO2': [9449, 938.4, 0.0, -467.1, 28.26, 0.0],
+            'HC': [2.923, 0.1113, 0.0, -0.3476, 0.01032, 0.0],
+            'NOx': [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
+            'PMx': [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
             'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0],
         }
         diesel = False  # TODO make parameter of vehicle type
@@ -621,11 +621,11 @@ class Vehicle:
                 # TODO log estimated emissions?
                 f.write(
                     f"{self.vid},"
-                    f"{self._emissions['co']},"
-                    f"{self._emissions['co2']},"
-                    f"{self._emissions['hc']},"
-                    f"{self._emissions['nox']},"
-                    f"{self._emissions['pmx']},"
+                    f"{self._emissions['CO']},"
+                    f"{self._emissions['CO2']},"
+                    f"{self._emissions['HC']},"
+                    f"{self._emissions['NOx']},"
+                    f"{self._emissions['PMx']},"
                     f"{self._emissions['fuel']}"
                     "\n"
                 )
