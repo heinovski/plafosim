@@ -717,7 +717,7 @@ class Simulator:
 
             # TODO remove duplicated code
             if self._start_as_platoon:
-                depart_position = (number_of_vehicles - vid) * (vtype.length + self._cacc_spacing)
+                depart_position = (number_of_vehicles - vid) * (vtype.length + self._cacc_spacing) - self._cacc_spacing
                 depart_lane = 0
             else:
                 # assume we have a collision to check at least once
