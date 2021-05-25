@@ -750,7 +750,7 @@ class Simulator:
             # always use desired speed for pre-fill vehicles
             depart_speed = desired_speed
 
-            arrival_position = self._get_arrival_position(depart_position, prefill=True)
+            arrival_position = self._get_arrival_position(depart_position, pre_fill=True)
 
             self._add_vehicle(
                 vid,
@@ -824,7 +824,7 @@ class Simulator:
 
         return depart_position
 
-    def _get_arrival_position(self, depart_position: int, prefill: bool = False) -> int:
+    def _get_arrival_position(self, depart_position: int, pre_fill: bool = False) -> int:
         """
         Returns a (random) arrival position for a given depart position.
 
@@ -840,7 +840,7 @@ class Simulator:
 
         if self._random_arrival_position:
             # set minimum theoretical arrival position
-            if prefill:
+            if pre_fill:
                 # We cannot use the minimum trip time here,
                 # since the pre-generation is supposed to produce a snapshot of a realistic simulation.
                 # But we can assume that a vehicle has to drive at least 1m
