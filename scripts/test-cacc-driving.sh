@@ -43,10 +43,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --pre-fill true \
     --penetration 1 \
     --desired-speed 36 \
-    --random-desired-speed true \
-    --speed-variation 0.1 \
-    --min-desired-speed 22 \
-    --max-desired-speed 50 \
+    --random-desired-speed false \
     --depart-flow false \
     --depart-method interval \
     --depart-time-interval 3 \
