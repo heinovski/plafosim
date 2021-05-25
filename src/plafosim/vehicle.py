@@ -560,7 +560,7 @@ class Vehicle:
         time_loss = self.travel_time - expected_travel_time
         assert(expected_travel_time != 0)
         travel_time_ratio = self.travel_time / expected_travel_time
-        # FIXME this also contains teleports
+        # NOTE: this also contains teleports
         average_driving_speed = self.travel_distance / self.travel_time
         average_deviation_desired_speed = average_driving_speed - self._desired_speed
 
