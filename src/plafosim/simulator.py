@@ -719,6 +719,13 @@ class Simulator:
             if self._start_as_platoon:
                 depart_position = (number_of_vehicles - vid) * (vtype.length + self._cacc_spacing) - self._cacc_spacing
                 depart_lane = 0
+
+                if vid == 0:
+                    # pick regular depart speed
+                    depart_speed = self._get_depart_speed(desired_speed)
+                else:
+                    # always set speed to leader speed
+                    depart_speed = self._vehicles[0].depart_speed
             else:
                 # assume we have a collision to check at least once
                 collision = True
@@ -747,8 +754,8 @@ class Simulator:
                         otv = TV(other_vehicle.position + other_vehicle.min_gap, other_vehicle.rear_position, other_vehicle.lane)
                         collision = collision or self.has_collision(tv, otv)
 
-            # always use desired speed for pre-fill vehicles
-            depart_speed = desired_speed
+                # always use desired speed for pre-fill vehicles
+                depart_speed = desired_speed
 
             arrival_position = self._get_arrival_position(depart_position, pre_fill=True)
 
