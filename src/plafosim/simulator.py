@@ -779,6 +779,20 @@ class Simulator:
 
         return desired_speed
 
+    def _get_depart_speed(self, desired_speed: float) -> float:
+        """Returns a (random) depart speed."""
+
+        if self._random_depart_speed:
+            # make sure to also include the desired speed itself
+            depart_speed = random.randrange(0, self._desired_speed + 1, 1)
+        else:
+            depart_speed = 0
+
+        if self._depart_desired:
+            depart_speed = desired_speed
+
+        return depart_speed
+
     def _get_depart_position(self) -> int:
         """
         Returns a (random) depart position for a given depart position.
@@ -911,14 +925,7 @@ class Simulator:
 
         desired_speed = self._get_desired_speed()
 
-        if self._random_depart_speed:
-            # make sure to also include the desired speed itself
-            depart_speed = random.randrange(0, self._desired_speed + 1, 1)
-        else:
-            depart_speed = 0
-
-        if self._depart_desired:
-            depart_speed = desired_speed
+        depart_speed = self._get_depart_speed(desired_speed)
 
         LOG.debug(f"Spawning vehicle {vid} at {depart_position}-{depart_position - vtype.length},{depart_lane} with {depart_speed}")
 
