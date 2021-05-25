@@ -200,8 +200,6 @@ class Simulator:
                 sys.exit("ERROR: Vehicles can not have random departure positions when starting as one platoon!")
             if random_depart_lane:
                 sys.exit("ERROR: Vehicles can not have random departure lanes when starting as one platoon!")
-            if random_arrival_position:
-                sys.exit("ERROR: Vehicles can not have random arrival position when starting as one platoon!")
         if maximum_teleport_distance == -1:
             self._maximum_teleport_distance = self._road_length
             LOG.warning("No maximum teleport distance configured! The vehicle behavior may be unrealistic!")
