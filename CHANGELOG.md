@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.9.6](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.6) - 2021-05-25
+* Fixed assert in result recording (#278)
+* Fixed spawning of static platoon (#277)
+
 ## [v0.9.5](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.5) - 2021-05-17
 * Added argument for sumo gui config
 * Added average candidate metric (#276)
