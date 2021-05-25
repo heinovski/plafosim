@@ -192,6 +192,8 @@ class Simulator:
                 sys.exit("ERROR: The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
             if formation_algorithm is not None:
                 sys.exit("ERROR: A formation algorithm cannot be used when all starting as one platoon!")
+            if not pre_fill:
+                sys.exit("ERROR: start-as-platoon is only available when using prefill!")
             if depart_flow:
                 sys.exit("ERROR: Vehicles can not spawn in a flow when starting as one platoon!")
             if random_depart_position:
@@ -991,9 +993,6 @@ class Simulator:
             self._add_gui_vehicle(vehicle)
 
         LOG.info(f"Spawned vehicle {vid} ({depart_position}-{vehicle.rear_position},{depart_lane})")
-
-        if self._start_as_platoon and vid > 0:
-            vehicle._join(0, 0)
 
     def _add_vehicle(
             self,

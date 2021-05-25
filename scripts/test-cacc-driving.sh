@@ -40,6 +40,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --acc-headway-time 1.0 \
     --cacc-spacing 5.0 \
     --start-as-platoon true \
+    --pre-fill true \
     --penetration 1 \
     --desired-speed 36 \
     --random-desired-speed true \
@@ -53,6 +54,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
     --record-end-trace false \
+    --record-prefilled true \
     --record-vehicle-trips true \
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
