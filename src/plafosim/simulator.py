@@ -713,6 +713,8 @@ class Simulator:
             vid = self._last_vehicle_id + 1
             depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
 
+            desired_speed = self._get_desired_speed()
+
             # TODO remove duplicated code
             if self._start_as_platoon:
                 depart_position = (number_of_vehicles - vid) * (vtype.length + self._cacc_spacing)
@@ -744,8 +746,6 @@ class Simulator:
                         tv = TV(depart_position + vtype.min_gap, depart_position - vtype.length, depart_lane)
                         otv = TV(other_vehicle.position + other_vehicle.min_gap, other_vehicle.rear_position, other_vehicle.lane)
                         collision = collision or self.has_collision(tv, otv)
-
-            desired_speed = self._get_desired_speed()
 
             # always use desired speed for pre-fill vehicles
             depart_speed = desired_speed
