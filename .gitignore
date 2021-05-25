@@ -152,5 +152,6 @@ tags
 # --> Project
 *.csv
 *.log
-*.xml
+*.out
 *.png
+*.xml
