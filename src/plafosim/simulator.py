@@ -711,12 +711,12 @@ class Simulator:
         for num in tqdm(range(0, number_of_vehicles), desc="Generated vehicles"):
 
             vid = self._last_vehicle_id + 1
-            depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
 
             desired_speed = self._get_desired_speed()
 
             # TODO remove duplicated code
             if self._start_as_platoon:
+                depart_time = 0
                 depart_position = (number_of_vehicles - vid) * (vtype.length + self._cacc_spacing) - self._cacc_spacing
                 depart_lane = 0
 
@@ -727,6 +727,7 @@ class Simulator:
                     # always set speed to leader speed
                     depart_speed = self._vehicles[0].depart_speed
             else:
+                depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
                 # assume we have a collision to check at least once
                 collision = True
                 while collision:
