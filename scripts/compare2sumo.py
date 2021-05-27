@@ -327,6 +327,8 @@ for label in trip_diff_labels:
             l_50 = 0.485000
             l_75 = 4.022500
             l_max = 26.140000
+        else:
+            sys.exit(f"Unknown label {label}!")
     elif args.experiment == "acc":
         # limits were set seed with 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'desiredSpeed':
@@ -377,6 +379,8 @@ for label in trip_diff_labels:
             l_50 = -17.430000
             l_75 = -3.927500
             l_max = 51.750000
+        else:
+            sys.exit(f"Unknown label {label}!")
     elif args.experiment == "cacc":
         # limits were set with seed 1337 on commit cf17215b5e6ece5d4c88cbc4f3199300879131f2
         if label == 'desiredSpeed':
@@ -427,6 +431,8 @@ for label in trip_diff_labels:
             l_50 = -4.881667
             l_75 = -1.089167
             l_max = -0.166667
+        else:
+            sys.exit(f"Unknown label {label}!")
     else:
         sys.exit(f"Unknown experiment {args.experiment}!")
 
@@ -538,6 +544,8 @@ for label in lifetime_labels:
             print(d)
     elif label == 'lane':
         ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='desired')
+    else:
+        sys.exit(f"Unknown label {label}!")
 
     fig.savefig('%s_%s.png' % (args.experiment, label))
 
@@ -593,6 +601,8 @@ for label in lifetime_diff_labels:
             l_50 = 0.000000
             l_75 = 1.000000
             l_max = 3.000000
+        else:
+            sys.exit(f"Unknown label {label}!")
     elif args.experiment == "acc":
         # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'diff_sumo_speed':
@@ -619,6 +629,8 @@ for label in lifetime_diff_labels:
             l_50 = 0.000000
             l_75 = 1.000000
             l_max = 3.000000
+        else:
+            sys.exit(f"Unknown label {label}!")
     elif args.experiment == "cacc":
         # limits were set with seed 1337 on commit cf17215b5e6ece5d4c88cbc4f3199300879131f2
         if label == 'diff_sumo_speed':
@@ -645,6 +657,8 @@ for label in lifetime_diff_labels:
             l_50 = 0.0
             l_75 = 0.0
             l_max = 0.0
+        else:
+            sys.exit(f"Unknown label {label}!")
     else:
         sys.exit(f"Unknown experiment {args.experiment}!")
 
