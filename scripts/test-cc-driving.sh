@@ -26,9 +26,9 @@ ROOT=$(pwd)/$(dirname $0)/..
 
 experiment=cc
 
-echo "simulator,real,user,sys" > runtimes_$experiment.csv
+echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
 
-/usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_$experiment.csv --append \
+/usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plafosim.py \
     --lanes 4 \
     --collisions true \
@@ -57,7 +57,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     2>&1 | tee run_${experiment}_plafosim.log
 
 # also change routes file
-/usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_$experiment.csv --append \
+/usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $SUMO_HOME/bin/sumo \
     -c $ROOT/sumocfg/freeway-$experiment.sumo.cfg \
     --fcd-output $experiment-traces.xml \

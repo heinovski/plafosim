@@ -49,7 +49,7 @@ error = False
 
 # Read runtimes
 
-runtimes = pandas.read_csv('runtimes_%s.csv' % args.experiment)
+runtimes = pandas.read_csv('%s_runtimes.csv' % args.experiment)
 runtimes = runtimes.astype({'simulator': str})
 runtimes = runtimes.set_index('simulator')
 

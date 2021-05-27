@@ -26,9 +26,9 @@ ROOT=$(pwd)/$(dirname $0)/..
 
 experiment=cacc
 
-echo "simulator,real,user,sys" > runtimes_$experiment.csv
+echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
 
-/usr/bin/time --format="plafosim,%e,%U,%S" --output=runtimes_$experiment.csv --append \
+/usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plafosim.py \
     --lanes 4 \
     --collisions true \
@@ -59,7 +59,7 @@ echo "simulator,real,user,sys" > runtimes_$experiment.csv
     --record-vehicle-changes true \
     2>&1 | tee run_${experiment}_plafosim.log
 
-/usr/bin/time --format="sumo,%e,%U,%S" --output=runtimes_$experiment.csv --append \
+/usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plexe/examples/autofeeddemo.py \
     --sumo-config $ROOT/plexe/examples/cfg/freeway.sumo.cfg \
     2>&1 | tee runlog_${experiment}_sumo.log
