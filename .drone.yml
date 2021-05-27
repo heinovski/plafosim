@@ -103,7 +103,7 @@ image_pull_secrets:
 
 steps:
 - name: CC
-  image: dbuse/sumo-python:3.8-buster-1_1_0
+  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   environment:
     HOST:
       from_secret: ARTIFACTS_HOST
@@ -127,7 +127,7 @@ steps:
     - ./scripts/test-cf-model-cc-100.sh 1337
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cc*.csv cc*.png"
 - name: ACC
-  image: dbuse/sumo-python:3.8-buster-1_1_0
+  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   environment:
     HOST:
       from_secret: ARTIFACTS_HOST
