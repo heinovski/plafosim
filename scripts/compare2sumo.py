@@ -277,7 +277,57 @@ for label in trip_diff_labels:
     # check limits for deviation to sumo
     d = data.describe()
 
-    if args.experiment == "acc":
+    if args.experiment == "cc":
+        # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+        if label == 'desiredSpeed':
+            l_mean = 0.443730
+            l_std = 5.233829
+            l_min = -15.603038
+            l_25 = -3.039654
+            l_50 = 1.074574
+            l_75 = 3.385923
+            l_max = 13.190750
+        elif label == 'arrival':
+            l_mean = -26.730000
+            l_std = 407.655327
+            l_min = -1036.000000
+            l_25 = -253.750000
+            l_50 = -76.000000
+            l_75 = 246.750000
+            l_max = 1308.000000
+        elif label == 'arrivalLane':
+            l_mean = 0.000000
+            l_std = 0.376051
+            l_min = -1.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 0.000000
+            l_max = 1.000000
+        elif label == 'arrivalSpeed':
+            l_mean = 0.330030
+            l_std = 5.230733
+            l_min = -15.723038
+            l_25 = -3.217154
+            l_50 = 1.054574
+            l_75 = 3.327779
+            l_max = 12.980750
+        elif label == 'duration':
+            l_mean = -26.730000
+            l_std = 407.655327
+            l_min = -1036.000000
+            l_25 = -253.750000
+            l_50 = -76.000000
+            l_75 = 246.750000
+            l_max = 1308.000000
+        elif label == 'timeLoss':
+            l_mean = 1.351600
+            l_std = 5.688248
+            l_min = -9.050000
+            l_25 = -2.157500
+            l_50 = 0.485000
+            l_75 = 4.022500
+            l_max = 26.140000
+    elif args.experiment == "acc":
         # limits were set seed with 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'desiredSpeed':
             l_mean = 0.443730
@@ -378,56 +428,7 @@ for label in trip_diff_labels:
             l_75 = -1.089167
             l_max = -0.166667
     else:
-        # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
-        assert(args.experiment == "cc")
-        if label == 'desiredSpeed':
-            l_mean = 0.443730
-            l_std = 5.233829
-            l_min = -15.603038
-            l_25 = -3.039654
-            l_50 = 1.074574
-            l_75 = 3.385923
-            l_max = 13.190750
-        elif label == 'arrival':
-            l_mean = -26.730000
-            l_std = 407.655327
-            l_min = -1036.000000
-            l_25 = -253.750000
-            l_50 = -76.000000
-            l_75 = 246.750000
-            l_max = 1308.000000
-        elif label == 'arrivalLane':
-            l_mean = 0.000000
-            l_std = 0.376051
-            l_min = -1.000000
-            l_25 = 0.000000
-            l_50 = 0.000000
-            l_75 = 0.000000
-            l_max = 1.000000
-        elif label == 'arrivalSpeed':
-            l_mean = 0.330030
-            l_std = 5.230733
-            l_min = -15.723038
-            l_25 = -3.217154
-            l_50 = 1.054574
-            l_75 = 3.327779
-            l_max = 12.980750
-        elif label == 'duration':
-            l_mean = -26.730000
-            l_std = 407.655327
-            l_min = -1036.000000
-            l_25 = -253.750000
-            l_50 = -76.000000
-            l_75 = 246.750000
-            l_max = 1308.000000
-        elif label == 'timeLoss':
-            l_mean = 1.351600
-            l_std = 5.688248
-            l_min = -9.050000
-            l_25 = -2.157500
-            l_50 = 0.485000
-            l_75 = 4.022500
-            l_max = 26.140000
+        sys.exit(f"Unknown experiment {args.experiment}!")
 
     if \
             abs(d['mean']) > ceil(abs(l_mean)) \
@@ -494,7 +495,16 @@ for label in lifetime_labels:
         # check limits for deviation in desired speed
         d = data.describe()
 
-        if args.experiment == "acc":
+        if args.experiment == "cc":
+            # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+            l_mean = -0.092872
+            l_std = 1.662458
+            l_min = -45.360000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 0.110000
+            l_max = 0.300000
+        elif args.experiment == "acc":
             # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
             l_mean = -0.817673
             l_std = 2.355079
@@ -513,15 +523,7 @@ for label in lifetime_labels:
             l_75 = 0.0
             l_max = 0.0
         else:
-            # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
-            assert(args.experiment == "cc")
-            l_mean = -0.092872
-            l_std = 1.662458
-            l_min = -45.360000
-            l_25 = 0.000000
-            l_50 = 0.000000
-            l_75 = 0.110000
-            l_max = 0.300000
+            sys.exit(f"Unknown experiment {args.experiment}!")
 
         if \
                 abs(d['mean']) > ceil(abs(l_mean)) \
@@ -565,7 +567,33 @@ for label in lifetime_diff_labels:
     # check limits for deviation to sumo
     d = data.describe()
 
-    if args.experiment == "acc":
+    if args.experiment == "cc":
+        # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
+        if label == 'diff_sumo_speed':
+            l_mean = 433.044838
+            l_std = 7174.285684
+            l_min = -36107.642525
+            l_25 = -3137.431724
+            l_50 = 441.553603
+            l_75 = 4062.827690
+            l_max = 30372.293185
+        elif label == 'diff_sumo_position':
+            l_mean = 433.044838
+            l_std = 7174.285684
+            l_min = -36107.642525
+            l_25 = -3137.431724
+            l_50 = 441.553603
+            l_75 = 4062.827690
+            l_max = 30372.293185
+        elif label == 'diff_sumo_lane':
+            l_mean = 0.330117
+            l_std = 0.536979
+            l_min = 0.000000
+            l_25 = 0.000000
+            l_50 = 0.000000
+            l_75 = 1.000000
+            l_max = 3.000000
+    elif args.experiment == "acc":
         # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
         if label == 'diff_sumo_speed':
             l_mean = 1.301589
@@ -618,32 +646,7 @@ for label in lifetime_diff_labels:
             l_75 = 0.0
             l_max = 0.0
     else:
-        # limits were set with seed 1337 on commit adfbddcdac77871dd4e53cc49eb299b72ac6e89d
-        assert(args.experiment == "cc")
-        if label == 'diff_sumo_speed':
-            l_mean = 433.044838
-            l_std = 7174.285684
-            l_min = -36107.642525
-            l_25 = -3137.431724
-            l_50 = 441.553603
-            l_75 = 4062.827690
-            l_max = 30372.293185
-        elif label == 'diff_sumo_position':
-            l_mean = 433.044838
-            l_std = 7174.285684
-            l_min = -36107.642525
-            l_25 = -3137.431724
-            l_50 = 441.553603
-            l_75 = 4062.827690
-            l_max = 30372.293185
-        elif label == 'diff_sumo_lane':
-            l_mean = 0.330117
-            l_std = 0.536979
-            l_min = 0.000000
-            l_25 = 0.000000
-            l_50 = 0.000000
-            l_75 = 1.000000
-            l_max = 3.000000
+        sys.exit(f"Unknown experiment {args.experiment}!")
 
     if \
             abs(d['mean']) > ceil(abs(l_mean)) \
