@@ -57,12 +57,12 @@ echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
     --record-vehicle-changes true \
-    2>&1 | tee run_${experiment}_plafosim.log
+    2>&1 | tee ${experiment}_plafosim.log
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plexe/examples/autofeeddemo.py \
     --sumo-config $ROOT/plexe/examples/cfg/freeway.sumo.cfg \
-    2>&1 | tee runlog_${experiment}_sumo.log
+    2>&1 | tee ${experiment}_sumo.log
 
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissions.csv -s ','
