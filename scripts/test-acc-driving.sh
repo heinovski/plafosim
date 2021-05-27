@@ -57,7 +57,6 @@ echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
     --record-vehicle-changes true \
     2>&1 | tee ${experiment}_plafosim.log
 
-# also change routes file
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $SUMO_HOME/bin/sumo \
     -c $ROOT/sumocfg/freeway-$experiment.sumo.cfg \
