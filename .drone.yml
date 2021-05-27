@@ -104,8 +104,19 @@ image_pull_secrets:
 steps:
 - name: CC
   image: dbuse/sumo-python:3.8-buster-1_1_0
+  environment:
+    HOST:
+      from_secret: ARTIFACTS_HOST
+    USERNAME:
+      from_secret: ARTIFACTS_USER
+    PASSWORD:
+      from_secret: ARTIFACTS_PASSWORD
+    BASE_DIR:
+      from_secret: ARTIFACTS_PATH
+    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
   commands:
     - apt update
+    - apt install lftp
     - apt install time
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade matplotlib
@@ -113,31 +124,8 @@ steps:
     - pip3 install --upgrade seaborn
     - pip3 install --upgrade statsmodels
     - ./scripts/test-cc-driving.sh 1337
+    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cc*.csv cc*.png"
 - name: ACC
-  image: dbuse/sumo-python:3.8-buster-1_1_0
-  commands:
-    - apt update
-    - apt install time
-    - pip3 install --upgrade tqdm
-    - pip3 install --upgrade matplotlib
-    - pip3 install --upgrade pandas
-    - pip3 install --upgrade seaborn
-    - pip3 install --upgrade statsmodels
-    - ./scripts/test-acc-driving.sh 1337
-- name: CACC
-  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
-  commands:
-    - apt update
-    - apt install time
-    - pip3 install --upgrade tqdm
-    - pip3 install --upgrade matplotlib
-    - pip3 install --upgrade pandas
-    - pip3 install --upgrade seaborn
-    - pip3 install --upgrade statsmodels
-    - git clone --branch heinovski/plafosim-comparison-cacc --single-branch "https://$DRONE_ASKPASS_USERNAME:$DRONE_ASKPASS_PASSWORD@webgit.ccs-labs.org/git/CCS/plexe-python.git" plexe
-    - pip3 install ./plexe
-    - ./scripts/test-cacc-driving.sh 1337
-- name: copy artifacts
   image: dbuse/sumo-python:3.8-buster-1_1_0
   environment:
     HOST:
@@ -152,7 +140,39 @@ steps:
   commands:
     - apt update
     - apt install lftp
-    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -p $DIR; mput -O $DIR *.csv *.png"
+    - apt install time
+    - pip3 install --upgrade tqdm
+    - pip3 install --upgrade matplotlib
+    - pip3 install --upgrade pandas
+    - pip3 install --upgrade seaborn
+    - pip3 install --upgrade statsmodels
+    - ./scripts/test-acc-driving.sh 1337
+    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR acc*.csv acc*.png"
+- name: CACC
+  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
+  environment:
+    HOST:
+      from_secret: ARTIFACTS_HOST
+    USERNAME:
+      from_secret: ARTIFACTS_USER
+    PASSWORD:
+      from_secret: ARTIFACTS_PASSWORD
+    BASE_DIR:
+      from_secret: ARTIFACTS_PATH
+    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
+  commands:
+    - apt update
+    - apt install lftp
+    - apt install time
+    - pip3 install --upgrade tqdm
+    - pip3 install --upgrade matplotlib
+    - pip3 install --upgrade pandas
+    - pip3 install --upgrade seaborn
+    - pip3 install --upgrade statsmodels
+    - git clone --branch heinovski/plafosim-comparison-cacc --single-branch "https://$DRONE_ASKPASS_USERNAME:$DRONE_ASKPASS_PASSWORD@webgit.ccs-labs.org/git/CCS/plexe-python.git" plexe
+    - pip3 install ./plexe
+    - ./scripts/test-cacc-driving.sh 1337
+    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cacc*.csv cacc*.png"
 
 trigger:
   branch:
