@@ -103,8 +103,8 @@ class Simulator:
             formation_centralized_kind: str = 'greedy',
             execution_interval: int = 1,
             alpha: float = 0.5,
-            speed_deviation_threshold: float = 0.1,
-            position_deviation_threshold: int = 300,
+            speed_deviation_threshold: float = -1,
+            position_deviation_threshold: int = -1,
             number_of_infrastructures: int = 0,
             step_length: int = 1,
             max_step: int = 1 * 60 * 60,
@@ -228,8 +228,16 @@ class Simulator:
         if execution_interval <= 0:
             sys.exit("ERROR: Execution interval has to be at least 1 second!")
         self._alpha = alpha  # the weight of the speed deviation
-        self._speed_deviation_threshold = speed_deviation_threshold  # the maximum deviation from the desired driving speed
-        self._position_deviation_threshold = position_deviation_threshold  # the maximum deviation from the current position
+        # the maximum deviation from the desired driving speed
+        if speed_deviation_threshold == -1:
+            self._speed_deviation_threshold = 1.0
+        else:
+            self._speed_deviation_threshold = speed_deviation_threshold
+        # the maximum deviation from the current position
+        if position_deviation_threshold == -1:
+            self._position_deviation_threshold = self._road_length
+        else:
+            self._position_deviation_threshold = position_deviation_threshold
 
         # infrastructure properties
         self._infrastructures = {}  # the list (dict) of infrastructures in the simulation

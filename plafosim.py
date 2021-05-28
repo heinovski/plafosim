@@ -168,12 +168,12 @@ def main():
     formation.add_argument('--alpha', type=float, default=0.5,
                            help="The weight of the speed deviation in comparison to the position deviation")
     formation.add_argument(
-        '--speed-deviation-threshold', type=float, default=0.1,
-        help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates"
+        '--speed-deviation-threshold', type=float, default=-1,
+        help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates. A value of -1 disables the threshold"
     )
     formation.add_argument(
-        '--position-deviation-threshold', type=int, default=300,
-        help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates"
+        '--position-deviation-threshold', type=int, default=-1,
+        help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold"
     )
 
     # infrastructure properties
