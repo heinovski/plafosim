@@ -152,7 +152,7 @@ def main():
     platoon.add_argument('--maximum-approach-time', type=int, default=60,
                          help="The maximum time for approaching a platoon during a join maneuver in s. A value of -1 disables the check")
     platoon.add_argument('--update-desired-speed', type=lambda x: bool(strtobool(x)), default=True,
-                         choices=(True, False), help="Whether to update the platoon's desired driving speed to the average speed of all members after the formation changed."
+                         choices=(True, False), help="Whether to update the platoon's desired driving speed to the average speed of all members after the formation changed"
                          )
     platoon.add_argument('--formation-algorithm', type=str, default=None,
                          choices=["speedposition"], help="The formation algorithm to use")
