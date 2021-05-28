@@ -37,3 +37,4 @@ def test_creation():
     assert(vtype.max_deceleration == max_deceleration)
     assert(vtype.min_gap == min_gap)
     assert(vtype.cc_headway_time == cc_headway_time)
+    assert(str(vtype) == str(vtype.__dict__))
