@@ -31,6 +31,8 @@ sumo --version | grep Version | head -n 1 | sed -E "s/.*([0-9]+\.[0-9]+\.[0-9]+)
 
 echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
 
+echo "Running PlaFoSim..."
+
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plafosim.py \
     --lanes 4 \
@@ -59,6 +61,8 @@ echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
     --record-vehicle-changes true \
     2>&1 | tee ${experiment}_plafosim.log
 
+echo "Running SUMO..."
+
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $SUMO_HOME/bin/sumo \
     -c $ROOT/sumocfg/freeway-$experiment.sumo.cfg \
@@ -72,9 +76,13 @@ echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
     $(test -z "$seed" && echo --random || echo --seed $seed) \
     2>&1 | tee ${experiment}_sumo.log
 
+echo "Converting results..."
+
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissions.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-traces.xml -o $experiment-traces.csv -s ','
 $SUMO_HOME/tools/xml/xml2csv.py $experiment-changes.xml -o $experiment-changes.csv -s ','
+
+echo "Comparing results..."
 
 $ROOT/scripts/compare2sumo.py $experiment --vehicles 100 --desired-speed 36 --arrival-position 100000
