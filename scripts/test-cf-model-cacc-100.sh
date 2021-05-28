@@ -40,7 +40,7 @@ echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
     --time-limit 1 \
     --road-length 100 \
     --max-speed 55 \
-    --acc-headway-time 1.0 \
+    --acc-headway-time 1.5 \
     --cacc-spacing 5.0 \
     --start-as-platoon true \
     --pre-fill true \
