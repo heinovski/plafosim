@@ -653,7 +653,10 @@ class Simulator:
         LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
         LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
         predecessor = self._get_predecessor(vehicle)
-        new_speed = vehicle.new_speed(predecessor.speed if predecessor else -1, predecessor.rear_position if predecessor else -1)
+        if predecessor:
+            new_speed = vehicle.new_speed(predecessor.speed, predecessor.rear_position, predecessor.vid)
+        else:
+            new_speed = vehicle.new_speed(-1, -1, -1)
         vehicle._acceleration = new_speed - vehicle.speed
         vehicle._speed = new_speed
         LOG.debug(f"{vehicle.vid}'s new acceleration: {vehicle.acceleration}")

@@ -315,7 +315,7 @@ class Vehicle:
         gap_to_close = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
         return speed_predecessor + distance2speed(gap_to_close, self.desired_headway_time)
 
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int) -> float:
         """
         Calculates the new speed for a vehicle using the kraus model.
 
@@ -336,6 +336,8 @@ class Vehicle:
             The driving speed of the vehicle in the front
         predecessor_rear_position : float
             The rear position of the vehicle in the front
+        predecessor_id : int
+            The id of the vehicle in the front. This should only be used for debugging.
         """
 
         LOG.debug(f"{self.vid}'s desired speed is {self.desired_speed}m/s")

@@ -307,7 +307,7 @@ class PlatooningVehicle(Vehicle):
 
         return -1.0 / self.desired_headway_time * (self.speed - desired_speed + self._acc_lambda * (-gap_to_predecessor + desired_gap))
 
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int) -> float:
         """
         Calculates the new speed for a vehicle using the currently active car following model.
 
@@ -317,6 +317,8 @@ class PlatooningVehicle(Vehicle):
             The driving speed of the vehicle in the front
         predecessor_rear_position : float
             The rear position of the vehicle in the front
+        predecessor_id : int
+            The id of the vehicle in the front. This should only be used for debugging.
         """
 
         if self._cf_model is CF_Model.ACC:
@@ -328,7 +330,7 @@ class PlatooningVehicle(Vehicle):
                     LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
                 LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}m")
                 LOG.debug(f"{self.vid}'s desired speed {self.desired_speed}m/s")
-                LOG.debug(f"{self.vid}'s predecessor ({self._simulator._get_predecessor(self).vid}) speed {speed_predecessor}m/s")
+                LOG.debug(f"{self.vid}'s predecessor ({predecessor_id}) speed {speed_predecessor}m/s")
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.desired_gap)
 
@@ -407,7 +409,7 @@ class PlatooningVehicle(Vehicle):
             assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
             # check whether there is a vehicle between us and our front vehicle
 
-            assert(self.platoon.get_front(self) is self._simulator._get_predecessor(self))
+            assert(self.platoon.get_front(self).vid == predecessor_id)
 
             gap_to_predecessor = predecessor_rear_position - self.position
             LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}m")
@@ -458,7 +460,7 @@ class PlatooningVehicle(Vehicle):
             return new_speed
 
         # default: use CC or driving freely
-        return super().new_speed(speed_predecessor, predecessor_rear_position)
+        return super().new_speed(speed_predecessor, predecessor_rear_position, predecessor_id)
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
         """
