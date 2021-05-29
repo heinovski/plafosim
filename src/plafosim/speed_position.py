@@ -35,10 +35,13 @@ class SpeedPosition(FormationAlgorithm):
     Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
     """
 
-    def __init__(self, owner,
-                 alpha: float,
-                 speed_deviation_threshold: float,
-                 position_deviation_threshold: int):
+    def __init__(
+        self,
+        owner: object,
+        alpha: float,
+        speed_deviation_threshold: float,
+        position_deviation_threshold: int,
+    ):
 
         """
         Initializes an instance of this formation algorithm to be used in a vehicle or an infrastructure.
