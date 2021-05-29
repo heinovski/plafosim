@@ -681,7 +681,16 @@ class Simulator:
 
     @staticmethod
     def _check_collisions(vdf: pd.DataFrame):
-        """Does collision checks for all vehicles in the simulation."""
+        """
+        Does collision checks for all vehicles in the simulation.
+
+        Parameters
+        ----------
+        vdf : pandas.DataFrame
+            The dataframe containing the vehicles as rows
+            index: vid
+            columns: [position, length, lane, ..]
+        """
 
         if vdf.empty:
             return
@@ -796,7 +805,14 @@ class Simulator:
         return desired_speed
 
     def _get_depart_speed(self, desired_speed: float) -> float:
-        """Returns a (random) depart speed."""
+        """
+        Returns a (random) depart speed.
+
+        Parameters
+        ----------
+        desired_speed : float
+            The desired speed to consider
+        """
 
         if self._random_depart_speed:
             # make sure to also include the desired speed itself
@@ -1079,7 +1095,14 @@ class Simulator:
         return vehicle
 
     def _generate_infrastructures(self, number_of_infrastructures: int):
-        """Generates infrastructures for the simulation."""
+        """
+        Generates infrastructures for the simulation.
+
+        Parameters
+        ----------
+        number_of_infrastructures : int
+            The number of infrastructures to generate
+        """
 
         if number_of_infrastructures <= 0:
             return
