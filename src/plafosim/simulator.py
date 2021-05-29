@@ -639,10 +639,16 @@ class Simulator:
         This does not (yet) use a vectorized approach.
         """
 
-        for vehicle in sorted(self._vehicles.values(), key=lambda x: x.position, reverse=True):
-            self._adjust_speed(vehicle)
+        vdf = self._get_vehicles_df()
+        vdf = vdf.sort_values(by='position', ascending=False)
+        vids = vdf.reset_index('vid').set_index(vdf.index).groupby('lane')['vid']
+        vdf['predecessor'] = vids.shift(1, fill_value=-1)
 
-    def _adjust_speed(self, vehicle: Vehicle):
+        for row in vdf.itertuples():
+            vehicle = self._vehicles[row.Index]
+            self._adjust_speed(vehicle, row.predecessor)
+
+    def _adjust_speed(self, vehicle: Vehicle, predecessor_id: int):
         """
         Updates the speed (i.e., acceleration & speed) of a given vehicle.
 
@@ -654,9 +660,9 @@ class Simulator:
 
         LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}m/s2")
         LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}m/s")
-        predecessor = self._get_predecessor(vehicle)
-        if predecessor:
-            new_speed = vehicle.new_speed(predecessor.speed, predecessor.rear_position, predecessor.vid)
+        if predecessor_id >= 0:
+            predecessor = self._vehicles[predecessor_id]
+            new_speed = vehicle.new_speed(predecessor.speed, predecessor.rear_position, predecessor_id)
         else:
             new_speed = vehicle.new_speed(-1, -1, -1)
         vehicle._acceleration = new_speed - vehicle.speed
