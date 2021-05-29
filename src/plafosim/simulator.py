@@ -201,7 +201,7 @@ class Simulator:
             if random_depart_lane:
                 sys.exit("ERROR: Vehicles can not have random departure lanes when starting as one platoon!")
         if maximum_teleport_distance == -1:
-            self._maximum_teleport_distance = self._road_length
+            self._maximum_teleport_distance = road_length
             LOG.warning("No maximum teleport distance configured! The vehicle behavior may be unrealistic!")
         else:
             if maximum_teleport_distance >= self._ramp_interval:
@@ -235,7 +235,7 @@ class Simulator:
             self._speed_deviation_threshold = speed_deviation_threshold
         # the maximum deviation from the current position
         if position_deviation_threshold == -1:
-            self._position_deviation_threshold = self._road_length
+            self._position_deviation_threshold = road_length
         else:
             self._position_deviation_threshold = position_deviation_threshold
 
