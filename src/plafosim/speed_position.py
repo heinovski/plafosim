@@ -85,13 +85,13 @@ class SpeedPosition(FormationAlgorithm):
     def speed_deviation_threshold(self) -> float:
         """Returns the speed deviation threshold"""
 
-        return self.speed_deviation_threshold
+        return self._speed_deviation_threshold
 
     @property
     def position_deviation_threshold(self) -> int:
         """Returns the position deviation threshold"""
 
-        return self.position_deviation_threshold
+        return self._position_deviation_threshold
 
     def ds(vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """
