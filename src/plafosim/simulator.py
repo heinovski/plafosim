@@ -204,7 +204,7 @@ class Simulator:
             self._maximum_teleport_distance = road_length
             LOG.warning("No maximum teleport distance configured! The vehicle behavior may be unrealistic!")
         else:
-            if maximum_teleport_distance >= self._ramp_interval:
+            if maximum_teleport_distance >= ramp_interval:
                 LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports beyond the next highway ramp! ")
             if maximum_teleport_distance >= minimum_trip_length and minimum_trip_length > 0:
                 LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports beyond the minimum trip length!")
