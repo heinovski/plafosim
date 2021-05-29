@@ -143,12 +143,12 @@ class SpeedPosition(FormationAlgorithm):
                 continue
 
             # remove platoon if not in speed range
-            if ds > self._speed_deviation_threshold * self._owner.desired_speed:
+            if ds > self.speed_deviation_threshold * self._owner.desired_speed:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
                 continue
 
             # remove platoon if not in position range
-            if dp > self._position_deviation_threshold:
+            if dp > self.position_deviation_threshold:
                 LOG.debug(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
                 continue
 
@@ -242,12 +242,12 @@ class SpeedPosition(FormationAlgorithm):
                     continue
 
                 # remove platoon if not in speed range
-                if ds > self._speed_deviation_threshold * vehicle.desired_speed:
+                if ds > self.speed_deviation_threshold * vehicle.desired_speed:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
                     continue
 
                 # remove platoon if not in position range
-                if dp > self._position_deviation_threshold:
+                if dp > self.position_deviation_threshold:
                     LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
                     continue
 
@@ -379,11 +379,11 @@ class SpeedPosition(FormationAlgorithm):
                     dp = SpeedPosition.dp(vehicle, platoon)
 
                     # remove platoon if not in speed range
-                    if ds > self._speed_deviation_threshold * vehicle.desired_speed:
+                    if ds > self.speed_deviation_threshold * vehicle.desired_speed:
                         LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference ({ds})")
                         fx = infinity
                     # remove platoon if not in position range
-                    elif dp > self._position_deviation_threshold:
+                    elif dp > self.position_deviation_threshold:
                         LOG.debug(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference ({dp})")
                         fx = infinity
                     else:
