@@ -97,6 +97,7 @@ class Simulator:
             minimum_trip_length: int = 0,
             communication_range: int = 1000,
             start_as_platoon: bool = False,
+            reduced_air_drag: bool = True,
             maximum_teleport_distance: int = 2000,
             maximum_approach_time: int = 60,
             update_desired_speed: bool = True,
@@ -202,6 +203,7 @@ class Simulator:
                 sys.exit("ERROR: Vehicles can not have random departure positions when starting as one platoon!")
             if random_depart_lane:
                 sys.exit("ERROR: Vehicles can not have random departure lanes when starting as one platoon!")
+        self._reduced_air_drag = reduced_air_drag  # whether the reduced air drag due to platooning should be considered in the emissions calculation
         if maximum_teleport_distance == -1:
             self._maximum_teleport_distance = road_length
             LOG.warning("No maximum teleport distance configured! The vehicle behavior may be unrealistic!")

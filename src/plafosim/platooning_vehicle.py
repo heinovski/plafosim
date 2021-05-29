@@ -505,7 +505,10 @@ class PlatooningVehicle(Vehicle):
 
         # calculate impact of air drag on emissions based on
         # Gino Sovran, "Tractive-Energy-Based Formulae for the Impact of Aerodynamics on Fuel Economy Over the EPA Driving Schedules," SAE International, Technical Paper, 830304, February 1983.
-        emission_change = air_drag_change * 0.46
+        if self._simulator._reduced_air_drag:
+            emission_change = air_drag_change * 0.46
+        else:
+            emission_change = 0.0
 
         return super()._calculate_emission(a, v, f, scale) * (1.0 - emission_change)
 

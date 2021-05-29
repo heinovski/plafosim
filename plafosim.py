@@ -147,6 +147,8 @@ def main():
     platoon = parser.add_argument_group('platoon properties')
     platoon.add_argument('--start-as-platoon', type=lambda x: bool(strtobool(x)), default=False,
                          choices=(True, False), help="Whether vehicles should automatically start as one platoon")
+    platoon.add_argument('--reduced-air-drag', type=lambda x: bool(strtobool(x)), default=True,
+                         choices=(True, False), help="Whether the reduced air drag due to platooning should be considered in the emissions calculation")
     platoon.add_argument('--maximum-teleport-distance', type=int, default=2000,
                          help="The maximum teleport distance in m. A value of -1 disables the check")
     platoon.add_argument('--maximum-approach-time', type=int, default=60,
@@ -266,6 +268,7 @@ def main():
         args.minimum_trip_length * 1000,
         args.communication_range,
         args.start_as_platoon,
+        args.reduced_air_drag,
         args.maximum_teleport_distance,
         args.maximum_approach_time,
         args.update_desired_speed,
