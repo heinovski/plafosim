@@ -504,6 +504,10 @@ class SpeedPosition(FormationAlgorithm):
 
             # end vehicle
 
+        if solver.NumConstraints() == 0:
+            LOG.info(f"{self._owner.iid} has no vehicles to run the solver for")
+            return
+
         # run the solver to calculate the optimal assignments
         LOG.info(f"{self._owner.iid} is running the solver for {solver.NumConstraints()} vehicles and {solver.NumVariables()} possible assignments")
 
