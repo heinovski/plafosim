@@ -72,8 +72,8 @@ class SpeedPosition(FormationAlgorithm):
             # we are behind the platoon
             return abs(platoon.rear_position - vehicle.position)
 
-    def _cost_speed_position(self, ds: float, dp: int, alpha: float, beta: float):
-        return (alpha * ds) + (beta * dp)
+    def cost_speed_position(self, ds: float, dp: int):
+        return (self.alpha * ds) + ((1.0 - self.alpha) * dp)
 
     def do_formation(self):
         """Run platoon formation algorithms to search for a platooning opportunity and perform corresponding maneuvers"""
@@ -153,7 +153,7 @@ class SpeedPosition(FormationAlgorithm):
                 continue
 
             # calculate deviation/cost
-            fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
+            fx = self.cost_speed_position(ds, dp)
 
             # add platoon to list
             found_candidates.append({'vid': self._owner.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
@@ -252,7 +252,7 @@ class SpeedPosition(FormationAlgorithm):
                     continue
 
                 # calculate deviation/cost
-                fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
+                fx = self.cost_speed_position(ds, dp)
 
                 # add platoon to list
                 all_found_candidates.append({'vid': vehicle.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
@@ -389,7 +389,7 @@ class SpeedPosition(FormationAlgorithm):
                     else:
                         # calculate deviation/cost
                         LOG.debug(f"Considering platoon {platoon.platoon_id} for vehicle {vehicle.vid}")
-                        fx = self._cost_speed_position(ds, dp, self._alpha, 1 - self._alpha)
+                        fx = self.cost_speed_position(ds, dp)
                         vehicle._candidates_found += 1
 
                 # define (0,1) decision variable for assignment of vehicle to platoon
