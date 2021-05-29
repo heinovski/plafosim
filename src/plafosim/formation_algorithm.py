@@ -31,6 +31,8 @@ class FormationAlgorithm(ABC):
 
     def __init__(self, name: str, owner: object):
         """
+        Initializes an instance of a formation algorithm.
+
         Parameters
         ----------
         name : str

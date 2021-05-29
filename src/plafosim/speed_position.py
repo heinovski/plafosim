@@ -29,10 +29,33 @@ LOG = logging.getLogger(__name__)
 
 
 class SpeedPosition(FormationAlgorithm):
+    """
+    Formation Algorithm based on:
+
+    Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
+    """
+
     def __init__(self, owner,
                  alpha: float,
                  speed_deviation_threshold: float,
                  position_deviation_threshold: int):
+
+        """
+        Initializes an instance of this formation algorithm to be used in a vehicle or an infrastructure.
+
+        Parameters
+        ----------
+        owner : object
+            The owning object that is execution this algorithm.
+            This can be either a PlatooningVehicle or an Infrastructure.
+        alpha : float
+            The weighting factor alpha
+        speed_deviation_threshold : float
+            The treshold for speed deviation
+        position_deviation_threshold : float
+            The threshold for position deviation
+        """
+
         super().__init__(self.__class__.__name__, owner)
 
         assert(alpha >= 0 and alpha <= 1.0)
@@ -51,20 +74,48 @@ class SpeedPosition(FormationAlgorithm):
 
     @property
     def alpha(self) -> float:
+        """Returns the alpha"""
+
         return self._alpha
 
     @property
     def speed_deviation_threshold(self) -> float:
+        """Returns the speed deviation threshold"""
+
         return self.speed_deviation_threshold
 
     @property
     def position_deviation_threshold(self) -> int:
+        """Returns the position deviation threshold"""
+
         return self.position_deviation_threshold
 
     def ds(vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+        """
+        Returns the deviation in speed from a given platoon.
+
+        Parameters
+        ----------
+        vehicle : PlatooningVehicle
+            The vehicle for which the deviation is calculated
+        platoon : Platoon
+            The platoon to which the deviation is calculated
+        """
+
         return abs(vehicle.desired_speed - platoon.desired_speed)
 
     def dp(vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+        """
+        Returns the deviation in position from a given platoon.
+
+        Parameters
+        ----------
+        vehicle : PlatooningVehicle
+            The vehicle for which the deviation is calculated
+        platoon : Platoon
+            The platoon to which the deviation is calculated
+        """
+
         if vehicle.rear_position > platoon.position:
             # we are in front of the platoon
             return abs(vehicle.rear_position - platoon.position)
@@ -73,6 +124,17 @@ class SpeedPosition(FormationAlgorithm):
             return abs(platoon.rear_position - vehicle.position)
 
     def cost_speed_position(self, ds: float, dp: int):
+        """
+        Returns the overall cost (i.e., the weigthed deviation) for a candidate.
+
+        Parameters
+        ----------
+        ds : float
+            The deviation in speed
+        dp : int
+            The deviation in position
+        """
+
         return (self.alpha * ds) + ((1.0 - self.alpha) * dp)
 
     def do_formation(self):
@@ -89,6 +151,12 @@ class SpeedPosition(FormationAlgorithm):
             self._do_formation_distributed()
 
     def finish(self):
+        """
+        Cleans up the instance of the formation algorithm.
+
+        This includes mostly statistic recording.
+        """
+
         # write statistics
         if not self._owner._simulator._record_platoon_formation:
             return
@@ -113,6 +181,12 @@ class SpeedPosition(FormationAlgorithm):
                 )
 
     def _do_formation_distributed(self):
+        """
+        Run distributed greedy formation approach.
+
+        This selects a candidate and triggers a join maneuver.
+        """
+
         # we can only run the algorithm if we are not yet in a platoon
         # because this algorithm does not support changing the platoon later on
         if self._owner.platoon_role != PlatoonRole.NONE:
@@ -176,6 +250,12 @@ class SpeedPosition(FormationAlgorithm):
         self._owner._join(best['pid'], best['lid'])
 
     def _do_formation_centralized(self):
+        """
+        Run centralized greedy formation approach.
+
+        This selects candidates and triggers join maneuvers.
+        """
+
         all_found_candidates = []
 
         from .platooning_vehicle import PlatooningVehicle  # noqa 811
@@ -290,6 +370,15 @@ class SpeedPosition(FormationAlgorithm):
 
             # remove all matches from the list of possible matches that would include the selected vehicle
             def is_available(x: dict) -> bool:
+                """
+                Returns whether an entry from the list of possible matches is (still) available.
+
+                Parameters
+                ----------
+                x : dict
+                    The entry from the list of possible matches
+                """
+
                 return (x['vid'] != best['vid'] and  # noqa 504 # this vehicle does not search anymore
                         x['lid'] != best['vid'] and  # noqa 504 # this vehicle will not be applicable as leader anymore # TODO what about transitive joins?
                         x['vid'] != best['lid'])  # the other vehicle is not searching anymore, since it will become a leader
@@ -298,6 +387,12 @@ class SpeedPosition(FormationAlgorithm):
             all_found_candidates = [x for x in all_found_candidates if is_available(x)]
 
     def _do_formation_optimal(self):
+        """
+        Run centralized optimal formation approach.
+
+        This selects candidates and triggers join maneuvers.
+        """
+
         from ortools.linear_solver import pywraplp
         solver = pywraplp.Solver(f"{self.name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
 
