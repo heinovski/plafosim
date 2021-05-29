@@ -124,6 +124,7 @@ class Infrastructure:
                 self._formation_algorithm.do_formation()
                 self._last_formation_step = step
 
+    # TODO currently not used --> remove?
     def _get_neighbors(self):
         neighbors = []
         for vehicle in self._simulator._vehicles.values():

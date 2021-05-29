@@ -674,6 +674,7 @@ class PlatooningVehicle(Vehicle):
                     "\n"
                 )
 
+    # TODO rework to only include "neighbors" and move platoon extraction to formation algorithm
     def _get_available_platoons(self):
         """
         Returns the available platoon candidates of the vehicle.
