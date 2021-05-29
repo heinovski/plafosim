@@ -193,7 +193,7 @@ def main():
     simulation.add_argument('--random-seed', type=int, default=-1,
                             help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--log-level', type=str, default="warn",
-                            choices=["error", "warn", "info", "debug"], help="Whether to enable debug output")
+                            choices=["error", "warn", "info", "debug"], help="The minimum level of logs to be printed")
 
     # gui properties
     gui = parser.add_argument_group('gui properties')
