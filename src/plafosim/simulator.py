@@ -217,7 +217,7 @@ class Simulator:
 
         self._update_desired_speed = update_desired_speed  # whether to update the platoon's desired driving speed to the average speed of all members after the formation changed
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
-        if formation_strategy == "centralized" and number_of_infrastructures == 0:
+        if formation_strategy == "centralized" and number_of_infrastructures <= 0:
             sys.exit("ERROR: When using a centralized strategy at least 1 infrastructure is needed!")
         self._formation_strategy = formation_strategy  # the formation strategy to use
         self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
