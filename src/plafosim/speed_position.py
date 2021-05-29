@@ -61,10 +61,10 @@ class SpeedPosition(FormationAlgorithm):
     def position_deviation_threshold(self) -> int:
         return self.position_deviation_threshold
 
-    def _ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+    def ds(vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         return abs(vehicle.desired_speed - platoon.desired_speed)
 
-    def _dp(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+    def dp(vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         if vehicle.rear_position > platoon.position:
             # we are in front of the platoon
             return abs(vehicle.rear_position - platoon.position)
@@ -134,8 +134,8 @@ class SpeedPosition(FormationAlgorithm):
         for platoon in self._owner._get_available_platoons():
 
             # calculate deviation values
-            ds = self._ds(self._owner, platoon)
-            dp = self._dp(self._owner, platoon)
+            ds = SpeedPosition.ds(self._owner, platoon)
+            dp = SpeedPosition.dp(self._owner, platoon)
 
             # TODO HACK for skipping platoons in front of us
             if self._owner.position > platoon.rear_position:
@@ -233,8 +233,8 @@ class SpeedPosition(FormationAlgorithm):
                 # check whether it is useful that A joins B
 
                 # calculate deviation values
-                ds = self._ds(vehicle, platoon)
-                dp = self._dp(vehicle, platoon)
+                ds = SpeedPosition.ds(vehicle, platoon)
+                dp = SpeedPosition.dp(vehicle, platoon)
 
                 # TODO HACK for skipping vehicles in front of us
                 if vehicle.position > platoon.rear_position:
@@ -375,8 +375,8 @@ class SpeedPosition(FormationAlgorithm):
                     fx = infinity
                 else:
                     # calculate deviation values
-                    ds = self._ds(vehicle, platoon)
-                    dp = self._dp(vehicle, platoon)
+                    ds = SpeedPosition.ds(vehicle, platoon)
+                    dp = SpeedPosition.dp(vehicle, platoon)
 
                     # remove platoon if not in speed range
                     if ds > self._speed_deviation_threshold * vehicle.desired_speed:
