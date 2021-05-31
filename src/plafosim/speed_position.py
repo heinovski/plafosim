@@ -93,6 +93,7 @@ class SpeedPosition(FormationAlgorithm):
 
         return self._position_deviation_threshold
 
+    @staticmethod
     def ds(vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """
         Returns the deviation in speed from a given platoon.
@@ -107,6 +108,7 @@ class SpeedPosition(FormationAlgorithm):
 
         return abs(vehicle.desired_speed - platoon.desired_speed)
 
+    @staticmethod
     def dp(vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """
         Returns the deviation in position from a given platoon.
