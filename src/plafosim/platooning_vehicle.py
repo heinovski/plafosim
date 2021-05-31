@@ -431,7 +431,7 @@ class PlatooningVehicle(Vehicle):
             # avoid the calculation
             # avoid issues due to floating point precision
             if math.isclose(gap_to_predecessor, self._cacc_spacing) and math.isclose(speed_predecessor, speed_leader):
-                LOG.debug(f"{self.vid} does not need to calcucate a CACC new speed")
+                LOG.debug(f"{self.vid} does not need to calculate a CACC new speed")
                 return speed_leader
 
             LOG.debug(f"{self.vid} needs to calculate a new CACC speed")
@@ -548,10 +548,10 @@ class PlatooningVehicle(Vehicle):
             time_until_first_platoon = None
             distance_until_first_platoon = None
         else:
-            time_until_first_platoon = self._first_platoon_join_time - self.depart_time  # NOTE: this produces wrong values when prefilled
+            time_until_first_platoon = self._first_platoon_join_time - self.depart_time  # NOTE: this produces wrong values when pre-filled
             assert(time_until_first_platoon >= 0)
             assert(self._first_platoon_join_position != -1)
-            distance_until_first_platoon = self._first_platoon_join_position - self.depart_position  # NOTE: this produces wrong values when prefilled
+            distance_until_first_platoon = self._first_platoon_join_position - self.depart_position  # NOTE: this produces wrong values when pre-filled
             assert(distance_until_first_platoon >= 0)
 
         # TODO log savings from platoon?
@@ -687,7 +687,7 @@ class PlatooningVehicle(Vehicle):
         This imitates neighbor maintenance by using a neighbor table.
         """
 
-        # HACK FOR AVOIDING MAINTAINING A NEIGHBORTABLE (for now)
+        # HACK FOR AVOIDING MAINTAINING A NEIGHBOR TABLE (for now)
         platoons = []
         for vehicle in self._simulator._vehicles.values():
 
@@ -944,8 +944,8 @@ class PlatooningVehicle(Vehicle):
             if still_required_space > 0:
                 # we still require some space for the teleport but do not have any more vehicles to move
                 # we need to abort the maneuver
-                # unfortunately, we move some vehicles already but this is colleteral damage?
-                # NOTE: will this produce a collsion as we did not move the joiner?
+                # unfortunately, we move some vehicles already but this is collateral damage?
+                # NOTE: will this produce a collision as we did not move the joiner?
                 LOG.warning(f"Could not make enough space to teleport vehicle {self.vid}! Aborting the join maneuver!")
                 self.in_maneuver = False
                 self._joins_aborted += 1
@@ -991,7 +991,7 @@ class PlatooningVehicle(Vehicle):
 
         # update all members
         leader.platoon._formation.append(self)
-        # update the desired speed of the platoon to the average of all platoom members
+        # update the desired speed of the platoon to the average of all platoon members
         if self._simulator._update_desired_speed:
             leader.platoon.update_desired_speed()
 
@@ -1113,7 +1113,7 @@ class PlatooningVehicle(Vehicle):
                     # could not leave the platoon
                     sys.exit(f"ERROR: Could not move vehicle {self.vid} to the adjacent lane to leave the platoon {self.platoon.platoon_id}!")  # TODO this could be just a return in future to let the leaver try again
 
-            # move all remaning platoon members further to the front
+            # move all remaining platoon members further to the front
             front = self.platoon.get_front(self)
             for vehicle in self.platoon.formation[self.platoon.get_member_index(self) + 1:]:
                 follower_gap = front.rear_position - vehicle.position
@@ -1201,7 +1201,7 @@ class PlatooningVehicle(Vehicle):
         """
         Handles a message of arbitrary type Message.
 
-        Messgaes are in general not used at the moment.
+        Messages are in general not used at the moment.
 
         Parameters
         ----------
@@ -1218,7 +1218,7 @@ class PlatooningVehicle(Vehicle):
         """
         Handles a message of the specific type PlatoonAdvertisement.
 
-        Messgaes are in general not used at the moment.
+        Messages are in general not used at the moment.
 
         Parameters
         ----------

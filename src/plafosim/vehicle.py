@@ -105,7 +105,7 @@ class Vehicle:
         # statistics
         self._emissions = {
             'co': 0,  # the total CO (Kohlenmonoxid) emission in mg
-            'co2': 0,  # the total CO2 (Kohlebdioxid) emission in mg
+            'co2': 0,  # the total CO2 (Kohlendioxid) emission in mg
             'hc': 0,  # the total HC (Kohlenwasserstoffe) emission in mg
             'nox': 0,  # the total NOx (Stickoxide) emission in mg
             'pm': 0,  # the total PM (Partikel) emission in mg
@@ -576,7 +576,7 @@ class Vehicle:
             # we do not record statistics for pre-filled vehicles
             return
 
-        # by this check, we should also already avoid logging if the mimimum trip length has not been fulfilled
+        # by this check, we should also already avoid logging if the minimum trip length has not been fulfilled
         # HACK: adding length here to cope for departPos="base"
         # TODO we might need to travel 'length' more than arrival position
         if self.travel_distance < (self._simulator._minimum_trip_length - self.length):
@@ -667,7 +667,7 @@ class Vehicle:
         """
         Receives a message of arbitrary type.
 
-        Messgaes are in general not used at the moment.
+        Messages are in general not used at the moment.
 
         Parameters
         ----------
@@ -694,7 +694,7 @@ class Vehicle:
         """
         Handles a message of arbitrary type Message.
 
-        Messgaes are in general not used at the moment.
+        Messages are in general not used at the moment.
 
         Parameters
         ----------
@@ -710,7 +710,7 @@ class Vehicle:
         """
         Handles a message of the specific type Message.
 
-        Messgaes are in general not used at the moment.
+        Messages are in general not used at the moment.
 
         Parameters
         ----------
