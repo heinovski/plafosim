@@ -98,7 +98,7 @@ def main():
         choices=(True, False),
         help="Whether to pick a random (normally distributed) desired driving speed")
     trip.add_argument('--speed-variation', type=float, default=0.1,
-                      help="The devation from the desired driving speed in ratio")
+                      help="The deviation from the desired driving speed in ratio")
     trip.add_argument('--min-desired-speed', type=float, default=22.0, help="The minimum desired driving speed im m/s")
     trip.add_argument('--max-desired-speed', type=float, default=50.0, help="The maximum desired driving speed im m/s")
     trip.add_argument(
@@ -118,7 +118,7 @@ def main():
         type=lambda x: bool(strtobool(x)),
         default=False,
         choices=(True, False),
-        help="Whether to spawn vehicles in a continous flow")
+        help="Whether to spawn vehicles in a continuous flow")
     trip.add_argument('--depart-method', type=str, choices=('interval', 'probability', 'rate', 'fixed'),
                       default='interval', help="The departure method of vehicles")
     trip.add_argument('--depart-time-interval', type=int, default=1,
@@ -128,7 +128,7 @@ def main():
     trip.add_argument('--depart-rate', type=int, default=3600,
                       help="The rate of departure in vehicles per hour for depart method 'rate'")
     trip.add_argument('--depart-fixed-time', type=int, default=0,
-                      help="Time of depature in s for all vehicles for depart method 'fixed'")
+                      help="Time of departure in s for all vehicles for depart method 'fixed'")
     trip.add_argument(
         '--random-arrival-position',
         type=lambda x: bool(strtobool(x)),
