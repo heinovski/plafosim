@@ -922,11 +922,11 @@ class PlatooningVehicle(Vehicle):
                     # we do gain
                     # move the current vehicle
                     current_vehicle._position -= current_gained_space
-                    LOG.debug(f"We moved vehicle {current_vehicle.vid} to {current_vehicle.position} and gained {current_gained_space}m")
+                    LOG.debug(f"We moved vehicle {current_vehicle.vid} to {current_vehicle.position}-{current_vehicle.rear_position} and gained {current_gained_space}m")
                     # move the previous vehicle(s) as well to keep the correct spacings between them
                     for v in already_moved_vehicles:
                         v._position -= current_gained_space
-                        LOG.debug(f"We moved vehicle {v.vid} by the same distance to {v.position}")
+                        LOG.debug(f"We moved vehicle {v.vid} by the same distance to {v.position}-{v.rear_position}")
                     # how much space do we still need?
                     still_required_space -= current_gained_space
                 else:
