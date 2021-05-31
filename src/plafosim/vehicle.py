@@ -355,7 +355,7 @@ class Vehicle:
             LOG.debug(f"{self.vid} wants to decelerate to {new_speed}m/s")
         else:
             new_speed = self.speed
-            LOG.debug(f"{self.vid} keeps the speed of {new_speed}m/s")
+            LOG.debug(f"{self.vid} wants to keep the speed of {new_speed}m/s")
 
         # vsafe
         if speed_predecessor >= 0 and predecessor_rear_position >= 0:
