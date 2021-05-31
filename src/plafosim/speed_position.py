@@ -234,7 +234,7 @@ class SpeedPosition(FormationAlgorithm):
 
             # add platoon to list
             found_candidates.append({'vid': self._owner.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
-            LOG.info(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
+            LOG.debug(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
 
         # the number of candidates found in this iteration
         self._owner._candidates_found += len(found_candidates)
@@ -246,7 +246,7 @@ class SpeedPosition(FormationAlgorithm):
         # find best candidate to join
         # pick the platoon with the lowest deviation
         best = min(found_candidates, key=lambda x: x['cost'])
-        LOG.info(f"{self._owner.vid}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
+        LOG.debug(f"{self._owner.vid}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
 
         # perform a join maneuver with the candidate's platoon
         # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
@@ -339,7 +339,7 @@ class SpeedPosition(FormationAlgorithm):
 
                 # add platoon to list
                 all_found_candidates.append({'vid': vehicle.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
-                LOG.info(f"{vehicle.vid} found applicable candidate {platoon.platoon_id}")
+                LOG.debug(f"{vehicle.vid} found applicable candidate {platoon.platoon_id}")
                 vehicle._candidates_found += 1
 
             # end vehicle
@@ -365,7 +365,7 @@ class SpeedPosition(FormationAlgorithm):
             # find best candidate to join
             # pick the platoon with the lowest deviation
             best = min(found_candidates, key=lambda x: x['cost'])
-            LOG.info(f"{v}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
+            LOG.debug(f"{v}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
 
             # perform a join maneuver with the candidate's platoon
             # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
@@ -520,15 +520,15 @@ class SpeedPosition(FormationAlgorithm):
             return
 
         if objective.Value() == 0:
-            LOG.warning(f"{self._owner.iid} made no assignment!")
+            LOG.info(f"{self._owner.iid} made no assignment!")
             self._assignments_none += 1
             return
 
-        LOG.info(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
-        LOG.info(f"{self._owner.iid}'s best bound is {objective.BestBound()}")
-        LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.wall_time()} ms")
-        LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")
-        LOG.info(f"{self._owner.iid} solved the optimization problem with {solver.nodes()} nodes")
+        LOG.debug(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
+        LOG.debug(f"{self._owner.iid}'s best bound is {objective.BestBound()}")
+        LOG.debug(f"{self._owner.iid} solved the optimization problem in {solver.wall_time()} ms")
+        LOG.debug(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")
+        LOG.debug(f"{self._owner.iid} solved the optimization problem with {solver.nodes()} nodes")
 
         for variable in solver.variables():
             if variable.solution_value() > 0:
