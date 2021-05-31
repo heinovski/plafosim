@@ -1340,7 +1340,7 @@ class Simulator:
         """Initializes the GUI via TraCI."""
 
         sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-        sumoCmd = [sumoBinary, '-Q', '-c', self._gui_sumo_config, '--collision.action', 'none']
+        sumoCmd = [sumoBinary, '-Q', '-c', self._gui_sumo_config, '--collision.mingap-factor', '0', '--collision.action', 'none']
 
         import traci
         traci.start(sumoCmd)
