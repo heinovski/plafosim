@@ -375,6 +375,8 @@ class Vehicle:
 
                 new_speed = max(safe_speed, self.speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
                 LOG.debug(f"{self.vid}'s new speed after safe speed is {new_speed}m/s")
+                if safe_speed < new_speed:
+                    LOG.warn(f"{self.vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({safe_speed}m/s)! This will probably lead to a crash!")
             else:
                 self._blocked_front = False
         else:
