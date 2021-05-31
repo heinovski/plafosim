@@ -54,7 +54,7 @@ class SpeedPosition(FormationAlgorithm):
         alpha : float
             The weighting factor alpha
         speed_deviation_threshold : float
-            The treshold for speed deviation
+            The threshold for speed deviation
         position_deviation_threshold : float
             The threshold for position deviation
         """
@@ -128,7 +128,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def cost_speed_position(self, ds: float, dp: int):
         """
-        Returns the overall cost (i.e., the weigthed deviation) for a candidate.
+        Returns the overall cost (i.e., the weighted deviation) for a candidate.
 
         Parameters
         ----------
