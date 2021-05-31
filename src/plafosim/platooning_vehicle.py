@@ -846,7 +846,7 @@ class PlatooningVehicle(Vehicle):
                 return
         else:
             # we do not need to consider this case as our error is only between 0m and cacc_spacing
-            pass
+            assert(abs(initial_distance) <= self._cacc_spacing)
 
         assert(new_position >= self.length)
         assert(new_position <= self._simulator.road_length)
