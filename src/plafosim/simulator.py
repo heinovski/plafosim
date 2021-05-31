@@ -30,10 +30,12 @@ from tqdm import tqdm
 from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
+from .util import addLoggingLevel
 from .util import get_crashed_vehicles, update_position
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
+addLoggingLevel('TRACE', 5)
 LOG = logging.getLogger(__name__)
 
 # assumptions

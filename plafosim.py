@@ -193,7 +193,7 @@ def main():
     simulation.add_argument('--random-seed', type=int, default=-1,
                             help="The seed (>=0) for the random number generator instead of the current system time")
     simulation.add_argument('--log-level', type=str, default="warn",
-                            choices=["error", "warn", "info", "debug"], help="The minimum level of logs to be printed")
+                            choices=["error", "warn", "info", "debug", "trace"], help="The minimum level of logs to be printed")
 
     # gui properties
     gui = parser.add_argument_group('gui properties')
@@ -283,7 +283,7 @@ def main():
         args.lane_changes,
         args.collisions,
         args.random_seed,
-        getattr(logging, args.log_level.upper(), None),
+        getattr(logging, args.log_level.upper(), 5),  # implicetly use trace level
         args.gui,
         args.gui_delay / 1000,
         args.track_vehicle,
