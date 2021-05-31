@@ -234,9 +234,9 @@ class SpeedPosition(FormationAlgorithm):
 
             # add platoon to list
             found_candidates.append({'vid': self._owner.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
-            LOG.debug(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
 
         # the number of candidates found in this iteration
+        LOG.debug(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
         self._owner._candidates_found += len(found_candidates)
 
         if len(found_candidates) == 0:
