@@ -457,10 +457,10 @@ class Simulator:
         if p is not None:
             gap_to_predecessor_on_target_lane = p.rear_position - vehicle.position
             if gap_to_predecessor_on_target_lane < 0:
-                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
+                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
                 return False
             if vehicle.speed >= vehicle._safe_speed(p.speed, gap_to_predecessor_on_target_lane, vehicle.desired_gap, vehicle.min_gap):
-                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
+                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
                 return False
 
         # check successor on target lane
@@ -468,10 +468,10 @@ class Simulator:
         if s is not None:
             gap_to_successor_on_target_lane = vehicle.rear_position - s.position
             if gap_to_successor_on_target_lane < 0:
-                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its successor")
+                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its successor")
                 return False
             if s.speed >= s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane, s.desired_gap, s.min_gap):
-                LOG.debug(f"{vehicle.vid}'s lane change is not safe because of its successor")
+                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its successor")
                 return False
 
         # safe
@@ -527,7 +527,7 @@ class Simulator:
                 for member in vehicle.platoon.formation:
                     can_change = can_change and self.is_lane_change_safe(member, target_lane)
                     if not can_change:
-                        LOG.debug(f"lane change is not safe for member {member.vid}")
+                        LOG.trace(f"lane change is not safe for member {member.vid}")
 
                 if can_change:
                     # perform lane change for all vehicles in this platoon
@@ -652,8 +652,8 @@ class Simulator:
             The vehicle to be updated
         """
 
-        LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}")
-        LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}")
+        LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}m/s2")
+        LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}m/s")
         predecessor = self._get_predecessor(vehicle)
         if predecessor:
             new_speed = vehicle.new_speed(predecessor.speed, predecessor.rear_position, predecessor.vid)
@@ -661,8 +661,7 @@ class Simulator:
             new_speed = vehicle.new_speed(-1, -1, -1)
         vehicle._acceleration = new_speed - vehicle.speed
         vehicle._speed = new_speed
-        LOG.debug(f"{vehicle.vid}'s new acceleration: {vehicle.acceleration}")
-        LOG.debug(f"{vehicle.vid}'s new speed {vehicle.speed}")
+        LOG.debug(f"{vehicle.vid}'s new acceleration: {vehicle.acceleration}m/s2")
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
         """
@@ -970,12 +969,13 @@ class Simulator:
         # check whether the vehicle can actually be inserted safely
         # assume we have a collision to check at least once
         collision = bool(self._vehicles)
+        LOG.debug(f"Checking for a collision with an existing vehicle for new vehicle {vid}")
         while collision:
             collision = False  # so far we do not have a collision
-            LOG.debug(f"Checking for a collision with an existing vehicle for new vehicle {vid}")
             # avoid a collision with an existing vehicle
             # check all vehicles
             for other_vehicle in self._vehicles.values():
+                LOG.trace(f"Checking vehicle {other_vehicle.vid}")
                 if other_vehicle.lane != depart_lane:
                     # we do not care about other lanes
                     continue

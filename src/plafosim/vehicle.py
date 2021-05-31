@@ -340,7 +340,7 @@ class Vehicle:
             The id of the vehicle in the front. This should only be used for debugging.
         """
 
-        LOG.debug(f"{self.vid}'s desired speed is {self.desired_speed}m/s")
+        LOG.trace(f"{self.vid}'s desired speed is {self.desired_speed}m/s")
 
         new_speed = -1
         # do we need to adjust our speed?
@@ -348,33 +348,33 @@ class Vehicle:
         if diff_to_desired > 0:
             # we need to accelerate
             new_speed = min(self.speed + min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
-            LOG.debug(f"{self.vid} wants to accelerate to {new_speed}m/s")
+            LOG.trace(f"{self.vid} wants to accelerate to {new_speed}m/s")
         elif diff_to_desired < 0:
             # we need to decelerate
             new_speed = max(self.speed + max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
-            LOG.debug(f"{self.vid} wants to decelerate to {new_speed}m/s")
+            LOG.trace(f"{self.vid} wants to decelerate to {new_speed}m/s")
         else:
             new_speed = self.speed
-            LOG.debug(f"{self.vid} wants to keep the speed of {new_speed}m/s")
+            LOG.trace(f"{self.vid} wants to keep the speed of {new_speed}m/s")
 
         # vsafe
         if speed_predecessor >= 0 and predecessor_rear_position >= 0:
             # we have a predecessor
             gap_to_predecessor = predecessor_rear_position - self.position
-            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}m")
+            LOG.trace(f"{self.vid}'s front gap {gap_to_predecessor}m")
             if gap_to_predecessor < 0:
                 LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
-            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}m/s")
-            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}m")
+            LOG.trace(f"{self.vid}'s predecessor speed {speed_predecessor}m/s")
+            LOG.trace(f"{self.vid}'s desired gap {self.desired_gap}m")
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
-            LOG.debug(f"{self.vid}'s safe speed {safe_speed}m/s")
+            LOG.trace(f"{self.vid}'s safe speed {safe_speed}m/s")
 
             if safe_speed < new_speed:
                 LOG.debug(f"{self.vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
                 new_speed = max(safe_speed, self.speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
-                LOG.debug(f"{self.vid}'s new speed after safe speed is {new_speed}m/s")
+                LOG.trace(f"{self.vid}'s new speed after safe speed is {new_speed}m/s")
                 if safe_speed < new_speed:
                     LOG.warn(f"{self.vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({safe_speed}m/s)! This will probably lead to a crash!")
             else:

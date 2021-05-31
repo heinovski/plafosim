@@ -325,29 +325,29 @@ class PlatooningVehicle(Vehicle):
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different models
             if speed_predecessor >= 0 and predecessor_rear_position >= 0:
                 gap_to_predecessor = predecessor_rear_position - self.position
-                LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}m")
+                LOG.trace(f"{self.vid}'s front gap {gap_to_predecessor}m")
                 if gap_to_predecessor < 0:
                     LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
-                LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}m")
-                LOG.debug(f"{self.vid}'s desired speed {self.desired_speed}m/s")
-                LOG.debug(f"{self.vid}'s predecessor ({predecessor_id}) speed {speed_predecessor}m/s")
+                LOG.trace(f"{self.vid}'s desired gap {self.desired_gap}m")
+                LOG.trace(f"{self.vid}'s desired speed {self.desired_speed}m/s")
+                LOG.trace(f"{self.vid}'s predecessor ({predecessor_id}) speed {speed_predecessor}m/s")
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.desired_gap)
 
-                LOG.debug(f"{self.vid}'s ACC safe speed {self.speed + u}m/s")
+                LOG.trace(f"{self.vid}'s ACC safe speed {self.speed + u}m/s")
 
                 u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-                LOG.debug(f"{self.vid}'s ACC max acceleration speed {self.speed + u}m/s")
+                LOG.trace(f"{self.vid}'s ACC max acceleration speed {self.speed + u}m/s")
 
                 # we cannot decelerate stronger than we actually can
                 if u < -self.max_deceleration:
                     u = -self.max_deceleration
                     LOG.warn(f"{self.vid}'s is performing an emergency braking! Its new speed ({self.speed + u}m/s) is still faster than its ACC desired speed! This will probably lead to a crash!")
-                LOG.debug(f"{self.vid}'s ACC max deceleration speed {self.speed + u}m/s")
+                LOG.trace(f"{self.vid}'s ACC max deceleration speed {self.speed + u}m/s")
 
                 new_speed = self.speed + u
                 new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-                LOG.debug(f"{self.vid}'s ACC max possible speed {new_speed}m/s")
+                LOG.trace(f"{self.vid}'s ACC max possible speed {new_speed}m/s")
 
                 # make sure we do not drive backwards
                 if (new_speed < 0):
@@ -360,7 +360,7 @@ class PlatooningVehicle(Vehicle):
                 if self.is_in_platoon():
                     assert(self.platoon_role is PlatoonRole.LEADER)
 
-                    LOG.debug(f"{self.vid}'s ACC new individual speed {new_speed}m/s")
+                    LOG.trace(f"{self.vid}'s ACC new individual speed {new_speed}m/s")
 
                     # make sure that the leader uses the platoon's parameters for ACC
 
@@ -373,11 +373,11 @@ class PlatooningVehicle(Vehicle):
                     # only drive as fast as the maximum speed of the individual platoon members
                     new_speed = min(new_speed, self.platoon.max_speed)
 
-                    LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}m/s")
+                    LOG.trace(f"{self.vid}'s CACC possible speed {new_speed}m/s")
 
                     # only drive as fast as the platoon's desired speed
                     new_speed = min(new_speed, self.platoon.desired_speed)
-                    LOG.debug(f"{self.vid}'s CACC desired speed {new_speed}m/s")
+                    LOG.trace(f"{self.vid}'s CACC desired speed {new_speed}m/s")
 
                     LOG.debug(f"{self.vid}'s CACC new speed {new_speed}m/s")
 
@@ -387,12 +387,14 @@ class PlatooningVehicle(Vehicle):
                         if follower is self:
                             continue
 
-                        LOG.debug(f"{self.vid} is updating speed of its follower {follower.vid}")
+                        LOG.trace(f"{self.vid} is updating speed of its follower {follower.vid}")
                         follower._speed = new_speed
                         follower._acceleration = new_speed - self.speed
                 else:
+                    # the vehicle is not in a platoon
+
                     new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
-                    LOG.debug(f"{self.vid}'s ACC desired speed {new_speed}m/s")
+                    LOG.trace(f"{self.vid}'s ACC desired speed {new_speed}m/s")
 
                     LOG.debug(f"{self.vid}'s ACC new speed {new_speed}m/s")
 
@@ -415,11 +417,11 @@ class PlatooningVehicle(Vehicle):
             assert(self.platoon.get_front(self).vid == predecessor_id)
 
             gap_to_predecessor = predecessor_rear_position - self.position
-            LOG.debug(f"{self.vid}'s front gap {gap_to_predecessor}m")
+            LOG.trace(f"{self.vid}'s front gap {gap_to_predecessor}m")
             if gap_to_predecessor < 0:
                 LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
-            LOG.debug(f"{self.vid}'s desired gap {self.desired_gap}m")
-            LOG.debug(f"{self.vid}'s predecessor speed {speed_predecessor}m/s")
+            LOG.trace(f"{self.vid}'s desired gap {self.desired_gap}m")
+            LOG.trace(f"{self.vid}'s predecessor speed {speed_predecessor}m/s")
 
             ### HACK FOR AVOIDING COMMUNICATION ###
             # acceleration_predecessor = self.platoon.get_front(self).acceleration
@@ -431,24 +433,24 @@ class PlatooningVehicle(Vehicle):
             # avoid the calculation
             # avoid issues due to floating point precision
             if math.isclose(gap_to_predecessor, self._cacc_spacing) and math.isclose(speed_predecessor, speed_leader):
-                LOG.debug(f"{self.vid} does not need to calculate a CACC new speed")
+                LOG.trace(f"{self.vid} does not need to calculate a CACC new speed")
                 return speed_leader
 
-            LOG.debug(f"{self.vid} needs to calculate a new CACC speed")
+            LOG.trace(f"{self.vid} needs to calculate a new CACC speed")
             u = self._acc_acceleration(speed_leader, gap_to_predecessor, self.desired_gap)
             #####################
 
-            LOG.debug(f"{self.vid}'s CACC safe speed {self.speed + u}m/s")
+            LOG.trace(f"{self.vid}'s CACC safe speed {self.speed + u}m/s")
 
             u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-            LOG.debug(f"{self.vid}'s CACC max acceleration speed {self.speed + u}m/s")
+            LOG.trace(f"{self.vid}'s CACC max acceleration speed {self.speed + u}m/s")
 
             u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
-            LOG.debug(f"{self.vid}'s CACC max deceleration speed {self.speed + u}m/s")
+            LOG.trace(f"{self.vid}'s CACC max deceleration speed {self.speed + u}m/s")
 
             new_speed = self.speed + u
             new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-            LOG.debug(f"{self.vid}'s CACC possible speed {new_speed}m/s")
+            LOG.trace(f"{self.vid}'s CACC possible speed {new_speed}m/s")
 
             LOG.debug(f"{self.vid}'s CACC new speed {new_speed}m/s")
 
@@ -705,7 +707,7 @@ class PlatooningVehicle(Vehicle):
 
             # filter based on communication range
             if abs(vehicle.position - self.position) > self._communication_range:
-                LOG.debug(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range}m)")
+                LOG.trace(f"{self.vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range}m)")
                 continue
 
             platoons.append(vehicle.platoon)
@@ -737,7 +739,7 @@ class PlatooningVehicle(Vehicle):
         # HACK for determining the join position
         if self.position + self.length > leader.platoon.position:
             # TODO join at front
-            LOG.info(f"{self.vid} is in front of the target platoon {platoon_id} ({leader_id})")
+            LOG.debug(f"{self.vid} is in front of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at the front of a platoon is not yet implemented! Aborting the join maneuver!")
             self.in_maneuver = False
 
@@ -747,7 +749,7 @@ class PlatooningVehicle(Vehicle):
             return
         elif self.position > leader.platoon.last.position:
             # TODO join at (arbitrary position) in the middle
-            LOG.info(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
+            LOG.debug(f"{self.vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at arbitrary positions of a platoon is not yet implemented! Aborting the join maneuver!")
             self.in_maneuver = False
 
@@ -856,9 +858,9 @@ class PlatooningVehicle(Vehicle):
 
         platoon_successor = self._simulator._get_successor(last)
         if not platoon_successor or platoon_successor is self:
-            LOG.debug(f"{self.vid}'s new position is {new_position} (behind {last.vid})")
+            LOG.trace(f"{self.vid}'s new position is {new_position} (behind {last.vid})")
         else:
-            LOG.debug(f"{self.vid}'s new position is {new_position} (between {last.vid} and {platoon_successor.vid})")
+            LOG.trace(f"{self.vid}'s new position is {new_position} (between {last.vid} and {platoon_successor.vid})")
 
             # MAKE SPACE FOR THE JOINER
             # the idea is to move the vehicle(s) behind the platoon to make room for the joiner
@@ -870,10 +872,10 @@ class PlatooningVehicle(Vehicle):
             # how big needs the gap behind the platoon in front of the platoon successor to be
             # cacc spacing + joiner + successor's min gap
             required_gap = self._cacc_spacing + self.length + platoon_successor.min_gap
-            LOG.debug(f"We need a gap of {required_gap}m behind the platoon (vehicle {last.vid}) to teleport vehicle {self.vid}")
+            LOG.trace(f"We need a gap of {required_gap}m behind the platoon (vehicle {last.vid}) to teleport vehicle {self.vid}")
             current_gap = last.rear_position - platoon_successor.position
             still_required_space = required_gap - current_gap
-            LOG.debug(f"We currently have a gap of {current_gap} and thus still require {still_required_space}m")
+            LOG.trace(f"We currently have a gap of {current_gap} and thus still require {still_required_space}m")
             if last.rear_position - (required_gap + platoon_successor.length) < 0:
                 # it is not possible to join because we cannot shift the current platoon successor out of the road
                 LOG.warning(f"Could not make enough space to teleport vehicle {self.vid}!")
@@ -889,57 +891,57 @@ class PlatooningVehicle(Vehicle):
             # we need to act to make space
             while still_required_space > 0 and current_vehicle:
                 # move vehicle until min gap to its successor is reached
-                LOG.debug(f"We are checking vehicle {current_vehicle.vid} for a possible move")
+                LOG.trace(f"We are checking vehicle {current_vehicle.vid} for a possible move")
                 # successor of the vehicle we are moving now
                 current_successor = self._simulator._get_successor(current_vehicle)
                 if current_vehicle is self:
                     # we cannot move the current vehicle as we are going to teleport it soon
                     # we need to select the next successor
-                    LOG.debug(f"We cannot move {current_vehicle.vid} as this is the joiner!")
+                    LOG.trace(f"We cannot move {current_vehicle.vid} as this is the joiner!")
                     current_vehicle = current_successor
                     continue
                 if current_successor is self:
                     # we cannot consider the joiner as successor, thus we need to select the next successor
-                    LOG.debug("We are skipping the joiner as successor")
+                    LOG.trace("We are skipping the joiner as successor")
                     current_successor = self._simulator._get_successor(self)
                 if current_successor:
-                    LOG.debug(f"The successor of vehicle {current_vehicle.vid} is {current_successor.vid}")
+                    LOG.trace(f"The successor of vehicle {current_vehicle.vid} is {current_successor.vid}")
                     # gap between vehicle we move now and its successor
                     current_back_gap = current_vehicle.rear_position - current_successor.position
-                    LOG.debug(f"{current_vehicle.vid}'s back gap is {current_back_gap}m")
+                    LOG.trace(f"{current_vehicle.vid}'s back gap is {current_back_gap}m")
                     # available space we could gain during the move of the current vehicle closer to its successor (deceleration)
                     current_possible_space = current_back_gap - current_successor.min_gap
-                    LOG.debug(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
+                    LOG.trace(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
                 else:
-                    LOG.debug(f"Vehicle {current_vehicle.vid} has no successor")
+                    LOG.trace(f"Vehicle {current_vehicle.vid} has no successor")
                     # we have no successor
                     # thus, we can move as far as we like to
                     # but only until the end of the road
                     current_possible_space = current_vehicle.position - current_vehicle.length
-                    LOG.debug(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
+                    LOG.trace(f"We could (theoretically) gain {current_possible_space}m by moving vehicle {current_vehicle.vid}")
                 # space we are actually gaining during this move
                 current_gained_space = min(still_required_space, current_possible_space)
-                LOG.debug(f"We will gain {current_gained_space}m by moving vehicle {current_vehicle.vid}")
+                LOG.trace(f"We will gain {current_gained_space}m by moving vehicle {current_vehicle.vid}")
                 # the actual gain by moving the current vehicle
                 if current_gained_space > 0:
                     # we do gain
                     # move the current vehicle
                     current_vehicle._position -= current_gained_space
-                    LOG.debug(f"We moved vehicle {current_vehicle.vid} to {current_vehicle.position}-{current_vehicle.rear_position} and gained {current_gained_space}m")
+                    LOG.trace(f"We moved vehicle {current_vehicle.vid} to {current_vehicle.position}-{current_vehicle.rear_position} and gained {current_gained_space}m")
                     # move the previous vehicle(s) as well to keep the correct spacings between them
                     for v in already_moved_vehicles:
                         v._position -= current_gained_space
-                        LOG.debug(f"We moved vehicle {v.vid} by the same distance to {v.position}-{v.rear_position}")
+                        LOG.trace(f"We moved vehicle {v.vid} by the same distance to {v.position}-{v.rear_position}")
                     # how much space do we still need?
                     still_required_space -= current_gained_space
                 else:
                     # we do not move the current vehicle and check again with its follower
-                    LOG.debug(f"We can not move vehicle {current_vehicle.vid}")
+                    LOG.trace(f"We can not move vehicle {current_vehicle.vid}")
 
                 # we need to remember this vehicle
                 already_moved_vehicles.append(current_vehicle)
                 current_vehicle = current_successor
-                LOG.debug(f"We still require {still_required_space}m")
+                LOG.trace(f"We still require {still_required_space}m")
 
             if still_required_space > 0:
                 # we still require some space for the teleport but do not have any more vehicles to move
@@ -956,26 +958,26 @@ class PlatooningVehicle(Vehicle):
         current_position = self.position
         if current_position != new_position:
             self._position = new_position
-            LOG.info(f"{self.vid} teleported to {self.position} (from {current_position}, {self.position - current_position}m)")
+            LOG.debug(f"{self.vid} teleported to {self.position} (from {current_position}, {self.position - current_position}m)")
             self._joins_teleport_position += 1
         current_lane = self.lane
         new_lane = leader.lane
         if current_lane != new_lane:
             self._lane = new_lane
-            LOG.info(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
+            LOG.debug(f"{self.vid} switched to lane {self.lane} (from {current_lane})")
             self._joins_teleport_lane += 1
         current_speed = self.speed
         new_speed = last.speed
         if current_speed != new_speed:
             self._speed = new_speed
-            LOG.info(f"{self.vid} changed speed to {self.speed}m/s (from {current_speed}m/s)")
+            LOG.debug(f"{self.vid} changed speed to {self.speed}m/s (from {current_speed}m/s)")
             self._joins_teleport_speed += 1
 
         # update the leader
         leader.in_maneuver = True
         if not leader.is_in_platoon():
             # only if leader was alone before
-            LOG.info(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
+            LOG.debug(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
             leader._last_platoon_join_time = self._simulator.step
             leader._last_platoon_join_position = leader.position
             if leader._first_platoon_join_time == -1:
@@ -1118,17 +1120,17 @@ class PlatooningVehicle(Vehicle):
             for vehicle in self.platoon.formation[self.platoon.get_member_index(self) + 1:]:
                 follower_gap = front.rear_position - vehicle.position
                 gap_error = follower_gap - vehicle._cacc_spacing
-                LOG.debug(f"The open gap between {front.vid} and {vehicle.vid} is {follower_gap}m (error of {gap_error}m)")
+                LOG.trace(f"The open gap between {front.vid} and {vehicle.vid} is {follower_gap}m (error of {gap_error}m)")
                 if gap_error <= 0:
-                    LOG.debug("We do not need to do anything")
+                    LOG.trace("We do not need to do anything")
                     front = vehicle
                     continue
                 if vehicle.position >= vehicle.arrival_position:
-                    LOG.debug(f"We are not moving {vehicle.vid} because it arrived as well")
+                    LOG.trace(f"We are not moving {vehicle.vid} because it arrived as well")
                     continue
-                LOG.debug(f"Moving follower {vehicle.vid} from {vehicle.position} by {gap_error}m ")
+                LOG.trace(f"Moving follower {vehicle.vid} from {vehicle.position} by {gap_error}m ")
                 vehicle._position += gap_error
-                LOG.debug(f"{vehicle.vid} is not at {vehicle.position}")
+                LOG.trace(f"{vehicle.vid} is not at {vehicle.position}")
                 follower_gap = front.rear_position - vehicle.position
                 # avoid issues due to floating point precision
                 assert(math.isclose(follower_gap, vehicle._cacc_spacing))

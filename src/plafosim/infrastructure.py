@@ -116,7 +116,7 @@ class Infrastructure:
             The current simulation step
         """
 
-        LOG.info(f"{self.iid} was triggered at {step}")
+        LOG.debug(f"{self.iid} was triggered at {step}")
 
         if self._formation_algorithm is not None:
             if step >= self._last_formation_step + self._execution_interval:
