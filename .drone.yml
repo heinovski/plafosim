@@ -5,9 +5,8 @@ name: syntax
 
 steps:
 - name: flake8
-  image: python
+  image: alpine/flake8
   commands:
-    - pip3 install --upgrade flake8
     - flake8 --ignore=E265,E266,E402,E501,W503,W504  # comments, import order, line-length, line-break binary operator*2
 
 ---
