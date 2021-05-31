@@ -112,7 +112,7 @@ class Simulator:
             lane_changes: bool = True,
             collisions: bool = True,
             random_seed: int = -1,
-            log_level: int = 'warning',
+            log_level: int = logging.WARNING,
             gui: bool = False,
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
