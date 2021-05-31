@@ -445,7 +445,10 @@ class PlatooningVehicle(Vehicle):
             u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
             LOG.trace(f"{self.vid}'s CACC max acceleration speed {self.speed + u}m/s")
 
-            u = max(-self.max_deceleration, u)  # we cannot decelerate stronger than we actually can
+            # we cannot decelerate stronger than we actually can
+            if u < -self.max_deceleration:
+                u = -self.max_deceleration
+                LOG.warn(f"{self.vid}'s is performing an emergency braking! Its new speed ({self.speed + u}m/s) is still faster than its ACC desired speed! This will probably lead to a crash!")
             LOG.trace(f"{self.vid}'s CACC max deceleration speed {self.speed + u}m/s")
 
             new_speed = self.speed + u
