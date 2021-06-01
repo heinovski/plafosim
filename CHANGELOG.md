@@ -1,7 +1,8 @@
 # Changelog
 
 ## [v0.10.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.10.0) - 2021-06-XX
-* Added comparison to Plexe for CACC
+* Added comparison of cf models with single vehicle (#229, #293)
+* Added comparison to Plexe for CACC (#84)
 * Added pandas for predecessor calculation (#283)
 * Added predecessor_id to new_speed method
 * Added switch for reduced air drag
@@ -9,7 +10,7 @@
 * Fixed typos
 * Fixed wrong execution trigger for formation algorithm
 * Updated call to SUMO when using GUI
-* Updated CI pipelines and comparisons (#229, #279, #280, #287, #293)
+* Updated CI pipelines and comparisons (#279, #280, #287)
 * Updated default values for formation thresholds
 * Updated depart time of platoon
 * Updated docstrings
