@@ -571,6 +571,57 @@ for label in trip_diff_labels:
             l_max = -0.376667
         else:
             sys.exit(f"Unknown label {label}!")
+    elif args.experiment == "cacc_single":
+        if label == 'desiredSpeed':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrival':
+            l_mean = -0.7
+            l_std = 0.0
+            l_min = -0.7
+            l_25 = -0.7
+            l_50 = -0.7
+            l_75 = -0.7
+            l_max = -0.7
+        elif label == 'arrivalLane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'arrivalSpeed':
+            l_mean = -0.7
+            l_std = 0.0
+            l_min = -0.7
+            l_25 = -0.7
+            l_50 = -0.7
+            l_75 = -0.7
+            l_max = -0.7
+        elif label == 'duration':
+            l_mean = -0.7
+            l_std = 0.0
+            l_min = -0.7
+            l_25 = -0.7
+            l_50 = -0.7
+            l_75 = -0.7
+            l_max = -0.7
+        elif label == 'timeLoss':
+            l_mean = -0.666667
+            l_std = 0.0
+            l_min = -0.666667
+            l_25 = -0.666667
+            l_50 = -0.666667
+            l_75 = -0.666667
+            l_max = -0.666667
+        else:
+            sys.exit(f"Unknown label {label}!")
     else:
         sys.exit(f"Unknown experiment {args.experiment}!")
 
@@ -688,6 +739,14 @@ for label in lifetime_labels:
             l_50 = 0.000000
             l_75 = 0.000000
             l_max = 0.000000
+        elif args.experiment == "cacc_single":
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
         else:
             sys.exit(f"Unknown experiment {args.experiment}!")
 
@@ -878,6 +937,33 @@ for label in lifetime_diff_labels:
             l_50 = 17.900000
             l_75 = 17.900000
             l_max = 17.900000
+        elif label == 'diff_sumo_lane':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        else:
+            sys.exit(f"Unknown label {label}!")
+    elif args.experiment == "cacc_single":
+        if label == 'diff_sumo_speed':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
+        elif label == 'diff_sumo_position':
+            l_mean = 0.0
+            l_std = 0.0
+            l_min = 0.0
+            l_25 = 0.0
+            l_50 = 0.0
+            l_75 = 0.0
+            l_max = 0.0
         elif label == 'diff_sumo_lane':
             l_mean = 0.0
             l_std = 0.0

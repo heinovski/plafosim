@@ -154,6 +154,7 @@ steps:
     - pip3 install -r requirements.opt.txt
     - git clone --branch heinovski/plafosim-comparison-cacc --single-branch "https://$DRONE_ASKPASS_USERNAME:$DRONE_ASKPASS_PASSWORD@webgit.ccs-labs.org/git/CCS/plexe-python.git" plexe
     - pip3 install ./plexe
+    - ./scripts/test-cf-model-cacc-single.sh 1337
     - ./scripts/test-cf-model-cacc-100.sh 1337
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cacc*.csv cacc*.png"
 

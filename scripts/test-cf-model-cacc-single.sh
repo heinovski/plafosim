@@ -24,7 +24,7 @@ ROOT=$(pwd)/$(dirname $0)/..
 
 ### CACC
 
-experiment=cacc
+experiment=cacc_single
 
 # check correct sumo version
 sumo --version | grep Version | head -n 1 | sed -E "s/.*([0-9]+\.[0-9]+\.[0-9]+)/\1/g" | xargs -i test "1.6.0" = "{}" || (echo "Incorrect SUMO version!" && exit 1)
@@ -38,13 +38,14 @@ echo "Running PlaFoSim..."
     --lanes 4 \
     --collisions true \
     --lane-changes true \
-    --vehicles 100 \
+    --vehicles 1 \
     --time-limit 1 \
     --road-length 100 \
     --max-speed 55 \
     --acc-headway-time 1.5 \
     --cacc-spacing 5.0 \
     --start-as-platoon true \
+    --reduced-air-drag false \
     --pre-fill true \
     --penetration 1 \
     --desired-speed 36 \
@@ -62,13 +63,14 @@ echo "Running PlaFoSim..."
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
     --record-vehicle-changes true \
+    --record-emission-traces true \
     2>&1 | tee ${experiment}_plafosim.log
 
 echo "Running SUMO..."
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plexe/examples/autofeeddemo.py \
-    --vehicles 100 \
+    --vehicles 1 \
     --sumo-config $ROOT/plexe/examples/cfg/freeway.sumo.cfg \
     2>&1 | tee ${experiment}_sumo.log
 
@@ -81,4 +83,4 @@ $SUMO_HOME/tools/xml/xml2csv.py cacc-changes.xml -o $experiment-changes.csv -s '
 
 echo "Comparing results..."
 
-$ROOT/scripts/compare2sumo.py $experiment --vehicles 100 --desired-speed 36 --arrival-position 100000
+$ROOT/scripts/compare2sumo.py $experiment --vehicles 1 --desired-speed 36 --arrival-position 100000
