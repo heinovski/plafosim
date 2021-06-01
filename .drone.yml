@@ -52,7 +52,7 @@ steps:
     commands:
       - pip3 install -r requirements.txt
         # we are testing both vehicle types
-      - ./plafosim.py --penetration 0.5 --random-seed $SEED
+      - python3 ./plafosim.py --penetration 0.5 --random-seed $SEED
   - name: distributed formation
     image: python:3.8-buster
     environment:
@@ -60,7 +60,7 @@ steps:
     commands:
       - pip3 install -r requirements.txt
         # we are testing both vehicle types
-      - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
+      - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
   - name: centralized formation (greedy)
     image: python:3.8-buster
     environment:
@@ -68,7 +68,7 @@ steps:
     commands:
       - pip3 install -r requirements.txt
         # we are testing both vehicle types
-      - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
+      - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
   - name: centralized formation (optimal)
     image: python:3.8-buster
     environment:
@@ -76,7 +76,7 @@ steps:
     commands:
       - pip3 install -r requirements.txt
         # we are testing both vehicle types
-      - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
+      - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 
 trigger:
   branch:
@@ -172,7 +172,7 @@ steps:
   commands:
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
-    - ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 30 --vehicles 1000 --random-depart-position true --lanes 4
+    - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 30 --vehicles 1000 --random-depart-position true --lanes 4
 
 
 trigger:
