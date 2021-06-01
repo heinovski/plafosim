@@ -170,8 +170,6 @@ steps:
 - name: profile
   image: python:3.8-buster
   commands:
-    - apt update
-    - apt install time
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
     - ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 30 --vehicles 1000 --random-depart-position true --lanes 4
