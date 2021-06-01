@@ -102,6 +102,7 @@ sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
 sumo_traces.replace(r'v\.', '', regex=True, inplace=True)
 sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
 # Remove trace values that do not correspond to plafosim (timestep of 1.0s)
+# TODO use average of values within 1.0s timestep?
 sumo_traces = sumo_traces[sumo_traces.step.mod(1.0) == 0.0]
 sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
 sumo_traces.sort_values(by='step', inplace=True)
