@@ -186,7 +186,7 @@ name: performance
 
 steps:
 - name: profile
-  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
+  image: python:3.8-buster
   commands:
     - apt update
     - apt install time
