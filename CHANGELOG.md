@@ -1,5 +1,20 @@
 # Changelog
 
+## [v0.10.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.10.0) - 2021-06-XX
+* Added comparison to Plexe for CACC
+* Added pandas for predecessor calculation (#283)
+* Added predecessor_id to new_speed method
+* Added switch for reduced air drag
+* Fixed infinite nesting of properties
+* Fixed typos
+* Fixed wrong execution trigger for formation algorithm
+* Updated call to SUMO when using GUI
+* Updated CI pipelines and comparisons (#229, #279, #280, #287, #293)
+* Updated default values for formation thresholds
+* Updated depart time of platoon
+* Updated docstrings
+* Updated logging
+
 ## [v0.9.6](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.6) - 2021-05-25
 * Fixed assert in result recording (#278)
 * Fixed spawning of static platoon (#277)
