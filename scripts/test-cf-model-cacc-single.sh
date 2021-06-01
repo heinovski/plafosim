@@ -70,16 +70,17 @@ echo "Running SUMO..."
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plexe/examples/autofeeddemo.py \
+    --experiment $experiment \
     --vehicles 1 \
     --sumo-config $ROOT/plexe/examples/cfg/freeway.sumo.cfg \
     2>&1 | tee ${experiment}_sumo.log
 
 echo "Converting results..."
 
-$SUMO_HOME/tools/xml/xml2csv.py cacc-trips.xml -o $experiment-trips.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py cacc-emissions.xml -o $experiment-emissions.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py cacc-traces.xml -o $experiment-traces.csv -s ','
-$SUMO_HOME/tools/xml/xml2csv.py cacc-changes.xml -o $experiment-changes.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-trips.xml -o $experiment-trips.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-emissions.xml -o $experiment-emissions.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-traces.xml -o $experiment-traces.csv -s ','
+$SUMO_HOME/tools/xml/xml2csv.py $experiment-changes.xml -o $experiment-changes.csv -s ','
 
 echo "Comparing results..."
 
