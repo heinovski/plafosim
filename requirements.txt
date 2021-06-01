@@ -1,4 +1,5 @@
 argparse==1.4.0 # argument parsing
-numpy>=1.19.5 # data processing
-pandas>=1.1.5 # data processing
-tqdm>=4.48.2 # progress bar
+numpy==1.19.5 # data processing
+ortools==9.0.9048 # solver
+pandas==1.1.5 # data processing
+tqdm==4.61.0 # progress bar
