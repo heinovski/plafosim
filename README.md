@@ -34,8 +34,8 @@ For more information, contact Julian Heinovski ([heinovski@ccs-labs.org](mailto:
 
 ## Installation
 
-- Install Python3 (tested with 3.6.9)
-- Optionally install SUMO (tested with >= 1.1.0)
+- Install Python3 (tested with 3.6.9, 3.7.10, 3.8.5)
+- Optionally install SUMO (tested with 1.1.0, 1.4.0, 1.6.0, 1.8.0)
 - Clone the repository
 - Install the minimum requirements (for running a simulation):
 ```
