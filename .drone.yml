@@ -16,7 +16,7 @@ name: tests
 
 steps:
 - name: unittests
-  image: python
+  image: python:3.8-buster
   commands:
     - pip3 install --upgrade tqdm
     - pip3 install --upgrade ortools
@@ -27,7 +27,7 @@ steps:
     - pytest -v --cov=plafosim tests/unit_tests
 
 - name: coverage
-  image: python
+  image: python:3.8-buster
   environment:
     HOST:
       from_secret: WWW_FTP_HOST
@@ -50,7 +50,7 @@ name: execution
 
 steps:
   - name: no formation
-    image: python
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
@@ -59,7 +59,7 @@ steps:
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --random-seed $SEED
   - name: distributed formation
-    image: python
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
@@ -68,7 +68,7 @@ steps:
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
   - name: centralized formation (greedy)
-    image: python
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
@@ -77,7 +77,7 @@ steps:
         # we are testing both vehicle types
       - ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
   - name: centralized formation (optimal)
-    image: python
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
