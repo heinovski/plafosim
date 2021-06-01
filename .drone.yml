@@ -45,38 +45,38 @@ type: docker
 name: execution
 
 steps:
-  - name: no formation
-    image: python:3.8-buster
-    environment:
-      SEED: ${DRONE_BUILD_NUMBER}
-    commands:
-      - pip3 install -r requirements.txt
-        # we are testing both vehicle types
-      - python3 ./plafosim.py --penetration 0.5 --random-seed $SEED
-  - name: distributed formation
-    image: python:3.8-buster
-    environment:
-      SEED: ${DRONE_BUILD_NUMBER}
-    commands:
-      - pip3 install -r requirements.txt
-        # we are testing both vehicle types
-      - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
-  - name: centralized formation (greedy)
-    image: python:3.8-buster
-    environment:
-      SEED: ${DRONE_BUILD_NUMBER}
-    commands:
-      - pip3 install -r requirements.txt
-        # we are testing both vehicle types
-      - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
-  - name: centralized formation (optimal)
-    image: python:3.8-buster
-    environment:
-      SEED: ${DRONE_BUILD_NUMBER}
-    commands:
-      - pip3 install -r requirements.txt
-        # we are testing both vehicle types
-      - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
+- name: no formation
+  image: python:3.8-buster
+  environment:
+    SEED: ${DRONE_BUILD_NUMBER}
+  commands:
+    - pip3 install -r requirements.txt
+      # we are testing both vehicle types
+    - python3 ./plafosim.py --penetration 0.5 --random-seed $SEED
+- name: distributed formation
+  image: python:3.8-buster
+  environment:
+    SEED: ${DRONE_BUILD_NUMBER}
+  commands:
+    - pip3 install -r requirements.txt
+      # we are testing both vehicle types
+    - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
+- name: centralized formation (greedy)
+  image: python:3.8-buster
+  environment:
+    SEED: ${DRONE_BUILD_NUMBER}
+  commands:
+    - pip3 install -r requirements.txt
+      # we are testing both vehicle types
+    - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
+- name: centralized formation (optimal)
+  image: python:3.8-buster
+  environment:
+    SEED: ${DRONE_BUILD_NUMBER}
+  commands:
+    - pip3 install -r requirements.txt
+      # we are testing both vehicle types
+    - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 
 trigger:
   branch:
