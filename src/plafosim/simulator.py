@@ -1500,12 +1500,16 @@ class Simulator:
             self._call_infrastructure_actions()
 
             # TODO update neighbor data (predecessor, successor, front)
+            # this is necessary due to the position updates at the end of the last step
+            # and the spawning of new vehicles
 
             # perform lane changes (for all vehicles)
             if self._lane_changes:
                 self._change_lanes()
 
             # TODO update neighbor data (predecessor, successor, front)
+            # this is necessary due to the lane changes
+            # however, it might be sufficient to update the neighbors only for vehicles that did change the lane
 
             # adjust speed (of all vehicles)
             self._adjust_speeds()
