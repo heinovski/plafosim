@@ -1499,15 +1499,20 @@ class Simulator:
             # call regular actions on infrastructure
             self._call_infrastructure_actions()
 
+            # TODO update neighbor data (predecessor, successor, front)
+
             # perform lane changes (for all vehicles)
             if self._lane_changes:
                 self._change_lanes()
+
+            # TODO update neighbor data (predecessor, successor, front)
 
             # adjust speed (of all vehicles)
             self._adjust_speeds()
 
             # BEGIN VECTORIZATION PART
-            # convert dict of vehicles to dataframe
+            # TODO move upwards/get rid of it entirely
+            # convert dict of vehicles to dataframe (temporary)
             vdf = self._get_vehicles_df()
 
             # adjust positions (of all vehicles)
