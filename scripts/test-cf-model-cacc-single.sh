@@ -69,10 +69,9 @@ echo "Running PlaFoSim..."
 echo "Running SUMO..."
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
-    $ROOT/plexe/examples/autofeeddemo.py \
+    $ROOT/scripts/run-plexe.py \
     --experiment $experiment \
     --vehicles 1 \
-    --sumo-config $ROOT/plexe/examples/cfg/freeway.sumo.cfg \
     2>&1 | tee ${experiment}_sumo.log
 
 echo "Converting results..."

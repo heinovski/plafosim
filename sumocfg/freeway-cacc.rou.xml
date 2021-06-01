@@ -1,0 +1,5 @@
+<routes>
+    <!-- desired speed: normal distribution at mean=1.0, dev=0.1, min=0.61, max=1.39) of edge speed (21.96 [80km/h] <= 36 [130 km/h] <= 50.04 [180km/h]) -->
+    <vType id="cacc" accel="2.5" decel="15.0" apparentDecel="15.0" emergencyDecel="15.0" sigma="0" tau="1.0" length="4" minGap="0" maxSpeed="55" speedFactor="normc(1.0,0.1,0.61,1.39)" color="0,1,0" carFollowModel="CC" laneChangeModel="LC2013" emissionClass="HBEFA3/PC_G_EU4" tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5" />
+    <route id="route" edges="edge_0_0" />
+</routes>
