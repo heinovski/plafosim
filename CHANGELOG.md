@@ -1,8 +1,9 @@
 # Changelog
 
-## [v0.10.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.10.0) - 2021-06-XX
+## [v0.10.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.10.0) - 2021-06-02
 * Added comparison of cf models with single vehicle (#229, #293)
 * Added comparison to Plexe for CACC (#84)
+* Added emissions to comparison (#177)
 * Added pandas for predecessor calculation (#283)
 * Added predecessor_id to new_speed method
 * Added switch for reduced air drag
