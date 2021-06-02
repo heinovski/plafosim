@@ -716,9 +716,9 @@ for label in lifetime_labels:
             # l_75 = 0.000000
             # l_max = 0.000000
             # Plexe step size 0.1s
-            mean = -0.046928
-            std = 0.921540
-            min = -23.670000
+            l_mean = -0.046928
+            l_std = 0.921540
+            l_min = -23.670000
             l_25 = 0.000000
             l_50 = 0.000000
             l_75 = 0.000000
