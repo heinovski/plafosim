@@ -332,6 +332,7 @@ for label in trip_diff_labels:
         else:
             sys.exit(f"Unknown label {label}!")
     elif args.experiment == "acc":
+        # we might need to work on ACC, since there is a little deviation
         if label == 'desiredSpeed':
             l_mean = 0.443730
             l_std = 5.233829
@@ -699,6 +700,7 @@ for label in lifetime_labels:
             l_75 = 0.000000
             l_max = 0.180000
         elif args.experiment == "acc":
+            # we might need to work on ACC, since there is a little deviation
             l_mean = -0.834908
             l_std = 2.318284
             l_min = -45.360000
@@ -822,6 +824,7 @@ for label in lifetime_diff_labels:
         else:
             sys.exit(f"Unknown label {label}!")
     elif args.experiment == "acc":
+        # we might need to work on ACC, since there is a little deviation
         if label == 'diff_sumo_speed':
             l_mean = 1.364988
             l_std = 4.268770
