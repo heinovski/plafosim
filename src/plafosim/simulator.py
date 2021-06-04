@@ -333,13 +333,13 @@ class Simulator:
         """Triggers actions on all vehicles in the simulation."""
 
         for vehicle in self._vehicles.values():
-            vehicle.action(self.step)
+            vehicle.action(self._step)
 
     def _call_infrastructure_actions(self):
         """Triggers actions on all infrastructures in the simulation."""
 
         for infrastructure in self._infrastructures.values():
-            infrastructure.action(self.step)
+            infrastructure.action(self._step)
 
     def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         """
@@ -544,7 +544,7 @@ class Simulator:
                             # log lane change
                             with open(f'{self._result_base_filename}_platoon_changes.csv', 'a') as f:
                                 f.write(
-                                    f"{self.step},"
+                                    f"{self._step},"
                                     f"{member.vid},"
                                     f"{member.position},"
                                     f"{source_lane},"
@@ -571,7 +571,7 @@ class Simulator:
                 # log lane change
                 with open(f'{self._result_base_filename}_vehicle_changes.csv', 'a') as f:
                     f.write(
-                        f"{self.step},"
+                        f"{self._step},"
                         f"{vehicle.vid},"
                         f"{vehicle.position},"
                         f"{source_lane},"
@@ -622,7 +622,7 @@ class Simulator:
         """
 
         if vehicle.blocked_front:
-            if vehicle.lane < self.number_of_lanes - 1:
+            if vehicle.lane < self._number_of_lanes - 1:
                 target_lane = vehicle.lane + 1
                 # TODO determine whether it is useful to overtake
                 self._change_lane(vehicle, target_lane, "speedGain")
@@ -766,9 +766,9 @@ class Simulator:
                     # we do not consider depart interval here since this is supposed to be a snapshot from an earlier point of simulation
                     # make sure to also include the end of the road itself
                     # consider length, equal to departPos="base" in SUMO
-                    depart_position = random.uniform(vtype.length, self.road_length)
+                    depart_position = random.uniform(vtype._length, self._road_length)
                     # always use random lane for pre-filled vehicle
-                    depart_lane = random.randrange(0, self.number_of_lanes, 1)
+                    depart_lane = random.randrange(0, self._number_of_lanes, 1)
 
                     LOG.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
 
@@ -864,7 +864,7 @@ class Simulator:
             depart_position = 0
 
         assert(depart_position >= 0)
-        assert(depart_position <= self.road_length)
+        assert(depart_position <= self._road_length)
 
         return depart_position
 
@@ -934,24 +934,24 @@ class Simulator:
         spawn = False  # should we spawn a new vehicle in this timestep?
         if self._depart_method == "interval":
             # spawn interval
-            spawn = self.step % self._depart_time_interval == 0  # is the time step correct?
+            spawn = self._step % self._depart_time_interval == 0  # is the time step correct?
             if self._last_vehicle_id in self._vehicles.keys():
-                spawn = spawn and self._vehicles[self._last_vehicle_id].depart_time != self.step
+                spawn = spawn and self._vehicles[self._last_vehicle_id].depart_time != self._step
         elif self._depart_method == "probability":
             # spawn probability per time step
             spawn = random.random() <= self._depart_probability
         elif self._depart_method == "rate":
             # spawn #vehicles per hour
-            spawn_interval = 3600 / self.step_length / self._depart_rate
-            spawn = self.step % round(spawn_interval) == 0
-        elif self._depart_method == "fixed" and self.step == self._depart_fixed_time:
+            spawn_interval = 3600 / self._step_length / self._depart_rate
+            spawn = self._step % round(spawn_interval) == 0
+        elif self._depart_method == "fixed" and self._step == self._depart_fixed_time:
             # we create all of the vehicles now
             sys.exit("ERROR: depart method fixed is not yet implemented!")
         else:
             sys.exit("ERROR: Unknown depart method!")
 
         if spawn:
-            depart_time = self.step
+            depart_time = self._step
         else:
             # we do not spawn a vehicle in this timestep
             return
@@ -959,7 +959,7 @@ class Simulator:
         vid = self._last_vehicle_id + 1
 
         if self._random_depart_lane:
-            depart_lane = random.randrange(0, self.number_of_lanes, 1)
+            depart_lane = random.randrange(0, self._number_of_lanes, 1)
         else:
             depart_lane = 0
 
@@ -1004,7 +1004,7 @@ class Simulator:
 
             if collision:
                 # can we avoid the collision by switching the departure lane?
-                if depart_lane == self.number_of_lanes - 1:
+                if depart_lane == self._number_of_lanes - 1:
                     # reached maximum number of lanes already
                     # TODO delay insertion of vehicle
                     LOG.warning(f"Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Vehicle {vid} will not be spawned, since delaying insertion of vehicles is not (yet) implemented!")
@@ -1122,7 +1122,7 @@ class Simulator:
 
         last_infrastructure_id = -1
 
-        placement_interval = self.road_length / number_of_infrastructures
+        placement_interval = self._road_length / number_of_infrastructures
 
         for num in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures"):
             iid = last_infrastructure_id + 1
@@ -1554,14 +1554,14 @@ class Simulator:
             progress_bar.update(self._step_length)
             if self._gui:
                 import traci
-                traci.simulationStep(self.step)
-                assert(traci.simulation.getTime() == float(self.step))
+                traci.simulationStep(self._step)
+                assert(traci.simulation.getTime() == float(self._step))
 
         # We reach this point only by setting self._running to False
         # which is only done by calling self.stop()
         # which already calls self._finish().
         # Hence, we do not have to do anything anymore.
-        return self.step
+        return self._step
 
     def _statistics(self):
         """Calculates some period statistics."""
