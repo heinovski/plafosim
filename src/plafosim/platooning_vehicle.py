@@ -108,7 +108,7 @@ class PlatooningVehicle(Vehicle):
         self._acc_lambda = 0.1  # see Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
         self._cacc_spacing = cacc_spacing
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
-        self._platoon = Platoon(self.vid, [self], self.desired_speed)
+        self._platoon = Platoon(vid, [self], desired_speed)
         self._in_maneuver = False
 
         if formation_algorithm is not None:
