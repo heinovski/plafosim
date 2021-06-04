@@ -199,8 +199,7 @@ def main():
 
     # gui properties
     gui = parser.add_argument_group('gui properties')
-    gui.add_argument('--gui', type=lambda x: bool(strtobool(x)), default=False, choices=(True, False),
-                     help="Whether to enable a live sumo gui")
+    gui.add_argument('--gui', action='store_true', help="Enable a live SUMO GUI")
     gui.add_argument('--gui-delay', type=int, default=0,
                      help="The delay used in every simulation step to visualize the current network state in ms")
     gui.add_argument('--track-vehicle', type=int, default=-1, help="The id of a vehicle to track in the gui")
