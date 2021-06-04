@@ -518,7 +518,6 @@ class SpeedPosition(FormationAlgorithm):
         LOG.info(f"{self._owner.iid} is running the solver for {solver.NumConstraints()} vehicles and {solver.NumVariables()} possible assignments")
 
         result_status = solver.Solve()
-        self._assignments_solved += 1
 
         if result_status >= solver.INFEASIBLE:
             LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
@@ -529,6 +528,8 @@ class SpeedPosition(FormationAlgorithm):
             LOG.info(f"{self._owner.iid} made no assignment!")
             self._assignments_none += 1
             return
+
+        self._assignments_solved += 1
 
         LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.wall_time()} ms")
         LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")  # broken?
