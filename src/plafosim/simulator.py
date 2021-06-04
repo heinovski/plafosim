@@ -1559,7 +1559,7 @@ class Simulator:
 
         # We reach this point only by setting self._running to False
         # which is only done by calling self.stop()
-        # which already calls self.finish().
+        # which already calls self._finish().
         # Hence, we do not have to do anything anymore.
         return self.step
 
@@ -1619,7 +1619,7 @@ class Simulator:
 
         self._running = False
         print(f"\n{msg}")
-        self.finish()
+        self._finish()
 
     def __str__(self) -> str:
         """Returns a str representation of a simulator instance."""
@@ -1631,7 +1631,7 @@ class Simulator:
         sim_dict.update({'current_number_of_infrastructures': len(self._infrastructures)})
         return str(sim_dict)
 
-    def finish(self):
+    def _finish(self):
         """Cleans up the simulation."""
 
         if self._running:
