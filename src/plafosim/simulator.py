@@ -356,13 +356,13 @@ class Simulator:
 
         if lane == -1:
             # implicitly search on current lane of vehicle
-            lane = vehicle.lane
+            lane = vehicle._lane
         predecessor = None  # there is no predecessor so far
         candidates = [
             v for v in self._vehicles.values() if
             v is not vehicle and  # not this vehicle
-            v.lane == lane and  # correct lane
-            v.position >= vehicle.position  # in front this vehicle
+            v._lane == lane and  # correct lane
+            v._position >= vehicle._position  # in front this vehicle
         ]
         for other_vehicle in candidates:
             # we do not check for collisions here because this method is also called within an update step
@@ -386,17 +386,17 @@ class Simulator:
 
         if lane == -1:
             # implicitly search on current lane of vehicle
-            lane = vehicle.lane
+            lane = vehicle._lane
         successor = None  # there is no successor so far
         candidates = [
             v for v in self._vehicles.values() if
             v is not vehicle and  # not this vehicle
-            v.lane == lane and  # correct lane
-            v.position <= vehicle.position  # behind this vehicle
+            v._lane == lane and  # correct lane
+            v._position <= vehicle._position  # behind this vehicle
         ]
         for other_vehicle in candidates:
             # we do not check for collisions here because this method is also called within an update step
-            if successor is None or other_vehicle.position > successor.position:
+            if successor is None or other_vehicle._position > successor._position:
                 # the current vehicle is closer to us than the previous successor
                 successor = other_vehicle
         return successor
@@ -437,7 +437,7 @@ class Simulator:
         if p is None:
             return -1
         else:
-            return p.speed
+            return p._speed
 
     def is_lane_change_safe(self, vehicle: Vehicle, target_lane: int) -> bool:
         """
@@ -457,23 +457,23 @@ class Simulator:
         # check predecessor on target lane
         p = self._get_predecessor(vehicle, target_lane)
         if p is not None:
-            gap_to_predecessor_on_target_lane = p.rear_position - vehicle.position
+            gap_to_predecessor_on_target_lane = p.rear_position - vehicle._position
             if gap_to_predecessor_on_target_lane < 0:
-                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
+                LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its predecessor")
                 return False
-            if vehicle.speed >= vehicle._safe_speed(p.speed, gap_to_predecessor_on_target_lane, vehicle.desired_gap, vehicle.min_gap):
-                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its predecessor")
+            if vehicle._speed >= vehicle._safe_speed(p._speed, gap_to_predecessor_on_target_lane, vehicle.desired_gap, vehicle.min_gap):
+                LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its predecessor")
                 return False
 
         # check successor on target lane
         s = self._get_successor(vehicle, target_lane)
         if s is not None:
-            gap_to_successor_on_target_lane = vehicle.rear_position - s.position
+            gap_to_successor_on_target_lane = vehicle.rear_position - s._position
             if gap_to_successor_on_target_lane < 0:
-                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its successor")
+                LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its successor")
                 return False
-            if s.speed >= s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane, s.desired_gap, s.min_gap):
-                LOG.trace(f"{vehicle.vid}'s lane change is not safe because of its successor")
+            if s._speed >= s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane, s.desired_gap, s.min_gap):
+                LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its successor")
                 return False
 
         # safe
@@ -503,39 +503,39 @@ class Simulator:
             The reason for the lane change
         """
 
-        source_lane = vehicle.lane
+        source_lane = vehicle._lane
         if source_lane == target_lane:
             return True
-        LOG.debug(f"{vehicle.vid} wants to change from lane {source_lane} to lane {target_lane} ({reason})")
+        LOG.debug(f"{vehicle._vid} wants to change from lane {source_lane} to lane {target_lane} ({reason})")
 
         lane_diff = target_lane - source_lane
         if abs(lane_diff) > 1:
-            LOG.warning(f"{vehicle.vid} can only change to adjacent lane!")
+            LOG.warning(f"{vehicle._vid} can only change to adjacent lane!")
             old_target_lane = target_lane
             target_lane = source_lane + copysign(1, lane_diff)
-            LOG.info(f"Adjusted target lane of {vehicle.vid} to {target_lane} (from {old_target_lane})")
+            LOG.info(f"Adjusted target lane of {vehicle._vid} to {target_lane} (from {old_target_lane})")
 
         if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon():
             # followers are not allowed to change the lane on their one
-            assert(vehicle.platoon_role is not PlatoonRole.FOLLOWER)
+            assert(vehicle._platoon_role is not PlatoonRole.FOLLOWER)
 
             # leaders are allowed to change the lane
-            if vehicle.platoon_role == PlatoonRole.LEADER:
+            if vehicle._platoon_role == PlatoonRole.LEADER:
                 assert(reason == "speedGain" or reason == "keepRight")
 
-                LOG.debug(f"{vehicle.vid} needs to check all its platoon members")
+                LOG.debug(f"{vehicle._vid} needs to check all its platoon members")
 
                 can_change = True
                 for member in vehicle.platoon.formation:
                     can_change = can_change and self.is_lane_change_safe(member, target_lane)
                     if not can_change:
-                        LOG.trace(f"lane change is not safe for member {member.vid}")
+                        LOG.trace(f"lane change is not safe for member {member._vid}")
 
                 if can_change:
                     # perform lane change for all vehicles in this platoon
-                    for member in vehicle.platoon.formation:
-                        assert(member.lane == source_lane)
-                        LOG.debug(f"{member.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
+                    for member in vehicle._platoon.formation:
+                        assert(member._lane == source_lane)
+                        LOG.debug(f"{member._vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
                         # switch to adjacent lane
                         member._lane = target_lane
@@ -545,24 +545,24 @@ class Simulator:
                             with open(f'{self._result_base_filename}_platoon_changes.csv', 'a') as f:
                                 f.write(
                                     f"{self._step},"
-                                    f"{member.vid},"
-                                    f"{member.position},"
+                                    f"{member._vid},"
+                                    f"{member._position},"
                                     f"{source_lane},"
                                     f"{target_lane},"
-                                    f"{member.speed},"
+                                    f"{member._speed},"
                                     f"{reason}"
                                     "\n"
                                 )
 
                     return abs(lane_diff) <= 1
-                LOG.debug(f"{vehicle.vid}'s lane change is not safe")
+                LOG.debug(f"{vehicle._vid}'s lane change is not safe")
                 return False
 
         # we are just a regular vehicle or we are not (yet) in a platoon
 
         # check adjacent lane is free
         if self.is_lane_change_safe(vehicle, target_lane):
-            LOG.debug(f"{vehicle.vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
+            LOG.debug(f"{vehicle._vid} is switching lanes: {source_lane} -> {target_lane} ({reason})")
 
             # switch to adjacent lane
             vehicle._lane = target_lane
@@ -572,17 +572,17 @@ class Simulator:
                 with open(f'{self._result_base_filename}_vehicle_changes.csv', 'a') as f:
                     f.write(
                         f"{self._step},"
-                        f"{vehicle.vid},"
-                        f"{vehicle.position},"
+                        f"{vehicle._vid},"
+                        f"{vehicle._position},"
                         f"{source_lane},"
                         f"{target_lane},"
-                        f"{vehicle.speed},"
+                        f"{vehicle._speed},"
                         f"{reason}"
                         "\n"
                     )
 
             return abs(lane_diff) <= 1
-        LOG.debug(f"{vehicle.vid}'s lane change is not safe")
+        LOG.debug(f"{vehicle._vid}'s lane change is not safe")
         return False
 
     def _change_lanes(self):
@@ -621,17 +621,17 @@ class Simulator:
             The vehicle to be adjusted
         """
 
-        if vehicle.blocked_front:
-            if vehicle.lane < self._number_of_lanes - 1:
-                target_lane = vehicle.lane + 1
+        if vehicle._blocked_front:
+            if vehicle._lane < self._number_of_lanes - 1:
+                target_lane = vehicle._lane + 1
                 # TODO determine whether it is useful to overtake
                 self._change_lane(vehicle, target_lane, "speedGain")
         else:
-            if isinstance(vehicle, PlatooningVehicle) and vehicle.platoon_role == PlatoonRole.FOLLOWER:
+            if isinstance(vehicle, PlatooningVehicle) and vehicle._platoon_role == PlatoonRole.FOLLOWER:
                 # followers are not allowed to change the lane on their own
                 return
-            if vehicle.lane > 0:
-                target_lane = vehicle.lane - 1
+            if vehicle._lane > 0:
+                target_lane = vehicle._lane - 1
                 self._change_lane(vehicle, target_lane, "keepRight")
 
     def _adjust_speeds(self):
@@ -660,16 +660,16 @@ class Simulator:
             The vehicle to be updated
         """
 
-        LOG.debug(f"{vehicle.vid}'s current acceleration: {vehicle.acceleration}m/s2")
-        LOG.debug(f"{vehicle.vid}'s current speed {vehicle.speed}m/s")
+        LOG.debug(f"{vehicle._vid}'s current acceleration: {vehicle._acceleration}m/s2")
+        LOG.debug(f"{vehicle._vid}'s current speed {vehicle._speed}m/s")
         if predecessor_id >= 0:
             predecessor = self._vehicles[predecessor_id]
-            new_speed = vehicle.new_speed(predecessor.speed, predecessor.rear_position, predecessor_id)
+            new_speed = vehicle.new_speed(predecessor._speed, predecessor.rear_position, predecessor_id)
         else:
             new_speed = vehicle.new_speed(-1, -1, -1)
-        vehicle._acceleration = new_speed - vehicle.speed
+        vehicle._acceleration = new_speed - vehicle._speed
         vehicle._speed = new_speed
-        LOG.debug(f"{vehicle.vid}'s new acceleration: {vehicle.acceleration}m/s2")
+        LOG.debug(f"{vehicle._vid}'s new acceleration: {vehicle._acceleration}m/s2")
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
         """
@@ -754,7 +754,7 @@ class Simulator:
                     depart_speed = self._get_depart_speed(desired_speed)
                 else:
                     # always set speed to leader speed
-                    depart_speed = self._vehicles[0].depart_speed
+                    depart_speed = self._vehicles[0]._depart_speed
             else:
                 depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
                 # assume we have a collision to check at least once
@@ -777,11 +777,11 @@ class Simulator:
 
                     # avoid a collision with an existing vehicle
                     for other_vehicle in self._vehicles.values():
-                        if other_vehicle.lane != depart_lane:
+                        if other_vehicle._lane != depart_lane:
                             # we do not care about other lanes
                             continue
-                        tv = TV(depart_position + vtype.min_gap, depart_position - vtype.length, depart_lane)
-                        otv = TV(other_vehicle.position + other_vehicle.min_gap, other_vehicle.rear_position, other_vehicle.lane)
+                        tv = TV(depart_position + vtype._min_gap, depart_position - vtype._length, depart_lane)
+                        otv = TV(other_vehicle._position + other_vehicle.min_gap, other_vehicle.rear_position, other_vehicle._lane)
                         collision = collision or self.has_collision(tv, otv)
 
                 # always use desired speed for pre-fill vehicles
@@ -801,7 +801,7 @@ class Simulator:
                 self._communication_range
             )
 
-            LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype.length},{depart_lane} with {depart_speed}")
+            LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
 
     def _get_desired_speed(self) -> float:
         """Returns a (random) depart speed."""
@@ -936,7 +936,7 @@ class Simulator:
             # spawn interval
             spawn = self._step % self._depart_time_interval == 0  # is the time step correct?
             if self._last_vehicle_id in self._vehicles.keys():
-                spawn = spawn and self._vehicles[self._last_vehicle_id].depart_time != self._step
+                spawn = spawn and self._vehicles[self._last_vehicle_id]._depart_time != self._step
         elif self._depart_method == "probability":
             # spawn probability per time step
             spawn = random.random() <= self._depart_probability
@@ -965,13 +965,13 @@ class Simulator:
 
         depart_position = self._get_depart_position()
         arrival_position = self._get_arrival_position(depart_position)
-        depart_position += vtype.length  # equal to departPos="base" in SUMO
+        depart_position += vtype._length  # equal to departPos="base" in SUMO
 
         desired_speed = self._get_desired_speed()
 
         depart_speed = self._get_depart_speed(desired_speed)
 
-        LOG.debug(f"Spawning vehicle {vid} at {depart_position}-{depart_position - vtype.length},{depart_lane} with {depart_speed}")
+        LOG.debug(f"Spawning vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
 
         # TODO remove duplicated code
         # check whether the vehicle can actually be inserted safely
@@ -983,22 +983,22 @@ class Simulator:
             # avoid a collision with an existing vehicle
             # check all vehicles
             for other_vehicle in self._vehicles.values():
-                LOG.trace(f"Checking vehicle {other_vehicle.vid}")
-                if other_vehicle.lane != depart_lane:
+                LOG.trace(f"Checking vehicle {other_vehicle._vid}")
+                if other_vehicle._lane != depart_lane:
                     # we do not care about other lanes
                     continue
                 # do we have a collision?
                 # avoid being inserted in between two platoon members by also considering the min gap
                 # TODO use the desired headway time for safe insertion on another lane
                 tv = TV(
-                    depart_position + vtype.min_gap,  # front collider
-                    depart_position - vtype.length,  # rear collider
+                    depart_position + vtype._min_gap,  # front collider
+                    depart_position - vtype._length,  # rear collider
                     depart_lane
                 )
                 otv = TV(
-                    other_vehicle.position + other_vehicle.min_gap,  # front collider
+                    other_vehicle._position + other_vehicle.min_gap,  # front collider
                     other_vehicle.rear_position,  # rear collider
-                    other_vehicle.lane
+                    other_vehicle._lane
                 )
                 collision = collision or self.has_collision(tv, otv)
 
@@ -1388,14 +1388,14 @@ class Simulator:
         color = (0, 0, 255)
         for infrastructure in self._infrastructures.values():
             # add infrastructure
-            if (str(infrastructure.iid)) not in traci.polygon.getIDList():
-                traci.polygon.add(f"rsu-{str(infrastructure.iid)}", [
-                    (infrastructure.position - width / 2, y),  # bottom left
-                    (infrastructure.position + width / 2, y),  # bottom right
-                    (infrastructure.position + width / 2, y + width),  # top right
-                    (infrastructure.position - width / 2, y + width)  # top left
+            if (str(infrastructure._iid)) not in traci.polygon.getIDList():
+                traci.polygon.add(f"rsu-{str(infrastructure._iid)}", [
+                    (infrastructure._position - width / 2, y),  # bottom left
+                    (infrastructure._position + width / 2, y),  # bottom right
+                    (infrastructure._position + width / 2, y + width),  # top right
+                    (infrastructure._position - width / 2, y + width)  # top left
                 ], color, fill=True)
-                traci.poi.add(f"RSU {infrastructure.iid}", x=infrastructure.position, y=y + width + 10, color=(51, 128, 51))
+                traci.poi.add(f"RSU {infrastructure._iid}", x=infrastructure._position, y=y + width + 10, color=(51, 128, 51))
 
         # draw pre-filled vehicles
         # save internal state of random number generator
@@ -1411,8 +1411,8 @@ class Simulator:
         import traci
         for vehicle in self._vehicles.values():
             # update vehicles
-            traci.vehicle.setSpeed(str(vehicle.vid), vehicle.speed)
-            traci.vehicle.moveTo(vehID=str(vehicle.vid), pos=vehicle.position, laneID=f'edge_0_0_{vehicle.lane}')
+            traci.vehicle.setSpeed(str(vehicle._vid), vehicle._speed)
+            traci.vehicle.moveTo(vehID=str(vehicle._vid), pos=vehicle._position, laneID=f'edge_0_0_{vehicle._lane}')
 
         # remove vehicles not in simulator
         for vid in traci.vehicle.getIDList():
@@ -1433,12 +1433,12 @@ class Simulator:
         """
 
         import traci
-        if str(vehicle.vid) not in traci.vehicle.getIDList():
-            traci.vehicle.add(str(vehicle.vid), 'route', departPos=str(vehicle.position), departSpeed=str(vehicle.speed), departLane=str(vehicle.lane), typeID='vehicle')
+        if str(vehicle._vid) not in traci.vehicle.getIDList():
+            traci.vehicle.add(str(vehicle._vid), 'route', departPos=str(vehicle._position), departSpeed=str(vehicle._speed), departLane=str(vehicle._lane), typeID='vehicle')
             # save internal state of random number generator
             state = random.getstate()
             color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
-            traci.vehicle.setColor(str(vehicle.vid), color)
+            traci.vehicle.setColor(str(vehicle._vid), color)
             vehicle._color = color
             # restore internal state of random number generator to not influence the determinism of the simulation
             if not (self._pre_fill and self._step == 0):
@@ -1447,11 +1447,11 @@ class Simulator:
                 # Otherwise, when resetting the state step 0, all pre-filled vehicles did not have a random color
                 # (instead they had the same), since the RNG did not pick any other numbers since the last color pick.
                 random.setstate(state)
-            traci.vehicle.setSpeedMode(str(vehicle.vid), 0)
-            traci.vehicle.setLaneChangeMode(str(vehicle.vid), 0)
+            traci.vehicle.setSpeedMode(str(vehicle._vid), 0)
+            traci.vehicle.setLaneChangeMode(str(vehicle._vid), 0)
             # track vehicle
-            if vehicle.vid == self._gui_track_vehicle:
-                traci.gui.trackVehicle("View #0", str(vehicle.vid))
+            if vehicle._vid == self._gui_track_vehicle:
+                traci.gui.trackVehicle("View #0", str(vehicle._vid))
                 traci.gui.setZoom("View #0", 1000000)
 
     def run(self):
@@ -1475,13 +1475,13 @@ class Simulator:
 
         # initialize pre-filled vehicles
         for vehicle in self._vehicles.values():
-            if self._start_as_platoon and vehicle.vid > 0:
+            if self._start_as_platoon and vehicle._vid > 0:
                 vehicle._join(0, 0)
 
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
         while self._running:
-            if self.step >= self._max_step:
+            if self._step >= self._max_step:
                 self.stop("Reached step limit")
                 continue
 
@@ -1648,7 +1648,7 @@ class Simulator:
             infrastructure.finish()
             if self._gui:
                 import traci
-                traci.polygon.remove(str(infrastructure.iid))
+                traci.polygon.remove(str(infrastructure._iid))
 
         # call finish on remaining vehicles?
         for vehicle in self._vehicles.values():
@@ -1656,7 +1656,7 @@ class Simulator:
             # therefore, we do not call finish here
             if self._gui:
                 import traci
-                traci.vehicle.remove(str(vehicle.vid), 2)
+                traci.vehicle.remove(str(vehicle._vid), 2)
             # remove from vehicles
             del vehicle
 
