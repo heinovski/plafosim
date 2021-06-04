@@ -1547,6 +1547,9 @@ class Simulator:
             del vdf
             # END VECTORIZATION PART
 
+            # record some periodic statistics
+            self._statistics()
+
             # a new step begins
             self._step += self._step_length
             progress_bar.update(self._step_length)
