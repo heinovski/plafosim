@@ -346,6 +346,8 @@ class SpeedPosition(FormationAlgorithm):
 
             # end vehicle
 
+        # end all vehicles
+
         if len(all_found_candidates) == 0:
             LOG.debug(f"{self._owner.iid} found no possible matches")
             return
@@ -505,6 +507,8 @@ class SpeedPosition(FormationAlgorithm):
                 objective.SetCoefficient(variable, fx)
 
             # end vehicle
+
+        # end all vehicles
 
         if solver.NumConstraints() == 0:
             LOG.info(f"{self._owner.iid} has no vehicles to run the solver for")
