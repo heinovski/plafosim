@@ -530,11 +530,11 @@ class SpeedPosition(FormationAlgorithm):
             self._assignments_none += 1
             return
 
+        LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.wall_time()} ms")
+        LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")  # broken?
+        LOG.info(f"{self._owner.iid} solved the optimization problem with {solver.nodes()} nodes")  # broken?
         LOG.debug(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
         LOG.debug(f"{self._owner.iid}'s best bound is {objective.BestBound()}")
-        LOG.debug(f"{self._owner.iid} solved the optimization problem in {solver.wall_time()} ms")
-        LOG.debug(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")
-        LOG.debug(f"{self._owner.iid} solved the optimization problem with {solver.nodes()} nodes")
 
         for variable in solver.variables():
             if variable.solution_value() > 0:
