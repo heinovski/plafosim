@@ -743,7 +743,7 @@ class PlatooningVehicle(Vehicle):
         assert(leader.vid == leader.platoon.leader.vid)
 
         # HACK for determining the join position
-        if self._position + self.length > leader.platoon.position:
+        if self._position > leader.platoon.position:
             # TODO join at front
             LOG.debug(f"{self._vid} is in front of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at the front of a platoon is not yet implemented! Aborting the join maneuver!")
