@@ -856,8 +856,8 @@ class PlatooningVehicle(Vehicle):
                 self._joins_aborted_approaching += 1
                 return
         else:
-            # we do not need to consider this case as our error is only between 0m and cacc_spacing
-            assert(abs(initial_distance) <= self._cacc_spacing)
+            # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing
+            assert(abs(initial_distance) <= last.length + self._cacc_spacing)
 
         assert(new_position >= self.length)
         assert(new_position <= self._simulator.road_length)
