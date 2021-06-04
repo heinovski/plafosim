@@ -126,6 +126,25 @@ To see all options of this script, run:
 
 ```python3 scripts/play-vehicle-trace.py -h, --help```
 
+## Development
+
+In order to contribute, please follow these steps:
+- Make sure to install all dependencies
+- Make your desired changes
+- Submit a Pull Request (PR)
+
+### Testing
+
+When adding methods and functions, make sure to add corresponding unit tests for `py.test`.
+The tests are located under `tests` and can be executed with `./scripts/run-pytest.sh`.
+This will also generate a test coverage report.
+
+### Validation
+
+To validate the behavior of PlaFoSim, it is compared to SUMO 1.6.0 by means of simulation results (e.g., vehicle traces).
+The corresponding scripts are located under `scripts` and executed withn CI/CD pipelines.
+You can have a look at `.drone.yml` for details regarding the execution.
+
 ## References
 
 [1] Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
