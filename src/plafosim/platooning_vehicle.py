@@ -1204,7 +1204,7 @@ class PlatooningVehicle(Vehicle):
                 self._lane,
                 self._vid,
                 self._position,
-                self._position + self.length
+                self.rear_position,
             ))
 
     def _handle_message(self, message: Message):
