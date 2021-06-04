@@ -38,8 +38,6 @@ class CustomFormatter(
 
 def main():
 
-    start_time = timer()
-
     # parse some parameters
     parser = argparse.ArgumentParser(
         formatter_class=CustomFormatter,
@@ -517,6 +515,9 @@ def main():
     )
 
     args = parser.parse_args()
+
+    start_time = timer()
+
     simulator = Simulator(
         args.road_length * 1000,
         args.lanes,
