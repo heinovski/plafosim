@@ -1562,7 +1562,7 @@ class Simulator:
         return self._step
 
     def _statistics(self):
-        """Calculates some period statistics."""
+        """Record some period statistics."""
 
         self._avg_number_vehicles = (
             (self._values_in_avg_number_vehicles * self._avg_number_vehicles + len(self._vehicles)) /
