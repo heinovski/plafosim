@@ -35,6 +35,8 @@ from .util import get_crashed_vehicles, update_position
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
+VERSION = "0.10.0"
+
 addLoggingLevel('TRACE', 5)
 LOG = logging.getLogger(__name__)
 

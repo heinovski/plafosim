@@ -37,6 +37,7 @@ from .platoon import Platoon  # noqa 401
 from .platoon_role import PlatoonRole  # noqa 401
 from .platooning_vehicle import PlatooningVehicle  # noqa 401
 from .simulator import Simulator  # noqa 401
+from .simulator import VERSION  # noqa 401
 from .speed_position import SpeedPosition  # noqa 401
 from .util import acceleration2speed  # noqa 401
 from .util import distance2speed  # noqa 401
