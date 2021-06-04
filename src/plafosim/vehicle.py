@@ -132,7 +132,7 @@ class Vehicle:
         This is based on the vehicle type.
         """
 
-        return self._vehicle_type.length
+        return self._vehicle_type._length
 
     @property
     def max_speed(self) -> float:
@@ -142,7 +142,7 @@ class Vehicle:
         This is based on the vehicle type.
         """
 
-        return self._vehicle_type.max_speed
+        return self._vehicle_type._max_speed
 
     @property
     def max_acceleration(self) -> float:
@@ -152,7 +152,7 @@ class Vehicle:
         This is based on the vehicle type.
         """
 
-        return self._vehicle_type.max_acceleration
+        return self._vehicle_type._max_acceleration
 
     @property
     def max_deceleration(self) -> float:
@@ -162,7 +162,7 @@ class Vehicle:
         This is based on the vehicle type.
         """
 
-        return self._vehicle_type.max_deceleration
+        return self._vehicle_type._max_deceleration
 
     @property
     def min_gap(self) -> float:
@@ -172,7 +172,7 @@ class Vehicle:
         This is based on the vehicle type.
         """
 
-        return self._vehicle_type.min_gap
+        return self._vehicle_type._min_gap
 
     @property
     def cc_headway_time(self) -> float:
@@ -182,13 +182,13 @@ class Vehicle:
         This is based on the vehicle type.
         """
 
-        return self._vehicle_type.cc_headway_time
+        return self._vehicle_type._cc_headway_time
 
     @property
     def desired_headway_time(self) -> float:
         """Returns the desired headway time of the vehicle."""
 
-        return self.cc_headway_time
+        return self._vehicle_type._cc_headway_time
 
     @property
     def depart_position(self) -> int:
@@ -216,7 +216,8 @@ class Vehicle:
         This is based on the desired headway time and the current driving speed.
         """
 
-        return speed2distance(self.desired_headway_time * self.speed, self._simulator._step_length)
+        # use potential other desired headway time
+        return speed2distance(self.desired_headway_time * self._speed, self._simulator._step_length)
 
     @property
     def depart_lane(self) -> int:
@@ -246,7 +247,7 @@ class Vehicle:
     def rear_position(self) -> int:
         """Returns the current rear position of the vehicle."""
 
-        position = self.position - self.length
+        position = self._position - self._vehicle_type._length
         assert(position >= 0)
         return position
 
@@ -278,13 +279,13 @@ class Vehicle:
     def travel_distance(self) -> float:
         """Returns the current traveled distance of the vehicle."""
 
-        return self.position - self.depart_position
+        return self._position - self._depart_position
 
     @property
     def travel_time(self) -> float:
         """Returns the current traveled time of the vehicle."""
 
-        return self._simulator.step - self.depart_time
+        return self._simulator.step - self._depart_time
 
     @property
     def blocked_front(self) -> bool:
@@ -340,43 +341,43 @@ class Vehicle:
             The id of the vehicle in the front. This should only be used for debugging.
         """
 
-        LOG.trace(f"{self.vid}'s desired speed is {self.desired_speed}m/s")
+        LOG.trace(f"{self._vid}'s desired speed is {self._desired_speed}m/s")
 
         new_speed = -1
         # do we need to adjust our speed?
-        diff_to_desired = self.desired_speed - self.speed
+        diff_to_desired = self._desired_speed - self._speed  # use explicit individual desired speed
         if diff_to_desired > 0:
             # we need to accelerate
-            new_speed = min(self.speed + min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
-            LOG.trace(f"{self.vid} wants to accelerate to {new_speed}m/s")
+            new_speed = min(self._speed + min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
+            LOG.trace(f"{self._vid} wants to accelerate to {new_speed}m/s")
         elif diff_to_desired < 0:
             # we need to decelerate
-            new_speed = max(self.speed + max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
-            LOG.trace(f"{self.vid} wants to decelerate to {new_speed}m/s")
+            new_speed = max(self._speed + max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
+            LOG.trace(f"{self._vid} wants to decelerate to {new_speed}m/s")
         else:
-            new_speed = self.speed
-            LOG.trace(f"{self.vid} wants to keep the speed of {new_speed}m/s")
+            new_speed = self._speed
+            LOG.trace(f"{self._vid} wants to keep the speed of {new_speed}m/s")
 
         # vsafe
         if speed_predecessor >= 0 and predecessor_rear_position >= 0:
             # we have a predecessor
-            gap_to_predecessor = predecessor_rear_position - self.position
-            LOG.trace(f"{self.vid}'s front gap {gap_to_predecessor}m")
+            gap_to_predecessor = predecessor_rear_position - self._position
+            LOG.trace(f"{self._vid}'s front gap {gap_to_predecessor}m")
             if gap_to_predecessor < 0:
-                LOG.warning(f"{self.vid}'s front gap is negative ({gap_to_predecessor}m)")
-            LOG.trace(f"{self.vid}'s predecessor speed {speed_predecessor}m/s")
-            LOG.trace(f"{self.vid}'s desired gap {self.desired_gap}m")
+                LOG.warning(f"{self._vid}'s front gap is negative ({gap_to_predecessor}m)")
+            LOG.trace(f"{self._vid}'s predecessor speed {speed_predecessor}m/s")
+            LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
             safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
-            LOG.trace(f"{self.vid}'s safe speed {safe_speed}m/s")
+            LOG.trace(f"{self._vid}'s safe speed {safe_speed}m/s")
 
             if safe_speed < new_speed:
-                LOG.debug(f"{self.vid} is blocked by a slow vehicle!")
+                LOG.debug(f"{self._vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
-                new_speed = max(safe_speed, self.speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
-                LOG.trace(f"{self.vid}'s new speed after safe speed is {new_speed}m/s")
+                new_speed = max(safe_speed, self._speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
+                LOG.trace(f"{self._vid}'s new speed after safe speed is {new_speed}m/s")
                 if safe_speed < new_speed:
-                    LOG.warn(f"{self.vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({safe_speed}m/s)! This will probably lead to a crash!")
+                    LOG.warn(f"{self._vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({safe_speed}m/s)! This will probably lead to a crash!")
             else:
                 self._blocked_front = False
         else:
@@ -391,10 +392,10 @@ class Vehicle:
             new_speed = 0
 
         # avoid issues due to floating point precision
-        if math.isclose(new_speed, self.speed):
-            new_speed = self.speed
+        if math.isclose(new_speed, self._speed):
+            new_speed = self._speed
 
-        LOG.debug(f"{self.vid}'s new speed is {new_speed}m/s")
+        LOG.debug(f"{self._vid}'s new speed is {new_speed}m/s")
 
         return new_speed
 
@@ -445,8 +446,8 @@ class Vehicle:
     def info(self) -> str:
         """Returns information about the vehicle."""
 
-        estimated_remaining_travel_time = (self.arrival_position - self.position) / self.speed if self.speed > 0 else self.desired_speed
-        return f"{self.vid} at {self.position}-{self.rear_position}, {self.lane} with {self.speed}, takes {estimated_remaining_travel_time}s to reach {self.arrival_position}"
+        estimated_remaining_travel_time = (self._arrival_position - self._position) / self._speed if self._speed > 0 else self.desired_speed  # use potential other desired driving speed
+        return f"{self._vid} at {self._position}-{self.rear_position}, {self._lane} with {self._speed}, takes {estimated_remaining_travel_time}s to reach {self._arrival_position}"
 
     def _statistics(self):
         """Writes continuous statistics for the vehicle."""
@@ -460,13 +461,13 @@ class Vehicle:
             with open(f'{self._simulator._result_base_filename}_vehicle_traces.csv', 'a') as f:
                 f.write(
                     f"{self._simulator.step},"
-                    f"{self.vid},"
-                    f"{self.position},"
-                    f"{self.lane},"
-                    f"{self.speed},"
+                    f"{self._vid},"
+                    f"{self._position},"
+                    f"{self._lane},"
+                    f"{self._speed},"
                     f"{self.travel_time},"
                     f"{self.travel_distance},"
-                    f"{self.desired_speed}"
+                    f"{self.desired_speed}"  # use potential other desired speed
                     "\n"
                 )
 
@@ -505,7 +506,7 @@ class Vehicle:
             with open(f'{self._simulator._result_base_filename}_emission_traces.csv', 'a') as f:
                 f.write(
                     f"{self._simulator.step},"
-                    f"{self.vid}"
+                    f"{self._vid}"
                 )
 
         for variable in self._emissions.keys():
@@ -515,7 +516,7 @@ class Vehicle:
                     scale *= 836.0
                 else:
                     scale *= 742.0
-            value = self._calculate_emission(self.acceleration, self.speed, emission_factors[variable], scale) * self._simulator.step_length
+            value = self._calculate_emission(self._acceleration, self._speed, emission_factors[variable], scale) * self._simulator.step_length
             self._emissions[variable] += value
 
             if self._simulator._record_emission_traces:
@@ -555,20 +556,20 @@ class Vehicle:
         This includes mostly statistic recording.
         """
 
-        if (self.position < self.arrival_position):
-            LOG.warning(f"{self.vid}'s finish method was called even though vehicle did not arrive yet!")
+        if (self._position < self._arrival_position):
+            LOG.warning(f"{self._vid}'s finish method was called even though vehicle did not arrive yet!")
             return
 
-        expected_travel_time = (self.arrival_position - self.depart_position) / self._desired_speed  # make sure to use the individual desired speed
+        expected_travel_time = (self._arrival_position - self._depart_position) / self._desired_speed  # use explicit individual desired speed
         assert(self.travel_time != 0)
         time_loss = self.travel_time - expected_travel_time
         assert(expected_travel_time != 0)
         travel_time_ratio = self.travel_time / expected_travel_time
         # NOTE: this also contains teleports
         average_driving_speed = self.travel_distance / self.travel_time
-        average_deviation_desired_speed = average_driving_speed - self._desired_speed
+        average_deviation_desired_speed = average_driving_speed - self._desired_speed  # use explicit individual desired speed
 
-        LOG.info(f"{self.vid} arrived at {self.position}m,{self.lane} with {self.speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {time_loss}s, {travel_time_ratio * 100}% of expected duration")
+        LOG.info(f"{self._vid} arrived at {self._position}m,{self._lane} with {self._speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {time_loss}s, {travel_time_ratio * 100}% of expected duration")
 
         # statistic recording
 
@@ -596,19 +597,19 @@ class Vehicle:
         if self._simulator._record_vehicle_trips:
             with open(f'{self._simulator._result_base_filename}_vehicle_trips.csv', 'a') as f:
                 f.write(
-                    f"{self.vid},"
-                    f"{self.depart_time},"
-                    f"{self.depart_lane},"
-                    f"{self.depart_position},"
-                    f"{self.depart_speed},"
+                    f"{self._vid},"
+                    f"{self._depart_time},"
+                    f"{self._depart_lane},"
+                    f"{self._depart_position},"
+                    f"{self._depart_speed},"
                     f"{self._simulator.step},"
-                    f"{self.lane},"
-                    f"{self.position},"
-                    f"{self.speed},"
+                    f"{self._lane},"
+                    f"{self._position},"
+                    f"{self._speed},"
                     f"{self.travel_time},"
                     f"{self.travel_distance},"
                     f"{time_loss},"
-                    f"{self.desired_speed},"
+                    f"{self._desired_speed},"  # use explicit individual desired speed
                     f"{expected_travel_time},"
                     f"{travel_time_ratio},"
                     f"{average_driving_speed},"
@@ -620,7 +621,7 @@ class Vehicle:
             with open(f'{self._simulator._result_base_filename}_vehicle_emissions.csv', 'a') as f:
                 # TODO log estimated emissions?
                 f.write(
-                    f"{self.vid},"
+                    f"{self._vid},"
                     f"{self._emissions['CO']},"
                     f"{self._emissions['CO2']},"
                     f"{self._emissions['HC']},"
@@ -680,11 +681,11 @@ class Vehicle:
             If the message to be received is not an instance of the Message type.
         """
 
-        if self._simulator.step < self.depart_time:
+        if self._simulator.step < self._depart_time:
             # we cannot receive anything since we did not start yet
             return False
         if isinstance(message, Message):
-            if message.destination == self.vid or message.destination == -1:
+            if message.destination == self._vid or message.destination == -1:
                 self._handle_message(message)
             # we cannot receive this message since it was not for us
             return False
@@ -718,4 +719,4 @@ class Vehicle:
             The message to be received
         """
 
-        LOG.warning(f"{self.vid} received non-sense message {message}")
+        LOG.warning(f"{self._vid} received non-sense message {message}")
