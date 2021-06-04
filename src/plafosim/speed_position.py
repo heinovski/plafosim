@@ -140,14 +140,14 @@ class SpeedPosition(FormationAlgorithm):
             The deviation in position
         """
 
-        return (self.alpha * ds) + ((1.0 - self.alpha) * dp)
+        return (self._alpha * ds) + ((1.0 - self._alpha) * dp)
 
     def do_formation(self):
         """Run platoon formation algorithms to search for a platooning opportunity and perform corresponding maneuvers"""
 
         from .infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
-            LOG.info(f"{self._owner.iid} is running formation algorithm {self.name} ({self._owner._formation_kind}) at {self._owner._simulator.step}")
+            LOG.info(f"{self._owner.iid} is running formation algorithm {self._name} ({self._owner._formation_kind}) at {self._owner._simulator.step}")
             if self._owner._formation_kind == 'optimal':
                 self._do_formation_optimal()
             else:
@@ -203,7 +203,7 @@ class SpeedPosition(FormationAlgorithm):
             LOG.trace(f"{self._owner.vid} is already in a maneuver")
             return
 
-        LOG.debug(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
+        LOG.debug(f"{self._owner.vid} is running formation algorithm {self._name} (distributed)")
 
         self._owner._formation_iterations += 1
 
@@ -222,12 +222,12 @@ class SpeedPosition(FormationAlgorithm):
                 continue
 
             # remove platoon if not in speed range
-            if ds > self.speed_deviation_threshold * self._owner.desired_speed:
+            if ds > self._speed_deviation_threshold * self._owner.desired_speed:
                 LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
                 continue
 
             # remove platoon if not in position range
-            if dp > self.position_deviation_threshold:
+            if dp > self._position_deviation_threshold:
                 LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
                 continue
 
@@ -327,12 +327,12 @@ class SpeedPosition(FormationAlgorithm):
                     continue
 
                 # remove platoon if not in speed range
-                if ds > self.speed_deviation_threshold * vehicle.desired_speed:
+                if ds > self._speed_deviation_threshold * vehicle.desired_speed:
                     LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
                     continue
 
                 # remove platoon if not in position range
-                if dp > self.position_deviation_threshold:
+                if dp > self._position_deviation_threshold:
                     LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
                     continue
 
@@ -399,7 +399,7 @@ class SpeedPosition(FormationAlgorithm):
         """
 
         from ortools.linear_solver import pywraplp
-        solver = pywraplp.Solver(f"{self.name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
+        solver = pywraplp.Solver(f"{self._name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
 
         import sys
         infinity = sys.float_info.max  # does work
@@ -479,11 +479,11 @@ class SpeedPosition(FormationAlgorithm):
                     dp = SpeedPosition.dp(vehicle, platoon)
 
                     # remove platoon if not in speed range
-                    if ds > self.speed_deviation_threshold * vehicle.desired_speed:
+                    if ds > self._speed_deviation_threshold * vehicle.desired_speed:
                         LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference ({ds})")
                         fx = infinity
                     # remove platoon if not in position range
-                    elif dp > self.position_deviation_threshold:
+                    elif dp > self._position_deviation_threshold:
                         LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference ({dp})")
                         fx = infinity
                     else:
