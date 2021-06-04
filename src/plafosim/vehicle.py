@@ -650,6 +650,8 @@ class Vehicle:
             The id of the destination vehicle
         message : Message
             The message to transmit
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         if isinstance(message, Message):
@@ -679,6 +681,8 @@ class Vehicle:
         ------
         RuntimeError
             If the message to be received is not an instance of the Message type.
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         if self._simulator.step < self._depart_time:
@@ -701,6 +705,8 @@ class Vehicle:
         ----------
         message : Message
             The message to be handled
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__,
@@ -717,6 +723,8 @@ class Vehicle:
         ----------
         message : Message
             The message to be received
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         LOG.warning(f"{self._vid} received non-sense message {message}")

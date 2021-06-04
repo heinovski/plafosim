@@ -1190,6 +1190,8 @@ class PlatooningVehicle(Vehicle):
         Transmit a broadcast to advertise as platoon.
 
         Advertisement are in general not used at the moment.
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         for vehicle in self._simulator._vehicles.values():
@@ -1215,6 +1217,8 @@ class PlatooningVehicle(Vehicle):
         ----------
         message : Message
             The message to be handled
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         func = self.__class__.__dict__.get(
@@ -1232,6 +1236,8 @@ class PlatooningVehicle(Vehicle):
         ----------
         advertisement : PlatoonAdvertisement
             The advertisement to be received
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         # TODO add contents to the neighbor table
