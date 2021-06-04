@@ -32,7 +32,9 @@ class SpeedPosition(FormationAlgorithm):
     """
     Formation Algorithm based on:
 
-    Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
+    Julian Heinovski and Falko Dressler,
+    "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols,"
+    Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
     """
 
     def __init__(
@@ -143,7 +145,10 @@ class SpeedPosition(FormationAlgorithm):
         return (self._alpha * ds) + ((1.0 - self._alpha) * dp)
 
     def do_formation(self):
-        """Run platoon formation algorithms to search for a platooning opportunity and perform corresponding maneuvers"""
+        """
+        Runs platoon formation algorithms to search for a platooning opportunity
+        and performs the corresponding join  maneuver.
+        """
 
         from .infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
@@ -187,7 +192,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def _do_formation_distributed(self):
         """
-        Run distributed greedy formation approach.
+        Runs distributed greedy formation approach.
 
         This selects a candidate and triggers a join maneuver.
         """
@@ -251,12 +256,13 @@ class SpeedPosition(FormationAlgorithm):
         LOG.debug(f"{self._owner.vid}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
 
         # perform a join maneuver with the candidate's platoon
-        # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
+        # do we really want the candidate to advertise its platoon
+        # or do we just want the leader to advertise its platoon?
         self._owner._join(best['pid'], best['lid'])
 
     def _do_formation_centralized(self):
         """
-        Run centralized greedy formation approach.
+        Runs centralized greedy formation approach.
 
         This selects candidates and triggers join maneuvers.
         """
@@ -372,7 +378,8 @@ class SpeedPosition(FormationAlgorithm):
             LOG.debug(f"{v}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
 
             # perform a join maneuver with the candidate's platoon
-            # do we really want the candidate to advertise its platoon or do we just want the leader to advertise its platoon?
+            # do we really want the candidate to advertise its platoon
+            # or do we just want the leader to advertise its platoon?
             vehicle._join(best['pid'], best['lid'])
 
             # remove all matches from the list of possible matches that would include the selected vehicle
@@ -498,7 +505,12 @@ class SpeedPosition(FormationAlgorithm):
                 variable = solver.IntVar(0, 1, f"{vehicle.vid} -> {platoon.platoon_id}")
 
                 # add variable to assignment matrix
-                decision_variables[variable.index()] = {'vid': vehicle.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx}
+                decision_variables[variable.index()] = {
+                    'vid': vehicle.vid,
+                    'pid': platoon.platoon_id,
+                    'lid': platoon.leader.vid,
+                    'cost': fx,
+                }
 
                 # add decision variable from vehicle to platoon to row sum
                 constraint_one_target_platoon.SetCoefficient(variable, 1)

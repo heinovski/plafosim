@@ -293,7 +293,13 @@ class Vehicle:
 
         return self._blocked_front
 
-    def _safe_speed(self, speed_predecessor: float, gap_to_predecessor: float, desired_gap: float = 0, min_gap: float = 0) -> float:
+    def _safe_speed(
+        self,
+        speed_predecessor: float,
+        gap_to_predecessor: float,
+        desired_gap: float = 0,
+        min_gap: float = 0
+    ) -> float:
         """
         Returns the speed which is still safe without a collision.
 
@@ -348,11 +354,19 @@ class Vehicle:
         diff_to_desired = self._desired_speed - self._speed  # use explicit individual desired speed
         if diff_to_desired > 0:
             # we need to accelerate
-            new_speed = min(self._speed + min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)), self.max_speed)
+            new_speed = min(
+                self._speed +
+                min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)),
+                self.max_speed
+            )
             LOG.trace(f"{self._vid} wants to accelerate to {new_speed}m/s")
         elif diff_to_desired < 0:
             # we need to decelerate
-            new_speed = max(self._speed + max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)), 0)
+            new_speed = max(
+                self._speed +
+                max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)),
+                0
+            )
             LOG.trace(f"{self._vid} wants to decelerate to {new_speed}m/s")
         else:
             new_speed = self._speed
@@ -374,7 +388,11 @@ class Vehicle:
                 LOG.debug(f"{self._vid} is blocked by a slow vehicle!")
                 self._blocked_front = True
 
-                new_speed = max(safe_speed, self._speed - acceleration2speed(self.max_deceleration, self._simulator.step_length))  # we cannot brake stronger than we actually can
+                # we cannot brake stronger than we actually can
+                new_speed = max(
+                    safe_speed,
+                    self._speed - acceleration2speed(self.max_deceleration, self._simulator.step_length)
+                )
                 LOG.trace(f"{self._vid}'s new speed after safe speed is {new_speed}m/s")
                 if safe_speed < new_speed:
                     LOG.warn(f"{self._vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({safe_speed}m/s)! This will probably lead to a crash!")
@@ -446,7 +464,11 @@ class Vehicle:
     def info(self) -> str:
         """Returns information about the vehicle."""
 
-        estimated_remaining_travel_time = (self._arrival_position - self._position) / self._speed if self._speed > 0 else self.desired_speed  # use potential other desired driving speed
+        estimated_remaining_travel_time = (
+            (self._arrival_position - self._position) / self._speed
+            if self._speed > 0
+            else self.desired_speed  # use potential other desired driving speed
+        )
         return f"{self._vid} at {self._position}-{self.rear_position}, {self._lane} with {self._speed}, takes {estimated_remaining_travel_time}s to reach {self._arrival_position}"
 
     def _statistics(self):
@@ -516,7 +538,12 @@ class Vehicle:
                     scale *= 836.0
                 else:
                     scale *= 742.0
-            value = self._calculate_emission(self._acceleration, self._speed, emission_factors[variable], scale) * self._simulator.step_length
+            value = (self._calculate_emission(
+                self._acceleration,
+                self._speed,
+                emission_factors[variable],
+                scale
+            ) * self._simulator.step_length)
             self._emissions[variable] += value
 
             if self._simulator._record_emission_traces:

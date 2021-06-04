@@ -115,7 +115,12 @@ class PlatooningVehicle(Vehicle):
             # initialize formation algorithm
             # TODO make enum
             if formation_algorithm == "speedposition":
-                self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
+                self._formation_algorithm = SpeedPosition(
+                    self,
+                    alpha,
+                    speed_deviation_threshold,
+                    position_deviation_threshold
+                )
             else:
                 sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}!")
             self._execution_interval = execution_interval
@@ -305,7 +310,14 @@ class PlatooningVehicle(Vehicle):
             The desired gap to the front vehicle
         """
 
-        return -1.0 / self.desired_headway_time * (self._speed - desired_speed + self._acc_lambda * (-gap_to_predecessor + desired_gap))
+        return (
+            -1.0 / self.desired_headway_time * (
+                self._speed
+                - desired_speed
+                + self._acc_lambda
+                * (-gap_to_predecessor + desired_gap)
+            )
+        )
 
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int) -> float:
         """
@@ -487,8 +499,10 @@ class PlatooningVehicle(Vehicle):
         """
 
         # calculate impact of platooning on air drag based on
-        # Charles-Henri Bruneau, Khodor Khadra and Iraj Mortazavi, "Flow analysis of square-back simplified vehicles in platoon," International Journal of Heat and Fluid Flow, vol. 66, pp. 43–59, August 2017.
-        # Table 5: d = L, vehicle length = 4m, distance = 5m
+        # Charles-Henri Bruneau, Khodor Khadra and Iraj Mortazavi,
+        # "Flow analysis of square-back simplified vehicles in platoon,"
+        # International Journal of Heat and Fluid Flow, vol. 66, pp. 43–59,
+        # August 2017. Table 5: d = L, vehicle length = 4m, distance = 5m
         air_drag_change = 0.0
         if self._platoon_role == PlatoonRole.LEADER:
             # savings by followers
@@ -504,7 +518,9 @@ class PlatooningVehicle(Vehicle):
                 air_drag_change = 0.27
 
         # calculate impact of air drag on emissions based on
-        # Gino Sovran, "Tractive-Energy-Based Formulae for the Impact of Aerodynamics on Fuel Economy Over the EPA Driving Schedules," SAE International, Technical Paper, 830304, February 1983.
+        # Gino Sovran, "Tractive-Energy-Based Formulae for the Impact of
+        # Aerodynamics on Fuel Economy Over the EPA Driving Schedules,"
+        # SAE International, Technical Paper, 830304, February 1983.
         if self._simulator._reduced_air_drag:
             emission_change = air_drag_change * 0.46
         else:
@@ -544,8 +560,16 @@ class PlatooningVehicle(Vehicle):
             # we do not record statistics for pre-filled vehicles
             return
 
-        candidates_found_avg = self._candidates_found / self._formation_iterations if self._formation_iterations > 0 else 0
-        candidates_filtered_avg = self._candidates_filtered / self._formation_iterations if self._formation_iterations > 0 else 0
+        candidates_found_avg = (
+            self._candidates_found / self._formation_iterations
+            if self._formation_iterations > 0
+            else 0
+        )
+        candidates_filtered_avg = (
+            self._candidates_filtered / self._formation_iterations
+            if self._formation_iterations > 0
+            else 0
+        )
 
         assert(platoon_time_ratio >= 0)
         assert(platoon_distance_ratio >= 0)
@@ -556,10 +580,12 @@ class PlatooningVehicle(Vehicle):
             time_until_first_platoon = None
             distance_until_first_platoon = None
         else:
-            time_until_first_platoon = self._first_platoon_join_time - self._depart_time  # NOTE: this produces wrong values when pre-filled
+            # NOTE: this produces wrong values when pre-filled
+            time_until_first_platoon = self._first_platoon_join_time - self._depart_time
             assert(time_until_first_platoon >= 0)
             assert(self._first_platoon_join_position != -1)
-            distance_until_first_platoon = self._first_platoon_join_position - self._depart_position  # NOTE: this produces wrong values when pre-filled
+            # NOTE: this produces wrong values when pre-filled
+            distance_until_first_platoon = self._first_platoon_join_position - self._depart_position
             assert(distance_until_first_platoon >= 0)
 
         # TODO log savings from platoon?
@@ -1009,7 +1035,8 @@ class PlatooningVehicle(Vehicle):
 
         for vehicle in leader.platoon.formation:
             # we copy all parameters from the platoon (for now)
-            # thus, the follower now drives as fast as the already existing platoon (i.e., only the leader in the worst case)
+            # thus, the follower now drives as fast as the already existing platoon
+            # (i.e., only the leader in the worst case)
             vehicle._platoon = leader.platoon
 
         # set color of vehicle
@@ -1119,7 +1146,8 @@ class PlatooningVehicle(Vehicle):
                 self._cf_model = CF_Model.ACC
                 if not self._simulator._change_lane(self, self._lane + 1, "maneuver"):
                     # could not leave the platoon
-                    sys.exit(f"ERROR: Could not move vehicle {self._vid} to the adjacent lane to leave the platoon {self._platoon.platoon_id}!")  # TODO this could be just a return in future to let the leaver try again
+                    # TODO this could be just a return in future to let the leaver try again
+                    sys.exit(f"ERROR: Could not move vehicle {self._vid} to the adjacent lane to leave the platoon {self._platoon.platoon_id}!")
 
             # move all remaining platoon members further to the front
             front = self._platoon.get_front(self)
@@ -1181,7 +1209,10 @@ class PlatooningVehicle(Vehicle):
         return  # TODO this is not necessary as a perfect communication guarantees information
 
         advertisement_interval = 600  # in s # TODO make parameter
-        if self._last_advertisement_step is None or self._last_advertisement_step + advertisement_interval <= self._simulator.step:
+        if (
+            self._last_advertisement_step is None
+            or self._last_advertisement_step + advertisement_interval <= self._simulator.step
+        ):
             self._send_advertisements()
             self._last_advertisement_step = self._simulator.step
 
