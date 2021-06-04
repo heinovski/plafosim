@@ -769,7 +769,7 @@ class PlatooningVehicle(Vehicle):
 
         last = leader.platoon.last
         new_position = last.rear_position - self._cacc_spacing
-        LOG.debug(f"{self._vid}'s new position is {new_position} (current {self._position})")
+        LOG.debug(f"{self._vid}'s new position is ({new_position},{leader.platoon.lane}) (current {self._position},{self._lane})")
 
         if new_position < self.length:
             # we cannot join since we would be outside of the road
