@@ -710,7 +710,7 @@ class Simulator:
         crashed_vehicles = get_crashed_vehicles(vdf)
         if crashed_vehicles:
             for v in crashed_vehicles:
-                print(f"{v}: {vdf.at[v, 'position']}:{vdf.at[v, 'length']},{vdf.at[v, 'lane']}")
+                print(f"{v}: {vdf.at[v, 'position']}-{vdf.at[v, 'position']-vdf.at[v, 'length']},{vdf.at[v, 'lane']}")
             sys.exit(f"ERROR: There were collisions with the following vehicles {crashed_vehicles}!")
 
     @staticmethod
