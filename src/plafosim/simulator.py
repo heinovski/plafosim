@@ -590,7 +590,7 @@ class Simulator:
         Does lane changes for all vehicles in the simulation.
 
         This is based on Krauss' multi lane traffic:
-        lane-change
+        laneChange()
         congested = (v_safe < v_thresh) and (v^0_safe < v_thresh)
         favorable(right->left) = (v_safe < v_max) and (not congested)
         favorable(left->right) = (v_safe >= v_max) and (v^0_safe >= v_max)
@@ -639,9 +639,13 @@ class Simulator:
         Updates the speed (i.e., acceleration & speed) of all vehicles in the simulation.
 
         This does not (yet) use a vectorized approach.
+
+        This is based on Krauss' multi lane traffic:
+        adjust()
         """
 
         vdf = self._get_vehicles_df()
+        # sort all vehicles by their position to avoid collisions
         vdf = vdf.sort_values(by='position', ascending=False)
         vids = vdf.reset_index('vid').set_index(vdf.index).groupby('lane')['vid']
         vdf['predecessor'] = vids.shift(1, fill_value=-1)
@@ -1459,7 +1463,10 @@ class Simulator:
         Main simulation method.
         Runs the simulation with the specified parameters until it is stopped.
 
-        This is based on Krauss' multi lane traffic.
+        This is based on Krauss' multi lane traffic:
+        laneChange();
+        adjust();
+        move();
         """
 
         if not self._running:
