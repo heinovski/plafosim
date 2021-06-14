@@ -710,6 +710,7 @@ class PlatooningVehicle(Vehicle):
         self._joins_attempted += 1
 
         self.in_maneuver = True
+        self._platoon_role = PlatoonRole.JOINER
 
         leader = self._simulator._vehicles[leader_id]
         assert(isinstance(leader, PlatooningVehicle))
@@ -851,6 +852,10 @@ class PlatooningVehicle(Vehicle):
         assert(new_position >= self.length)
         assert(new_position <= self._simulator.road_length)
 
+        # the join has been "allowed" by the leader
+        # the actual join procedure starts here
+        leader.in_maneuver = True
+
         platoon_successor = self._simulator._get_successor(last)
         if not platoon_successor or platoon_successor is self:
             LOG.trace(f"{self._vid}'s new position is {new_position} (behind {last.vid})")
@@ -875,6 +880,7 @@ class PlatooningVehicle(Vehicle):
                 # it is not possible to join because we cannot shift the current platoon successor out of the road
                 LOG.warning(f"Could not make enough space to teleport vehicle {self._vid}!")
                 self.in_maneuver = False
+                leader.in_maneuver = False
                 self._joins_aborted += 1
                 self._joins_aborted_no_space += 1
                 return
@@ -945,6 +951,7 @@ class PlatooningVehicle(Vehicle):
                 # NOTE: will this produce a collision as we did not move the joiner?
                 LOG.warning(f"Could not make enough space to teleport vehicle {self._vid}! Aborting the join maneuver!")
                 self.in_maneuver = False
+                leader.in_maneuver = False
                 self._joins_aborted += 1
                 self._joins_aborted_no_space += 1
                 return
@@ -969,7 +976,6 @@ class PlatooningVehicle(Vehicle):
             self._joins_teleport_speed += 1
 
         # update the leader
-        leader.in_maneuver = True
         if not leader.is_in_platoon():
             # only if leader was alone before
             LOG.debug(f"{leader.vid} became a leader of platoon {leader.platoon.platoon_id}")
@@ -982,7 +988,9 @@ class PlatooningVehicle(Vehicle):
                 # was not set before
                 leader._first_platoon_join_position = leader.position
             leader._number_platoons += 1
-        leader._platoon_role = PlatoonRole.LEADER
+            leader._platoon_role = PlatoonRole.LEADER
+        else:
+            assert(leader.platoon_role is PlatoonRole.LEADER)
 
         self._platoon_role = PlatoonRole.FOLLOWER
 
