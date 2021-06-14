@@ -802,6 +802,9 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted_teleport_threshold += 1
             return
 
+        assert(new_position >= self.length)
+        assert(new_position <= self._simulator.road_length)
+
         # consider the actual approaching duration
         initial_distance = new_position - self._position
         if initial_distance > 0:
@@ -848,9 +851,6 @@ class PlatooningVehicle(Vehicle):
         else:
             # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing
             assert(abs(initial_distance) <= last.length + self._cacc_spacing)
-
-        assert(new_position >= self.length)
-        assert(new_position <= self._simulator.road_length)
 
         # the join has been "allowed" by the leader
         # the actual join procedure starts here
