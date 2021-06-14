@@ -419,7 +419,6 @@ class PlatooningVehicle(Vehicle):
                 return new_speed
 
         elif self._cf_model is CF_Model.CACC:
-            assert(self.is_in_platoon())
             assert(self._platoon_role is PlatoonRole.FOLLOWER)  # only followers can use CACC
 
             # sanity checks for front vehicle in platoon
