@@ -158,6 +158,7 @@ trigger:
   branch:
     - master
     - develop
+
 ---
 kind: pipeline
 type: docker
