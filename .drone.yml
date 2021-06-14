@@ -79,9 +79,9 @@ steps:
     - python3 ./plafosim.py --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 
 trigger:
-  branch:
-    - master
-    - develop
+  ref:
+    - refs/heads/master
+    - refs/heads/develop
 
 ---
 kind: pipeline
@@ -155,9 +155,9 @@ steps:
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cacc*.csv cacc*.png"
 
 trigger:
-  branch:
-    - master
-    - develop
+  ref:
+    - refs/heads/master
+    - refs/heads/develop
 
 ---
 kind: pipeline
@@ -173,6 +173,6 @@ steps:
     - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 30 --vehicles 1000 --random-depart-position true --lanes 4
 
 trigger:
-  branch:
-    - master
-    - develop
+  ref:
+    - refs/heads/master
+    - refs/heads/develop
