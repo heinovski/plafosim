@@ -82,6 +82,7 @@ trigger:
   ref:
     - refs/heads/master
     - refs/heads/develop
+    - refs/tags/*
 
 ---
 kind: pipeline
@@ -158,6 +159,7 @@ trigger:
   ref:
     - refs/heads/master
     - refs/heads/develop
+    - refs/tags/*
 
 ---
 kind: pipeline
@@ -176,3 +178,4 @@ trigger:
   ref:
     - refs/heads/master
     - refs/heads/develop
+    - refs/tags/*
