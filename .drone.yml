@@ -82,6 +82,7 @@ trigger:
   ref:
     - refs/heads/master
     - refs/heads/develop
+    - refs/pull/**
     - refs/tags/*
 
 ---
@@ -159,6 +160,7 @@ trigger:
   ref:
     - refs/heads/master
     - refs/heads/develop
+    - refs/pull/**
     - refs/tags/*
 
 ---
@@ -178,4 +180,5 @@ trigger:
   ref:
     - refs/heads/master
     - refs/heads/develop
+    - refs/pull/**
     - refs/tags/*
