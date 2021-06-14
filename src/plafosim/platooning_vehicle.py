@@ -1009,7 +1009,7 @@ class PlatooningVehicle(Vehicle):
         leader.in_maneuver = True
         if not leader.is_in_platoon():
             # only if leader was alone before
-            LOG.debug(f"{leader_id} became a leader of platoon {leader.platoon.platoon_id}")
+            LOG.debug(f"{leader.vid} became a leader of platoon {leader.platoon.platoon_id}")
             leader._last_platoon_join_time = self._simulator.step
             leader._last_platoon_join_position = leader.position
             if leader._first_platoon_join_time == -1:
@@ -1044,7 +1044,7 @@ class PlatooningVehicle(Vehicle):
             import traci
             traci.vehicle.setColor(str(vehicle.vid), leader._color)
 
-        LOG.info(f"{self._vid} joined platoon {platoon_id} (leader: {leader_id})")
+        LOG.info(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
 
         self.in_maneuver = False
         leader.in_maneuver = False
