@@ -235,6 +235,7 @@ class PlatooningVehicle(Vehicle):
         Returns whether the vehicle currently is in a platoon.
 
         This is based on the current PlatoonRole.
+        A joining or leaving vehicle is either not yet or still part of a platoon, thus the returned value should be true.
         """
 
         return self._platoon_role is not PlatoonRole.NONE
@@ -369,8 +370,7 @@ class PlatooningVehicle(Vehicle):
                 if math.isclose(new_speed, self._speed):
                     new_speed = self._speed
 
-                if self.is_in_platoon():
-                    assert(self._platoon_role is PlatoonRole.LEADER)
+                if self._platoon_role is PlatoonRole.LEADER:
 
                     LOG.trace(f"{self._vid}'s ACC new individual speed {new_speed}m/s")
 
@@ -404,6 +404,7 @@ class PlatooningVehicle(Vehicle):
                         follower._acceleration = new_speed - self._speed
                 else:
                     # the vehicle is not in a platoon
+                    assert(not (self._platoon_role is PlatoonRole.LEADER or self._platoon_role is PlatoonRole.FOLLOWER))
 
                     new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
                     LOG.trace(f"{self._vid}'s ACC desired speed {new_speed}m/s")
