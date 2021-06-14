@@ -720,6 +720,14 @@ class PlatooningVehicle(Vehicle):
         # correct leader of that platoon
         assert(leader.vid == leader.platoon.leader.vid)
 
+        if leader.in_maneuver:
+            LOG.warning(f"{self._vid}'s new leader {leader_id} was already in a maneuver! Aborting the join maneuver!")
+            self.in_maneuver = False
+
+            self._joins_aborted += 1
+            self._joins_aborted_leader_maneuver += 1
+            return
+
         # HACK for determining the join position
         if self._position > leader.platoon.position:
             # TODO join at front
@@ -774,14 +782,6 @@ class PlatooningVehicle(Vehicle):
 
             self._joins_aborted += 1
             self._joins_aborted_trip_end += 1
-            return
-
-        if leader.in_maneuver:
-            LOG.warning(f"{self._vid}'s new leader {leader_id} was already in a maneuver! Aborting the join maneuver!")
-            self.in_maneuver = False
-
-            self._joins_aborted += 1
-            self._joins_aborted_leader_maneuver += 1
             return
 
         if self.max_speed <= leader.platoon.speed:
