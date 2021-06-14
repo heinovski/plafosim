@@ -110,6 +110,10 @@ class PlatooningVehicle(Vehicle):
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(vid, [self], desired_speed)
         self._in_maneuver = False
+        self._join_approach_step = None
+        self._join_data_leader = None
+        self._join_data_last = None
+        self._join_data_new_position = None
 
         if formation_algorithm is not None:
             # initialize formation algorithm
@@ -613,6 +617,16 @@ class PlatooningVehicle(Vehicle):
 
         super()._action(step)
 
+        if self._join_approach_step:
+            assert(self._in_maneuver)
+            if step >= self._join_approach_step:
+                self._join_teleport(self._join_data_leader, self._join_data_last, self._join_data_new_position)
+                # cleaning up
+                self._join_approach_step = None
+                self._join_data_leader = None
+                self._join_data_last = None
+                self._join_data_new_position = None
+
         if self._formation_algorithm is not None:
             # transmit regular platoon advertisements
             self._advertise()
@@ -865,6 +879,50 @@ class PlatooningVehicle(Vehicle):
         # the join has been "allowed" by the leader
         # the actual join procedure starts here
         leader.in_maneuver = True
+
+        if total_approach_time > 0:
+        # delay teleport by approach duration
+            # the platoon will be driving while we are waiting
+            new_position = new_position + total_approach_time * leader.platoon.speed
+            self._join_approach_step = self._simulator.step + total_approach_time
+            self._join_data_leader = leader
+            self._join_data_last = last
+            self._join_data_new_position = new_position
+            LOG.debug(f"Scheduled the teleport for vehicle {self._vid} to {self._join_approach_step}")
+        else:
+            # perform the teleport now
+            LOG.debug(f"The teleport for vehicle {self._vid} will be performed instantaneous.")
+            self._join_teleport(leader, last, new_position)
+
+    def _join_teleport(self, leader, last, new_position):
+
+        LOG.debug(f"Continuing the join maneuver for vehicle {self._vid} -> {leader.platoon.platoon_id} ({leader.vid})")
+
+        assert(self._in_maneuver)
+        assert(self._platoon_role is PlatoonRole.JOINER)
+        assert(leader.in_maneuver)
+        assert(leader.platoon_role is PlatoonRole.LEADER or leader.platoon_role is PlatoonRole.NONE)
+
+        if leader.position >= leader.arrival_position:
+            # the leader is gone (or will be gone soon)
+            # TODO we might still want to teleport the vehicle for realism
+            LOG.warning(f"{self._vid}'s platoon leader meanwhile reached the end of its trip! Aborting the join maneuver")
+            self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
+            leader.in_maneuver = False
+
+            self._joins_aborted += 1
+            self._joins_aborted_trip_end += 1
+            return
+
+        # re-calculate new position
+        new_position = last.rear_position - self._cacc_spacing
+        LOG.debug(f"{self._vid}'s new position is ({new_position},{leader.platoon.lane}) (current {self._position},{self._lane})")
+
+        assert(new_position >= self.length)
+        assert(new_position >= self._depart_position)
+        assert(new_position <= self._simulator.road_length)
+        assert(new_position <= self._arrival_position)
 
         platoon_successor = self._simulator._get_successor(last)
         if not platoon_successor or platoon_successor is self:
