@@ -807,9 +807,9 @@ class PlatooningVehicle(Vehicle):
 
         # consider the actual approaching duration
         initial_distance = new_position - self._position
+        total_approach_time = -1
         if initial_distance > 0:
             # we need to approach the platoon
-            total_approach_time = -1
             if self._speed <= leader.platoon.speed:
                 # we need to accelerate to approach the platoon
                 # the time we need to accelerate to our maximum speed (given a linear acceleration)
@@ -838,19 +838,20 @@ class PlatooningVehicle(Vehicle):
                 time_current_speed = distance_current_speed / self._speed
                 # the total time we need for approaching our target position
                 total_approach_time = time_current_speed + time_deceleration
-
-            assert(total_approach_time != -1)
-            if total_approach_time > self._simulator._maximum_appraoch_time:
-                # approaching the platoon would take to0 long
-                LOG.warning(f"It would take too long ({total_approach_time}s) for {self._vid} to approach the platoon {leader.platoon.platoon_id} ({leader.vid})! Aborting the join maneuver!")
-                self.in_maneuver = False
-
-                self._joins_aborted += 1
-                self._joins_aborted_approaching += 1
-                return
         else:
-            # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing
+            # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing (e.g., 9m)
             assert(abs(initial_distance) <= last.length + self._cacc_spacing)
+            total_approach_time = 0  # FIXME: we ignore that for now, since the time should be very small anyhow
+
+        assert(total_approach_time != -1)
+        if total_approach_time > self._simulator._maximum_appraoch_time:
+            # approaching the platoon would take too long
+            LOG.warning(f"It would take too long ({total_approach_time}s) for {self._vid} to approach the platoon {leader.platoon.platoon_id} ({leader.vid})! Aborting the join maneuver!")
+            self.in_maneuver = False
+
+            self._joins_aborted += 1
+            self._joins_aborted_approaching += 1
+            return
 
         # the join has been "allowed" by the leader
         # the actual join procedure starts here
