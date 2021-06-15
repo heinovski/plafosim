@@ -393,15 +393,6 @@ class PlatooningVehicle(Vehicle):
 
                     LOG.debug(f"{self._vid}'s CACC new speed {new_speed}m/s")
 
-                    # HACK for avoiding communication for platoon management
-                    # update all my followers
-                    for follower in self._platoon.formation:
-                        if follower is self:
-                            continue
-
-                        LOG.trace(f"{self._vid} is updating speed of its follower {follower.vid}")
-                        follower._speed = new_speed
-                        follower._acceleration = new_speed - self._speed
                 else:
                     # the vehicle is not in a platoon
                     assert(not (self._platoon_role is PlatoonRole.LEADER or self._platoon_role is PlatoonRole.FOLLOWER))
@@ -429,56 +420,15 @@ class PlatooningVehicle(Vehicle):
 
             assert(self._platoon.get_front(self).vid == predecessor_id)
 
-            gap_to_predecessor = predecessor_rear_position - self._position
-            LOG.trace(f"{self._vid}'s front gap {gap_to_predecessor}m")
-            if gap_to_predecessor < 0:
-                LOG.warning(f"{self._vid}'s front gap is negative ({gap_to_predecessor}m)")
-            LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
-            LOG.trace(f"{self._vid}'s predecessor speed {speed_predecessor}m/s")
-
-            ### HACK FOR AVOIDING COMMUNICATION ###
-            # acceleration_predecessor = self._platoon.get_front(self).acceleration
-            # acceleration_leader = self._platoon.leader.acceleration
+            ### HACK FOR AVOIDING COMMUNICATION AND CACC CALCULATION ###
             speed_leader = self._platoon.leader.speed
-            #######################################
 
-            ### HACK FOR CACC ###
-            # avoid the calculation
+            gap_to_predecessor = predecessor_rear_position - self._position
             # avoid issues due to floating point precision
-            if math.isclose(gap_to_predecessor, self._cacc_spacing) and math.isclose(speed_predecessor, speed_leader):
-                LOG.trace(f"{self._vid} does not need to calculate a CACC new speed")
-                return speed_leader
+            assert(math.isclose(gap_to_predecessor, self._cacc_spacing))
 
-            LOG.trace(f"{self._vid} needs to calculate a new CACC speed")
-            u = self._acc_acceleration(speed_leader, gap_to_predecessor, self.desired_gap)
-            #####################
-
-            LOG.trace(f"{self._vid}'s CACC safe speed {self._speed + u}m/s")
-
-            u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-            LOG.trace(f"{self._vid}'s CACC max acceleration speed {self._speed + u}m/s")
-
-            # we cannot decelerate stronger than we actually can
-            if u < -self.max_deceleration:
-                u = -self.max_deceleration
-                LOG.warn(f"{self._vid}'s is performing an emergency braking! Its new speed ({self._speed + u}m/s) is still faster than its ACC desired speed! This will probably lead to a crash!")
-            LOG.trace(f"{self._vid}'s CACC max deceleration speed {self._speed + u}m/s")
-
-            new_speed = self._speed + u
-            new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-            LOG.trace(f"{self._vid}'s CACC possible speed {new_speed}m/s")
-
-            LOG.debug(f"{self._vid}'s CACC new speed {new_speed}m/s")
-
-            # make sure we do not drive backwards
-            if (new_speed < 0):
-                new_speed = 0
-
-            # avoid issues due to floating point precision
-            if math.isclose(new_speed, self._speed):
-                new_speed = self._speed
-
-            return new_speed
+            LOG.trace(f"{self._vid} uses new speed {speed_leader}m/s from platoon leader {self._platoon.leader.vid}")
+            return speed_leader
 
         # default: use CC or driving freely
         return super().new_speed(speed_predecessor, predecessor_rear_position, predecessor_id)
