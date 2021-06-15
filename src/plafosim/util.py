@@ -141,6 +141,7 @@ def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
     step_length : int
         The length of the simulated step
     """
+
     position = vdf.position + (vdf.speed * step_length)
     vdf['position'] = clip_position(position, vdf)
     return vdf
