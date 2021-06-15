@@ -419,6 +419,7 @@ class PlatooningVehicle(Vehicle):
 
                 return new_speed
 
+            # no predecessor --> use default CC (see below)
         elif self._cf_model is CF_Model.CACC:
             assert(self._platoon_role is PlatoonRole.FOLLOWER)  # only followers can use CACC
 
