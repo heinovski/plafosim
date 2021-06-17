@@ -808,13 +808,13 @@ class PlatooningVehicle(Vehicle):
             total_approach_time = -1
             if self._speed <= leader.platoon.speed:
                 # we need to accelerate to approach the platoon
-                time_accleration = (self.max_speed - self._speed) / self.max_acceleration
+                time_acceleration = (self.max_speed - self._speed) / self.max_acceleration
                 time_deceleration = (self.max_speed - leader.platoon.speed) / self.max_deceleration
-                distance_acceleration = (self._speed + self.max_speed) / 2 * time_accleration
+                distance_acceleration = (self._speed + self.max_speed) / 2 * time_acceleration
                 distance_deceleration = (self.max_speed + leader.platoon.speed) / 2 * time_deceleration
                 distance_max_speed = initial_distance - (distance_acceleration + distance_deceleration)
                 time_max_speed = distance_max_speed / self.max_speed
-                total_approach_time = time_accleration + time_max_speed + time_deceleration
+                total_approach_time = time_acceleration + time_max_speed + time_deceleration
             else:
                 # we need to decelerate to approach the platoon
                 time_deceleration = (self._speed - leader.platoon.speed) / self.max_deceleration
