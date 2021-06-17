@@ -546,7 +546,6 @@ class SpeedPosition(FormationAlgorithm):
 
         LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.wall_time()} ms")
         LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")  # broken?
-        LOG.info(f"{self._owner.iid} solved the optimization problem with {solver.nodes()} nodes")  # broken?
         LOG.debug(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
         LOG.debug(f"{self._owner.iid}'s best bound is {objective.BestBound()}")
 
