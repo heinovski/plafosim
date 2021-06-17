@@ -573,6 +573,7 @@ class SpeedPosition(FormationAlgorithm):
                     LOG.warning(f"{vehicle.vid}'s assigned platoon {mapping['pid']} (leader {leader.vid}) meanwhile joined another platoon {target_platoon.platoon_id}! {vehicle.vid} is joining this platoon transitively")
                     self._assignments_candidate_joined_already += 1
                 else:
+                    assert(not leader.in_maneuver)
                     assert(not leader.is_in_platoon() or leader.platoon_role == PlatoonRole.LEADER)
                 # let vehicle join platoon
                 if vehicle.is_in_platoon():
