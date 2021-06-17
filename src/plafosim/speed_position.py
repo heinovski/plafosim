@@ -423,6 +423,8 @@ class SpeedPosition(FormationAlgorithm):
 
         from .platooning_vehicle import PlatooningVehicle  # noqa 811
 
+        LOG.debug(f"{self._owner.iid} is adding assignment variables for vehicles")
+
         # select all searching vehicles
         for vehicle in self._owner._simulator._vehicles.values():
 
