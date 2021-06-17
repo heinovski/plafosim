@@ -723,6 +723,7 @@ class PlatooningVehicle(Vehicle):
         if leader.in_maneuver:
             LOG.warning(f"{self._vid}'s new leader {leader_id} was already in a maneuver! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_aborted += 1
             self._joins_aborted_leader_maneuver += 1
@@ -734,6 +735,7 @@ class PlatooningVehicle(Vehicle):
             LOG.debug(f"{self._vid} is in front of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at the front of a platoon is not yet implemented! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_front += 1
             self._joins_aborted += 1
@@ -744,6 +746,7 @@ class PlatooningVehicle(Vehicle):
             LOG.debug(f"{self._vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at arbitrary positions of a platoon is not yet implemented! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_arbitrary += 1
             self._joins_aborted += 1
@@ -761,6 +764,7 @@ class PlatooningVehicle(Vehicle):
             # we cannot join since we would be outside of the road
             LOG.warning(f"{self._vid}'s new position would be too close to the beginning of the road! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_aborted += 1
             self._joins_aborted_road_begin += 1
@@ -769,6 +773,7 @@ class PlatooningVehicle(Vehicle):
         if new_position < self._depart_position:
             LOG.warning(f"{self._vid}'s new position would be before its depart position! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_aborted += 1
             self._joins_aborted_trip_begin += 1
@@ -779,6 +784,7 @@ class PlatooningVehicle(Vehicle):
         if new_position >= self._arrival_position:
             LOG.warning(f"{self._vid}'s new position would be outside of its trip! Aborting the join maneuver")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_aborted += 1
             self._joins_aborted_trip_end += 1
@@ -788,6 +794,7 @@ class PlatooningVehicle(Vehicle):
             # we will never be able to approach the platoon
             LOG.warning(f"{self._vid}'s maximum speed is too low such that it can never reach the platoon! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_aborted += 1
             self._joins_aborted_max_speed += 1
@@ -797,6 +804,7 @@ class PlatooningVehicle(Vehicle):
             # the vehicle is too far away to be teleported
             LOG.warning(f"{self._vid} is too far away from the target platoon to realistically do a teleport! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_aborted += 1
             self._joins_aborted_teleport_threshold += 1
@@ -848,6 +856,7 @@ class PlatooningVehicle(Vehicle):
             # approaching the platoon would take too long
             LOG.warning(f"It would take too long ({total_approach_time}s) for {self._vid} to approach the platoon {leader.platoon.platoon_id} ({leader.vid})! Aborting the join maneuver!")
             self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
 
             self._joins_aborted += 1
             self._joins_aborted_approaching += 1
@@ -881,6 +890,7 @@ class PlatooningVehicle(Vehicle):
                 # it is not possible to join because we cannot shift the current platoon successor out of the road
                 LOG.warning(f"Could not make enough space to teleport vehicle {self._vid}!")
                 self.in_maneuver = False
+                self._platoon_role = PlatoonRole.NONE
                 leader.in_maneuver = False
                 self._joins_aborted += 1
                 self._joins_aborted_no_space += 1
@@ -952,6 +962,7 @@ class PlatooningVehicle(Vehicle):
                 # NOTE: will this produce a collision as we did not move the joiner?
                 LOG.warning(f"Could not make enough space to teleport vehicle {self._vid}! Aborting the join maneuver!")
                 self.in_maneuver = False
+                self._platoon_role = PlatoonRole.NONE
                 leader.in_maneuver = False
                 self._joins_aborted += 1
                 self._joins_aborted_no_space += 1
