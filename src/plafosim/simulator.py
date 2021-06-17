@@ -1656,9 +1656,6 @@ class Simulator:
         # call finish on infrastructures
         for infrastructure in self._infrastructures.values():
             infrastructure.finish()
-            if self._gui:
-                import traci
-                traci.polygon.remove(str(infrastructure._iid))
 
         # call finish on remaining vehicles?
         for vehicle in self._vehicles.values():
