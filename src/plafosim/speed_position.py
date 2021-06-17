@@ -548,6 +548,11 @@ class SpeedPosition(FormationAlgorithm):
             self._assignments_none += 1
             return
 
+        if result_status == solver.OPTIMAL:
+            LOG.info(f"{self._owner.iid}'s solution is optimal")
+        elif result_status == solver.FEASIBLE:
+            LOG.info(f"{self._owner.iid}'s solution is not optimal")
+
         self._assignments_solved += 1
 
         LOG.info(f"{self._owner.iid} solved the optimization problem in {run_time}s ({solver.wall_time()}ms)")
