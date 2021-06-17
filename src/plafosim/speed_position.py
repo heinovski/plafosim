@@ -485,7 +485,7 @@ class SpeedPosition(FormationAlgorithm):
                 elif vehicle.position > platoon.rear_position:
                     # TODO HACK for skipping vehicles in front of us
                     LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
-                    fx = infinity
+                    continue
                 else:
                     # calculate deviation values
                     ds = SpeedPosition.ds(vehicle, platoon)
@@ -494,11 +494,11 @@ class SpeedPosition(FormationAlgorithm):
                     # remove platoon if not in speed range
                     if ds > self._speed_deviation_threshold * vehicle.desired_speed:
                         LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference ({ds})")
-                        fx = infinity
+                        continue
                     # remove platoon if not in position range
                     elif dp > self._position_deviation_threshold:
                         LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference ({dp})")
-                        fx = infinity
+                        continue
                     else:
                         # calculate deviation/cost
                         LOG.debug(f"Considering platoon {platoon.platoon_id} for vehicle {vehicle.vid}")
