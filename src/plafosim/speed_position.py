@@ -411,6 +411,8 @@ class SpeedPosition(FormationAlgorithm):
         from ortools.linear_solver import pywraplp
         solver = pywraplp.Solver(f"{self._name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
         solver.SetNumThreads(1)
+        # TODO make parameter
+        solver.set_time_limit(60 * 1000)  # influences whether the solution is optimal
 
         import sys
         infinity = sys.float_info.max  # does work
