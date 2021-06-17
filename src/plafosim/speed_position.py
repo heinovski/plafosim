@@ -514,6 +514,7 @@ class SpeedPosition(FormationAlgorithm):
                     'pid': platoon.platoon_id,
                     'lid': platoon.leader.vid,
                     'cost': fx,
+                    'var': variable.index(),
                 }
 
                 # add decision variable from vehicle to platoon to row sum
@@ -525,6 +526,27 @@ class SpeedPosition(FormationAlgorithm):
             # end vehicle
 
         # end all vehicles
+
+        # add more platoon constraints
+        LOG.debug(f"{self._owner.iid} is adding additional platoon constraints")
+        # get all platoons
+        for pid in set([x['pid'] for x in decision_variables.values()]):
+            # create constraint for this platoon
+            # assign only one (other) vehicle to this platoon
+            constraint_one_member_per_platoon = solver.RowConstraint(0, 1, f"one other member per platoon: {pid}")
+            # assign a vehicle only if no other vehicles has been assigned
+            constraint_one_assignment_per_vehicle = solver.RowConstraint(0, 1, f"one assignment per vehicle: {pid}")
+            # get all variables that assign a vehicle to that platoon
+            for var in [x['var'] for x in decision_variables.values() if x['pid'] == pid and x['vid'] != pid]:
+                # not a self-assignment
+                variable = solver.variable(var)
+                constraint_one_member_per_platoon.SetCoefficient(variable, 1)
+                constraint_one_assignment_per_vehicle.SetCoefficient(variable, 1)
+
+            # get all variables that assign this vehicle to someone else
+            for var in [x['var'] for x in decision_variables.values() if x['vid'] == pid and x['pid'] != pid]:
+                # not a self-assignment
+                constraint_one_assignment_per_vehicle.SetCoefficient(solver.variable(var), 1)
 
         if solver.NumConstraints() == 0:
             LOG.info(f"{self._owner.iid} has no vehicles to run the solver for")
@@ -577,8 +599,9 @@ class SpeedPosition(FormationAlgorithm):
                 if target_platoon.platoon_id != mapping['pid']:
                     # meanwhile, the leader became a platoon member
                     assert(leader.is_in_platoon() and leader.platoon_role == PlatoonRole.FOLLOWER)
-                    LOG.warning(f"{vehicle.vid}'s assigned platoon {mapping['pid']} (leader {leader.vid}) meanwhile joined another platoon {target_platoon.platoon_id}! {vehicle.vid} is joining this platoon transitively")
+                    LOG.warning(f"{vehicle.vid}'s assigned platoon {mapping['pid']} (leader {leader.vid}) meanwhile joined another platoon {target_platoon.platoon_id}!")
                     self._assignments_candidate_joined_already += 1
+                    continue
                 else:
                     assert(not leader.in_maneuver)
                     assert(not leader.is_in_platoon() or leader.platoon_role == PlatoonRole.LEADER)
