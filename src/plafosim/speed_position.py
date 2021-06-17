@@ -16,6 +16,7 @@
 #
 
 import logging
+from timeit import default_timer as timer
 from typing import TYPE_CHECKING
 
 from .formation_algorithm import FormationAlgorithm
@@ -530,7 +531,10 @@ class SpeedPosition(FormationAlgorithm):
         # run the solver to calculate the optimal assignments
         LOG.info(f"{self._owner.iid} is running the solver for {solver.NumVariables()} possible assignments, and {solver.NumConstraints()} constraints")
 
+        start_time = timer()
         result_status = solver.Solve()
+        end_time = timer()
+        run_time = end_time - start_time
 
         if result_status >= solver.INFEASIBLE:
             LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
@@ -544,7 +548,7 @@ class SpeedPosition(FormationAlgorithm):
 
         self._assignments_solved += 1
 
-        LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.wall_time()} ms")
+        LOG.info(f"{self._owner.iid} solved the optimization problem in {run_time}s ({solver.wall_time()}ms)")
         LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")  # broken?
         LOG.debug(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
         LOG.debug(f"{self._owner.iid}'s best bound is {objective.BestBound()}")
