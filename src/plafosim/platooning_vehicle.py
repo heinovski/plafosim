@@ -808,19 +808,31 @@ class PlatooningVehicle(Vehicle):
             total_approach_time = -1
             if self._speed <= leader.platoon.speed:
                 # we need to accelerate to approach the platoon
+                # the time we need to accelerate to our maximum speed (given a linear acceleration)
                 time_acceleration = (self.max_speed - self._speed) / self.max_acceleration
+                # the time we need to decelerate to target speed (given a linear deceleration)
                 time_deceleration = (self.max_speed - leader.platoon.speed) / self.max_deceleration
+                # the distance driven while accelerating to the maximum speed (given a linear acceleration
                 distance_acceleration = (self._speed + self.max_speed) / 2 * time_acceleration
+                # the distance driven while decelerating to the target speed (given a linear acceleration
                 distance_deceleration = (self.max_speed + leader.platoon.speed) / 2 * time_deceleration
+                # the distance to drive with maximum speed (i.e., after acceleration and before deceleration)
                 distance_max_speed = initial_distance - (distance_acceleration + distance_deceleration)
+                # the time we need drive with the maximum speed
                 time_max_speed = distance_max_speed / self.max_speed
+                # the total time we need for approaching our target position
                 total_approach_time = time_acceleration + time_max_speed + time_deceleration
             else:
                 # we need to decelerate to approach the platoon
+                # the time we need to decelerate to target speed (given a linear deceleration)
                 time_deceleration = (self._speed - leader.platoon.speed) / self.max_deceleration
+                # the distance driven while decelerating to the target speed (given a linear acceleration
                 distance_deceleration = (self._speed + leader.platoon.speed) / 2 * time_deceleration
+                # the distance to drive with our current speed (i.e., before deceleration)
                 distance_current_speed = initial_distance - distance_deceleration
+                # the time we need drive with the current speed
                 time_current_speed = distance_current_speed / self._speed
+                # the total time we need for approaching our target position
                 total_approach_time = time_current_speed + time_deceleration
 
             assert(total_approach_time != -1)
