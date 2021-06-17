@@ -414,8 +414,9 @@ class SpeedPosition(FormationAlgorithm):
         # TODO make parameter
         solver.set_time_limit(60 * 1000)  # influences whether the solution is optimal
 
-        import sys
-        infinity = sys.float_info.max  # does work
+        # import sys
+        # infinity = sys.float_info.max  # does work
+        # infinity = solver.infinity() does work?
         individual = 1e+6  # big magic number for the cost of driving individually
 
         objective = solver.Objective()
