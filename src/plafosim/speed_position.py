@@ -498,7 +498,7 @@ class SpeedPosition(FormationAlgorithm):
                         fx = infinity
                     else:
                         # calculate deviation/cost
-                        LOG.trace(f"Considering platoon {platoon.platoon_id} for vehicle {vehicle.vid}")
+                        LOG.debug(f"Considering platoon {platoon.platoon_id} for vehicle {vehicle.vid}")
                         fx = self.cost_speed_position(ds, dp)
                         vehicle._candidates_found += 1
 
