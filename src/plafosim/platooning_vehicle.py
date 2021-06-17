@@ -193,7 +193,7 @@ class PlatooningVehicle(Vehicle):
         This is based on the currently active car following model.
         """
 
-        if self._cf_model == CF_Model.ACC or self._cf_model == CF_Model.CACC:
+        if self._cf_model == CF_Model.ACC:
             return self._acc_headway_time
         return super().desired_headway_time
 
