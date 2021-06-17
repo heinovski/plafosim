@@ -527,7 +527,7 @@ class SpeedPosition(FormationAlgorithm):
             return
 
         # run the solver to calculate the optimal assignments
-        LOG.info(f"{self._owner.iid} is running the solver for {solver.NumConstraints()} vehicles and {solver.NumVariables()} possible assignments")
+        LOG.info(f"{self._owner.iid} is running the solver for {solver.NumVariables()} possible assignments, and {solver.NumConstraints()} constraints")
 
         result_status = solver.Solve()
 
