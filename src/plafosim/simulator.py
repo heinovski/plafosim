@@ -1168,6 +1168,7 @@ class Simulator:
             with open(f'{self._result_base_filename}_vehicle_trips.csv', 'w') as f:
                 f.write(
                     "id,"
+                    "vType,"
                     "depart,"
                     "departLane,"
                     "departPos,"

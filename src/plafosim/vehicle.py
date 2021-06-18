@@ -625,6 +625,7 @@ class Vehicle:
             with open(f'{self._simulator._result_base_filename}_vehicle_trips.csv', 'a') as f:
                 f.write(
                     f"{self._vid},"
+                    f"{self._vehicle_type.name},"
                     f"{self._depart_time},"
                     f"{self._depart_lane},"
                     f"{self._depart_position},"
