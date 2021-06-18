@@ -1170,6 +1170,7 @@ class Simulator:
                     "id,"
                     "vType,"
                     "eClass,"
+                    "vClass,"
                     "depart,"
                     "departLane,"
                     "departPos,"
