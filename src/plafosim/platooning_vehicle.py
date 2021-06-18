@@ -880,8 +880,8 @@ class PlatooningVehicle(Vehicle):
         # the actual join procedure starts here
         leader.in_maneuver = True
 
-        if total_approach_time > 0:
         # delay teleport by approach duration
+        if self._simulator._delay_teleports and total_approach_time > 0:
             # the platoon will be driving while we are waiting
             new_position = new_position + total_approach_time * leader.platoon.speed
             self._join_approach_step = self._simulator.step + total_approach_time

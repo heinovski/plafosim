@@ -275,6 +275,13 @@ def main():
         help="The maximum time for approaching a platoon during a join maneuver in s. A value of -1 disables the check",
     )
     platoon.add_argument(
+        "--delay-teleports",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether teleports (i.e., during a join maneuver) should be delayed by the time for approaching the target platoon",
+    )
+    platoon.add_argument(
         "--update-desired-speed",
         type=lambda x: bool(strtobool(x)),
         default=True,
@@ -550,6 +557,7 @@ def main():
         args.reduced_air_drag,
         args.maximum_teleport_distance,
         args.maximum_approach_time,
+        args.delay_teleports,
         args.update_desired_speed,
         args.formation_algorithm,
         args.formation_strategy,

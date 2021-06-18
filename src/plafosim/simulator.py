@@ -102,6 +102,7 @@ class Simulator:
             reduced_air_drag: bool = True,
             maximum_teleport_distance: int = 2000,
             maximum_approach_time: int = 60,
+            delay_teleports: bool = True,
             update_desired_speed: bool = True,
             formation_algorithm: str = None,
             formation_strategy: str = 'distributed',
@@ -220,6 +221,9 @@ class Simulator:
             self._maximum_appraoch_time = float('inf')
         else:
             self._maximum_appraoch_time = maximum_approach_time  # maximum approach time
+        if not delay_teleports:
+            LOG.warning("Teleports will be executed instantaneous! The vehicle behavior may be unrealistic!")
+        self._delay_teleports = delay_teleports  # whether teleports during a join maneuver should be delayed by the approach time
 
         self._update_desired_speed = update_desired_speed  # whether to update the platoon's desired driving speed to the average speed of all members after the formation changed
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
