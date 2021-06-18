@@ -1276,6 +1276,7 @@ class Simulator:
                     "joinsAbortedArbitrary,"
                     "joinsAbortedRoadBegin,"
                     "joinsAbortedTripBegin,"
+                    "joinsAbortedRoadEnd,"
                     "joinsAbortedTripEnd,"
                     "joinsAbortedLeaderManeuver,"
                     "joinsAbortedMaxSpeed,"

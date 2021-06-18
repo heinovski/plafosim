@@ -155,6 +155,7 @@ class PlatooningVehicle(Vehicle):
         self._joins_aborted_arbitrary = 0
         self._joins_aborted_road_begin = 0
         self._joins_aborted_trip_begin = 0
+        self._joins_aborted_road_end = 0
         self._joins_aborted_trip_end = 0
         self._joins_aborted_leader_maneuver = 0
         self._joins_aborted_max_speed = 0
@@ -569,6 +570,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_aborted_arbitrary},"
                     f"{self._joins_aborted_road_begin},"
                     f"{self._joins_aborted_trip_begin},"
+                    f"{self._joins_aborted_road_end},"
                     f"{self._joins_aborted_trip_end},"
                     f"{self._joins_aborted_leader_maneuver},"
                     f"{self._joins_aborted_max_speed},"
@@ -794,6 +796,15 @@ class PlatooningVehicle(Vehicle):
             return
         # TODO should we also avoid teleporting backwards at all?
         # for now this is allowed to simulate decelerating and waiting for the platoon for passing further
+
+        if new_position >= self._simulator.road_length:
+            LOG.warning(f"{self._vid}'s new position would be outside of the road! Aborting the join maneuver")
+            self.in_maneuver = False
+            self._platoon_role = PlatoonRole.NONE
+
+            self._joins_aborted += 1
+            self._joins_aborted_road_end += 1
+            return
 
         if new_position >= self._arrival_position:
             LOG.warning(f"{self._vid}'s new position would be outside of its trip! Aborting the join maneuver")
