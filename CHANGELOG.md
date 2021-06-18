@@ -1,5 +1,32 @@
 # Changelog
 
+## [v0.11.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.0) - 2021-06-XX
+* Added additional constraints to optimization problem (#304)
+* Added deprecation warning to communication code
+* Added development advice to README
+* Added solver time limit
+* Added statists for solution quality
+* Added teleport delay during maneuver (#301)
+* Fixed argument choices
+* Fixed desired headway time
+* Fixed metric for successful assignments
+* Fixed recording of periodic simulator statistics
+* Fixed typos
+* Updated CACC model to use direct speed from the leader (#302)
+* Updated CACC validation to not update platoon's desired speed (#306)
+* Updated CI triggers
+* Updated CLI arguments
+* Updated comments
+* Updated condition for front join
+* Updated docstring
+* Updated formatting
+* Updated optimization problem (#298)
+* Updated parameter variables in simulator
+* Updated platoon role in leave maneuver (#307)
+* Updated run time calculation
+* Updated validation scripts
+* Updated variable access to gain speed
+
 ## [v0.10.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.10.0) - 2021-06-02
 * Added comparison of cf models with single vehicle (#229, #293)
 * Added comparison to Plexe for CACC (#84)
