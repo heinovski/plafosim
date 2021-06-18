@@ -45,6 +45,7 @@ echo "Running PlaFoSim..."
     --acc-headway-time 1.5 \
     --cacc-spacing 5.0 \
     --start-as-platoon true \
+    --update-desired-speed false \
     --reduced-air-drag false \
     --pre-fill true \
     --penetration 1 \
