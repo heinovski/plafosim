@@ -2,6 +2,7 @@
 
 ## [v0.11.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.0) - 2021-06-XX
 * Added additional constraints to optimization problem (#304)
+* Added distinction between desired speed and CC target speed (#309)
 * Added deprecation warning to communication code
 * Added development advice to README
 * Added solver time limit
@@ -25,6 +26,7 @@
 * Updated platoon role in leave maneuver (#307)
 * Updated properties and variables (#298)
 * Updated run time calculation
+* Updated vehicle tripinfo
 * Updated validation scripts
 * Updated variable access to gain speed
 
