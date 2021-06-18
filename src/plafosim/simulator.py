@@ -1352,7 +1352,7 @@ class Simulator:
                     "assignmentsSelf,"
                     "assignmentsCandidateJoinedAlready,"
                     "assignmentsVehicleBecameLeader,"
-                    "assignmentsSuccessful,"
+                    "assignmentsSuccessful"
                     "\n"
                 )
 
