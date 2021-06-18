@@ -336,6 +336,12 @@ def main():
         default=-1,
         help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold",
     )
+    formation.add_argument(
+        "--solver-time-limit",
+        type=int,
+        default=60,
+        help="The time limit for the optimal solver per assignment problem in s. Influences the quality of the solution.",
+    )
 
     # infrastructure properties
     infrastructures = parser.add_argument_group("infrastructure properties")
@@ -566,6 +572,7 @@ def main():
         args.alpha,
         args.speed_deviation_threshold,
         args.position_deviation_threshold,
+        args.solver_time_limit * 1000,
         args.infrastructures,
         args.step_length,
         round(args.time_limit * 60 * 60),

@@ -111,6 +111,7 @@ class Simulator:
             alpha: float = 0.5,
             speed_deviation_threshold: float = -1,
             position_deviation_threshold: int = -1,
+            solver_time_limit: int = 60 * 1000,
             number_of_infrastructures: int = 0,
             step_length: int = 1,
             max_step: int = 1 * 60 * 60,
@@ -248,6 +249,9 @@ class Simulator:
             self._position_deviation_threshold = road_length
         else:
             self._position_deviation_threshold = position_deviation_threshold
+        if solver_time_limit < 2 * 1000:
+            LOG.warning("The time limit for the solver should be at least 2s! Otherwise it may not be possible for the solver to produce a solution (especially with many vehicles)!")
+        self._solver_time_limit = solver_time_limit  # the time limit for the optimal solver per assignment problem
 
         # infrastructure properties
         self._infrastructures = {}  # the list (dict) of infrastructures in the simulation
