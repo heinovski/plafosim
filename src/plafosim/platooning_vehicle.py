@@ -912,11 +912,6 @@ class PlatooningVehicle(Vehicle):
 
         LOG.debug(f"Continuing the join maneuver for vehicle {self._vid} -> {leader.platoon.platoon_id} ({leader.vid})")
 
-        assert(self._in_maneuver)
-        assert(self._platoon_role is PlatoonRole.JOINER)
-        assert(leader.in_maneuver)
-        assert(leader.platoon_role is PlatoonRole.LEADER or leader.platoon_role is PlatoonRole.NONE)
-
         if leader.position >= leader.arrival_position:
             # the leader is gone (or will be gone soon)
             # TODO we might still want to teleport the vehicle for realism
@@ -928,6 +923,11 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted += 1
             self._joins_aborted_trip_end += 1
             return
+
+        assert(self._in_maneuver)
+        assert(self._platoon_role is PlatoonRole.JOINER)
+        assert(leader.in_maneuver)
+        assert(leader.platoon_role is PlatoonRole.LEADER or leader.platoon_role is PlatoonRole.NONE)
 
         # re-calculate new position
         new_position = last.rear_position - self._cacc_spacing
