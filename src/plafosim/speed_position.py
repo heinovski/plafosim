@@ -72,6 +72,8 @@ class SpeedPosition(FormationAlgorithm):
         # statistics
         self._assignments_solved = 0
         self._assignments_not_solvable = 0
+        self._assignments_solved_optimal = 0
+        self._assignments_solved_feasible = 0
         self._assignments_none = 0
         self._assignments_self = 0
         self._assignments_candidate_joined_already = 0
@@ -183,6 +185,8 @@ class SpeedPosition(FormationAlgorithm):
                     f"{self._owner.iid},"
                     f"{self._assignments_solved},"
                     f"{self._assignments_not_solvable},"
+                    f"{self._assignments_solved_optimal},"
+                    f"{self._assignments_solved_feasible},"
                     f"{self._assignments_none},"
                     f"{self._assignments_self},"
                     f"{self._assignments_candidate_joined_already},"
@@ -573,12 +577,14 @@ class SpeedPosition(FormationAlgorithm):
             self._assignments_none += 1
             return
 
+        self._assignments_solved += 1
+
         if result_status == solver.OPTIMAL:
             LOG.info(f"{self._owner.iid}'s solution is optimal")
+            self._assignments_solved_optimal += 1
         elif result_status == solver.FEASIBLE:
             LOG.info(f"{self._owner.iid}'s solution is not optimal")
-
-        self._assignments_solved += 1
+            self._assignments_solved_feasible += 1
 
         LOG.info(f"{self._owner.iid} solved the optimization problem in {run_time}s ({solver.wall_time()}ms)")
         LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")  # broken?

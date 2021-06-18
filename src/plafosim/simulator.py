@@ -1346,6 +1346,8 @@ class Simulator:
                     "id,"
                     "assignmentsSolved,"
                     "assignmentsNotSolvable,"
+                    "assignmentsSolvedOptimal,"
+                    "assignmentsSolvedFeasible,"
                     "assignmentsNone,"
                     "assignmentsSelf,"
                     "assignmentsCandidateJoinedAlready,"
