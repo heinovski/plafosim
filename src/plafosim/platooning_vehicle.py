@@ -1032,7 +1032,7 @@ class PlatooningVehicle(Vehicle):
         """
 
         if self.platoon.size == 1:
-            LOG.warning(f"Can not leave when driving indiviudally ({self._vid})!")
+            LOG.warning(f"Can not leave when driving individually ({self._vid})!")
             return
         assert(self.is_in_platoon())
 
