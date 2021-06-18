@@ -1169,6 +1169,7 @@ class Simulator:
                 f.write(
                     "id,"
                     "vType,"
+                    "eClass,"
                     "depart,"
                     "departLane,"
                     "departPos,"

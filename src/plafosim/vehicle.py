@@ -626,6 +626,7 @@ class Vehicle:
                 f.write(
                     f"{self._vid},"
                     f"{self._vehicle_type.name},"
+                    "HBEFA3/PC_G_EU4,"  # TODO make parameter
                     f"{self._depart_time},"
                     f"{self._depart_lane},"
                     f"{self._depart_position},"
