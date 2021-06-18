@@ -297,7 +297,7 @@ class PlatooningVehicle(Vehicle):
 
         return self._distance_in_platoon
 
-    def _acc_acceleration(self, desired_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
+    def _acc_acceleration(self, target_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
         """
         s Helper method to calculate the ACC acceleration based on the given parameters.
 
@@ -318,7 +318,7 @@ class PlatooningVehicle(Vehicle):
         return (
             -1.0 / self.desired_headway_time * (
                 self._speed
-                - desired_speed
+                - target_speed
                 + self._acc_lambda
                 * (-gap_to_predecessor + desired_gap)
             )
@@ -346,7 +346,7 @@ class PlatooningVehicle(Vehicle):
                 if gap_to_predecessor < 0:
                     LOG.warning(f"{self._vid}'s front gap is negative ({gap_to_predecessor}m)")
                 LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
-                LOG.trace(f"{self._vid}'s desired speed {self.desired_speed}m/s")
+                LOG.trace(f"{self._vid}'s target speed {self._cc_target_speed}m/s")
                 LOG.trace(f"{self._vid}'s predecessor ({predecessor_id}) speed {speed_predecessor}m/s")
 
                 u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.desired_gap)
@@ -358,7 +358,7 @@ class PlatooningVehicle(Vehicle):
 
                 # we cannot decelerate stronger than we actually can
                 if u < -self.max_deceleration:
-                    LOG.warn(f"{self._vid}'s is performing an emergency braking! Its new speed ({self._speed - self.max_deceleration}m/s) is still faster than its ACC desired speed ({self._speed + u}m/s)! This will probably lead to a crash!")
+                    LOG.warn(f"{self._vid}'s is performing an emergency braking! Its new speed ({self._speed - self.max_deceleration}m/s) is still faster than its ACC target speed ({self._speed + u}m/s)! This will probably lead to a crash!")
                     u = -self.max_deceleration
                 LOG.trace(f"{self._vid}'s ACC max deceleration speed {self._speed + u}m/s")
 
@@ -393,7 +393,7 @@ class PlatooningVehicle(Vehicle):
 
                     # only drive as fast as the platoon's desired speed
                     new_speed = min(new_speed, self.platoon.desired_speed)
-                    LOG.trace(f"{self._vid}'s CACC desired speed {new_speed}m/s")
+                    LOG.trace(f"{self._vid}'s CACC target speed {new_speed}m/s")
 
                     LOG.debug(f"{self._vid}'s CACC new speed {new_speed}m/s")
 
@@ -401,12 +401,12 @@ class PlatooningVehicle(Vehicle):
                     # the vehicle is not in a platoon
                     assert(not (self._platoon_role is PlatoonRole.LEADER or self._platoon_role is PlatoonRole.FOLLOWER))
 
-                    new_speed = min(self.desired_speed, new_speed)  # only drive as fast as desired
-                    LOG.trace(f"{self._vid}'s ACC desired speed {new_speed}m/s")
+                    new_speed = min(self._cc_target_speed, new_speed)  # only drive as fast as target speed
+                    LOG.trace(f"{self._vid}'s ACC target speed {new_speed}m/s")
 
                     LOG.debug(f"{self._vid}'s ACC new speed {new_speed}m/s")
 
-                if new_speed < self.desired_speed and u <= 0:
+                if new_speed < self._cc_target_speed and u <= 0:
                     LOG.debug(f"{self._vid} is blocked by slow vehicle!")
                     self._blocked_front = True
                 else:
@@ -834,6 +834,7 @@ class PlatooningVehicle(Vehicle):
             # we need to approach the platoon
             if self._speed <= leader.platoon.speed:
                 # we need to accelerate to approach the platoon
+                self._cc_target_speed = self.max_speed
                 # the time we need to accelerate to our maximum speed (given a linear acceleration)
                 time_acceleration = (self.max_speed - self._speed) / self.max_acceleration
                 # the time we need to decelerate to target speed (given a linear deceleration)
@@ -1040,6 +1041,7 @@ class PlatooningVehicle(Vehicle):
             self._joins_teleport_lane += 1
         current_speed = self._speed
         new_speed = last.speed
+        self._cc_target_speed = new_speed
         if current_speed != new_speed:
             self._speed = new_speed
             LOG.debug(f"{self._vid} changed speed to {self._speed}m/s (from {current_speed}m/s)")
@@ -1130,7 +1132,8 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"Only {follower.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
-                follower._platoon = Platoon(follower.vid, [follower], follower.desired_speed)
+                follower._cc_target_speed = follower._desired_speed
+                follower._platoon = Platoon(follower.vid, [follower], follower._desired_speed)
 
                 # reset color of vehicle
                 if self._simulator._gui:
@@ -1161,7 +1164,8 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"Only the current leader {leader.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 leader._platoon_role = PlatoonRole.NONE
                 leader._cf_model = CF_Model.ACC
-                leader._platoon = Platoon(leader.vid, [leader], leader.desired_speed)
+                leader._cc_target_speed = leader._desired_speed
+                leader._platoon = Platoon(leader.vid, [leader], leader._desired_speed)
 
                 # reset color of vehicle
                 if self._simulator._gui:

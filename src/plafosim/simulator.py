@@ -1215,7 +1215,8 @@ class Simulator:
                     "speed,"
                     "duration,"
                     "routeLength,"
-                    "desiredSpeed"
+                    "desiredSpeed,"
+                    "ccTargetSpeed"
                     "\n"
                 )
 

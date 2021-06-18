@@ -97,6 +97,7 @@ class Vehicle:
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
         self._acceleration = 0  # the current acceleration of the vehicle
         self._cf_model = CF_Model.CC  # the current car following model
+        self._cc_target_speed = desired_speed  # the target speed for CC
 
         # communication properties
         # TODO move to platooning vehicle
@@ -217,6 +218,7 @@ class Vehicle:
         """
 
         # use potential other desired headway time
+        # TODO should this be target speed?
         return speed2distance(self.desired_headway_time * self._speed, self._simulator._step_length)
 
     @property
@@ -347,24 +349,24 @@ class Vehicle:
             The id of the vehicle in the front. This should only be used for debugging.
         """
 
-        LOG.trace(f"{self._vid}'s desired speed is {self._desired_speed}m/s")
+        LOG.trace(f"{self._vid}'s target speed is {self._cc_target_speed}m/s")
 
         new_speed = -1
         # do we need to adjust our speed?
-        diff_to_desired = self._desired_speed - self._speed  # use explicit individual desired speed
-        if diff_to_desired > 0:
+        diff_to_target = self._cc_target_speed - self._speed
+        if diff_to_target > 0:
             # we need to accelerate
             new_speed = min(
                 self._speed +
-                min(diff_to_desired, acceleration2speed(self.max_acceleration, self._simulator.step_length)),
+                min(diff_to_target, acceleration2speed(self.max_acceleration, self._simulator.step_length)),
                 self.max_speed
             )
             LOG.trace(f"{self._vid} wants to accelerate to {new_speed}m/s")
-        elif diff_to_desired < 0:
+        elif diff_to_target < 0:
             # we need to decelerate
             new_speed = max(
                 self._speed +
-                max(diff_to_desired, -acceleration2speed(self.max_deceleration, self._simulator.step_length)),
+                max(diff_to_target, -acceleration2speed(self.max_deceleration, self._simulator.step_length)),
                 0
             )
             LOG.trace(f"{self._vid} wants to decelerate to {new_speed}m/s")
@@ -489,7 +491,8 @@ class Vehicle:
                     f"{self._speed},"
                     f"{self.travel_time},"
                     f"{self.travel_distance},"
-                    f"{self.desired_speed}"  # use potential other desired speed
+                    f"{self.desired_speed},"  # use potential other desired driving speed
+                    f"{self._cc_target_speed}"
                     "\n"
                 )
 
