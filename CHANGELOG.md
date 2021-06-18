@@ -20,9 +20,10 @@
 * Updated condition for front join
 * Updated docstring
 * Updated formatting
-* Updated optimization problem (#298)
+* Updated optimization problem
 * Updated parameter variables in simulator
 * Updated platoon role in leave maneuver (#307)
+* Updated properties and variables (#298)
 * Updated run time calculation
 * Updated validation scripts
 * Updated variable access to gain speed
