@@ -5,6 +5,7 @@
 * Added distinction between desired speed and CC target speed (#309)
 * Added deprecation warning to communication code
 * Added development advice to README
+* Added more maneuver abort reasons
 * Added solver time limit
 * Added statists for solution quality
 * Added teleport delay during maneuver (#301)
