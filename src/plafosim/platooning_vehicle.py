@@ -725,6 +725,7 @@ class PlatooningVehicle(Vehicle):
         LOG.info(f"{self._vid} is trying to join platoon {platoon_id} (leader {leader_id})")
         self._joins_attempted += 1
 
+        assert(not self.in_maneuver)
         self.in_maneuver = True
         self._platoon_role = PlatoonRole.JOINER
 
@@ -890,6 +891,7 @@ class PlatooningVehicle(Vehicle):
 
         # the join has been "allowed" by the leader
         # the actual join procedure starts here
+        assert(not leader.in_maneuver)
         leader.in_maneuver = True
 
         # delay teleport by approach duration
@@ -1130,6 +1132,7 @@ class PlatooningVehicle(Vehicle):
         LOG.info(f"{self._vid} is trying to leave platoon {self._platoon.platoon_id} (leader {self._platoon.leader.vid})")
         self._leaves_attempted += 1
 
+        assert(not self.in_maneuver)
         self.in_maneuver = True
         self._platoon_role = PlatoonRole.LEAVER
 
