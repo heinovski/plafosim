@@ -288,30 +288,30 @@ def main():
         choices=(True, False),
         help="Whether to update the platoon's desired driving speed to the average speed of all members after the formation changed",
     )
-    platoon.add_argument(
+
+    # formation properties
+    formation = parser.add_argument_group("formation properties")
+    formation.add_argument(
         "--formation-algorithm",
         type=str,
         default=None,
         choices=["speedposition"],
         help="The formation algorithm to use",
     )
-    platoon.add_argument(
+    formation.add_argument(
         "--formation-strategy",
         type=str,
         default="distributed",
         choices=["distributed", "centralized"],
         help="The formation strategy to use",
     )
-    platoon.add_argument(
+    formation.add_argument(
         "--formation-centralized-kind",
         type=str,
         default="greedy",
         choices=["greedy", "optimal"],
         help="The kind of the centralized formation",
     )
-
-    # formation properties
-    formation = parser.add_argument_group("formation properties")
     formation.add_argument(
         "--execution-interval",
         type=int,
