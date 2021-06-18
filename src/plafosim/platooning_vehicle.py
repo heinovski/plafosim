@@ -898,6 +898,26 @@ class PlatooningVehicle(Vehicle):
         if self._simulator._delay_teleports and total_approach_time > 0:
             # the platoon will be driving while we are waiting
             new_position = new_position + total_approach_time * leader.platoon.speed
+            if new_position >= self._simulator.road_length:
+                LOG.warning(f"{self._vid}'s new position would be outside of the road! Aborting the join maneuver")
+                self.in_maneuver = False
+                self._platoon_role = PlatoonRole.NONE
+                leader.in_maneuver = False
+
+                self._joins_aborted += 1
+                self._joins_aborted_road_end += 1
+                return
+
+            if new_position >= self._arrival_position:
+                LOG.warning(f"{self._vid}'s new position would be outside of its trip! Aborting the join maneuver")
+                self.in_maneuver = False
+                self._platoon_role = PlatoonRole.NONE
+                leader.in_maneuver = False
+
+                self._joins_aborted += 1
+                self._joins_aborted_trip_end += 1
+                return
+
             self._join_approach_step = self._simulator.step + total_approach_time
             self._join_data_leader = leader
             self._join_data_last = last
