@@ -567,24 +567,23 @@ class SpeedPosition(FormationAlgorithm):
         end_time = timer()
         run_time = end_time - start_time
 
-        if result_status >= solver.INFEASIBLE:
-            LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
-            self._assignments_not_solvable += 1
-            return
-
-        if objective.Value() == 0:
-            LOG.info(f"{self._owner.iid} made no assignment!")
-            self._assignments_none += 1
-            return
-
-        self._assignments_solved += 1
-
         if result_status == solver.OPTIMAL:
             LOG.info(f"{self._owner.iid}'s solution is optimal")
             self._assignments_solved_optimal += 1
         elif result_status == solver.FEASIBLE:
             LOG.info(f"{self._owner.iid}'s solution is not optimal")
             self._assignments_solved_feasible += 1
+        elif result_status >= solver.INFEASIBLE:
+            LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
+            self._assignments_not_solvable += 1
+            return
+
+        self._assignments_solved += 1
+
+        if objective.Value() == 0:
+            LOG.info(f"{self._owner.iid} made no assignment!")
+            self._assignments_none += 1
+            return
 
         # TODO record mean runtime?
 
