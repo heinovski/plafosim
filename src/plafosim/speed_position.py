@@ -586,6 +586,8 @@ class SpeedPosition(FormationAlgorithm):
             LOG.info(f"{self._owner.iid}'s solution is not optimal")
             self._assignments_solved_feasible += 1
 
+        # TODO record mean runtime?
+
         LOG.info(f"{self._owner.iid} solved the optimization problem in {run_time}s ({solver.wall_time()}ms)")
         LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")  # broken?
         LOG.debug(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
