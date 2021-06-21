@@ -59,13 +59,13 @@ class Platoon:
     def leader(self) -> 'PlatooningVehicle':
         """Returns the leading PlatoonVehicle of the platoon."""
 
-        return self.formation[0]
+        return self._formation[0]
 
     @property
     def last(self) -> 'PlatooningVehicle':
         """Returns the last PlatooningVehicle of the platoon."""
 
-        return self.formation[-1]
+        return self._formation[-1]
 
     @property
     def formation(self) -> list:
@@ -77,7 +77,7 @@ class Platoon:
     def member_ids(self) -> list:
         """Returns the ids of all platoon members."""
 
-        return [x.vid for x in self.formation]
+        return [x.vid for x in self._formation]
 
     @property
     def desired_speed(self) -> float:
@@ -107,7 +107,7 @@ class Platoon:
         The maximum speed is based on the slowest vehicle within the platoon.
         """
 
-        return min(self.formation, key=lambda x: x.max_speed).max_speed
+        return min(self._formation, key=lambda x: x.max_speed).max_speed
 
     @property
     def max_acceleration(self) -> float:
@@ -117,7 +117,7 @@ class Platoon:
         The maximum acceleration is based on the slowest vehicle within the platoon.
         """
 
-        return min(self.formation, key=lambda x: x.max_acceleration).max_acceleration
+        return min(self._formation, key=lambda x: x.max_acceleration).max_acceleration
 
     @property
     def max_deceleration(self) -> float:
@@ -127,13 +127,13 @@ class Platoon:
         The maximum deceleration is based on the slowest vehicle within the platoon.
         """
 
-        return min(self.formation, key=lambda x: x.max_deceleration).max_deceleration
+        return min(self._formation, key=lambda x: x.max_deceleration).max_deceleration
 
     @property
     def size(self) -> int:
         """Returns the size of the platoon."""
 
-        return len(self.formation)
+        return len(self._formation)
 
     @property
     def position(self) -> int:
@@ -165,7 +165,7 @@ class Platoon:
             The considered vehicle within the platoon.
         """
 
-        return self.formation.index(vehicle)
+        return self._formation.index(vehicle)
 
     def get_front(self, vehicle: 'PlatooningVehicle'):
         """
@@ -178,7 +178,7 @@ class Platoon:
         """
 
         if vehicle is not self.leader:
-            return self.formation[self.get_member_index(vehicle) - 1]
+            return self._formation[self.get_member_index(vehicle) - 1]
         else:
             return None
 
@@ -193,7 +193,7 @@ class Platoon:
         """
 
         if vehicle is not self.last:
-            return self.formation[self.get_member_index(vehicle) + 1]
+            return self._formation[self.get_member_index(vehicle) + 1]
         else:
             return None
 
@@ -204,11 +204,11 @@ class Platoon:
         This is based on the desired driving speed of all members.
         """
 
-        old_desired_speed = self.desired_speed
-        self._desired_speed = min(mean([v._desired_speed for v in self.formation]), self.max_speed)
+        old_desired_speed = self._desired_speed
+        self._desired_speed = min(mean([v._desired_speed for v in self._formation]), self.max_speed)
         LOG.debug(f"Updated platoon {self.platoon_id}'s desired speed to {self.desired_speed} (from {old_desired_speed})")
 
     def __str__(self) -> str:
         """Returns the str representation of the platoon."""
 
-        return f"{self.platoon_id}: {self.member_ids}"
+        return f"{self._platoon_id}: {self.member_ids}"
