@@ -226,7 +226,7 @@ class SpeedPosition(FormationAlgorithm):
             ds = SpeedPosition.ds(self._owner, platoon)
             dp = SpeedPosition.dp(self._owner, platoon)
 
-            # TODO HACK for skipping platoons in front of us
+            # TODO HACK for skipping platoons behind us
             if self._owner.position > platoon.rear_position:
                 LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                 continue
@@ -332,7 +332,7 @@ class SpeedPosition(FormationAlgorithm):
                 ds = SpeedPosition.ds(vehicle, platoon)
                 dp = SpeedPosition.dp(vehicle, platoon)
 
-                # TODO HACK for skipping vehicles in front of us
+                # TODO HACK for skipping platoons behind us
                 if vehicle.position > platoon.rear_position:
                     LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                     continue
@@ -490,7 +490,7 @@ class SpeedPosition(FormationAlgorithm):
                     fx = individual
                     LOG.trace(f"Considering driving individually for vehicle {vehicle.vid}")
                 elif vehicle.position > platoon.rear_position:
-                    # TODO HACK for skipping vehicles in front of us
+                    # TODO HACK for skipping platoons behind us
                     LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
                     continue
                 else:
