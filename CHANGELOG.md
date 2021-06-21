@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.11.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.0) - 2021-06-XX
+## [v0.11.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.0) - 2021-06-21
 * Added additional constraints to optimization problem (#304)
 * Added distinction between desired speed and CC target speed (#309)
 * Added deprecation warning to communication code
@@ -17,6 +17,7 @@
 * Fixed typos
 * Updated CACC model to use direct speed from the leader (#302)
 * Updated CACC validation to not update platoon's desired speed (#306)
+* Updated calculation of speed and position deviation (#310)
 * Updated CI triggers
 * Updated CLI arguments
 * Updated comments
