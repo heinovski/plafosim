@@ -84,6 +84,8 @@ class SpeedPosition(FormationAlgorithm):
         """
         Returns the deviation in speed from a given platoon.
 
+        NOTE: In the original version of the paper, the deviation calculated here was not normalized.
+
         Parameters
         ----------
         vehicle : PlatooningVehicle
@@ -92,11 +94,16 @@ class SpeedPosition(FormationAlgorithm):
             The platoon to which the deviation is calculated
         """
 
-        return abs(vehicle.desired_speed - platoon.desired_speed)
+        diff = abs(vehicle._desired_speed - platoon.desired_speed)
+
+        # normalize deviation by maximum allowed speed deviation
+        return (diff / (self._speed_deviation_threshold * vehicle._desired_speed))
 
     def dp(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """
         Returns the deviation in position from a given platoon.
+
+        NOTE: In the original version of the paper, the deviation calculated here was not normalized.
 
         Parameters
         ----------
@@ -108,10 +115,13 @@ class SpeedPosition(FormationAlgorithm):
 
         if vehicle.rear_position > platoon.position:
             # we are in front of the platoon
-            return abs(vehicle.rear_position - platoon.position)
+            diff = abs(vehicle.rear_position - platoon.position)
         else:
             # we are behind the platoon
-            return abs(platoon.rear_position - vehicle.position)
+            diff = abs(platoon.rear_position - vehicle.position)
+
+        # normalize deviation by maximum allowed position deviation
+        return (diff / self._position_deviation_threshold)
 
     def cost_speed_position(self, ds: float, dp: int):
         """
@@ -212,12 +222,12 @@ class SpeedPosition(FormationAlgorithm):
                 continue
 
             # remove platoon if not in speed range
-            if ds > self._speed_deviation_threshold * self._owner.desired_speed:
+            if ds > 1.0:
                 LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
                 continue
 
             # remove platoon if not in position range
-            if dp > self._position_deviation_threshold:
+            if dp > 1.0:
                 LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
                 continue
 
@@ -318,12 +328,12 @@ class SpeedPosition(FormationAlgorithm):
                     continue
 
                 # remove platoon if not in speed range
-                if ds > self._speed_deviation_threshold * vehicle.desired_speed:
+                if ds > 1.0:
                     LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
                     continue
 
                 # remove platoon if not in position range
-                if dp > self._position_deviation_threshold:
+                if dp > 1.0:
                     LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
                     continue
 
@@ -480,11 +490,11 @@ class SpeedPosition(FormationAlgorithm):
                     dp = self.dp(vehicle, platoon)
 
                     # remove platoon if not in speed range
-                    if ds > self._speed_deviation_threshold * vehicle.desired_speed:
+                    if ds > 1.0:
                         LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference ({ds})")
                         continue
                     # remove platoon if not in position range
-                    elif dp > self._position_deviation_threshold:
+                    elif dp > 1.0:
                         LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference ({dp})")
                         continue
                     else:
