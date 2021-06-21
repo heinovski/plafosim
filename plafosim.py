@@ -333,7 +333,7 @@ def main():
     formation.add_argument(
         "--position-deviation-threshold",
         type=int,
-        default=-1,
+        default=2000,
         help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold",
     )
     formation.add_argument(

@@ -110,7 +110,7 @@ class Simulator:
             execution_interval: int = 1,
             alpha: float = 0.5,
             speed_deviation_threshold: float = -1,
-            position_deviation_threshold: int = -1,
+            position_deviation_threshold: int = 2000,
             solver_time_limit: int = 60 * 1000,
             number_of_infrastructures: int = 0,
             step_length: int = 1,
