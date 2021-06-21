@@ -364,8 +364,7 @@ class SpeedPosition(FormationAlgorithm):
             return
 
         # get unique list of searching vehicles from within the possible matches
-        uids = set()
-        uids = [x['vid'] for x in all_found_candidates if x['vid'] not in uids and (uids.add(x['vid']) or True)]
+        uids = set(x['vid'] for x in all_found_candidates)
 
         for v in uids:
             # get vehicle data and candidates
