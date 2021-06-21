@@ -397,10 +397,12 @@ class SpeedPosition(FormationAlgorithm):
                     The entry from the list of possible matches
                 """
 
-                return (x['vid'] != best['vid'] and  # noqa 504 # this vehicle does not search anymore
-                        x['lid'] != best['vid'] and  # noqa 504 # this vehicle will not be applicable as leader anymore # TODO what about transitive joins?
-                        x['vid'] != best['lid'])  # the other vehicle is not searching anymore, since it will become a leader
-            # it still possible to join the other vehicles (which will become a leader now)
+                return (
+                    x['vid'] != best['vid'] and  # noqa 504 # this vehicle does not search anymore
+                    x['lid'] != best['vid'] and  # noqa 504 # this vehicle will not be applicable as leader anymore
+                    x['vid'] != best['lid'] and  # noqa 504 # the other vehicle is not searching anymore, since it will become a leader
+                    x['lid'] != best['lid']  # the leader is not applicable as leader anymore
+                )
 
             all_found_candidates = [x for x in all_found_candidates if is_available(x)]
 
