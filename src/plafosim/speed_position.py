@@ -80,24 +80,6 @@ class SpeedPosition(FormationAlgorithm):
         self._assingments_vehicle_became_leader = 0
         self._assignments_successful = 0
 
-    @property
-    def alpha(self) -> float:
-        """Returns the alpha"""
-
-        return self._alpha
-
-    @property
-    def speed_deviation_threshold(self) -> float:
-        """Returns the speed deviation threshold"""
-
-        return self._speed_deviation_threshold
-
-    @property
-    def position_deviation_threshold(self) -> int:
-        """Returns the position deviation threshold"""
-
-        return self._position_deviation_threshold
-
     def ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """
         Returns the deviation in speed from a given platoon.
