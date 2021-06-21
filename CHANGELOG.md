@@ -10,6 +10,7 @@
 * Added statists for solution quality
 * Added teleport delay during maneuver (#301)
 * Fixed argument choices
+* Fixed centralized version of speed position algorithm
 * Fixed desired headway time
 * Fixed metric for successful assignments
 * Fixed recording of periodic simulator statistics
