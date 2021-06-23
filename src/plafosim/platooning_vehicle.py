@@ -662,23 +662,32 @@ class PlatooningVehicle(Vehicle):
 
         if self._simulator._record_platoon_traces:
             # write statistics about the current platoon
-            with open(f'{self._simulator._result_base_filename}_platoon_traces.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_vehicle_platoon_traces.csv', 'a') as f:
                 f.write(
                     f"{self._simulator.step},"
                     f"{self._vid},"
                     f"{self._platoon.platoon_id},"
-                    f"{self._platoon.leader.vid},"
-                    f"{self._platoon.position},"
-                    f"{self._platoon.rear_position},"
-                    f"{self._platoon.lane},"
-                    f"{self._platoon.speed},"
-                    f"{self._platoon.size},"
-                    f"{self._platoon.length},"
-                    f"{self._platoon.desired_speed},"
                     f"{self._platoon_role.name},"
                     f"{self._platoon.get_member_index(self)}"
                     "\n"
                 )
+
+            if self._platoon_role is PlatoonRole.LEADER:
+                # write statistics about the platoon
+                with open(f'{self._simulator._result_base_filename}_platoon_traces.csv', 'a') as f:
+                    f.write(
+                        f"{self._simulator.step},"
+                        f"{self._platoon.platoon_id},"
+                        f"{self._platoon.leader.vid},"
+                        f"{self._platoon.position},"
+                        f"{self._platoon.rear_position},"
+                        f"{self._platoon.lane},"
+                        f"{self._platoon.speed},"
+                        f"{self._platoon.size},"
+                        f"{self._platoon.length},"
+                        f"{self._platoon.desired_speed}"
+                        "\n"
+                    )
 
     # TODO rework to only include "neighbors" and move platoon extraction to formation algorithm
     def _get_available_platoons(self):

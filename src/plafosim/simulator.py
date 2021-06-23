@@ -1315,12 +1315,22 @@ class Simulator:
                 )
 
         if self._record_platoon_traces:
+            # create output file for vehicle platoon traces
+            with open(f'{self._result_base_filename}_vehicle_platoon_traces.csv', 'w') as f:
+                f.write(
+                    "step,"
+                    "id,"
+                    "platoon,"
+                    "platoonRole,"
+                    "platoonPosition"
+                    "\n"
+                )
+
             # create output file for platoon traces
             with open(f'{self._result_base_filename}_platoon_traces.csv', 'w') as f:
                 f.write(
                     "step,"
                     "id,"
-                    "platoon,"
                     "leader,"
                     "position,"
                     "rearPosition,"
@@ -1328,9 +1338,7 @@ class Simulator:
                     "speed,"
                     "size,"
                     "length,"
-                    "desiredSpeed,"
-                    "platoonRole,"
-                    "platoonPosition"
+                    "desiredSpeed"
                     "\n"
                 )
 
