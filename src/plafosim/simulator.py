@@ -1251,7 +1251,7 @@ class Simulator:
 
         if self._record_platoon_trips:
             # create output file for platoon trips
-            with open(f'{self._result_base_filename}_platoon_trips.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_vehicle_platoon_trips.csv', 'w') as f:
                 f.write(
                     "id,"
                     "timeInPlatoon,"

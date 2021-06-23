@@ -546,7 +546,7 @@ class PlatooningVehicle(Vehicle):
 
         # TODO log savings from platoon?
         if self._simulator._record_platoon_trips:
-            with open(f'{self._simulator._result_base_filename}_platoon_trips.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_vehicle_platoon_trips.csv', 'a') as f:
                 f.write(
                     f"{self._vid},"
                     f"{self._time_in_platoon},"
