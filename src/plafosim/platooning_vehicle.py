@@ -560,7 +560,7 @@ class PlatooningVehicle(Vehicle):
                 )
 
         if self._simulator._record_platoon_maneuvers:
-            with open(f'{self._simulator._result_base_filename}_platoon_maneuvers.csv', 'a') as f:
+            with open(f'{self._simulator._result_base_filename}_vehicle_platoon_maneuvers.csv', 'a') as f:
                 f.write(
                     f"{self._vid},"
                     f"{self._joins_attempted},"

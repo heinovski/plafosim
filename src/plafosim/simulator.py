@@ -1266,7 +1266,7 @@ class Simulator:
 
         if self._record_platoon_maneuvers:
             # create output file for platoon maneuvers
-            with open(f'{self._result_base_filename}_platoon_maneuvers.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_vehicle_platoon_maneuvers.csv', 'w') as f:
                 f.write(
                     "id,"
                     "joinsAttempted,"
