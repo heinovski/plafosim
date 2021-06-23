@@ -1301,7 +1301,7 @@ class Simulator:
 
         if self._record_platoon_formation:
             # create output file for platoon formation
-            with open(f'{self._result_base_filename}_platoon_formation.csv', 'w') as f:
+            with open(f'{self._result_base_filename}_vehicle_platoon_formation.csv', 'w') as f:
                 f.write(
                     "id,"
                     "formationIterations,"
