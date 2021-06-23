@@ -693,7 +693,7 @@ class PlatooningVehicle(Vehicle):
         for vehicle in self._simulator._vehicles.values():
 
             # filter out self
-            if vehicle == self:
+            if vehicle is self:
                 continue
 
             # filter vehicles that are technically not able to do platooning
