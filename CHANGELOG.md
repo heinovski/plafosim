@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.11.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.1) - 2021-06-24
+* Updated result files for platoon related data
+
 ## [v0.11.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.0) - 2021-06-21
 * Added additional constraints to optimization problem (#304)
 * Added distinction between desired speed and CC target speed (#309)
