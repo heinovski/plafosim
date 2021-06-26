@@ -236,6 +236,12 @@ def main():
         default=0,
         help="The minimum trip length for a vehicle in km",
     )
+    trip.add_argument(
+        "--maximum-trip-length",
+        type=int,
+        default=-1,
+        help="The maximum trip length for a vehicle in km",
+    )
 
     # communication properties
     communication = parser.add_argument_group("communication properties")
@@ -565,6 +571,7 @@ def main():
         args.depart_fixed_time,
         args.random_arrival_position,
         args.minimum_trip_length * 1000,
+        args.maximum_trip_length * 1000,
         args.communication_range,
         args.start_as_platoon,
         args.reduced_air_drag,

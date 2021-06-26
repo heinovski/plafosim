@@ -100,6 +100,7 @@ class Simulator:
             depart_fixed_time: int = 0,
             random_arrival_position: bool = False,
             minimum_trip_length: int = 0,
+            maximum_trip_length: int = -1 * 1000,
             communication_range: int = 1000,
             start_as_platoon: bool = False,
             reduced_air_drag: bool = True,
@@ -185,9 +186,19 @@ class Simulator:
         self._depart_rate = depart_rate  # the departure rate
         self._depart_fixed_time = depart_fixed_time  # the fixed departure time for all vehicles
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
-        self._minimum_trip_length = minimum_trip_length  # the minimum trip length
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
+        self._minimum_trip_length = minimum_trip_length  # the minimum trip length
+        if maximum_trip_length == -1 * 1000:
+            self._maximum_trip_length = road_length
+        else:
+            if maximum_trip_length < minimum_trip_length:
+                sys.exit("ERROR: Maximum trip length cannot be smaller than the minimum trip length!")
+            if maximum_trip_length < ramp_interval:
+                sys.exit("ERROR: Maximum trip length cannot be smaller than the ramp interval!")
+            if not maximum_trip_length % ramp_interval == 0:
+                sys.exit("ERROR: Maximum trip length has to be a multiple of the ramp interval!")
+            self._maximum_trip_length = maximum_trip_length  # the maximum trip length
 
         # communication properties
         self._communication_range = communication_range  # the maximum communication range between two vehicles
@@ -906,13 +917,18 @@ class Simulator:
                 # since the pre-generation is supposed to produce a snapshot of a realistic simulation.
                 # But we can assume that a vehicle has to drive at least 1m
                 min_arrival = depart_position + 1
+                max_arrival = min(depart_position + self._maximum_trip_length - self._ramp_interval, self._road_length)
             else:
                 # make sure that the vehicles drive at least for the minimum length of a trip
                 # and at least for one ramp
                 min_arrival = depart_position + max(self._minimum_trip_length, self._ramp_interval)
+                max_arrival = min(depart_position + self._maximum_trip_length, self._road_length)
             min_arrival_ramp = min_arrival + (self._ramp_interval - min_arrival) % self._ramp_interval
+            max_arrival_ramp = max_arrival + (self._ramp_interval - max_arrival) % self._ramp_interval
             assert(min_arrival_ramp >= 0)
             assert(min_arrival_ramp <= self._road_length)
+            assert(min_arrival_ramp <= max_arrival_ramp)
+            assert(max_arrival_ramp <= self._road_length)
             if min_arrival % self._ramp_interval == 0:
                 assert(min_arrival == min_arrival_ramp)
             if min_arrival_ramp == self._road_length:
@@ -921,7 +937,7 @@ class Simulator:
                 arrival_position = self._road_length
             else:
                 # make sure to also include the end of the road itself
-                arrival_position = random.randrange(min_arrival_ramp, self._road_length + 1, self._ramp_interval)
+                arrival_position = random.randrange(min_arrival_ramp, max_arrival_ramp + 1, self._ramp_interval)
             assert(arrival_position >= min_arrival_ramp)
         else:
             # simply drive until the end
@@ -929,6 +945,7 @@ class Simulator:
 
         assert(arrival_position <= self._road_length)
         assert(arrival_position > depart_position)
+        assert(arrival_position - depart_position <= self._maximum_trip_length)
 
         return arrival_position
 
