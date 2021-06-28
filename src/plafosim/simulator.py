@@ -25,6 +25,7 @@ from collections import namedtuple
 from math import copysign
 
 import pandas as pd
+from timeit import default_timer as timer
 from tqdm import tqdm
 
 from .infrastructure import Infrastructure
@@ -127,6 +128,7 @@ class Simulator:
             gui_track_vehicle: int = -1,
             gui_sumo_config: str = "sumocfg/freeway.sumo.cfg",
             result_base_filename: str = 'results',
+            record_simulation_trace: bool = False,
             record_end_trace: bool = True,
             record_vehicle_trips: bool = False,
             record_vehicle_emissions: bool = False,
@@ -290,16 +292,17 @@ class Simulator:
 
         # result recording properties
         self._result_base_filename = result_base_filename  # the base filename of the result files
+        self._record_simulation_trace = record_simulation_trace  # whether to record a continuous simulation trace
         self._record_end_trace = record_end_trace  # whether to record another trace item at the trip end
         self._record_vehicle_trips = record_vehicle_trips  # whether to record vehicles trips
         self._record_vehicle_emissions = record_vehicle_emissions  # whether to record vehicle emissions
-        self._record_vehicle_traces = record_vehicle_traces  # whether to record vehicle traces
+        self._record_vehicle_traces = record_vehicle_traces  # whether to record continuous vehicle traces
         self._record_vehicle_changes = record_vehicle_changes  # whether to record vehicle lane changes
-        self._record_emission_traces = record_emission_traces  # whether to record emission traces
+        self._record_emission_traces = record_emission_traces  # whether to record continuous emission traces
         self._record_platoon_trips = record_platoon_trips  # whether to record platoon trips
         self._record_platoon_maneuvers = record_platoon_maneuvers  # whether to record platoon maneuvers
         self._record_platoon_formation = record_platoon_formation  # whether to record platoon formation
-        self._record_platoon_traces = record_platoon_traces  # whether to record platoon traces
+        self._record_platoon_traces = record_platoon_traces  # whether to record continuous platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
         self._record_infrastructure_assignments = record_infrastructure_assignments  # whether to record infrastructure assignments
         if record_prefilled and not start_as_platoon:
@@ -1179,6 +1182,16 @@ class Simulator:
             f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
             f.write(f"parameters {str(self)}\n")
 
+        if self._record_simulation_trace:
+            # write continuous simulation trace
+            with open(f'{self._result_base_filename}_simulation_trace.csv', 'w') as f:
+                f.write(
+                    "step,"
+                    "numberOfVehicles,"
+                    "executionTime"
+                    "\n"
+                )
+
         if self._record_vehicle_trips:
             # create output file for vehicle trips
             with open(f'{self._result_base_filename}_vehicle_trips.csv', 'w') as f:
@@ -1527,6 +1540,8 @@ class Simulator:
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
         while self._running:
+            start_time = timer()
+
             if self._step >= self._max_step:
                 self.stop("Reached step limit")
                 continue
@@ -1595,8 +1610,11 @@ class Simulator:
             del vdf
             # END VECTORIZATION PART
 
+            end_time = timer()
+
             # record some periodic statistics
-            self._statistics()
+            run_time = end_time - start_time
+            self._statistics(run_time)
 
             # a new step begins
             self._step += self._step_length
@@ -1612,13 +1630,23 @@ class Simulator:
         # Hence, we do not have to do anything anymore.
         return self._step
 
-    def _statistics(self):
+    def _statistics(self, run_time: float):
         """Record some period statistics."""
 
         self._avg_number_vehicles = (
             (self._values_in_avg_number_vehicles * self._avg_number_vehicles + len(self._vehicles)) /
             (self._values_in_avg_number_vehicles + 1)
         )
+
+        if self._record_simulation_trace:
+            # write continuous simulation traces
+            with open(f'{self._result_base_filename}_simulation_trace.csv', 'a') as f:
+                f.write(
+                    f"{self._step},"
+                    f"{len(self._vehicles)},"
+                    f"{run_time}"
+                    "\n"
+                )
 
     def _get_vehicles_df(self) -> pd.DataFrame:
         """Returns a pandas dataframe from the internal data structure."""

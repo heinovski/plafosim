@@ -435,6 +435,13 @@ def main():
         help="The base filename of the result files",
     )
     results.add_argument(
+        "--record-simulation-trace",
+        type=lambda x: bool(strtobool(x)),
+        default=False,
+        choices=(True, False),
+        help="Whether to record a continuous simulation trace",
+    )
+    results.add_argument(
         "--record-end-trace",
         type=lambda x: bool(strtobool(x)),
         default=True,
@@ -460,7 +467,7 @@ def main():
         type=lambda x: bool(strtobool(x)),
         default=False,
         choices=(True, False),
-        help="Whether to record vehicles traces",
+        help="Whether to record continuous vehicles traces",
     )
     results.add_argument(
         "--record-vehicle-changes",
@@ -474,7 +481,7 @@ def main():
         type=lambda x: bool(strtobool(x)),
         default=False,
         choices=(True, False),
-        help="Whether to record emission traces",
+        help="Whether to record continuous emission traces",
     )
     results.add_argument(
         "--record-platoon-trips",
@@ -502,7 +509,7 @@ def main():
         type=lambda x: bool(strtobool(x)),
         default=False,
         choices=(True, False),
-        help="Whether to record platoon traces",
+        help="Whether to record continuous platoon traces",
     )
     results.add_argument(
         "--record-platoon-changes",
@@ -580,12 +587,13 @@ def main():
         args.lane_changes,
         args.collisions,
         args.random_seed,
-        getattr(logging, args.log_level.upper(), 5),  # implicetly use trace level
+        getattr(logging, args.log_level.upper(), 5),  # implicitly use trace level
         args.gui,
         args.gui_delay / 1000,
         args.track_vehicle,
         args.sumo_config,
         args.result_base_filename,
+        args.record_simulation_trace,
         args.record_end_trace,
         args.record_vehicle_trips,
         args.record_vehicle_emissions,
