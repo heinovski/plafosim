@@ -3,7 +3,7 @@
 ## [v0.11.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.2) - 2021-07-02
 * Added maximum trip length (#315)
 * Added recording of continuous simulation trace (#316)
-* Added safety check for insertions (#265)
+* Added safety check for insertions (#265, #317)
 
 ## [v0.11.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.1) - 2021-06-24
 * Updated result files for platoon related data
