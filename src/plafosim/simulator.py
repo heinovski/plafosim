@@ -827,7 +827,11 @@ class Simulator:
                         )
 
                         # do we have a "collision" (now or in the next step)?
-                        collision = collision or self.has_collision(tv, otv) or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
+                        collision = (
+                            collision
+                            or self.has_collision(tv, otv)
+                            or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
+                        )
 
             arrival_position = self._get_arrival_position(depart_position, pre_fill=True)
 
@@ -1050,7 +1054,11 @@ class Simulator:
                 )
 
                 # do we have a "collision" (now or in the next step)?
-                collision = collision or self.has_collision(tv, otv) or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
+                collision = (
+                    collision
+                    or self.has_collision(tv, otv)
+                    or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
+                )
 
             if collision:
                 # can we avoid the collision by switching the departure lane?
