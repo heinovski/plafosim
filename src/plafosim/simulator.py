@@ -785,6 +785,10 @@ class Simulator:
                     depart_speed = self._vehicles[0]._depart_speed
             else:
                 depart_time = -1  # since this is a pre-filled vehicle, we cannot say when it departed
+
+                # always use desired speed for pre-fill vehicles
+                depart_speed = desired_speed
+
                 # assume we have a collision to check at least once
                 collision = True
                 while collision:
@@ -808,12 +812,22 @@ class Simulator:
                         if other_vehicle._lane != depart_lane:
                             # we do not care about other lanes
                             continue
-                        tv = TV(depart_position + vtype._min_gap, depart_position - vtype._length, depart_lane)
-                        otv = TV(other_vehicle._position + other_vehicle.min_gap, other_vehicle.rear_position, other_vehicle._lane)
-                        collision = collision or self.has_collision(tv, otv)
 
-                # always use desired speed for pre-fill vehicles
-                depart_speed = desired_speed
+                        # do we have a collision?
+                        # avoid being inserted in between two platoon members by also considering the min gap
+                        tv = TV(
+                            depart_position + vtype._min_gap,  # front collider
+                            depart_position - vtype._length,  # rear collider
+                            depart_lane
+                        )
+                        otv = TV(
+                            other_vehicle._position + other_vehicle.min_gap,  # front collider
+                            other_vehicle.rear_position,  # rear collider
+                            other_vehicle._lane
+                        )
+
+                        # do we have a "collision" (now or in the next step)?
+                        collision = collision or self.has_collision(tv, otv) or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
 
             arrival_position = self._get_arrival_position(depart_position, pre_fill=True)
 
