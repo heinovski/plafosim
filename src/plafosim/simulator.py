@@ -38,7 +38,7 @@ from .util import update_position
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
-VERSION = "0.11.1"
+VERSION = "0.11.2"
 
 addLoggingLevel('TRACE', 5)
 LOG = logging.getLogger(__name__)
