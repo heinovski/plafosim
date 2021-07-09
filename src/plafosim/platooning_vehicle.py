@@ -641,7 +641,7 @@ class PlatooningVehicle(Vehicle):
     def info(self) -> str:
         """Returns information about the PlatooningVehicle."""
 
-        return f"{super().info()}, platoon {self._platoon.platoon_id if self.is_in_platoon() else None}"
+        return f"{super().info()}, platoon {self._platoon}"
 
     def __str__(self) -> str:
         """Returns the str representation of the platooning vehicle."""
