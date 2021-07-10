@@ -110,10 +110,13 @@ class PlatooningVehicle(Vehicle):
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(vid, [self], desired_speed)
         self._in_maneuver = False
+        # for a JOINER
         self._join_approach_step = None
         self._join_data_leader = None
         self._join_data_last = None
         self._join_data_new_position = None
+        # for a LEADER
+        self._joiner = None
 
         if formation_algorithm is not None:
             # initialize formation algorithm
@@ -162,6 +165,7 @@ class PlatooningVehicle(Vehicle):
         self._joins_aborted_teleport_threshold = 0
         self._joins_aborted_approaching = 0
         self._joins_aborted_no_space = 0
+        self._joins_aborted_leave_other = 0
 
         self._joins_front = 0
         self._joins_arbitrary = 0
@@ -577,6 +581,7 @@ class PlatooningVehicle(Vehicle):
                     f"{self._joins_aborted_teleport_threshold},"
                     f"{self._joins_aborted_approaching},"
                     f"{self._joins_aborted_no_space},"
+                    f"{self._joins_aborted_leave_other},"
                     f"{self._joins_front},"
                     f"{self._joins_arbitrary},"
                     f"{self._joins_back},"
@@ -625,6 +630,7 @@ class PlatooningVehicle(Vehicle):
                 self._join_teleport(self._join_data_leader, self._join_data_last, self._join_data_new_position)
                 # cleaning up
                 self._join_approach_step = None
+                self._join_data_leader._joiner = None
                 self._join_data_leader = None
                 self._join_data_last = None
                 self._join_data_new_position = None
@@ -932,6 +938,7 @@ class PlatooningVehicle(Vehicle):
             self._join_data_leader = leader
             self._join_data_last = last
             self._join_data_new_position = new_position
+            leader._joiner = self
             LOG.debug(f"Scheduled the teleport for vehicle {self._vid} to {self._join_approach_step} ({new_position})")
         else:
             # perform the teleport now
@@ -1159,12 +1166,33 @@ class PlatooningVehicle(Vehicle):
             return
         assert(self.is_in_platoon())
 
-        LOG.info(f"{self._vid} is trying to leave platoon {self._platoon.platoon_id} (leader {self._platoon.leader.vid})")
+        leader = self._platoon.leader
+
+        LOG.info(f"{self._vid} is trying to leave platoon {self._platoon.platoon_id} (leader {leader.vid})")
         self._leaves_attempted += 1
 
+        if leader.in_maneuver:
+            # the platoon leader has already a (join) maneuver ongoing
+            assert(leader._joiner)
+            LOG.warning(f"{leader.vid} currently has a (join) maneuver by {leader._joiner.vid} ongoing. For now, we are going to abort this (join) maneuver as handling this situation is not yet implemented properly!")
+            # TODO implement complex leave to not abort the ongoing (join) maneuver
+            # abort ongoing (join) maneuver
+            leader._joiner._join_approach_step = None
+            leader._joiner._join_data_leader = None
+            leader._joiner._join_data_last = None
+            leader._joiner._join_data_new_position = None
+            leader._joiner._joins_aborted += 1
+            leader._joiner._joins_aborted_leave_other += 1
+            leader._joiner.in_maneuver = False
+            leader._joiner._platoon_role = PlatoonRole.NONE
+            leader._joiner = None
+            leader.in_maneuver = False
+        # by checking the leader first, we should already cover cases where self == leader
         assert(not self.in_maneuver)
+
         self.in_maneuver = True
         self._platoon_role = PlatoonRole.LEAVER
+        leader.in_maneuver = True
 
         if self is self._platoon.leader:
             # leave at front
@@ -1173,6 +1201,7 @@ class PlatooningVehicle(Vehicle):
             if self._platoon.size == 2:
                 # tell the only follower to drive individually
                 follower = self._platoon.last
+                assert(not follower.in_maneuver)
                 LOG.debug(f"Only {follower.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
@@ -1204,11 +1233,10 @@ class PlatooningVehicle(Vehicle):
 
             if self._platoon.size == 2:
                 # tell the current leader to drive individually
-                leader = self.platoon.leader
                 LOG.debug(f"Only the current leader {leader.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 leader._platoon_role = PlatoonRole.NONE
-                leader._cf_model = CF_Model.ACC
-                leader._cc_target_speed = leader._desired_speed
+                leader._cf_model = CF_Model.ACC  # TODO superfluous?
+                leader._cc_target_speed = leader._desired_speed  # TODO superfluous?
                 leader._platoon = Platoon(leader.vid, [leader], leader._desired_speed)
 
                 # reset color of vehicle
@@ -1262,13 +1290,16 @@ class PlatooningVehicle(Vehicle):
                 assert(self._simulator._get_predecessor(vehicle) in vehicle.platoon.formation)
 
         # leave the platoon
-        self.platoon._formation.remove(self)
+        self._platoon.formation.remove(self)
         if self._simulator._update_desired_speed:
             self._platoon.update_desired_speed()
 
-        # update formation for all members
-        for vehicle in self._platoon.formation:
-            vehicle._platoon = self._platoon  # TODO superfluous?
+        # update formation for all (remaining) members
+        # TODO this could be nicer, e.g., by taking the (new) leader's updated formation
+        if self._platoon.size > 1:
+            # more than one remaining member
+            for vehicle in self._platoon.formation:
+                vehicle._platoon = self._platoon
 
         # leave
         LOG.info(f"{self._vid} left platoon {self._platoon.platoon_id} (leader {self._platoon.leader.vid})")
@@ -1282,6 +1313,7 @@ class PlatooningVehicle(Vehicle):
             traci.vehicle.setColor(str(self._vid), self._color)
 
         self.in_maneuver = False
+        leader.in_maneuver = False
 
         assert(self._last_platoon_join_time >= 0)
         self._time_in_platoon += self._simulator.step - self._last_platoon_join_time

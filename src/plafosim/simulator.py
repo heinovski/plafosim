@@ -1409,6 +1409,7 @@ class Simulator:
                     "joinsAbortedTeleportThreshold,"
                     "joinsAbortedApproaching,"
                     "joinsAbortedNoSpace,"
+                    "joinsAbortedLeaveOther,"
                     "joinsFront,"
                     "joinsArbitrary,"
                     "joinsBack,"
