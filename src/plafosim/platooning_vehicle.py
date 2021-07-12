@@ -917,7 +917,8 @@ class PlatooningVehicle(Vehicle):
                 self._joins_aborted_road_end += 1
                 return
 
-            if new_position >= self._arrival_position:
+            # check if the new position (+ the distance in one time step) would be outside of the trip
+            if new_position + self._simulator.step_length * self.speed >= self._arrival_position:
                 LOG.warning(f"{self._vid}'s new position would be outside of its trip! Aborting the join maneuver")
                 self.in_maneuver = False
                 self._platoon_role = PlatoonRole.NONE
@@ -931,7 +932,7 @@ class PlatooningVehicle(Vehicle):
             self._join_data_leader = leader
             self._join_data_last = last
             self._join_data_new_position = new_position
-            LOG.debug(f"Scheduled the teleport for vehicle {self._vid} to {self._join_approach_step}")
+            LOG.debug(f"Scheduled the teleport for vehicle {self._vid} to {self._join_approach_step} ({new_position})")
         else:
             # perform the teleport now
             LOG.debug(f"The teleport for vehicle {self._vid} will be performed instantaneous.")
