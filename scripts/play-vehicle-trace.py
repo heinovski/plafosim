@@ -120,8 +120,8 @@ def use_read():
     step = 0
 
     with open(args.trace_file, 'r') as file:
-        for line in file:
-            lstep, vid, position, lane, speed, duration, routeLength, desiredSpeed = line.strip(' ').split(',')
+        for line in tqdm(file, desc="Trace progress", unit="step"):
+            lstep, vid, position, lane, speed, duration, routeLength, desiredSpeed, ccTargetSpeed = line.strip(' ').split(',')
             if lstep == "step":
                 continue
             if int(lstep) < step:
