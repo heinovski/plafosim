@@ -1153,7 +1153,7 @@ class PlatooningVehicle(Vehicle):
         Communication and fine-grained maneuver control is out-of-scope and thus omitted.
         """
 
-        if self.platoon.size == 1:
+        if self._platoon.size == 1:
             LOG.warning(f"Can not leave when driving individually ({self._vid})!")
             return
         assert(self.is_in_platoon())
