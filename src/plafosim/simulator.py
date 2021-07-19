@@ -181,6 +181,8 @@ class Simulator:
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         self._depart_method = depart_method  # the departure method to use
         self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
+        if depart_probability < 0 or depart_probability > 1:
+            sys.exit("ERROR: The depart probability needs to be between 0 and 1!")
         self._depart_probability = depart_probability  # the departure probability
         if depart_rate <= 0:
             sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
