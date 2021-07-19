@@ -35,7 +35,7 @@ from .util import addLoggingLevel
 from .util import get_crashed_vehicles
 from .util import speed2distance
 from .util import update_position
-from .vehicle import Vehicle
+from .vehicle import safe_speed, Vehicle
 from .vehicle_type import VehicleType
 
 addLoggingLevel('TRACE', 5)
@@ -512,7 +512,7 @@ class Simulator:
             if gap_to_predecessor_on_target_lane < 0:
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its predecessor")
                 return False
-            if vehicle._speed >= vehicle._safe_speed(p._speed, gap_to_predecessor_on_target_lane, vehicle.desired_gap, vehicle.min_gap):
+            if vehicle._speed >= safe_speed(p._speed, gap_to_predecessor_on_target_lane, vehicle.desired_headway_time, vehicle.desired_gap, vehicle.min_gap):
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its predecessor")
                 return False
 
@@ -523,7 +523,7 @@ class Simulator:
             if gap_to_successor_on_target_lane < 0:
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its successor")
                 return False
-            if s._speed >= s._safe_speed(vehicle.speed, gap_to_successor_on_target_lane, s.desired_gap, s.min_gap):
+            if s._speed >= safe_speed(vehicle.speed, gap_to_successor_on_target_lane, s.desired_headway_time, s.desired_gap, s.min_gap):
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its successor")
                 return False
 
@@ -1164,11 +1164,11 @@ class Simulator:
         unsafe = False
         if other_vehicle._position <= depart_position:
             # unsafe if the other vehicle cannot reach the safe speed within the next simulation step
-            safe_speed = other_vehicle._safe_speed(depart_speed, depart_position - vtype._length - other_vehicle._position, other_vehicle.desired_gap, other_vehicle.min_gap)
+            safe_speed = safe_speed(depart_speed, depart_position - vtype._length - other_vehicle._position, other_vehicle.desired_headway_time, other_vehicle.desired_gap, other_vehicle.min_gap)
             unsafe = other_vehicle._speed - safe_speed >= other_vehicle.max_deceleration
         else:
             # unsafe if the new vehicle cannot reach the safe speed within the next simulation step
-            safe_speed = other_vehicle._safe_speed(other_vehicle._speed, other_vehicle.rear_position - depart_position, speed2distance(vtype._cc_headway_time * depart_speed, self._step_length), vtype._min_gap)
+            safe_speed = safe_speed(other_vehicle._speed, other_vehicle.rear_position - depart_position, other_vehicle.desired_headway_time, speed2distance(vtype._cc_headway_time * depart_speed, self._step_length), vtype._min_gap)
             unsafe = depart_speed - safe_speed >= vtype.max_deceleration
         return unsafe
 

@@ -30,6 +30,38 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
+def safe_speed(
+    speed_predecessor: float,
+    gap_to_predecessor: float,
+    desired_headway_time: float,
+    desired_gap: float = 0,
+    min_gap: float = 0,
+) -> float:
+    """
+    Returns the speed which is still safe without a collision.
+
+    This is a simple and dumb calculation for the safe speed of a vehicle.
+    The calculation is is based on Krauss' single lane traffic:
+    v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
+
+    Parameters
+    ----------
+    speed_predecessor : float
+        The driving speed of the vehicle in the front
+    gap_to_predecessor : float
+        The gap to the vehicle in the front
+    desired_headway_time : float
+        The vehicle's desired hadway to its predecessor (in seconds)
+    desired_gap : float, optional
+        The desired gap
+    min_gap : float, optional
+        The minimum safety gap
+    """
+
+    gap_to_close = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
+    return speed_predecessor + distance2speed(gap_to_close, desired_headway_time)
+
+
 class Vehicle:
     """
     A collection of state information for a vehicle in the simulation.
@@ -295,35 +327,6 @@ class Vehicle:
 
         return self._blocked_front
 
-    def _safe_speed(
-        self,
-        speed_predecessor: float,
-        gap_to_predecessor: float,
-        desired_gap: float = 0,
-        min_gap: float = 0
-    ) -> float:
-        """
-        Returns the speed which is still safe without a collision.
-
-        This is a simple and dumb calculation for the safe speed of a vehicle.
-        The calculation is is based on Krauss' single lane traffic:
-        v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
-
-        Parameters
-        ----------
-        speed_predecessor : float
-            The driving speed of the vehicle in the front
-        gap_to_predecessor : float
-            The gap to the vehicle in the front
-        desired_gap : float, optional
-            The desired gap
-        min_gap : float, optional
-            The minimum safety gap
-        """
-
-        gap_to_close = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
-        return speed_predecessor + distance2speed(gap_to_close, self.desired_headway_time)
-
     def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int) -> float:
         """
         Calculates the new speed for a vehicle using the kraus model.
@@ -383,7 +386,7 @@ class Vehicle:
                 LOG.warning(f"{self._vid}'s front gap is negative ({gap_to_predecessor}m)")
             LOG.trace(f"{self._vid}'s predecessor speed {speed_predecessor}m/s")
             LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
-            safe_speed = self._safe_speed(speed_predecessor, gap_to_predecessor, self.desired_gap, self.min_gap)
+            safe_speed = safe_speed(speed_predecessor, gap_to_predecessor, self.desired_headway_time, self.desired_gap, self.min_gap)
             LOG.trace(f"{self._vid}'s safe speed {safe_speed}m/s")
 
             if safe_speed < new_speed:
