@@ -48,7 +48,7 @@ ARRIVAL = 100000
 def start_sumo(config_file, gui=False, experiment="cacc"):
     arguments = [
         "--seed", str(SEED),
-        "--lanechange.duration", "3",
+        "--lanechange.duration", "0",
         "--fcd-output", f"{experiment}-traces.xml",
         "--device.fcd.deterministic",
         "--tripinfo-output", f"{experiment}-trips.xml",
