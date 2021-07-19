@@ -18,7 +18,6 @@
 import logging
 import os
 import random
-import re
 import sys
 import time
 from collections import namedtuple
@@ -1772,16 +1771,26 @@ class Simulator:
     def _get_vehicles_df(self) -> pd.DataFrame:
         """Returns a pandas dataframe from the internal data structure."""
 
+        fields = [
+            "arrival_position",
+            "desired_speed",
+            "position",
+            "lane",
+            "speed",
+            "cf_model",
+            "vid",
+        ]
+
         if not self._vehicles:
             return pd.DataFrame()
         return (
-            pd.DataFrame([dict(
-                **v.__dict__,
-                length=v.length
-            )
-                for v in self._vehicles.values()
+            pd.DataFrame([
+                dict(
+                    **{key: vehicle.__dict__[f"_{key}"] for key in fields},
+                    length=vehicle.length,
+                )
+                for vehicle in self._vehicles.values()
             ])
-            .rename(columns=lambda x: re.sub('^_', '', x))
             .astype({"cf_model": CFModelDtype})
             .set_index('vid')
         )
