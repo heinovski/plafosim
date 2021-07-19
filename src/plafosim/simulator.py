@@ -1164,12 +1164,12 @@ class Simulator:
         unsafe = False
         if other_vehicle._position <= depart_position:
             # unsafe if the other vehicle cannot reach the safe speed within the next simulation step
-            safe_speed = safe_speed(depart_speed, depart_position - vtype._length - other_vehicle._position, other_vehicle.desired_headway_time, other_vehicle.desired_gap, other_vehicle.min_gap)
-            unsafe = other_vehicle._speed - safe_speed >= other_vehicle.max_deceleration
+            speed_safe = safe_speed(depart_speed, depart_position - vtype._length - other_vehicle._position, other_vehicle.desired_headway_time, other_vehicle.desired_gap, other_vehicle.min_gap)
+            unsafe = other_vehicle._speed - speed_safe >= other_vehicle.max_deceleration
         else:
             # unsafe if the new vehicle cannot reach the safe speed within the next simulation step
-            safe_speed = safe_speed(other_vehicle._speed, other_vehicle.rear_position - depart_position, other_vehicle.desired_headway_time, speed2distance(vtype._cc_headway_time * depart_speed, self._step_length), vtype._min_gap)
-            unsafe = depart_speed - safe_speed >= vtype.max_deceleration
+            speed_safe = safe_speed(other_vehicle._speed, other_vehicle.rear_position - depart_position, other_vehicle.desired_headway_time, speed2distance(vtype._cc_headway_time * depart_speed, self._step_length), vtype._min_gap)
+            unsafe = depart_speed - speed_safe >= vtype.max_deceleration
         return unsafe
 
     def _add_vehicle(
