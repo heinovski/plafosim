@@ -195,7 +195,7 @@ def main():
     trip.add_argument(
         "--depart-method",
         type=str,
-        choices=("interval", "probability", "rate", "fixed"),
+        choices=("interval", "probability", "rate", "number"),
         default="interval",
         help="The departure method of vehicles",
     )
@@ -216,12 +216,6 @@ def main():
         type=int,
         default=3600,
         help="The rate of departure in vehicles per hour for depart method 'rate'",
-    )
-    trip.add_argument(
-        "--depart-fixed-time",
-        type=int,
-        default=0,
-        help="Time of departure in s for all vehicles for depart method 'fixed'",
     )
     trip.add_argument(
         "--random-arrival-position",
@@ -568,7 +562,6 @@ def main():
         args.depart_time_interval,
         args.depart_probability,
         args.depart_rate,
-        args.depart_fixed_time,
         args.random_arrival_position,
         args.minimum_trip_length * 1000,
         args.maximum_trip_length * 1000,

@@ -97,7 +97,6 @@ class Simulator:
             depart_time_interval: int = 1,
             depart_probability: float = 1.0,
             depart_rate: int = 3600,
-            depart_fixed_time: int = 0,
             random_arrival_position: bool = False,
             minimum_trip_length: int = 0,
             maximum_trip_length: int = -1 * 1000,
@@ -184,7 +183,6 @@ class Simulator:
         self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
         self._depart_probability = depart_probability  # the departure probability
         self._depart_rate = depart_rate  # the departure rate
-        self._depart_fixed_time = depart_fixed_time  # the fixed departure time for all vehicles
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
@@ -996,9 +994,6 @@ class Simulator:
             # spawn #vehicles per hour
             spawn_interval = 3600 / self._step_length / self._depart_rate
             spawn = self._step % round(spawn_interval) == 0
-        elif self._depart_method == "fixed" and self._step == self._depart_fixed_time:
-            # we create all of the vehicles now
-            sys.exit("ERROR: depart method fixed is not yet implemented!")
         else:
             sys.exit("ERROR: Unknown depart method!")
 
