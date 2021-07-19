@@ -49,7 +49,7 @@ echo "Running PlaFoSim..."
     --depart-desired false \
     --depart-flow false \
     --depart-method interval \
-    --depart-time-interval 3 \
+    --depart-interval 3 \
     --step-length 1 \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
     --result-base-filename $experiment \
