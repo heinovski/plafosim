@@ -96,8 +96,8 @@ def main():
     vehicle.add_argument(
         "--density",
         type=float,
-        default=0,
-        help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles.",
+        default=-1,
+        help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. A value of -1 disables this value. Overrides --vehicles.",
     )
     vehicle.add_argument(
         "--max-speed",

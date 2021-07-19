@@ -78,7 +78,7 @@ class Simulator:
             ramp_interval: int = 5000,
             pre_fill: bool = False,
             number_of_vehicles: int = 100,
-            vehicle_density: int = 0,
+            vehicle_density: float = -1,
             max_speed: float = 55,
             acc_headway_time: float = 1.0,
             cacc_spacing: float = 5.0,
