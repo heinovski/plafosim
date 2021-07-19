@@ -898,6 +898,11 @@ class Simulator:
             # make sure that the vehicles can drive for at least the minimum length of a trip
             # and at least for one ramp
             max_depart = self._road_length - max(self._minimum_trip_length, self._ramp_interval)
+            if not self._random_arrival_position:
+                min_depart = max(self._road_length - self._maximum_trip_length, 0)
+                min_depart_ramp = min_depart - (self._ramp_interval + min_depart) % self._ramp_interval
+            else:
+                min_depart_ramp = 0
             max_depart_ramp = max_depart - (self._ramp_interval + max_depart) % self._ramp_interval
             assert(max_depart_ramp <= self._road_length)
             assert(max_depart_ramp >= 0)
@@ -905,8 +910,10 @@ class Simulator:
                 # start at beginning
                 depart_position = 0
             else:
-                depart_position = random.randrange(0, max_depart_ramp, self._ramp_interval)
+                depart_position = random.randrange(min_depart_ramp, max_depart_ramp + 1, self._ramp_interval)
             assert(depart_position <= max_depart_ramp)
+            if not self._random_arrival_position:
+                assert(depart_position >= self._road_length - self._maximum_trip_length)
         else:
             # simply start at beginning
             depart_position = 0
