@@ -94,7 +94,7 @@ class Simulator:
             depart_desired: bool = False,
             depart_flow: bool = False,
             depart_method: str = 'interval',
-            depart_time_interval: int = 1,
+            depart_interval: int = 1,
             depart_probability: float = 1.0,
             depart_rate: int = 3600,
             random_arrival_position: bool = False,
@@ -190,13 +190,14 @@ class Simulator:
             sys.exit("ERROR: random-depart-position is only possible in conjunction with depart-desired!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         self._depart_method = depart_method  # the departure method to use
-        self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
+        self._depart_interval = depart_interval  # the interval between two vehicle departures
         if depart_probability < 0 or depart_probability > 1:
             sys.exit("ERROR: The depart probability needs to be between 0 and 1!")
         self._depart_probability = depart_probability  # the departure probability
         if depart_rate <= 0:
             sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
         self._depart_rate = depart_rate  # the departure rate
+        self._vehicles_scheduled = 1
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
@@ -981,8 +982,8 @@ class Simulator:
 
         return arrival_position
 
-    def _spawn_vehicle(self):
-        """Spawns a vehicle within the simulation."""
+    def _spawn_vehicles(self):
+        """Spawns vehicles within the current step"""
 
         if self._depart_flow:
             # similator to SUMO's flows
@@ -998,29 +999,70 @@ class Simulator:
                 self._vehicles_scheduled = 0
                 return
 
-        spawn = False  # should we spawn a new vehicle in this timestep?
+        if self._random_depart_position:
+            # enable spawning at multiple ramps
+            num_spawn_ramps = int(self._road_length / self._ramp_interval)
+        else:
+            # spawn only at first ramp (i.e., beginning of the road)
+            num_spawn_ramps = 1
+
         if self._depart_method == "interval":
-            # spawn interval
-            spawn = self._step % self._depart_time_interval == 0  # is the time step correct?
-            if self._last_vehicle_id in self._vehicles.keys():
-                spawn = spawn and self._vehicles[self._last_vehicle_id]._depart_time != self._step
-        elif self._depart_method == "probability":
-            # spawn probability per time step
-            spawn = random.random() <= self._depart_probability
+            # spawn interval, similar to SUMO's flow param period
+            self._spawn_vehicles_interval(self._depart_interval, num_spawn_ramps)
         elif self._depart_method == "rate":
-            # spawn #vehicles per hour
-            spawn_interval = 3600 / self._step_length / self._depart_rate
-            spawn = self._step % round(spawn_interval) == 0
+            # spawn #vehicles per hour, similar to SUMO's flow param vehsPerHour
+            depart_interval = 3600 / self._step_length / self._depart_rate
+            self._spawn_vehicles_interval(depart_interval, num_spawn_ramps)
+        elif self._depart_method == "number":
+            # spawn #number vehicles, similar to SUMO's flow param number
+            depart_interval = self._max_step / self._number_of_vehicles
+            self._spawn_vehicles_interval(depart_interval, num_spawn_ramps)
+        elif self._depart_method == "probability":
+            # spawn probability per time step, similar to SUMO's flow param probability
+            for r in range(0, num_spawn_ramps):
+                if random.random() <= self._depart_probability:
+                    self._spawn_vehicle()
         else:
             sys.exit("ERROR: Unknown depart method!")
 
-        if spawn:
-            depart_time = self._step
-        else:
-            # we do not spawn a vehicle in this timestep
-            return
+    def _spawn_vehicles_interval(self, depart_interval: float, num_spawn_ramps: int):
+        """
+        Spawns vehicles within the current step based on the depart interval.
+        Note that this does not automatically spawn a vehicle at step 0 (cf. SUMO's flow param begin).
+
+        Parameters
+        ----------
+        depart_interval : float
+            The (equally spaced) depart interval between vehicles
+        num_spawn_ramps : int
+            The number of depart ramps
+        """
+
+        # spawn rate per spawn ramp
+        spawn_rate = self._step_length / depart_interval
+        LOG.trace(f"The spawn rate per step per ramp is {spawn_rate}")
+        # total spawn rate for all ramps
+        spawn_rate = spawn_rate * num_spawn_ramps
+        LOG.trace(f"The total spawn rate per step is {spawn_rate}")
+
+        LOG.debug(f"Currently scheduled vehicles {self._vehicles_scheduled} ({self._step})")
+
+        # spawn all vehicles
+        num_vehicles = int(self._vehicles_scheduled)
+        LOG.debug(f"I will spawn {num_vehicles} total vehicles now ({self._step})")
+        for v in range(0, num_vehicles):
+            self._spawn_vehicle()
+
+        # update scheduled vehicles
+        self._vehicles_scheduled -= num_vehicles  # remove spawned vehicles
+        self._vehicles_scheduled += spawn_rate  # add spawn rate
+
+    def _spawn_vehicle(self):
+        """Spawns a vehicle within the simulation"""
 
         vid = self._last_vehicle_id + 1
+
+        depart_time = self._step
 
         if self._random_depart_lane:
             depart_lane = random.randrange(0, self._number_of_lanes, 1)
@@ -1076,8 +1118,10 @@ class Simulator:
                 # can we avoid the collision by switching the departure lane?
                 if depart_lane == self._number_of_lanes - 1:
                     # reached maximum number of lanes already
-                    # TODO delay insertion of vehicle
-                    LOG.warning(f"Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Vehicle {vid} will not be spawned, since delaying insertion of vehicles is not (yet) implemented!")
+                    LOG.warning(f"Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Vehicle {vid} will be delayed!")
+                    # delay insertion of vehicle
+                    # TODO add real delaying incl. depart time and time loss
+                    self._vehicles_scheduled += 1
                     return  # do not insert this vehicle but also do not abort the simulation
                 depart_lane = depart_lane + 1
                 LOG.info(f"Increased depart lane for {vid} to avoid a collision (now lane {depart_lane})")
@@ -1600,7 +1644,7 @@ class Simulator:
                 continue
 
             # spawn vehicle based on given parameters
-            self._spawn_vehicle()
+            self._spawn_vehicles()
 
             if self._vehicles:
                 # update the GUI
@@ -1660,7 +1704,8 @@ class Simulator:
                 del vdf
                 # END VECTORIZATION PART
             else:
-                self.stop("No more vehicles in the simulation")  # do we really want to exit here?
+                if self._vehicles_scheduled == 0:
+                    self.stop("No more vehicles in the simulation")  # do we really want to exit here?
 
             end_time = timer()
 
