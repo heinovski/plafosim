@@ -28,6 +28,7 @@ import pandas as pd
 from timeit import default_timer as timer
 from tqdm import tqdm
 
+from .cf_model import CF_Model
 from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
@@ -64,6 +65,10 @@ vtype = VehicleType(
     _desired_headway_time
 )  # TODO support multiple vtypes
 TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
+
+# vehicle data fram type collections
+# TODO: extract to module or class later
+CFModelDtype = pd.CategoricalDtype(list(CF_Model), ordered=True)
 
 
 class Simulator:
@@ -1777,6 +1782,7 @@ class Simulator:
                 for v in self._vehicles.values()
             ])
             .rename(columns=lambda x: re.sub('^_', '', x))
+            .astype({"cf_model": CFModelDtype})
             .set_index('vid')
         )
 
