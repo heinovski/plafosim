@@ -182,6 +182,8 @@ class Simulator:
         self._depart_method = depart_method  # the departure method to use
         self._depart_time_interval = depart_time_interval  # the interval between two vehicle departures
         self._depart_probability = depart_probability  # the departure probability
+        if depart_rate <= 0:
+            sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
         self._depart_rate = depart_rate  # the departure rate
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
