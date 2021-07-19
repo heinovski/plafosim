@@ -91,7 +91,7 @@ def main():
         "--vehicles",
         type=int,
         default=100,
-        help="The (maximum) number of vehicles that are in the simulation at once",
+        help="The (maximum) number of vehicles that are in the simulation at once. A value of -1 disables this value.",
     )
     vehicle.add_argument(
         "--density",

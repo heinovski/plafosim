@@ -155,8 +155,18 @@ class Simulator:
         # vehicle properties
         self._vehicles = {}  # the list (dict) of vehicles in the simulation
         self._last_vehicle_id = -1  # the id of the last vehicle generated
-        self._number_of_vehicles = number_of_vehicles  # the maximum number of vehicles
-        self._vehicle_density = vehicle_density  # the number of vehicles per km and lane
+        # the maximum number of vehicles
+        if vehicle_density > 0:
+            # override vehicles
+            number_of_vehicles = int(vehicle_density * (self._road_length / 1000) * self._number_of_lanes)
+        if number_of_vehicles == -1:
+            if not depart_flow:
+                LOG.warning("Using an unlimited number of vehicles without a depart flow!")
+            self._number_of_vehicles = sys.maxsize
+        else:
+            if depart_flow:
+                LOG.warning(f"Using a limited number of vehicles ({number_of_vehicles}) for a depart flow!")
+            self._number_of_vehicles = number_of_vehicles
         self._max_speed = max_speed  # the maximum driving speed # FIXME not used
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
         if acc_headway_time < 1.0:
@@ -760,14 +770,9 @@ class Simulator:
     def _generate_vehicles(self):
         """Adds pre-filled vehicles to the simulation."""
 
-        if self._vehicle_density > 0:
-            number_of_vehicles = round(self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes)
-        else:
-            number_of_vehicles = self._number_of_vehicles
+        LOG.info(f"Pre-filling the road network with {self._number_of_vehicles} vehicles")
 
-        LOG.info(f"Pre-filling the road network with {number_of_vehicles} vehicles")
-
-        for num in tqdm(range(0, number_of_vehicles), desc="Generated vehicles"):
+        for num in tqdm(range(0, self._number_of_vehicles), desc="Generated vehicles"):
 
             vid = self._last_vehicle_id + 1
 
@@ -776,7 +781,7 @@ class Simulator:
             # TODO remove duplicated code
             if self._start_as_platoon:
                 depart_time = 0
-                depart_position = (number_of_vehicles - vid) * (vtype._length + self._cacc_spacing) - self._cacc_spacing
+                depart_position = (self._number_of_vehicles - vid) * (vtype._length + self._cacc_spacing) - self._cacc_spacing
                 depart_lane = 0
 
                 if vid == 0:
@@ -979,18 +984,19 @@ class Simulator:
     def _spawn_vehicle(self):
         """Spawns a vehicle within the simulation."""
 
-        if self._vehicle_density > 0:
-            number_of_vehicles = self._vehicle_density * int(self._road_length / 1000) * self._number_of_lanes
+        if self._depart_flow:
+            # similator to SUMO's flows
+            if len(self._vehicles) >= self._number_of_vehicles:
+                # limit the flow by a maximum number of concurrent vehicles
+                LOG.debug(f"Maximum number of vehicles ({self._number_of_vehicles}) is reached already")
+                return
         else:
-            number_of_vehicles = self._number_of_vehicles
-
-        if len(self._vehicles) >= number_of_vehicles:
-            LOG.debug(f"Number of vehicles {number_of_vehicles} is reached already")
-            return
-
-        if not self._depart_flow and self._last_vehicle_id >= number_of_vehicles - 1:
-            LOG.debug(f"All {number_of_vehicles} vehicles have been spawned already")
-            return
+            if self._last_vehicle_id >= self._number_of_vehicles - 1:
+                # limit the spawn by a maximum number of total vehicles
+                LOG.debug(f"All {self._number_of_vehicles} vehicles have been spawned already")
+                # clear scheduled vehicles
+                self._vehicles_scheduled = 0
+                return
 
         spawn = False  # should we spawn a new vehicle in this timestep?
         if self._depart_method == "interval":
