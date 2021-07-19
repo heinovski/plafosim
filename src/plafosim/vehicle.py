@@ -34,6 +34,7 @@ def safe_speed(
     speed_predecessor: float,
     gap_to_predecessor: float,
     desired_headway_time: float,
+    max_deceleration: float,
     desired_gap: float = 0,
     min_gap: float = 0,
 ) -> float:
@@ -59,6 +60,7 @@ def safe_speed(
     """
 
     gap_to_close = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
+    # TODO use maximum deceleration
     return speed_predecessor + distance2speed(gap_to_close, desired_headway_time)
 
 
@@ -386,7 +388,14 @@ class Vehicle:
                 LOG.warning(f"{self._vid}'s front gap is negative ({gap_to_predecessor}m)")
             LOG.trace(f"{self._vid}'s predecessor speed {speed_predecessor}m/s")
             LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
-            speed_safe = safe_speed(speed_predecessor, gap_to_predecessor, self.desired_headway_time, self.desired_gap, self.min_gap)
+            speed_safe = safe_speed(
+                speed_predecessor,
+                gap_to_predecessor,
+                self.desired_headway_time,
+                self.max_deceleration,
+                self.desired_gap,
+                self.min_gap
+            )
             LOG.trace(f"{self._vid}'s safe speed {speed_safe}m/s")
 
             if speed_safe < new_speed:

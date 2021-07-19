@@ -45,6 +45,7 @@ def test_safe_speed(v_pred, v_veh, gap, expected):
     speed = safe_speed(
         speed_predecessor=v_pred,
         gap_to_predecessor=gap,
+        max_deceleration=MAX_DECELERATION,
         desired_headway_time=DESIRED_HEADWAY_TIME,
         desired_gap=v_veh * DESIRED_HEADWAY_TIME,
     )
