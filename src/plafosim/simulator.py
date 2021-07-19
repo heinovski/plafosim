@@ -1602,66 +1602,65 @@ class Simulator:
             # spawn vehicle based on given parameters
             self._spawn_vehicle()
 
-            if not self._vehicles:
+            if self._vehicles:
+                # update the GUI
+                if self._gui:
+                    self._update_gui()
+
+                # call regular actions on vehicles
+                self._call_vehicle_actions()
+                # call regular actions on infrastructure
+                self._call_infrastructure_actions()
+
+                # TODO update neighbor data (predecessor, successor, front)
+                # this is necessary due to the position updates at the end of the last step
+                # and the spawning of new vehicles
+
+                # perform lane changes (for all vehicles)
+                if self._lane_changes:
+                    self._change_lanes()
+
+                # TODO update neighbor data (predecessor, successor, front)
+                # this is necessary due to the lane changes
+                # however, it might be sufficient to update the neighbors only for vehicles that did change the lane
+
+                # adjust speed (of all vehicles)
+                self._adjust_speeds()
+
+                # BEGIN VECTORIZATION PART
+                # TODO move upwards/get rid of it entirely
+                # convert dict of vehicles to dataframe (temporary)
+                vdf = self._get_vehicles_df()
+
+                # adjust positions (of all vehicles)
+                vdf = update_position(vdf, self._step_length)
+
+                # convert dataframe back to dict of vehicles
+                self._write_back_vehicles_df(vdf)
+
+                # get arrived vehicles
+                arrived_vehicles = vdf[
+                    (vdf.position >= vdf.arrival_position)
+                ].index.values
+
+                # remove arrived vehicles from dataframe
+                vdf = vdf.drop(arrived_vehicles)
+
+                # do collision check (for all vehicles)
+                # without arrived vehicles
+                if self._collisions:
+                    self._check_collisions(vdf)
+
+                # remove arrived vehicles from dict and do finish
+                self._remove_arrived_vehicles(arrived_vehicles)
+
+                # make sure that everything is correct
+                assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
+
+                del vdf
+                # END VECTORIZATION PART
+            else:
                 self.stop("No more vehicles in the simulation")  # do we really want to exit here?
-                continue
-
-            # update the GUI
-            if self._gui:
-                self._update_gui()
-
-            # call regular actions on vehicles
-            self._call_vehicle_actions()
-            # call regular actions on infrastructure
-            self._call_infrastructure_actions()
-
-            # TODO update neighbor data (predecessor, successor, front)
-            # this is necessary due to the position updates at the end of the last step
-            # and the spawning of new vehicles
-
-            # perform lane changes (for all vehicles)
-            if self._lane_changes:
-                self._change_lanes()
-
-            # TODO update neighbor data (predecessor, successor, front)
-            # this is necessary due to the lane changes
-            # however, it might be sufficient to update the neighbors only for vehicles that did change the lane
-
-            # adjust speed (of all vehicles)
-            self._adjust_speeds()
-
-            # BEGIN VECTORIZATION PART
-            # TODO move upwards/get rid of it entirely
-            # convert dict of vehicles to dataframe (temporary)
-            vdf = self._get_vehicles_df()
-
-            # adjust positions (of all vehicles)
-            vdf = update_position(vdf, self._step_length)
-
-            # convert dataframe back to dict of vehicles
-            self._write_back_vehicles_df(vdf)
-
-            # get arrived vehicles
-            arrived_vehicles = vdf[
-                (vdf.position >= vdf.arrival_position)
-            ].index.values
-
-            # remove arrived vehicles from dataframe
-            vdf = vdf.drop(arrived_vehicles)
-
-            # do collision check (for all vehicles)
-            # without arrived vehicles
-            if self._collisions:
-                self._check_collisions(vdf)
-
-            # remove arrived vehicles from dict and do finish
-            self._remove_arrived_vehicles(arrived_vehicles)
-
-            # make sure that everything is correct
-            assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
-
-            del vdf
-            # END VECTORIZATION PART
 
             end_time = timer()
 
@@ -1679,8 +1678,9 @@ class Simulator:
 
         # We reach this point only by setting self._running to False
         # which is only done by calling self.stop()
-        # which already calls self._finish().
-        # Hence, we do not have to do anything anymore.
+
+        self._finish()
+
         return self._step
 
     def _statistics(self, run_time: float):
@@ -1749,7 +1749,6 @@ class Simulator:
 
         self._running = False
         print(f"\n{msg}")
-        self._finish()
 
     def __str__(self) -> str:
         """Returns a str representation of a simulator instance."""
