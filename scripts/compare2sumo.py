@@ -318,6 +318,7 @@ for label in trip_diff_labels:
 
     data = diff_trips[label]
 
+    print(f"Plotting diff in {label}...")
     pl.figure()
     pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
     pl.boxplot(data, showmeans=True)
@@ -696,6 +697,7 @@ for label in trip_diff_labels:
 for label in emission_labels:
     data = diff_emissions[label]
 
+    print(f"Plotting diff in {label}...")
     pl.figure()
     pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
     pl.boxplot(data, showmeans=True)
@@ -1099,6 +1101,7 @@ for label in lifetime_labels:
 
     data = merged_traces[label]
 
+    print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles" % (label, args.vehicles))
     # TODO check ci or disable bootstrapping
@@ -1212,6 +1215,7 @@ for label in emission_labels:
 
     data = merged_emission_traces[label]
 
+    print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles" % (label, args.vehicles))
     # TODO check ci or disable bootstrapping
@@ -1235,6 +1239,8 @@ lifetime_diff_labels = ['diff_sumo_speed', 'diff_sumo_position', 'diff_sumo_lane
 for label in lifetime_diff_labels:
 
     data = merged_traces[label]
+
+    print(f"Plotting life time for {label}...")
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
@@ -1457,6 +1463,8 @@ lifetime_diff_emission_labels = ['diff_sumo_CO', 'diff_sumo_CO2', 'diff_sumo_HC'
 for label in lifetime_diff_emission_labels:
 
     data = merged_emission_traces[label]
+
+    print(f"Plotting life time for {label}...")
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
