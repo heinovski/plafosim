@@ -22,7 +22,6 @@ import argparse
 import re
 import sys
 from scipy.stats import ks_2samp
-from math import ceil
 
 import matplotlib.pyplot as pl
 import pandas
