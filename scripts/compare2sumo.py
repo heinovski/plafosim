@@ -443,6 +443,14 @@ for label in emission_labels:
 
     fig.savefig('%s_%s.png' % (args.experiment, label))
 
+    # check limits for deviation to sumo
+    print(f"Running sample test for {label}...")
+    result = ks_2samp(plafosim_emission_traces[label], sumo_emission_traces[label])
+    if result.pvalue < args.significance:
+        print("Deviation to Sumo in %s exceeded limits!" % label)
+        print((sumo_emission_traces[label] - plafosim_emission_traces[label]).describe())
+        # error = True  # FIXME enable
+
 lifetime_diff_labels = ['diff_sumo_speed', 'diff_sumo_position', 'diff_sumo_lane']
 
 # diff lifetime plots
