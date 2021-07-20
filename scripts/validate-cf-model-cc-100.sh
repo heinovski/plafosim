@@ -36,6 +36,7 @@ echo "Running PlaFoSim..."
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plafosim.py \
     --collisions true \
+    --depart-desired false \
     --depart-flow false \
     --depart-interval 3 \
     --depart-method interval \

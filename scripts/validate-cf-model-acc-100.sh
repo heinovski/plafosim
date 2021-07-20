@@ -37,6 +37,7 @@ echo "Running PlaFoSim..."
     $ROOT/plafosim.py \
     --acc-headway-time 1.0 \
     --collisions true \
+    --depart-desired false \
     --depart-flow false \
     --depart-interval 3 \
     --depart-method interval \
