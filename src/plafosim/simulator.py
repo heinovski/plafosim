@@ -33,7 +33,6 @@ from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
 from .util import addLoggingLevel
 from .util import get_crashed_vehicles
-from .util import speed2distance
 from .util import update_position
 from .vehicle import safe_speed, Vehicle
 from .vehicle_type import VehicleType

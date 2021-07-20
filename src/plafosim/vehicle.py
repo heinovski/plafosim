@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING
 
 from .cf_model import CF_Model
 from .message import Message
-from .util import acceleration2speed, distance2speed, speed2distance
+from .util import acceleration2speed, speed2distance
 from .vehicle_type import VehicleType
 
 if TYPE_CHECKING:
