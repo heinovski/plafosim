@@ -32,10 +32,10 @@ LOG = logging.getLogger(__name__)
 
 def safe_speed(
     speed_predecessor: float,
+    speed_current: float,
     gap_to_predecessor: float,
     desired_headway_time: float,
     max_deceleration: float,
-    desired_gap: float = 0,
     min_gap: float = 0,
 ) -> float:
     """
@@ -44,24 +44,37 @@ def safe_speed(
     This is a simple and dumb calculation for the safe speed of a vehicle.
     The calculation is is based on Krauss' single lane traffic:
     v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
+    g_des(t) = tau * v_lead(t)
+
+    We further introduced the optional minimum gap.
+    This may be used to keep some distance at very low speeds.
+    However, this makes this function infeasible for backwards-driving predecessors!
 
     Parameters
     ----------
     speed_predecessor : float
-        The driving speed of the vehicle in the front
+        The driving speed of the vehicle in the front (in m/s)
+    speed_current : float
+        The previously computed speed of the vehicle in question (in m/s)
     gap_to_predecessor : float
-        The gap to the vehicle in the front
+        The gap between the vehicle in question and its predecessor (in m)
     desired_headway_time : float
-        The vehicle's desired hadway to its predecessor (in seconds)
-    desired_gap : float, optional
-        The desired gap
+        The vehicle's desired hadway or reaction time (in s)
+    max_deceleration : float
+        The vehicle's absolute (positve number) maximum deceleration (in m/(s**2))
     min_gap : float, optional
-        The minimum safety gap
+        The minimum safety gap (in m)
     """
 
-    gap_to_close = gap_to_predecessor - max(desired_gap, min_gap)  # use to close the gap
-    # TODO use maximum deceleration
-    return speed_predecessor + distance2speed(gap_to_close, desired_headway_time)
+    assert speed_predecessor >= 0
+    assert speed_current >= 0
+    assert max_deceleration > 0
+
+    # NOTE: maybe we will extract the computation of gap_desired later
+    #       that would make this formula use the pure Krauss model again here
+    gap_desired = max(desired_headway_time * speed_predecessor, min_gap)
+    tau_b = (speed_predecessor + speed_current) / (2 * max_deceleration)
+    return speed_predecessor + ((gap_to_predecessor - gap_desired) / (desired_headway_time + tau_b))
 
 
 class Vehicle:
@@ -389,12 +402,12 @@ class Vehicle:
             LOG.trace(f"{self._vid}'s predecessor speed {speed_predecessor}m/s")
             LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
             speed_safe = safe_speed(
-                speed_predecessor,
-                gap_to_predecessor,
-                self.desired_headway_time,
-                self.max_deceleration,
-                self.desired_gap,
-                self.min_gap
+                speed_predecessor=speed_predecessor,
+                speed_current=self._speed,
+                gap_to_predecessor=gap_to_predecessor,
+                desired_headway_time=self.desired_headway_time,
+                max_deceleration=self.max_deceleration,
+                min_gap=self.min_gap,
             )
             LOG.trace(f"{self._vid}'s safe speed {speed_safe}m/s")
 

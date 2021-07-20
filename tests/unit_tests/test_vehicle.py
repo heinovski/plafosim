@@ -42,11 +42,12 @@ SAFE_SPEED_TESTDATA = [
 
 @pytest.mark.parametrize("v_pred,v_veh,gap,expected", SAFE_SPEED_TESTDATA)
 def test_safe_speed(v_pred, v_veh, gap, expected):
+    # TODO: tests involving our min_gap parameter
     speed = safe_speed(
         speed_predecessor=v_pred,
+        speed_current=v_veh,
         gap_to_predecessor=gap,
-        max_deceleration=MAX_DECELERATION,
         desired_headway_time=DESIRED_HEADWAY_TIME,
-        desired_gap=v_veh * DESIRED_HEADWAY_TIME,
+        max_deceleration=MAX_DECELERATION,
     )
-    assert speed == pytest.approx(expected)
+    assert speed == pytest.approx(expected, abs=0.01)
