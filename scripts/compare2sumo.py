@@ -1104,13 +1104,12 @@ for label in lifetime_labels:
     print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles in m/s, m, m/s, lid" % (label, args.vehicles))
-    # TODO check ci or disable bootstrapping
     seaborn.lineplot(
         data=merged_traces,
         x='lifetime',
         y=label,
         estimator='mean',
-        n_boot=1,
+        n_boot=10,
         hue='simulator',
         ax=ax
     )
@@ -1123,7 +1122,9 @@ for label in lifetime_labels:
             x=range(0, merged_traces.lifetime.max()),
             y=[step * args.desired_speed if step <= args.arrival_position / args.desired_speed else None for step in range(0, merged_traces.lifetime.max())],
             color='black',
-            ax=ax)
+            ax=ax,
+            n_boot=10,
+        )
     elif label == 'diff_desired':
         ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='desired')
 
@@ -1218,13 +1219,12 @@ for label in emission_labels:
     print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles in mg/ml" % (label, args.vehicles))
-    # TODO check ci or disable bootstrapping
     seaborn.lineplot(
         data=merged_emission_traces,
         x='lifetime',
         y=label,
         estimator='mean',
-        n_boot=1,
+        n_boot=10,
         hue='simulator',
         ax=ax
     )
@@ -1251,7 +1251,7 @@ for label in lifetime_diff_labels:
         x='lifetime',
         y=label,
         estimator='mean',
-        n_boot=1
+        n_boot=10,
     )
     pl.xlabel("trip duration [s]")
 
@@ -1475,7 +1475,7 @@ for label in lifetime_diff_emission_labels:
         x='lifetime',
         y=label,
         estimator='mean',
-        n_boot=1
+        n_boot=10,
     )
     pl.xlabel("trip duration [s]")
 
