@@ -46,6 +46,8 @@ parser.add_argument('--vehicles', type=int, default=100,
 parser.add_argument('--desired-speed', type=float, default=36.0, help="The desired speed to use for the comparison")
 parser.add_argument('--arrival-position', type=int, default=100000,
                     help="The arrival position to use for the comparison")
+parser.add_argument('--significance', type=float, default=0.05,
+                    help="The significance level to use for the KS tests")
 args = parser.parse_args()
 
 error = False
@@ -297,7 +299,7 @@ pl.savefig('%s_desired_speed.png' % args.experiment)
 
 # check distributions of desired speed
 print("Running sample test for desired speed...")
-assert(ks_2samp(sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed).pvalue >= 0.05)
+assert(ks_2samp(sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed).pvalue >= args.significance)
 
 # ecdfplot with desired driving speed
 
