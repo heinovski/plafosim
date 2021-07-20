@@ -297,7 +297,7 @@ pl.savefig('%s_desired_speed.png' % args.experiment)
 # ecdfplot with desired driving speed
 
 fig, ax = pl.subplots()
-pl.title("Desired Driving Speed for %d Vehicles" % args.vehicles)
+pl.title("Desired Driving Speed for %d Vehicles in m/s" % args.vehicles)
 seaborn.ecdfplot(
     sumo_trips.desiredSpeed,
     label='sumo',
@@ -699,12 +699,12 @@ for label in emission_labels:
 
     print(f"Plotting diff in {label}...")
     pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
+    pl.title("Deviation to Sumo in %s for %d Vehicles in ml/mg" % (label, args.vehicles))
     pl.boxplot(data, showmeans=True)
     pl.savefig('%s_diff_%s_box.png' % (args.experiment, label))
 
     pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
+    pl.title("Deviation to Sumo in %s for %d Vehicles in ml/mg" % (label, args.vehicles))
     seaborn.ecdfplot(
         data,
     )
@@ -1103,7 +1103,7 @@ for label in lifetime_labels:
 
     print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
-    pl.title("Average %s for %d Vehicles" % (label, args.vehicles))
+    pl.title("Average %s for %d Vehicles in m/s, m, m/s, lid" % (label, args.vehicles))
     # TODO check ci or disable bootstrapping
     seaborn.lineplot(
         data=merged_traces,
@@ -1217,7 +1217,7 @@ for label in emission_labels:
 
     print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
-    pl.title("Average %s for %d Vehicles" % (label, args.vehicles))
+    pl.title("Average %s for %d Vehicles in mg/ml" % (label, args.vehicles))
     # TODO check ci or disable bootstrapping
     seaborn.lineplot(
         data=merged_emission_traces,
@@ -1468,7 +1468,7 @@ for label in lifetime_diff_emission_labels:
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
-    pl.title("Average Deviation to Sumo in %s during trip for %d Vehicles" % (lal, args.vehicles))
+    pl.title("Average Deviation to Sumo in %s during trip for %d Vehicles in mg/ml" % (lal, args.vehicles))
 
     seaborn.lineplot(
         data=merged_emission_traces,
