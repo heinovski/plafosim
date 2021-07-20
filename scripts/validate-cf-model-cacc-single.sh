@@ -35,35 +35,35 @@ echo "Running PlaFoSim..."
 
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plafosim.py \
-    --lanes 4 \
-    --collisions true \
-    --lane-changes true \
-    --vehicles 1 \
-    --time-limit 1 \
-    --road-length 100 \
-    --max-speed 55 \
     --acc-headway-time 1.5 \
     --cacc-spacing 5.0 \
-    --start-as-platoon true \
-    --reduced-air-drag false \
-    --pre-fill true \
-    --penetration 1 \
-    --desired-speed 36 \
-    --random-desired-speed false \
+    --collisions true \
     --depart-desired true \
     --depart-flow false \
-    --depart-method interval \
     --depart-interval 3 \
-    --step-length 1 \
+    --depart-method interval \
+    --desired-speed 36 \
+    --lane-changes true \
+    --lanes 4 \
+    --max-speed 55 \
+    --penetration 1 \
+    --pre-fill true \
+    --random-desired-speed false \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
-    --result-base-filename $experiment \
+    --record-emission-traces true \
     --record-end-trace false \
     --record-prefilled true \
-    --record-vehicle-trips true \
+    --record-vehicle-changes true \
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
-    --record-vehicle-changes true \
-    --record-emission-traces true \
+    --record-vehicle-trips true \
+    --reduced-air-drag false \
+    --result-base-filename $experiment \
+    --road-length 100 \
+    --start-as-platoon true \
+    --step-length 1 \
+    --time-limit 1 \
+    --vehicles 1 \
     2>&1 | tee ${experiment}_plafosim.log
 
 echo "Running SUMO..."
@@ -71,8 +71,8 @@ echo "Running SUMO..."
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/scripts/run-plexe.py \
     --experiment $experiment \
-    --vehicles 1 \
     --sumo-config sumocfg/freeway-cacc.sumo.cfg \
+    --vehicles 1 \
     2>&1 | tee ${experiment}_sumo.log
 
 echo "Converting results..."

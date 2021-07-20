@@ -35,30 +35,30 @@ echo "Running PlaFoSim..."
 
 /usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/plafosim.py \
-    --lanes 4 \
-    --collisions true \
-    --lane-changes true \
-    --vehicles 1 \
-    --time-limit 1.0 \
-    --road-length 100 \
-    --max-speed 55 \
     --acc-headway-time 1.0 \
-    --penetration 1 \
-    --desired-speed 36 \
-    --random-desired-speed false \
+    --collisions true \
     --depart-desired false \
     --depart-flow false \
-    --depart-method interval \
     --depart-interval 3 \
-    --step-length 1 \
+    --depart-method interval \
+    --desired-speed 36 \
+    --lane-changes true \
+    --lanes 4 \
+    --max-speed 55 \
+    --penetration 1 \
+    --random-desired-speed false \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
-    --result-base-filename $experiment \
+    --record-emission-traces true \
     --record-end-trace false \
-    --record-vehicle-trips true \
+    --record-vehicle-changes true \
     --record-vehicle-emissions true \
     --record-vehicle-traces true \
-    --record-vehicle-changes true \
-    --record-emission-traces true \
+    --record-vehicle-trips true \
+    --result-base-filename $experiment \
+    --road-length 100 \
+    --step-length 1 \
+    --time-limit 1.0 \
+    --vehicles 1 \
     2>&1 | tee ${experiment}_plafosim.log
 
 echo "Running SUMO..."
@@ -66,13 +66,13 @@ echo "Running SUMO..."
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $SUMO_HOME/bin/sumo \
     -c $ROOT/sumocfg/freeway-$experiment.sumo.cfg \
-    --fcd-output $experiment-traces.xml \
-    --device.fcd.deterministic \
-    --tripinfo-output $experiment-trips.xml \
-    --emission-output $experiment-emissions.xml \
     --device.emissions.deterministic \
+    --device.fcd.deterministic \
+    --emission-output $experiment-emissions.xml \
+    --fcd-output $experiment-traces.xml \
     --lanechange-output $experiment-changes.xml \
     --step-length 1 \
+    --tripinfo-output $experiment-trips.xml \
     $(test -z "$seed" && echo --random || echo --seed $seed) \
     2>&1 | tee ${experiment}_sumo.log
 
