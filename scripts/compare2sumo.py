@@ -182,12 +182,12 @@ assert(len(plafosim_emission_traces.id.unique()) == args.vehicles)
 # assert same vehicles
 assert(sorted(list(sumo_emission_traces.id.unique())) == sorted(list(plafosim_emission_traces.id.unique())))
 
-# Evalute runtime
+# Evaluate runtime
 
 pl.figure()
 pl.title("Runtime for %d Vehicles" % args.vehicles)
 data = runtimes.reset_index().melt('simulator', var_name='kind').set_index('simulator')
-# does not work because of imcompatibility between matplotlib and seaborn
+# does not work because of incompatibility between matplotlib and seaborn
 # seaborn.scatterplot(data=data, x='kind', y='value', hue='simulator')
 pl.scatter(data=data.loc['sumo'], x='kind', y='value', label='sumo')
 pl.scatter(data=data.loc['plafosim'], x='kind', y='value', label='plafosim')
@@ -1238,7 +1238,7 @@ for label in lifetime_diff_labels:
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
-    pl.title("Average Deviation to Sumo in %s during Trip for %d Vehicles" % (lal, args.vehicles))
+    pl.title("Average Deviation to Sumo in %s during trip for %d Vehicles" % (lal, args.vehicles))
 
     seaborn.lineplot(
         data=merged_traces,
@@ -1460,7 +1460,7 @@ for label in lifetime_diff_emission_labels:
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
-    pl.title("Average Deviation to Sumo in %s during Trip for %d Vehicles" % (lal, args.vehicles))
+    pl.title("Average Deviation to Sumo in %s during trip for %d Vehicles" % (lal, args.vehicles))
 
     seaborn.lineplot(
         data=merged_emission_traces,
