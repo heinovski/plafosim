@@ -21,6 +21,7 @@
 import argparse
 import re
 import sys
+from scipy.stats import ks_2samp
 from math import ceil
 
 import matplotlib.pyplot as pl
@@ -293,6 +294,10 @@ pl.boxplot([sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=Tru
 pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
 pl.savefig('%s_desired_speed.png' % args.experiment)
+
+# check distributions of desired speed
+print("Running sample test for desired speed...")
+assert(ks_2samp(sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed).pvalue >= 0.05)
 
 # ecdfplot with desired driving speed
 
