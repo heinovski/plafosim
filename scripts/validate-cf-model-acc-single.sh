@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,9 @@ echo "Running PlaFoSim..."
     --desired-speed 36 \
     --lane-changes true \
     --lanes 4 \
+    --max-desired-speed 50 \
     --max-speed 55 \
+    --min-desired-speed 22 \
     --penetration 1 \
     --random-desired-speed false \
     --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
@@ -56,6 +58,7 @@ echo "Running PlaFoSim..."
     --record-vehicle-trips true \
     --result-base-filename $experiment \
     --road-length 100 \
+    --speed-variation 0.1 \
     --step-length 1 \
     --time-limit 1.0 \
     --vehicles 1 \

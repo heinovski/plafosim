@@ -63,6 +63,7 @@ echo "Running PlaFoSim..."
     --start-as-platoon true \
     --step-length 1 \
     --time-limit 1 \
+    --update-desired-speed false \
     --vehicles 1 \
     2>&1 | tee ${experiment}_plafosim.log
 
