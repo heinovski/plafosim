@@ -377,8 +377,6 @@ lifetime_labels = ['speed', 'position', 'diff_desired', 'lane']
 
 for label in lifetime_labels:
 
-    data = merged_traces[label]
-
     print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles in m/s, m, m/s, lid" % (label, args.vehicles))
@@ -424,8 +422,6 @@ for label in lifetime_labels:
 
 for label in emission_labels:
 
-    data = merged_emission_traces[label]
-
     print(f"Plotting life time for {label}...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles in mg/ml" % (label, args.vehicles))
@@ -456,8 +452,6 @@ lifetime_diff_labels = ['diff_sumo_speed', 'diff_sumo_position', 'diff_sumo_lane
 
 for label in lifetime_diff_labels:
 
-    data = merged_traces[label]
-
     print(f"Plotting life time for {label}...")
     lal = re.sub('diff_sumo_', '', label)
 
@@ -482,8 +476,6 @@ for label in lifetime_diff_labels:
 lifetime_diff_emission_labels = ['diff_sumo_CO', 'diff_sumo_CO2', 'diff_sumo_HC', 'diff_sumo_NOx', 'diff_sumo_PMx', 'diff_sumo_fuel']
 
 for label in lifetime_diff_emission_labels:
-
-    data = merged_emission_traces[label]
 
     print(f"Plotting life time for {label}...")
     lal = re.sub('diff_sumo_', '', label)
