@@ -47,14 +47,14 @@ ARRIVAL = 100000
 
 def start_sumo(config_file, gui=False, experiment="cacc"):
     arguments = [
-        "--seed", str(SEED),
-        "--lanechange.duration", "0",
-        "--fcd-output", f"{experiment}-traces.xml",
-        "--device.fcd.deterministic",
-        "--tripinfo-output", f"{experiment}-trips.xml",
-        "--emission-output", f"{experiment}-emissions.xml",
         "--device.emissions.deterministic",
+        "--device.fcd.deterministic",
+        "--emission-output", f"{experiment}-emissions.xml",
+        "--fcd-output", f"{experiment}-traces.xml",
+        "--lanechange.duration", "0",
         "--lanechange-output", f"{experiment}-changes.xml",
+        "--seed", str(SEED),
+        "--tripinfo-output", f"{experiment}-trips.xml",
         "-c"]
     sumo_cmd = [sumolib.checkBinary('sumo-gui' if gui else 'sumo')]
     arguments.append(config_file)
