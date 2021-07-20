@@ -17,7 +17,9 @@
 
 import logging
 import math
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
+
+import numpy as np
 
 from .cf_model import CF_Model
 from .message import Message
@@ -26,17 +28,20 @@ from .vehicle_type import VehicleType
 
 if TYPE_CHECKING:
     from .simulator import Simulator  # noqa 401
+    from numpy.typing import ArrayLike
+else:
+    ArrayLike = float
 
 LOG = logging.getLogger(__name__)
 
 
 def safe_speed(
-    speed_predecessor: float,
-    speed_current: float,
-    gap_to_predecessor: float,
-    desired_headway_time: float,
-    max_deceleration: float,
-    min_gap: float = 0,
+    speed_predecessor: ArrayLike,
+    speed_current: ArrayLike,
+    gap_to_predecessor: ArrayLike,
+    desired_headway_time: ArrayLike,
+    max_deceleration: ArrayLike,
+    min_gap: Optional[ArrayLike] = None,
 ) -> float:
     """
     Returns the speed which is still safe without a collision.
@@ -66,13 +71,18 @@ def safe_speed(
         The minimum safety gap (in m)
     """
 
-    assert speed_predecessor >= 0
-    assert speed_current >= 0
-    assert max_deceleration > 0
+    if min_gap is None:
+        min_gap = np.zeros_like(speed_predecessor)
+
+    # TODO: make numpy-compatible
+    assert np.all(speed_predecessor >= 0)
+    assert np.all(speed_current >= 0)
+    assert np.all(max_deceleration > 0)
 
     # NOTE: maybe we will extract the computation of gap_desired later
     #       that would make this formula use the pure Krauss model again here
-    gap_desired = max(desired_headway_time * speed_predecessor, min_gap)
+    gap_desired = np.max(np.array([desired_headway_time * speed_predecessor, min_gap]), axis=0)
+    # gap_desired = max(desired_headway_time * speed_predecessor, min_gap)
     tau_b = (speed_predecessor + speed_current) / (2 * max_deceleration)
     return speed_predecessor + ((gap_to_predecessor - gap_desired) / (desired_headway_time + tau_b))
 

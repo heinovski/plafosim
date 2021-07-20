@@ -17,6 +17,7 @@
 #from plafosim import Message
 
 import pytest
+import numpy as np
 
 from plafosim.vehicle import safe_speed
 
@@ -47,6 +48,19 @@ def test_safe_speed(v_pred, v_veh, gap, expected):
         speed_predecessor=v_pred,
         speed_current=v_veh,
         gap_to_predecessor=gap,
+        desired_headway_time=DESIRED_HEADWAY_TIME,
+        max_deceleration=MAX_DECELERATION,
+    )
+    assert speed == pytest.approx(expected, abs=0.01)
+
+
+@pytest.mark.parametrize("v_pred,v_veh,gap,expected", SAFE_SPEED_TESTDATA)
+def test_safe_speed_with_numpy(v_pred, v_veh, gap, expected):
+    # TODO: tests involving our min_gap parameter
+    speed = safe_speed(
+        speed_predecessor=np.array([v_pred, v_pred]),
+        speed_current=np.array([v_veh, v_veh]),
+        gap_to_predecessor=np.array([gap, gap]),
         desired_headway_time=DESIRED_HEADWAY_TIME,
         max_deceleration=MAX_DECELERATION,
     )
