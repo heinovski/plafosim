@@ -72,6 +72,7 @@ echo "Running SUMO..."
     $ROOT/scripts/run-plexe.py \
     --experiment $experiment \
     --vehicles 1 \
+    --sumo-config sumocfg/freeway-cacc.sumo.cfg \
     2>&1 | tee ${experiment}_sumo.log
 
 echo "Converting results..."
