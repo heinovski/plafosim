@@ -406,88 +406,20 @@ for label in lifetime_labels:
         )
     elif label == 'diff_desired':
         ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='desired')
-
-        # check limits for deviation in desired speed
-        d = data.describe()
-
-        if args.experiment == "cc":
-            l_mean = -0.147831
-            l_std = 1.657094
-            l_min = -45.360000
-            l_25 = -0.020000
-            l_50 = 0.000000
-            l_75 = 0.000000
-            l_max = 0.180000
-        elif args.experiment == "acc":
-            # we might need to work on ACC, since there is some deviation
-            l_mean = -0.834908
-            l_std = 2.318284
-            l_min = -45.360000
-            l_25 = -0.170000
-            l_50 = 0.000000
-            l_75 = 0.000000
-            l_max = 0.180000
-        elif args.experiment == "cacc":
-            # Plexe step size 1s
-            # l_mean = -0.000103
-            # l_std = 0.015260
-            # l_min = -2.270000
-            # l_25 = 0.000000
-            # l_50 = 0.000000
-            # l_75 = 0.000000
-            # l_max = 0.000000
-            # Plexe step size 0.1s
-            l_mean = -0.046928
-            l_std = 0.921540
-            l_min = -23.670000
-            l_25 = 0.000000
-            l_50 = 0.000000
-            l_75 = 0.000000
-            l_max = 0.000000
-        elif args.experiment == "cc_single":
-            l_mean = -0.099641
-            l_std = 1.569152
-            l_min = -36.000000
-            l_25 = 0.000000
-            l_50 = 0.000000
-            l_75 = 0.000000
-            l_max = 0.000000
-        elif args.experiment == "acc_single":
-            l_mean = -0.099641
-            l_std = 1.569152
-            l_min = -36.000000
-            l_25 = 0.000000
-            l_50 = 0.000000
-            l_75 = 0.000000
-            l_max = 0.000000
-        elif args.experiment == "cacc_single":
-            l_mean = 0.0
-            l_std = 0.0
-            l_min = 0.0
-            l_25 = 0.0
-            l_50 = 0.0
-            l_75 = 0.0
-            l_max = 0.0
-        else:
-            sys.exit(f"Unknown experiment {args.experiment}!")
-
-        if \
-                abs(d['mean']) > ceil(abs(l_mean)) \
-                or abs(d['std']) > ceil(abs(l_std)) \
-                or abs(d['min']) > ceil(abs(l_min)) \
-                or abs(d['25%']) > ceil(abs(l_25)) \
-                or abs(d['50%']) > ceil(abs(l_50)) \
-                or abs(d['75%']) > ceil(abs(l_75)) \
-                or abs(d['max']) > ceil(abs(l_max)):
-            error = True
-            print(f"Deviation to Sumo in {label} exceeded limits ({args.experiment}, {args.vehicles}, {args.desired_speed})!")
-            print(d)
     elif label == 'lane':
         ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='desired')
     else:
         sys.exit(f"Unknown label {label}!")
 
     fig.savefig('%s_%s.png' % (args.experiment, label))
+
+    # check limits for deviation to sumo
+    print(f"Running sample test for {label}...")
+    result = ks_2samp(plafosim_traces[label], sumo_traces[label])
+    if result.pvalue < args.significance:
+        print("Deviation to Sumo in %s exceeded limits!" % label)
+        print((sumo_traces[label] - plafosim_traces[label]).describe())
+        # error = True  # FIXME enable
 
 # emission lifetime
 
