@@ -19,7 +19,7 @@
 set -e
 set -o pipefail
 
-seed="$1"
+seed=$(test -z "$1" && echo 1337 || echo "$1")
 ROOT=$(pwd)/$(dirname $0)/..
 
 ### CACC
@@ -49,7 +49,7 @@ echo "Running PlaFoSim..."
     --penetration 1 \
     --pre-fill true \
     --random-desired-speed false \
-    --random-seed $(test -z "$seed" && echo -1 || echo $seed) \
+    --random-seed $seed \
     --record-emission-traces true \
     --record-end-trace false \
     --record-prefilled true \
