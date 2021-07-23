@@ -88,7 +88,7 @@ def main(sumo_config, n_vehicles, experiment):
     traci.addStepListener(plexe)
     step = 0
 
-    max_step = 3600 * 100  # 1 hour with 10ms step size
+    max_step = 3600 / traci.simulation.getDeltaT()
 
     # create vehicles and track the joiner
     add_vehicles(plexe, n_vehicles)
