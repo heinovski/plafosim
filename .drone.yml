@@ -155,6 +155,21 @@ steps:
     - ./scripts/validate-cf-model-cacc-single.sh
     - ./scripts/validate-cf-model-cacc-100.sh
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cacc*.csv cacc*.png"
+- name: wiki upload
+  image: alpine/git
+  commands:
+    - echo "Username '$DRONE_ASKPASS_USERNAME'"
+    - echo "machine webgit.ccs-labs.org login $DRONE_ASKPASS_USERNAME password $DRONE_ASKPASS_PASSWORD" > ~/.netrc
+    - git clone ${DRONE_GIT_HTTP_URL/.git/.wiki.git} /wiki
+    - mkdir -p /wiki/${DRONE_BRANCH}
+    - cp *.png /wiki/${DRONE_BRANCH}/
+    - git -C /wiki add /wiki/${DRONE_BRANCH}
+    - git -C /wiki commit -m"Add validation data for ${DRONE_COMMIT_SHA:0:8} from run ${DRONE_BUILD_NUMBER}"
+    - git -C /wiki push
+  when:
+    branch:
+      - master
+      - develop
 
 trigger:
   ref:
