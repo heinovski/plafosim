@@ -19,7 +19,6 @@
 set -e
 set -o pipefail
 
-seed=$(test -z "$1" && echo 1337 || echo "$1")
 ROOT=$(pwd)/$(dirname $0)/..
 
 ### ACC
@@ -49,7 +48,7 @@ echo "Running PlaFoSim..."
     --min-desired-speed 22 \
     --penetration 1 \
     --random-desired-speed false \
-    --random-seed $seed \
+    --random-seed 1337 \
     --record-emission-traces true \
     --record-end-trace false \
     --record-vehicle-changes true \
@@ -76,7 +75,7 @@ echo "Running SUMO..."
     --lanechange-output $experiment-changes.xml \
     --step-length 1 \
     --tripinfo-output $experiment-trips.xml \
-    --seed $seed \
+    --seed 1338 \
     2>&1 | tee ${experiment}_sumo.log
 
 echo "Converting results..."
