@@ -229,7 +229,8 @@ if not failed_equality.empty:
 # END HACK for small diff in departPos and routeLength
 
 # metrics that can be different among the simulators
-trip_diff_labels = ['desiredSpeed', 'arrival', 'arrivalLane', 'arrivalSpeed', 'duration', 'timeLoss']
+# TODO add timeLoss after it is implemented correctly in plafosim
+trip_diff_labels = ['desiredSpeed', 'arrival', 'arrivalLane', 'arrivalSpeed', 'duration']
 diff_trips = plafosim_trips[trip_diff_labels] - sumo_trips[trip_diff_labels]
 
 # Evaluate emissions
