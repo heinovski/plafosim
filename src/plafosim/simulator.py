@@ -77,7 +77,7 @@ class Simulator:
             number_of_lanes: int = 3,
             ramp_interval: int = 5000,
             pre_fill: bool = False,
-            number_of_vehicles: int = 100,
+            number_of_vehicles: int = -1,
             vehicle_density: float = -1,
             max_speed: float = 55,
             acc_headway_time: float = 1.0,
