@@ -378,7 +378,7 @@ lifetime_labels = ['speed', 'position', 'diff_desired', 'lane']
 
 for label in lifetime_labels:
 
-    print(f"Plotting life time for {label}...")
+    print(f"Plotting {label} over life time...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles in m/s, m, m/s, lid" % (label, args.vehicles))
     seaborn.lineplot(
@@ -415,7 +415,7 @@ for label in lifetime_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_traces[label], sumo_traces[label])
     if result.pvalue < args.significance:
-        print("Deviation to Sumo in %s exceeded limits!" % label)
+        print("Deviation to Sumo in %s over life time exceeded limits!" % label)
         print((sumo_traces[label] - plafosim_traces[label]).describe())
         # error = True  # FIXME enable
 
@@ -423,7 +423,7 @@ for label in lifetime_labels:
 
 for label in emission_labels:
 
-    print(f"Plotting life time for {label}...")
+    print(f"Plotting {label} over life time...")
     fig, ax = pl.subplots()
     pl.title("Average %s for %d Vehicles in mg/ml" % (label, args.vehicles))
     seaborn.lineplot(
@@ -443,7 +443,7 @@ for label in emission_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_emission_traces[label], sumo_emission_traces[label])
     if result.pvalue < args.significance:
-        print("Deviation to Sumo in %s exceeded limits!" % label)
+        print("Deviation to Sumo in %s over life time exceeded limits!" % label)
         print((sumo_emission_traces[label] - plafosim_emission_traces[label]).describe())
         # error = True  # FIXME enable
 
@@ -453,7 +453,7 @@ lifetime_diff_labels = ['diff_sumo_speed', 'diff_sumo_position', 'diff_sumo_lane
 
 for label in lifetime_diff_labels:
 
-    print(f"Plotting life time for {label}...")
+    print(f"Plotting {label} over life time...")
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
@@ -478,7 +478,7 @@ lifetime_diff_emission_labels = ['diff_sumo_CO', 'diff_sumo_CO2', 'diff_sumo_HC'
 
 for label in lifetime_diff_emission_labels:
 
-    print(f"Plotting life time for {label}...")
+    print(f"Plotting {label} over life time...")
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
