@@ -535,8 +535,6 @@ def main():
 
     args = parser.parse_args()
 
-    start_time = timer()
-
     simulator = Simulator(
         args.road_length * 1000,
         args.lanes,
@@ -608,6 +606,8 @@ def main():
         args.record_infrastructure_assignments,
         args.record_prefilled,
     )
+
+    start_time = timer()
 
     steps = simulator.run()
 
