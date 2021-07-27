@@ -66,21 +66,10 @@ echo "Running PlaFoSim..."
 echo "Running SUMO..."
 
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
-    $SUMO_HOME/bin/sumo \
-    --begin 0 \
-    --collision.action warn \
-    --device.emissions.deterministic \
-    --device.fcd.deterministic \
-    --emission-output $experiment-emissions.xml \
-    --fcd-output $experiment-traces.xml \
-    --gui-settings-file $ROOT/sumocfg/freeway.gui.xml \
-    --lanechange-output $experiment-changes.xml \
-    --net-file $ROOT/sumocfg/freeway.net.xml \
-    --route-files $ROOT/sumocfg/freeway-$experiment.rou.xml \
-    --seed 1338 \
-    --step-length 1 \
-    --step-method.ballistic false \
-    --tripinfo-output $experiment-trips.xml \
+    $ROOT/scripts/run-plexe-acc.py \
+    --experiment $experiment \
+    --sumo-config sumocfg/freeway-acc.sumo.cfg \
+    --vehicles 100 \
     2>&1 | tee ${experiment}_sumo.log
 
 echo "Converting results..."

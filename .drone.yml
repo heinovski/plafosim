@@ -130,6 +130,7 @@ steps:
     - apt install time
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
+    - pip3 install git+https://github.com/michele-segata/plexe-pyapi.git
     - ./scripts/validate-cf-model-acc-single.sh
     - ./scripts/validate-cf-model-acc-100.sh
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR acc*.csv acc*.png"
