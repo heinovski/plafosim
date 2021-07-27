@@ -1626,14 +1626,14 @@ class Simulator:
 
         self._initialize_result_recording()
 
-        # initialize the GUI
-        if self._gui:
-            self._initialize_gui()
-
         # initialize pre-filled vehicles
         for vehicle in self._vehicles.values():
             if self._start_as_platoon and vehicle._vid > 0:
                 vehicle._join(0, 0)
+
+        # initialize the GUI
+        if self._gui:
+            self._initialize_gui()
 
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
