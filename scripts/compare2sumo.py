@@ -54,12 +54,14 @@ error = False
 # Read runtimes
 
 runtimes = pandas.read_csv('%s_runtimes.csv' % args.experiment)
+runtimes = runtimes.round(2)
 runtimes = runtimes.astype({'simulator': str})
 runtimes = runtimes.set_index('simulator')
 
 # Read trips/emissions
 
 sumo_trips = pandas.read_csv('%s-trips.csv' % args.experiment)
+sumo_trips = sumo_trips.round(2)
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x))
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('emissions_', '', x))
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('_abs', '', x))
@@ -74,6 +76,7 @@ assert(sumo_trips.index.is_unique)
 assert(len(sumo_trips.index == args.vehicles))
 
 plafosim_trips = pandas.read_csv('%s_vehicle_trips.csv' % args.experiment)
+plafosim_trips = plafosim_trips.round(2)
 plafosim_trips = plafosim_trips.set_index('id').sort_index()
 assert(plafosim_trips.index.is_unique)
 assert(len(plafosim_trips.index == args.vehicles))
@@ -81,6 +84,7 @@ assert(len(plafosim_trips.index == args.vehicles))
 assert(list(sumo_trips.index) == list(plafosim_trips.index))
 
 plafosim_emissions = pandas.read_csv('%s_vehicle_emissions.csv' % args.experiment)
+plafosim_emissions = plafosim_emissions.round(2)
 plafosim_emissions = plafosim_emissions.set_index('id').sort_index()
 assert(plafosim_emissions.index.is_unique)
 assert(len(plafosim_emissions.index == args.vehicles))
@@ -98,6 +102,7 @@ sumo_traces = pandas.read_csv(
         'vehicle_lane',
         'vehicle_pos',
         'vehicle_speed'])
+sumo_traces = sumo_traces.round(2)
 sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
 sumo_traces.dropna(inplace=True)
 sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
@@ -114,6 +119,7 @@ plafosim_traces = pandas.read_csv(
     '%s_vehicle_traces.csv' %
     args.experiment, usecols=[
         'step', 'id', 'position', 'lane', 'speed'])
+plafosim_traces = plafosim_traces.round(2)
 plafosim_traces.sort_values(by='step', inplace=True)
 assert(len(plafosim_traces.id.unique()) == args.vehicles)
 # assert same vehicles
@@ -132,6 +138,7 @@ try:
             'change_speed',
             'change_time',
             'change_to'])
+    sumo_changes = sumo_changes.round(2)
     sumo_changes.columns = ['from', 'id', 'position', 'reason', 'speed', 'step', 'to']
     sumo_changes.dropna(inplace=True)
     sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
@@ -145,6 +152,7 @@ except pandas.errors.EmptyDataError:
 
 try:
     plafosim_changes = pandas.read_csv('%s_vehicle_changes.csv' % args.experiment)
+    plafosim_changes = plafosim_changes.round(2)
     plafosim_changes.sort_values(by='step', inplace=True)
     assert(len(plafosim_changes.id.unique()) <= args.vehicles)
 except pandas.errors.EmptyDataError:
@@ -166,6 +174,7 @@ sumo_emission_traces = pandas.read_csv(
         'vehicle_fuel',
     ]
 )
+sumo_emission_traces = sumo_emission_traces.round(2)
 sumo_emission_traces = sumo_emission_traces.rename(columns=lambda x: re.sub('timestep_time', 'step', x))
 sumo_emission_traces = sumo_emission_traces.rename(columns=lambda x: re.sub('vehicle_', '', x))
 sumo_emission_traces.dropna(inplace=True)
@@ -179,6 +188,7 @@ sumo_emission_traces.sort_values(by='step', inplace=True)
 assert(len(sumo_emission_traces.id.unique()) == args.vehicles)
 
 plafosim_emission_traces = pandas.read_csv(f'{args.experiment}_emission_traces.csv')
+plafosim_emission_traces = plafosim_emission_traces.round(2)
 plafosim_emission_traces.sort_values(by='step', inplace=True)
 assert(len(plafosim_emission_traces.id.unique()) == args.vehicles)
 # assert same vehicles
