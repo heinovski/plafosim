@@ -4,5 +4,6 @@
 
     <route id="route" edges="edge_0_0" />
 
-    <flow id="static" begin="0" period="3" type="cc" number="100" route="route" departSpeed="0" arrivalPos="100000" departPos="base" departLane="first" />
+    <!-- use depart pos 4 to get rid of the magic additional 0.1m -->
+    <flow id="static" begin="0" period="3" type="cc" number="100" route="route" departSpeed="0" arrivalPos="100000" departPos="4" departLane="first" />
 </routes>
