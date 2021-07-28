@@ -18,6 +18,7 @@
 VERSION = "0.11.4"
 
 from .cf_model import CF_Model  # noqa 401
+from .emission_class import EmissionClass  # noqa 401
 from .formation_algorithm import FormationAlgorithm  # noqa 401
 from .infrastructure import Infrastructure  # noqa 401
 from .message import AbortManeuver  # noqa 401
