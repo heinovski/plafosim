@@ -425,6 +425,27 @@ def main():
         default="sumocfg/freeway.sumo.cfg",
         help="The name of the SUMO config file",
     )
+    gui.add_argument(
+        "--draw-ramps",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether to draw on-/off-ramps",
+    )
+    gui.add_argument(
+        "--draw-road-end",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether to draw the end of the road",
+    )
+    gui.add_argument(
+        "--draw-infrastructures",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether to draw infrastructures",
+    )
 
     # result recording properties
     results = parser.add_argument_group("result recording properties")
@@ -590,6 +611,9 @@ def main():
         args.gui_delay / 1000,
         args.track_vehicle,
         args.sumo_config,
+        args.draw_ramps,
+        args.draw_road_end,
+        args.draw_infrastructures,
         args.result_base_filename,
         args.record_simulation_trace,
         args.record_end_trace,

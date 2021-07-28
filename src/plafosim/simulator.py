@@ -127,6 +127,9 @@ class Simulator:
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
             gui_sumo_config: str = "sumocfg/freeway.sumo.cfg",
+            draw_ramps: bool = True,
+            draw_road_end: bool = True,
+            draw_infrastructures: bool = True,
             result_base_filename: str = 'results',
             record_simulation_trace: bool = False,
             record_end_trace: bool = True,
@@ -313,6 +316,9 @@ class Simulator:
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._gui_sumo_config = gui_sumo_config  # the name of the SUMO config file
+        self._draw_ramps = draw_ramps  # whether to draw on-/off-ramps
+        self._draw_road_end = draw_road_end  # whether to draw the end of the road
+        self._draw_infrastructures = draw_infrastructures  # whether to draw infrastructures
 
         # result recording properties
         self._result_base_filename = result_base_filename  # the base filename of the result files
@@ -1510,46 +1516,49 @@ class Simulator:
         traci.start(sumoCmd)
 
         # draw ramps
-        y = 241
-        color = (0, 0, 0)
-        width = 4
-        height = 150
-        for x in range(0, self._road_length + 1, self._ramp_interval):
-            traci.polygon.add(f"ramp-{x}", [
-                (x - width / 2, y),  # top left
-                (x + width / 2, y),  # top right
-                (x + width / 2, y - height),  # bottom right
-                (x - width / 2, y - height)   # bottom left
-            ], color, fill=True)
-            traci.poi.add(f"Ramp at {x}m", x=x, y=y - height - 10, color=(51, 128, 51))
+        if self._draw_ramps:
+            y = 241
+            color = (0, 0, 0)
+            width = 4
+            height = 150
+            for x in range(0, self._road_length + 1, self._ramp_interval):
+                traci.polygon.add(f"ramp-{x}", [
+                    (x - width / 2, y),  # top left
+                    (x + width / 2, y),  # top right
+                    (x + width / 2, y - height),  # bottom right
+                    (x - width / 2, y - height)   # bottom left
+                ], color, fill=True)
+                traci.poi.add(f"Ramp at {x}m", x=x, y=y - height - 10, color=(51, 128, 51))
 
         # draw road end
-        y_top = 340
-        y_bottom = 241
-        width = 4
-        color = (255, 0, 0)
-        traci.polygon.add("road-end", [
-            (self._road_length - width / 2, y_bottom),  # bottom left
-            (self._road_length + width / 2, y_bottom),  # bottom right
-            (self._road_length + width / 2, y_top),  # top right
-            (self._road_length - width / 2, y_top)  # top left
-        ], color, fill=True, layer=3)
-        traci.poi.add("Road End", x=self._road_length + 50, y=300, color=(51, 128, 51))
+        if self._draw_road_end:
+            y_top = 340
+            y_bottom = 241
+            width = 4
+            color = (255, 0, 0)
+            traci.polygon.add("road-end", [
+                (self._road_length - width / 2, y_bottom),  # bottom left
+                (self._road_length + width / 2, y_bottom),  # bottom right
+                (self._road_length + width / 2, y_top),  # top right
+                (self._road_length - width / 2, y_top)  # top left
+            ], color, fill=True, layer=3)
+            traci.poi.add("Road End", x=self._road_length + 50, y=300, color=(51, 128, 51))
 
         # draw infrastructures
-        y = 280
-        width = 20
-        color = (0, 0, 255)
-        for infrastructure in self._infrastructures.values():
-            # add infrastructure
-            if (str(infrastructure._iid)) not in traci.polygon.getIDList():
-                traci.polygon.add(f"rsu-{str(infrastructure._iid)}", [
-                    (infrastructure._position - width / 2, y),  # bottom left
-                    (infrastructure._position + width / 2, y),  # bottom right
-                    (infrastructure._position + width / 2, y + width),  # top right
-                    (infrastructure._position - width / 2, y + width)  # top left
-                ], color, fill=True)
-                traci.poi.add(f"RSU {infrastructure._iid}", x=infrastructure._position, y=y + width + 10, color=(51, 128, 51))
+        if self._draw_infrastructures:
+            y = 280
+            width = 20
+            color = (0, 0, 255)
+            for infrastructure in self._infrastructures.values():
+                # add infrastructure
+                if (str(infrastructure._iid)) not in traci.polygon.getIDList():
+                    traci.polygon.add(f"rsu-{str(infrastructure._iid)}", [
+                        (infrastructure._position - width / 2, y),  # bottom left
+                        (infrastructure._position + width / 2, y),  # bottom right
+                        (infrastructure._position + width / 2, y + width),  # top right
+                        (infrastructure._position - width / 2, y + width)  # top left
+                    ], color, fill=True)
+                    traci.poi.add(f"RSU {infrastructure._iid}", x=infrastructure._position, y=y + width + 10, color=(51, 128, 51))
 
         # draw pre-filled vehicles
         # save internal state of random number generator
