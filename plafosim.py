@@ -433,6 +433,13 @@ def main():
         help="Whether to draw on-/off-ramps",
     )
     gui.add_argument(
+        "--draw-ramp-labels",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether to draw labels for on-/off-ramps",
+    )
+    gui.add_argument(
         "--draw-road-end",
         type=lambda x: bool(strtobool(x)),
         default=True,
@@ -440,11 +447,25 @@ def main():
         help="Whether to draw the end of the road",
     )
     gui.add_argument(
+        "--draw-road-end-label",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether to draw a label for the end of the road",
+    )
+    gui.add_argument(
         "--draw-infrastructures",
         type=lambda x: bool(strtobool(x)),
         default=True,
         choices=(True, False),
         help="Whether to draw infrastructures",
+    )
+    gui.add_argument(
+        "--draw-infrastructure-labels",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether to draw labels for infrastructures",
     )
 
     # result recording properties
@@ -612,8 +633,11 @@ def main():
         args.track_vehicle,
         args.sumo_config,
         args.draw_ramps,
+        args.draw_ramp_labels,
         args.draw_road_end,
+        args.draw_road_end_label,
         args.draw_infrastructures,
+        args.draw_infrastructure_labels,
         args.result_base_filename,
         args.record_simulation_trace,
         args.record_end_trace,

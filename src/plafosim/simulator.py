@@ -128,8 +128,11 @@ class Simulator:
             gui_track_vehicle: int = -1,
             gui_sumo_config: str = "sumocfg/freeway.sumo.cfg",
             draw_ramps: bool = True,
+            draw_ramp_labels: bool = True,
             draw_road_end: bool = True,
+            draw_road_end_label: bool = True,
             draw_infrastructures: bool = True,
+            draw_infrastructure_labels: bool = True,
             result_base_filename: str = 'results',
             record_simulation_trace: bool = False,
             record_end_trace: bool = True,
@@ -317,8 +320,11 @@ class Simulator:
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._gui_sumo_config = gui_sumo_config  # the name of the SUMO config file
         self._draw_ramps = draw_ramps  # whether to draw on-/off-ramps
+        self._draw_ramp_labels = draw_ramp_labels  # whether to draw labels for on-/off-ramps
         self._draw_road_end = draw_road_end  # whether to draw the end of the road
+        self._draw_road_end_label = draw_road_end_label  # whether to draw a label for the end of the road
         self._draw_infrastructures = draw_infrastructures  # whether to draw infrastructures
+        self._draw_infrastructure_labels = draw_infrastructure_labels  # whether to draw labels for infrastructures
 
         # result recording properties
         self._result_base_filename = result_base_filename  # the base filename of the result files
@@ -1528,7 +1534,8 @@ class Simulator:
                     (x + width / 2, y - height),  # bottom right
                     (x - width / 2, y - height)   # bottom left
                 ], color, fill=True)
-                traci.poi.add(f"Ramp at {x}m", x=x, y=y - height - 10, color=(51, 128, 51))
+                if self._draw_ramp_labels:
+                    traci.poi.add(f"Ramp at {x}m", x=x, y=y - height - 10, color=(51, 128, 51))
 
         # draw road end
         if self._draw_road_end:
@@ -1542,7 +1549,8 @@ class Simulator:
                 (self._road_length + width / 2, y_top),  # top right
                 (self._road_length - width / 2, y_top)  # top left
             ], color, fill=True, layer=3)
-            traci.poi.add("Road End", x=self._road_length + 50, y=300, color=(51, 128, 51))
+            if self._draw_road_end_label:
+                traci.poi.add("Road End", x=self._road_length + 50, y=300, color=(51, 128, 51))
 
         # draw infrastructures
         if self._draw_infrastructures:
@@ -1558,7 +1566,8 @@ class Simulator:
                         (infrastructure._position + width / 2, y + width),  # top right
                         (infrastructure._position - width / 2, y + width)  # top left
                     ], color, fill=True)
-                    traci.poi.add(f"RSU {infrastructure._iid}", x=infrastructure._position, y=y + width + 10, color=(51, 128, 51))
+                    if self._draw_infrastructure_labels:
+                        traci.poi.add(f"RSU {infrastructure._iid}", x=infrastructure._position, y=y + width + 10, color=(51, 128, 51))
 
         # draw pre-filled vehicles
         # save internal state of random number generator
