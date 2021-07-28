@@ -502,7 +502,7 @@ class Vehicle:
 
     def _calculate_emissions(self):
         """
-        Calculates the emitted pollutant amount using the given speed and acceleration.
+        Calculates the emitted pollutant amount using the given speed and acceleration based on the HBEFA3 model.
 
         As the functions are defining emissions in g/hour, the function's result is normed
         by 3.6 (seconds in an hour/1000) yielding mg/s. For fuel ml/s is returned.
