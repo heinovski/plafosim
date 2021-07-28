@@ -1135,7 +1135,7 @@ class PlatooningVehicle(Vehicle):
             vehicle._cc_target_speed = vehicle._platoon.desired_speed
 
         # set color of vehicle
-        if self._simulator._gui:
+        if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
             import traci
             traci.vehicle.setColor(str(vehicle.vid), leader._color)
 
@@ -1211,7 +1211,7 @@ class PlatooningVehicle(Vehicle):
                 follower._platoon = Platoon(follower.vid, [follower], follower._desired_speed)
 
                 # reset color of vehicle
-                if self._simulator._gui:
+                if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
                     import traci
                     traci.vehicle.setColor(str(follower.vid), follower._color)
 
@@ -1242,7 +1242,7 @@ class PlatooningVehicle(Vehicle):
                 leader._platoon = Platoon(leader.vid, [leader], leader._desired_speed)
 
                 # reset color of vehicle
-                if self._simulator._gui:
+                if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
                     import traci
                     traci.vehicle.setColor(str(leader.vid), leader._color)
 
@@ -1310,7 +1310,7 @@ class PlatooningVehicle(Vehicle):
         self._cf_model = CF_Model.ACC  # not necessary, but we still do it explicitly
 
         # reset color of vehicle
-        if self._simulator._gui:
+        if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
             import traci
             traci.vehicle.setColor(str(self._vid), self._color)
 

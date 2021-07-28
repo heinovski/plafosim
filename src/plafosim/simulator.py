@@ -132,6 +132,7 @@ class Simulator:
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
             gui_sumo_config: str = "sumocfg/freeway.sumo.cfg",
+            gui_start: int = 0,
             draw_ramps: bool = True,
             draw_ramp_labels: bool = True,
             draw_road_end: bool = True,
@@ -324,6 +325,9 @@ class Simulator:
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._gui_sumo_config = gui_sumo_config  # the name of the SUMO config file
+        if gui_start < 0:
+            sys.exit("ERROR: GUI start time cannot be negative!")
+        self._gui_start = gui_start  # the time when to connect to the GUI
         self._draw_ramps = draw_ramps  # whether to draw on-/off-ramps
         self._draw_ramp_labels = draw_ramp_labels  # whether to draw labels for on-/off-ramps
         self._draw_road_end = draw_road_end  # whether to draw the end of the road
@@ -757,7 +761,7 @@ class Simulator:
             # call finish on arrived vehicle
             self._vehicles[vid].finish()
             # remove arrived vehicle from gui
-            if self._gui:
+            if self._gui and self._step >= self._gui_start:
                 import traci
                 traci.vehicle.remove(str(vid), 2)
             # remove from vehicles
@@ -1170,7 +1174,7 @@ class Simulator:
             self._communication_range
         )
 
-        if self._gui:
+        if self._gui and self._step >= self._gui_start:
             self._add_gui_vehicle(vehicle)
 
         LOG.info(f"Spawned vehicle {vid} ({depart_position}-{vehicle.rear_position},{depart_lane})")
@@ -1683,10 +1687,6 @@ class Simulator:
             if self._start_as_platoon and vehicle._vid > 0:
                 vehicle._join(0, 0)
 
-        # initialize the GUI
-        if self._gui:
-            self._initialize_gui()
-
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
         # let the simulator run
         while self._running:
@@ -1696,12 +1696,16 @@ class Simulator:
                 self.stop("Reached step limit")
                 continue
 
+            # initialize the GUI
+            if self._gui and self._step == self._gui_start:
+                self._initialize_gui()
+
             # spawn vehicle based on given parameters
             self._spawn_vehicles()
 
             if self._vehicles:
                 # update the GUI
-                if self._gui:
+                if self._gui and self._step >= self._gui_start:
                     self._update_gui()
 
                 # call regular actions on vehicles
@@ -1769,7 +1773,7 @@ class Simulator:
             # a new step begins
             self._step += self._step_length
             progress_bar.update(self._step_length)
-            if self._gui:
+            if self._gui and self._step > self._gui_start:
                 import traci
                 traci.simulationStep(self._step)
                 assert(traci.simulation.getTime() == float(self._step))
@@ -1889,12 +1893,12 @@ class Simulator:
         for vehicle in self._vehicles.values():
             # we do not want to write statistics for not finished vehicles
             # therefore, we do not call finish here
-            if self._gui:
+            if self._gui and self._step >= self._gui_start:
                 import traci
                 traci.vehicle.remove(str(vehicle._vid), 2)
             # remove from vehicles
             del vehicle
 
-        if self._gui:
+        if self._gui and self._step >= self._gui_start:
             import traci
             traci.close(False)

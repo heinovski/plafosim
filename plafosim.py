@@ -426,6 +426,12 @@ def main():
         help="The name of the SUMO config file",
     )
     gui.add_argument(
+        "--gui-start",
+        type=int,
+        default=0,
+        help="The time to connect to the GUI in s",
+    )
+    gui.add_argument(
         "--draw-ramps",
         type=lambda x: bool(strtobool(x)),
         default=True,
@@ -640,6 +646,7 @@ def main():
         args.gui_delay,
         args.track_vehicle,
         args.sumo_config,
+        args.gui_start,
         args.draw_ramps,
         args.draw_ramp_labels,
         args.draw_road_end,
