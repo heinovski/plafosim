@@ -16,6 +16,9 @@
 #
 
 
+from .emission_class import EmissionClass
+
+
 class VehicleType:
     """A collection of parameters for a concrete vehicle type"""
 
@@ -26,7 +29,9 @@ class VehicleType:
             max_acceleration: float,
             max_deceleration: float,
             min_gap: float,
-            cc_headway_time: float):
+            cc_headway_time: float,
+            emission_class: str,
+    ):
         """
         Initializes a specific vehicle type.
 
@@ -46,6 +51,8 @@ class VehicleType:
             The minimum safety gap to the vehicle in front of the vehicle type
         cc_headway_time : float
             The CC headway time of the vehicle type
+        emission_class : EmissionClass
+            The emission class of the vehicle type
         """
 
         self._name = name  # the name of a vehicle type
@@ -55,6 +62,7 @@ class VehicleType:
         self._max_deceleration = max_deceleration  # the maximum deceleration of the vehicle type
         self._min_gap = min_gap  # the minimum gap to the vehicle in front
         self._cc_headway_time = cc_headway_time  # the desired cc headway time
+        self._emission_class = EmissionClass[emission_class]  # the emission class of the vehicle type
 
     @property
     def name(self) -> str:
@@ -97,6 +105,18 @@ class VehicleType:
         """Returns the desired headway time of a vehicle type."""
 
         return self._cc_headway_time
+
+    @property
+    def emission_class(self) -> EmissionClass:
+        """Returns the emission class of a vehicle type."""
+
+        return self._emission_class
+
+    @property
+    def emission_factors(self) -> dict:
+        """Returns the emission factors of a vehicle type."""
+
+        return self._emission_class.emission_factors
 
     def __str__(self) -> str:
         """Returns the str representation of a vehicle type."""

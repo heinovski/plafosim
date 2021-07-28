@@ -545,19 +545,7 @@ class Vehicle:
         Negative acceleration results directly in zero emission.
 
         The amount emitted by the given emission class when moving with the given velocity and acceleration [mg/s or ml/s]
-
-        SUMO: The current default model is HBEFA3/PC_G_EU4 (a gasoline powered Euro norm 4 passenger car modeled using the HBEFA3 based model).
         """
-
-        emission_factors = {
-            'CO': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
-            'CO2': [9449, 938.4, 0.0, -467.1, 28.26, 0.0],
-            'HC': [2.923, 0.1113, 0.0, -0.3476, 0.01032, 0.0],
-            'NOx': [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
-            'PMx': [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
-            'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0],
-        }
-        diesel = False  # TODO make parameter of vehicle type
 
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
@@ -570,17 +558,18 @@ class Vehicle:
                     f"{self._vid}"
                 )
 
+        ec = self._vehicle_type.emission_class
         for variable in self._emissions.keys():
             scale = 3.6
             if variable == 'fuel':
-                if diesel:
+                if ec.is_diesel:
                     scale *= 836.0
                 else:
                     scale *= 742.0
             value = (self._calculate_emission(
                 self._acceleration,
                 self._speed,
-                emission_factors[variable],
+                ec.emission_factors[variable],
                 scale
             ) * self._simulator.step_length)
             self._emissions[variable] += value

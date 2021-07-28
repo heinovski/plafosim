@@ -28,6 +28,7 @@ from timeit import default_timer as timer
 from tqdm import tqdm
 
 from .cf_model import CF_Model
+from .emission_class import EmissionClass
 from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
@@ -53,6 +54,8 @@ _max_acceleration = 2.5  # m/s # TODO make parameter
 _max_deceleration = 15  # m/s # TODO make parameter
 _min_gap = 2.5  # m # TODO make parameter
 _desired_headway_time = 1.0  # s # TODO make parameter
+# HBEFA3/PC_G_EU4 (a gasoline powered Euro norm 4 passenger car modeled using the HBEFA3 based model), default of SUMO
+_emission_class = EmissionClass.PC_G_EU4.name  # TODO make parameter
 vtype = VehicleType(
     "car",
     _length,
@@ -60,7 +63,8 @@ vtype = VehicleType(
     _max_acceleration,
     _max_deceleration,
     _min_gap,
-    _desired_headway_time
+    _desired_headway_time,
+    _emission_class,
 )  # TODO support multiple vtypes
 TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
 

@@ -15,6 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+from plafosim import EmissionClass
+from plafosim.emission_class import EMISSION_FACTORS
 from plafosim import VehicleType
 
 
@@ -26,8 +28,18 @@ def test_creation():
     max_deceleration = 15.0
     min_gap = 1.0
     cc_headway_time = 1.0
+    emission_class = EmissionClass.PC_G_EU4
 
-    vtype = VehicleType(name, length, max_speed, max_acceleration, max_deceleration, min_gap, cc_headway_time)
+    vtype = VehicleType(
+        name,
+        length,
+        max_speed,
+        max_acceleration,
+        max_deceleration,
+        min_gap,
+        cc_headway_time,
+        emission_class.name,
+    )
 
     assert(vtype is not None)
     assert(vtype.name == name)
@@ -37,4 +49,6 @@ def test_creation():
     assert(vtype.max_deceleration == max_deceleration)
     assert(vtype.min_gap == min_gap)
     assert(vtype.cc_headway_time == cc_headway_time)
+    assert(vtype.emission_class == emission_class)
+    assert(vtype.emission_factors == EMISSION_FACTORS[emission_class.name])
     assert(str(vtype) == str(vtype.__dict__))
