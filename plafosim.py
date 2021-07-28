@@ -52,7 +52,7 @@ def main():
 
     # miscellaneous
     parser.add_argument(
-        "--version",
+        "-V, --version",
         action="version",
         version=f"%(prog)s {VERSION}"
     )
