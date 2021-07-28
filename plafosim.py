@@ -74,8 +74,8 @@ def main():
     road.add_argument(
         "--ramp-interval",
         type=int,
-        default=5000,
-        help="The distance between any two on-/off-ramps in m",
+        default=5,
+        help="The distance between any two on-/off-ramps in km",
     )
     road.add_argument(
         "--pre-fill",
@@ -580,7 +580,7 @@ def main():
     simulator = Simulator(
         args.road_length * 1000,
         args.lanes,
-        args.ramp_interval,
+        args.ramp_interval * 1000,
         args.pre_fill,
         args.vehicles,
         args.density,

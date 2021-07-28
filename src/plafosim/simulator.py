@@ -75,7 +75,7 @@ class Simulator:
             self,
             road_length: int = 100 * 1000,
             number_of_lanes: int = 3,
-            ramp_interval: int = 5000,
+            ramp_interval: int = 5 * 1000,
             pre_fill: bool = False,
             number_of_vehicles: int = -1,
             vehicle_density: float = -1,
