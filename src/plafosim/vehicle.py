@@ -17,6 +17,7 @@
 
 import logging
 import math
+import random
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
@@ -169,6 +170,9 @@ class Vehicle:
             'PMx': 0,  # the total PM (Partikel) emission in mg
             'fuel': 0,  # the total mKr (Kraftstoffverbrauch) emission in mg
         }
+
+        # gui properties
+        self._color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
 
     @property
     def vid(self) -> int:

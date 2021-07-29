@@ -1608,12 +1608,8 @@ class Simulator:
                         traci.poi.add(f"RSU {infrastructure._iid}", x=infrastructure._position, y=y + width + 10, color=(51, 128, 51))
 
         # draw pre-filled vehicles
-        # save internal state of random number generator
-        state = random.getstate()
         for vehicle in self._vehicles.values():
             self._add_gui_vehicle(vehicle)
-        # restore internal state of random number generator to not influence the determinism of the simulation
-        random.setstate(state)
 
     def _update_gui(self):
         """Updates the GUI via TraCI."""
@@ -1645,18 +1641,10 @@ class Simulator:
         import traci
         if str(vehicle._vid) not in traci.vehicle.getIDList():
             traci.vehicle.add(str(vehicle._vid), 'route', departPos=str(vehicle._position), departSpeed=str(vehicle._speed), departLane=str(vehicle._lane), typeID='vehicle')
-            # save internal state of random number generator
-            state = random.getstate()
-            color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
-            traci.vehicle.setColor(str(vehicle._vid), color)
-            vehicle._color = color
-            # restore internal state of random number generator to not influence the determinism of the simulation
-            if not (self._pre_fill and self._step == 0):
-                # By disabling the reset of the random state when using pre-fill and in the first time step,
-                # we achieve a (deterministic) random color for all pre-filled vehicles.
-                # Otherwise, when resetting the state step 0, all pre-filled vehicles did not have a random color
-                # (instead they had the same), since the RNG did not pick any other numbers since the last color pick.
-                random.setstate(state)
+            if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon:
+                traci.vehicle.setColor(str(vehicle._vid), vehicle.platoon.leader._color)
+            else:
+                traci.vehicle.setColor(str(vehicle._vid), vehicle._color)
             traci.vehicle.setSpeedMode(str(vehicle._vid), 0)
             traci.vehicle.setLaneChangeMode(str(vehicle._vid), 0)
             # track vehicle
