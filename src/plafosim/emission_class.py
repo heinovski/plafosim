@@ -17,7 +17,6 @@
 
 from enum import Enum
 
-
 # emission factors of the HBEFA3 model
 EMISSION_FACTORS = {
     'PC_G_EU4': {

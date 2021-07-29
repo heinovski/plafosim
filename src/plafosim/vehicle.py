@@ -28,8 +28,9 @@ from .util import acceleration2speed, speed2distance
 from .vehicle_type import VehicleType
 
 if TYPE_CHECKING:
-    from .simulator import Simulator  # noqa 401
     from numpy.typing import ArrayLike
+
+    from .simulator import Simulator  # noqa 401
 else:
     ArrayLike = float
 

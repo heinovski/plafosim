@@ -16,8 +16,8 @@
 #
 #from plafosim import Message
 
-import pytest
 import numpy as np
+import pytest
 
 from plafosim.vehicle import safe_speed
 

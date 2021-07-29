@@ -22,9 +22,9 @@ import sys
 import time
 from collections import namedtuple
 from math import copysign
+from timeit import default_timer as timer
 
 import pandas as pd
-from timeit import default_timer as timer
 from tqdm import tqdm
 
 from .cf_model import CF_Model
@@ -32,10 +32,8 @@ from .emission_class import EmissionClass
 from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
-from .util import addLoggingLevel
-from .util import get_crashed_vehicles
-from .util import update_position
-from .vehicle import safe_speed, Vehicle
+from .util import addLoggingLevel, get_crashed_vehicles, update_position
+from .vehicle import Vehicle, safe_speed
 from .vehicle_type import VehicleType
 
 addLoggingLevel('TRACE', 5)
