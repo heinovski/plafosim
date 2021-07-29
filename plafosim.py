@@ -369,7 +369,8 @@ def main():
     simulation = parser.add_argument_group("simulation properties")
     simulation.add_argument(
         "--step-length",
-        type=int, default=1,
+        type=int,
+        default=1,
         help="The step length in s",
     )
     simulation.add_argument(
@@ -607,12 +608,18 @@ def main():
     # load snapshot
     simulator = None
     if args.load_snapshot:
-        with open(args.load_snapshot, 'rb') as f:
+        with open(args.load_snapshot, "rb") as f:
             simulator = pickle.load(f)
             assert(isinstance(simulator, Simulator))
         print(f"Loaded a snapshot of the simulation from {args.load_snapshot}. Running simulation with the loaded state...")
         # allow to override the loaded gui parameters
-        simulator.__dict__.update({f"_{k}": v for k, v in vars(args).items() if k in [x.dest for x in gui._group_actions]})
+        simulator.__dict__.update(
+            {
+                f"_{k}": v
+                for k, v in vars(args).items()
+                if k in [x.dest for x in gui._group_actions]
+            }
+        )
     else:
         simulator = Simulator(
             args.road_length,
@@ -697,7 +704,7 @@ def main():
     if args.save_snapshot:
         if args.load_snapshot:
             sys.exit("ERROR: Saving a loaded snapshot does not make sense!")
-        with open(args.save_snapshot, 'wb') as f:
+        with open(args.save_snapshot, "wb") as f:
             pickle.dump(simulator, f)
         print(f"Saved a snapshot of the simulation to {args.save_snapshot}. Exiting...")
         return
