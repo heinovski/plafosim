@@ -612,6 +612,8 @@ def main():
             simulator = pickle.load(f)
             assert(isinstance(simulator, Simulator))
         print(f"Loaded a snapshot of the simulation from {args.load_snapshot}. Running simulation with the loaded state...")
+        # allow to override the loaded gui parameters
+        simulator.__dict__.update({f"_{k}": v for k, v in vars(args).items() if k in [x.dest for x in gui._group_actions]})
     else:
         simulator = Simulator(
             args.road_length,
