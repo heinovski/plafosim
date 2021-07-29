@@ -575,12 +575,20 @@ def main():
         help="Whether to record results for pre-filled vehicles",
     )
 
+    # get argument values
     args = parser.parse_args()
+    args.road_length *= 1000
+    args.ramp_interval *= 1000
+    args.minimum_trip_length *= 1000
+    args.maximum_trip_length *= 1000
+    args.solver_time_limit *= 1000
+    args.time_limit *= 60 * 60
+    args.gui_delay /= 1000
 
     simulator = Simulator(
-        args.road_length * 1000,
+        args.road_length,
         args.lanes,
-        args.ramp_interval * 1000,
+        args.ramp_interval,
         args.pre_fill,
         args.vehicles,
         args.density,
@@ -603,8 +611,8 @@ def main():
         args.depart_probability,
         args.depart_rate,
         args.random_arrival_position,
-        args.minimum_trip_length * 1000,
-        args.maximum_trip_length * 1000,
+        args.minimum_trip_length,
+        args.maximum_trip_length,
         args.communication_range,
         args.start_as_platoon,
         args.reduced_air_drag,
@@ -619,17 +627,17 @@ def main():
         args.alpha,
         args.speed_deviation_threshold,
         args.position_deviation_threshold,
-        args.solver_time_limit * 1000,
+        args.solver_time_limit,
         args.infrastructures,
         args.step_length,
-        round(args.time_limit * 60 * 60),
+        args.time_limit,
         args.actions,
         args.lane_changes,
         args.collisions,
         args.random_seed,
         getattr(logging, args.log_level.upper(), 5),  # implicitly use trace level
         args.gui,
-        args.gui_delay / 1000,
+        args.gui_delay,
         args.track_vehicle,
         args.sumo_config,
         args.draw_ramps,
