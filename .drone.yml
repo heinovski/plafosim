@@ -7,7 +7,8 @@ steps:
 - name: flake8
   image: alpine/flake8
   commands:
-    - flake8 --ignore=E265,E266,E402,E501,W503,W504  # comments, import order, line-length, line-break binary operator*2
+      # comments, import order, line-length, line-break binary operator*2
+    - flake8 --ignore=E265,E266,E402,E501,W503,W504 src tests plafosim.py
 
 ---
 kind: pipeline
