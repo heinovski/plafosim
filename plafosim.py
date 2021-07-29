@@ -18,6 +18,8 @@
 
 import argparse
 import logging
+import pickle
+import sys
 from distutils.util import strtobool
 from timeit import default_timer as timer
 
@@ -55,6 +57,18 @@ def main():
         "-V", "--version",
         action="version",
         version=f"%(prog)s {VERSION}"
+    )
+    parser.add_argument(
+        "--save-snapshot",
+        type=str,
+        default=None,
+        help="The name of a snapshot file to save",
+    )
+    parser.add_argument(
+        "--load-snapshot",
+        type=str,
+        default=None,
+        help="The name of a snapshot file to load",
     )
 
     # road network properties
@@ -591,85 +605,103 @@ def main():
     args.time_limit *= 60 * 60
     args.gui_delay /= 1000
 
-    simulator = Simulator(
-        args.road_length,
-        args.lanes,
-        args.ramp_interval,
-        args.pre_fill,
-        args.vehicles,
-        args.density,
-        args.max_speed,
-        args.acc_headway_time,
-        args.cacc_spacing,
-        args.penetration,
-        args.random_depart_position,
-        args.random_depart_lane,
-        args.desired_speed,
-        args.random_desired_speed,
-        args.speed_variation,
-        args.min_desired_speed,
-        args.max_desired_speed,
-        args.random_depart_speed,
-        args.depart_desired,
-        args.depart_flow,
-        args.depart_method,
-        args.depart_interval,
-        args.depart_probability,
-        args.depart_rate,
-        args.random_arrival_position,
-        args.minimum_trip_length,
-        args.maximum_trip_length,
-        args.communication_range,
-        args.start_as_platoon,
-        args.reduced_air_drag,
-        args.maximum_teleport_distance,
-        args.maximum_approach_time,
-        args.delay_teleports,
-        args.update_desired_speed,
-        args.formation_algorithm,
-        args.formation_strategy,
-        args.formation_centralized_kind,
-        args.execution_interval,
-        args.alpha,
-        args.speed_deviation_threshold,
-        args.position_deviation_threshold,
-        args.solver_time_limit,
-        args.infrastructures,
-        args.step_length,
-        args.time_limit,
-        args.actions,
-        args.lane_changes,
-        args.collisions,
-        args.random_seed,
-        getattr(logging, args.log_level.upper(), 5),  # implicitly use trace level
-        args.gui,
-        args.gui_delay,
-        args.track_vehicle,
-        args.sumo_config,
-        args.gui_start,
-        args.draw_ramps,
-        args.draw_ramp_labels,
-        args.draw_road_end,
-        args.draw_road_end_label,
-        args.draw_infrastructures,
-        args.draw_infrastructure_labels,
-        args.result_base_filename,
-        args.record_simulation_trace,
-        args.record_end_trace,
-        args.record_vehicle_trips,
-        args.record_vehicle_emissions,
-        args.record_vehicle_traces,
-        args.record_vehicle_changes,
-        args.record_emission_traces,
-        args.record_platoon_trips,
-        args.record_platoon_maneuvers,
-        args.record_platoon_formation,
-        args.record_platoon_traces,
-        args.record_platoon_changes,
-        args.record_infrastructure_assignments,
-        args.record_prefilled,
-    )
+    # load snapshot
+    simulator = None
+    if args.load_snapshot:
+        with open(args.load_snapshot, 'rb') as f:
+            simulator = pickle.load(f)
+            assert(isinstance(simulator, Simulator))
+        print(f"Loaded a snapshot of the simulation from {args.load_snapshot}. Running simulation with the loaded state...")
+    else:
+        simulator = Simulator(
+            args.road_length,
+            args.lanes,
+            args.ramp_interval,
+            args.pre_fill,
+            args.vehicles,
+            args.density,
+            args.max_speed,
+            args.acc_headway_time,
+            args.cacc_spacing,
+            args.penetration,
+            args.random_depart_position,
+            args.random_depart_lane,
+            args.desired_speed,
+            args.random_desired_speed,
+            args.speed_variation,
+            args.min_desired_speed,
+            args.max_desired_speed,
+            args.random_depart_speed,
+            args.depart_desired,
+            args.depart_flow,
+            args.depart_method,
+            args.depart_interval,
+            args.depart_probability,
+            args.depart_rate,
+            args.random_arrival_position,
+            args.minimum_trip_length,
+            args.maximum_trip_length,
+            args.communication_range,
+            args.start_as_platoon,
+            args.reduced_air_drag,
+            args.maximum_teleport_distance,
+            args.maximum_approach_time,
+            args.delay_teleports,
+            args.update_desired_speed,
+            args.formation_algorithm,
+            args.formation_strategy,
+            args.formation_centralized_kind,
+            args.execution_interval,
+            args.alpha,
+            args.speed_deviation_threshold,
+            args.position_deviation_threshold,
+            args.solver_time_limit,
+            args.infrastructures,
+            args.step_length,
+            args.time_limit,
+            args.actions,
+            args.lane_changes,
+            args.collisions,
+            args.random_seed,
+            getattr(logging, args.log_level.upper(), 5),  # implicitly use trace level
+            args.gui,
+            args.gui_delay,
+            args.track_vehicle,
+            args.sumo_config,
+            args.gui_start,
+            args.draw_ramps,
+            args.draw_ramp_labels,
+            args.draw_road_end,
+            args.draw_road_end_label,
+            args.draw_infrastructures,
+            args.draw_infrastructure_labels,
+            args.result_base_filename,
+            args.record_simulation_trace,
+            args.record_end_trace,
+            args.record_vehicle_trips,
+            args.record_vehicle_emissions,
+            args.record_vehicle_traces,
+            args.record_vehicle_changes,
+            args.record_emission_traces,
+            args.record_platoon_trips,
+            args.record_platoon_maneuvers,
+            args.record_platoon_formation,
+            args.record_platoon_traces,
+            args.record_platoon_changes,
+            args.record_infrastructure_assignments,
+            args.record_prefilled,
+        )
 
+    # save snapshot
+    if args.save_snapshot:
+        if args.load_snapshot:
+            sys.exit("ERROR: Saving a loaded snapshot does not make sense!")
+        with open(args.save_snapshot, 'wb') as f:
+            pickle.dump(simulator, f)
+        print(f"Saved a snapshot of the simulation to {args.save_snapshot}. Exiting...")
+        return
+
+    # execute simulation
     start_time = timer()
 
     steps = simulator.run()
