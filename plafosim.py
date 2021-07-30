@@ -666,7 +666,7 @@ def main():
             args.solver_time_limit,
             args.infrastructures,
             args.step_length,
-            args.time_limit,
+            int(args.time_limit),
             args.actions,
             args.lane_changes,
             args.collisions,
