@@ -407,16 +407,16 @@ class Simulator:
             # implicitly search on current lane of vehicle
             lane = vehicle._lane
         predecessor = None  # there is no predecessor so far
-        candidates = [
-            v for v in self._vehicles.values() if
+        candidates = {
+            v._vid: v.rear_position for v in self._vehicles.values() if
             v is not vehicle and  # not this vehicle
             v._lane == lane and  # correct lane
             v._position >= vehicle._position  # in front this vehicle
-        ]
+        }
         # find candidate with smallest rear_position (min)
         # we do not check for collisions here because this method is also called within an update step
         if candidates:
-            predecessor = min(candidates, key=lambda x: x.rear_position)
+            predecessor = self._vehicles[min(candidates, key=candidates.get)]
         return predecessor
 
     def _get_successor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
@@ -436,16 +436,16 @@ class Simulator:
             # implicitly search on current lane of vehicle
             lane = vehicle._lane
         successor = None  # there is no successor so far
-        candidates = [
-            v for v in self._vehicles.values() if
+        candidates = {
+            v._vid: v._position for v in self._vehicles.values() if
             v is not vehicle and  # not this vehicle
             v._lane == lane and  # correct lane
             v._position <= vehicle._position  # behind this vehicle
-        ]
+        }
         # find candidate with largest_position (max)
         # we do not check for collisions here because this method is also called within an update step
         if candidates:
-            successor = max(candidates, key=lambda x: x._position)
+            successor = self._vehicles[max(candidates, key=candidates.get)]
         return successor
 
     def _get_predecessor_rear_position(self, vehicle: Vehicle, lane: int = -1) -> float:
