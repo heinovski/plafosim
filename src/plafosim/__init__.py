@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-VERSION = "0.11.4"
+__version__ = "0.11.4"
 
 from .cf_model import CF_Model  # noqa 401
 from .emission_class import EmissionClass  # noqa 401

@@ -23,7 +23,7 @@ import sys
 from distutils.util import strtobool
 from timeit import default_timer as timer
 
-from src.plafosim import VERSION, Simulator
+from src.plafosim import Simulator, __version__
 
 
 class CustomFormatter(
@@ -55,7 +55,7 @@ def main():
     parser.add_argument(
         "-V", "--version",
         action="version",
-        version=f"%(prog)s {VERSION}"
+        version=f"%(prog)s {__version__}"
     )
     parser.add_argument(
         "--save-snapshot",
