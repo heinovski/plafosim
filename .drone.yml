@@ -95,51 +95,37 @@ steps:
 - name: CC
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   failure: ignore  # FIXME: remove after comparison (script) has been fixed
-  environment:
-    HOST:
-      from_secret: ARTIFACTS_HOST
-    USERNAME:
-      from_secret: ARTIFACTS_USER
-    PASSWORD:
-      from_secret: ARTIFACTS_PASSWORD
-    BASE_DIR:
-      from_secret: ARTIFACTS_PATH
-    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
   commands:
     - apt update
-    - apt install lftp
     - apt install time
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
     - ./scripts/validate-cf-model-cc-single.sh
     - ./scripts/validate-cf-model-cc-100.sh
-    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cc*.csv cc*.png"
 - name: ACC
   failure: ignore  # FIXME: remove after comparison (script) has been fixed
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
-  environment:
-    HOST:
-      from_secret: ARTIFACTS_HOST
-    USERNAME:
-      from_secret: ARTIFACTS_USER
-    PASSWORD:
-      from_secret: ARTIFACTS_PASSWORD
-    BASE_DIR:
-      from_secret: ARTIFACTS_PATH
-    DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
   commands:
     - apt update
-    - apt install lftp
     - apt install time
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
     - pip3 install git+https://github.com/michele-segata/plexe-pyapi.git
     - ./scripts/validate-cf-model-acc-single.sh
     - ./scripts/validate-cf-model-acc-100.sh
-    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR acc*.csv acc*.png"
 - name: CACC
   failure: ignore  # FIXME: remove after comparison (script) has been fixed
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
+  commands:
+    - apt update
+    - apt install time
+    - pip3 install -r requirements.txt
+    - pip3 install -r requirements.opt.txt
+    - pip3 install git+https://github.com/michele-segata/plexe-pyapi.git
+    - ./scripts/validate-cf-model-cacc-single.sh
+    - ./scripts/validate-cf-model-cacc-100.sh
+- name: data
+  image: maurosoft1973/docker-alpine-lftp
   environment:
     HOST:
       from_secret: ARTIFACTS_HOST
@@ -151,16 +137,8 @@ steps:
       from_secret: ARTIFACTS_PATH
     DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
   commands:
-    - apt update
-    - apt install lftp
-    - apt install time
-    - pip3 install -r requirements.txt
-    - pip3 install -r requirements.opt.txt
-    - pip3 install git+https://github.com/michele-segata/plexe-pyapi.git
-    - ./scripts/validate-cf-model-cacc-single.sh
-    - ./scripts/validate-cf-model-cacc-100.sh
-    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR cacc*.csv cacc*.png"
-- name: wiki upload
+    - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR *.csv"
+- name: plots
   image: alpine/git
   commands:
     - echo "Username '$DRONE_ASKPASS_USERNAME'"
