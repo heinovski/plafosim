@@ -125,7 +125,7 @@ steps:
     - ./scripts/validate-cf-model-cacc-single.sh
     - ./scripts/validate-cf-model-cacc-100.sh
 - name: data
-  image: maurosoft1973/docker-alpine-lftp
+  image: maurosoft1973/alpine-lftp
   environment:
     HOST:
       from_secret: ARTIFACTS_HOST
