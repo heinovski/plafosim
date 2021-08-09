@@ -24,6 +24,7 @@ from collections import namedtuple
 from math import copysign, isclose
 from timeit import default_timer as timer
 
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
@@ -40,10 +41,11 @@ from .gui import (
     start_gui,
 )
 from .infrastructure import Infrastructure
+from .mobility import compute_new_speeds, safe_speed, single_vehicle_new_speed
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
 from .util import addLoggingLevel, get_crashed_vehicles, update_position
-from .vehicle import Vehicle, safe_speed
+from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
 addLoggingLevel('TRACE', 5)
@@ -525,7 +527,7 @@ class Simulator:
         p = self._get_predecessor(vehicle, target_lane)
         if p is not None:
             gap_to_predecessor_on_target_lane = p.rear_position - vehicle._position
-            if gap_to_predecessor_on_target_lane < 0:
+            if gap_to_predecessor_on_target_lane < vehicle.desired_gap:
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its predecessor")
                 return False
             if vehicle._speed >= safe_speed(
@@ -534,7 +536,7 @@ class Simulator:
                     gap_to_predecessor=gap_to_predecessor_on_target_lane,
                     desired_headway_time=vehicle.desired_headway_time,
                     max_deceleration=vehicle.max_deceleration,
-                    min_gap=vehicle.min_gap,
+                    desired_gap=vehicle.desired_gap,
             ):
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its predecessor")
                 return False
@@ -543,7 +545,7 @@ class Simulator:
         s = self._get_successor(vehicle, target_lane)
         if s is not None:
             gap_to_successor_on_target_lane = vehicle.rear_position - s._position
-            if gap_to_successor_on_target_lane < 0:
+            if gap_to_successor_on_target_lane < s.desired_gap:
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its successor")
                 return False
             if s._speed >= safe_speed(
@@ -552,7 +554,7 @@ class Simulator:
                     gap_to_predecessor=gap_to_successor_on_target_lane,
                     desired_headway_time=s.desired_headway_time,
                     max_deceleration=s.max_deceleration,
-                    min_gap=s.min_gap,
+                    desired_gap=s.desired_gap,
             ):
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its successor")
                 return False
@@ -720,12 +722,12 @@ class Simulator:
                 self._change_lane(vehicle, target_lane, "speedGain")
                 return
 
-            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target.vid, dry_run=True)
+            speed_target = single_vehicle_new_speed(vehicle, pred_target, self._step_length)
             pred_current = self._get_predecessor(vehicle, vehicle._lane)
             if not pred_current:
                 # no more predecessor, no more reason to change right
                 return
-            speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current.vid, dry_run=True)
+            speed_current = single_vehicle_new_speed(vehicle, pred_current, self._step_length)
             if speed_target > speed_current:
                 self._change_lane(vehicle, target_lane, "speedGain")
 
@@ -740,55 +742,11 @@ class Simulator:
                 self._change_lane(vehicle, target_lane, "keepRight")
                 return
 
-            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target.vid, dry_run=True)
+            speed_target = single_vehicle_new_speed(vehicle, pred_target, self._step_length)
             pred_current = self._get_predecessor(vehicle, vehicle._lane)
-            if pred_current is not None:
-                speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current.vid, dry_run=True)
-            else:
-                speed_current = vehicle.new_speed(-1, -1, -1)
+            speed_current = single_vehicle_new_speed(vehicle, pred_current, self._step_length)
             if speed_target >= speed_current or isclose(speed_target, vehicle._cc_target_speed):
                 self._change_lane(vehicle, target_lane, "keepRight")
-
-    def _adjust_speeds(self):
-        """
-        Updates the speed (i.e., acceleration & speed) of all vehicles in the simulation.
-
-        This does not (yet) use a vectorized approach.
-
-        This is based on Krauss' multi lane traffic:
-        adjust()
-        """
-
-        vdf = self._get_vehicles_df()
-        # sort all vehicles by their position to avoid collisions
-        vdf = vdf.sort_values(by='position', ascending=False)
-        vids = vdf.reset_index('vid').set_index(vdf.index).groupby('lane')['vid']
-        vdf['predecessor'] = vids.shift(1, fill_value=-1)
-
-        for row in vdf.itertuples():
-            vehicle = self._vehicles[row.Index]
-            self._adjust_speed(vehicle, row.predecessor)
-
-    def _adjust_speed(self, vehicle: Vehicle, predecessor_id: int):
-        """
-        Updates the speed (i.e., acceleration & speed) of a given vehicle.
-
-        Parameters
-        ----------
-        vehicle: Vehicle
-            The vehicle to be updated
-        """
-
-        LOG.debug(f"{vehicle._vid}'s current acceleration: {vehicle._acceleration}m/s2")
-        LOG.debug(f"{vehicle._vid}'s current speed {vehicle._speed}m/s")
-        if predecessor_id >= 0:
-            predecessor = self._vehicles[predecessor_id]
-            new_speed = vehicle.new_speed(predecessor._speed, predecessor.rear_position, predecessor_id)
-        else:
-            new_speed = vehicle.new_speed(-1, -1, -1)
-        vehicle._acceleration = new_speed - vehicle._speed
-        vehicle._speed = new_speed
-        LOG.debug(f"{vehicle._vid}'s new acceleration: {vehicle._acceleration}m/s2")
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
         """
@@ -1230,7 +1188,7 @@ class Simulator:
                 gap_to_predecessor=depart_position - vtype._length - other_vehicle._position,
                 desired_headway_time=other_vehicle.desired_headway_time,
                 max_deceleration=other_vehicle.max_deceleration,
-                min_gap=other_vehicle.min_gap,
+                desired_gap=other_vehicle.desired_gap,
             )
             unsafe = other_vehicle._speed - speed_safe >= other_vehicle.max_deceleration
         else:
@@ -1241,7 +1199,7 @@ class Simulator:
                 gap_to_predecessor=other_vehicle.rear_position - depart_position,
                 desired_headway_time=other_vehicle.desired_headway_time,
                 max_deceleration=other_vehicle.max_deceleration,
-                min_gap=vtype._min_gap,
+                desired_gap=other_vehicle.desired_gap,
             )
             unsafe = depart_speed - speed_safe >= vtype.max_deceleration
         return unsafe
@@ -1695,17 +1653,26 @@ class Simulator:
                 if self._lane_changes:
                     self._change_lanes()
 
-                # TODO update neighbor data (predecessor, successor, front)
-                # this is necessary due to the lane changes
-                # however, it might be sufficient to update the neighbors only for vehicles that did change the lane
-
-                # adjust speed (of all vehicles)
-                self._adjust_speeds()
-
                 # BEGIN VECTORIZATION PART
                 # TODO move upwards/get rid of it entirely
                 # convert dict of vehicles to dataframe (temporary)
                 vdf = self._get_vehicles_df()
+
+                # TODO update neighbor data (predecessor, successor, front)
+                # this is necessary due to the lane changes
+                # however, it might be sufficient to update the neighbors only
+                # for vehicles that did change the lane
+                # TODO: take care to de-duplicate this from compute_new_speeds
+
+                # adjust speed (of all vehicles)
+                new_speed = compute_new_speeds(vdf, self._step_length)
+                vdf['old_speed'] = vdf['speed']
+                vdf['speed'] = new_speed
+                vdf['blocked_front'] = (
+                    (vdf.speed < vdf.max_speed)
+                    & ((vdf.speed - vdf.old_speed) <= 0)
+                    & (vdf.cf_model != CF_Model.CACC)
+                )
 
                 # adjust positions (of all vehicles)
                 vdf = update_position(vdf, self._step_length)
@@ -1779,29 +1746,71 @@ class Simulator:
 
     def _get_vehicles_df(self) -> pd.DataFrame:
         """Returns a pandas dataframe from the internal data structure."""
+        platoon_fields = [
+            "leader_id",
+            "platoon_desired_speed",
+            "platoon_max_speed",
+            "platoon_max_acceleration",
+            "platoon_max_deceleration",
+        ]
+
+        def get_platoon_data(vehicle):
+            data = {key: 1e15 for key in platoon_fields}
+            data["leader_id"] = -1
+
+            if not isinstance(vehicle, PlatooningVehicle):
+                return data
+
+            platoon = vehicle._platoon
+            data["leader_id"] = platoon._formation[0].vid
+            data["platoon_desired_speed"] = platoon._desired_speed
+            data["platoon_max_speed"] = platoon.max_speed
+            data["platoon_max_acceleration"] = platoon.max_acceleration
+            data["platoon_max_deceleration"] = platoon.max_deceleration
+            return data
 
         fields = [
             "arrival_position",
-            "desired_speed",
+            "cc_target_speed",
             "position",
             "lane",
             "speed",
             "cf_model",
             "vid",
         ]
+        vtype_fields = [
+            "length",
+            "min_gap",
+            "max_speed",
+            "max_acceleration",
+            "max_deceleration",
+        ]
 
         if not self._vehicles:
-            return pd.DataFrame()
+            return pd.DataFrame({key: [] for key in fields + vtype_fields + platoon_fields + ["desired_headway_time", "acc_lambda"]}).drop(["cc_target_speed"], axis="columns")
         return (
             pd.DataFrame([
                 dict(
                     **{key: vehicle.__dict__[f"_{key}"] for key in fields},
-                    length=vehicle.length,
+                    **{key: vehicle._vehicle_type.__dict__[f"_{key}"] for key in vtype_fields},
+                    **get_platoon_data(vehicle),
+                    desired_headway_time=vehicle.desired_headway_time,
+                    acc_lambda=getattr(vehicle, "_acc_lambda", np.nan),
                 )
                 for vehicle in self._vehicles.values()
             ])
             .astype({"cf_model": CFModelDtype})
             .set_index('vid')
+            # compute effective limits
+            # These computations may negatively impact performance, but will
+            # eventually be removed from here anyway once the DataFrame stays
+            # and computations/updates move to actions (like platoon updates).
+            .assign(
+                max_speed=lambda df: df[["max_speed", "cc_target_speed", "platoon_max_speed", "platoon_desired_speed"]].min(axis="columns"),
+                max_acceleration=lambda df: df[["max_acceleration", "platoon_max_acceleration"]].min(axis="columns"),
+                max_deceleration=lambda df: df[["max_deceleration", "platoon_max_deceleration"]].min(axis="columns"),
+            )
+            .drop(["cc_target_speed"], axis="columns")
         )
 
     def _write_back_vehicles_df(self, vdf: pd.DataFrame):
@@ -1823,6 +1832,8 @@ class Simulator:
             # update all fields within the data that we updated with pandas
             vehicle = self._vehicles[row.Index]
             vehicle._position = row.position
+            vehicle._speed = row.speed
+            vehicle._blocked_front = row.blocked_front
 
     def stop(self, msg: str):
         """

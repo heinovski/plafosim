@@ -16,15 +16,12 @@
 #
 
 import logging
-import math
 import random
-from typing import TYPE_CHECKING, Optional
-
-import numpy as np
+from typing import TYPE_CHECKING
 
 from .cf_model import CF_Model
 from .message import Message
-from .util import FAKELOG, acceleration2speed, speed2distance
+from .util import speed2distance
 from .vehicle_type import VehicleType
 
 if TYPE_CHECKING:
@@ -36,57 +33,8 @@ else:
 
 LOG = logging.getLogger(__name__)
 
-
-def safe_speed(
-    speed_predecessor: ArrayLike,
-    speed_current: ArrayLike,
-    gap_to_predecessor: ArrayLike,
-    desired_headway_time: ArrayLike,
-    max_deceleration: ArrayLike,
-    min_gap: Optional[ArrayLike] = None,
-) -> float:
-    """
-    Returns the speed which is still safe without a collision.
-
-    This is a simple and dumb calculation for the safe speed of a vehicle.
-    The calculation is is based on Krauss' single lane traffic:
-    v_safe(t) = v_lead(t) + (g(t)-g_des(t)) / (tau_b + tau)
-    g_des(t) = tau * v_lead(t)
-
-    We further introduced the optional minimum gap.
-    This may be used to keep some distance at very low speeds.
-    However, this makes this function infeasible for backwards-driving predecessors!
-
-    Parameters
-    ----------
-    speed_predecessor : float
-        The driving speed of the vehicle in the front (in m/s)
-    speed_current : float
-        The previously computed speed of the vehicle in question (in m/s)
-    gap_to_predecessor : float
-        The gap between the vehicle in question and its predecessor (in m)
-    desired_headway_time : float
-        The vehicle's desired hadway or reaction time (in s)
-    max_deceleration : float
-        The vehicle's absolute (positve number) maximum deceleration (in m/(s**2))
-    min_gap : float, optional
-        The minimum safety gap (in m)
-    """
-
-    if min_gap is None:
-        min_gap = np.zeros_like(speed_predecessor)
-
-    # TODO: make numpy-compatible
-    assert np.all(speed_predecessor >= 0)
-    assert np.all(speed_current >= 0)
-    assert np.all(max_deceleration > 0)
-
-    # NOTE: maybe we will extract the computation of gap_desired later
-    #       that would make this formula use the pure Krauss model again here
-    gap_desired = np.max(np.array([desired_headway_time * speed_predecessor, min_gap]), axis=0)
-    # gap_desired = max(desired_headway_time * speed_predecessor, min_gap)
-    tau_b = (speed_predecessor + speed_current) / (2 * max_deceleration)
-    return speed_predecessor + ((gap_to_predecessor - gap_desired) / (desired_headway_time + tau_b))
+SPEED_NO_PREDECESSOR = 1e15
+REARPOSITION_NO_PREDECESSOR = 1e15
 
 
 class Vehicle:
@@ -356,114 +304,6 @@ class Vehicle:
         """Returns whether the vehicle is currently blocked by a slow vehicle in the front."""
 
         return self._blocked_front
-
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int, dry_run: bool = False) -> float:
-        """
-        Calculates the new speed for a vehicle using the kraus model.
-
-        This is a simple and dumb calculation for the safe speed of a vehicle.
-        The calculation is is based on Krauss' single lane traffic:
-        adjust speed
-        v_max, desired speed
-        epsilon, dawdling of drives
-        g_des = tau*v_lead
-        tau, reaction time of drivers
-        tau_b = v/b
-        v_des(t) = min[v_max, v(t)+a(v)*step_size, v_safe(t)]
-        v(t + step_size) = max[0, v_des(t) - epsilon]
-
-        Parameters
-        ----------
-        speed_predecessor : float
-            The driving speed of the vehicle in the front
-        predecessor_rear_position : float
-            The rear position of the vehicle in the front
-        predecessor_id : int
-            The id of the vehicle in the front. This should only be used for debugging.
-        """
-
-        # hide logger to disable logging in dry_run mode
-        LOG = FAKELOG if dry_run else globals()["LOG"]
-
-        LOG.trace(f"{self._vid}'s target speed is {self._cc_target_speed}m/s")
-
-        new_speed = -1
-        # do we need to adjust our speed?
-        diff_to_target = self._cc_target_speed - self._speed
-        if diff_to_target > 0:
-            # we need to accelerate
-            new_speed = min(
-                self._speed +
-                min(diff_to_target, acceleration2speed(self.max_acceleration, self._simulator.step_length)),
-                self.max_speed
-            )
-            LOG.trace(f"{self._vid} wants to accelerate to {new_speed}m/s")
-        elif diff_to_target < 0:
-            # we need to decelerate
-            new_speed = max(
-                self._speed +
-                max(diff_to_target, -acceleration2speed(self.max_deceleration, self._simulator.step_length)),
-                0
-            )
-            LOG.trace(f"{self._vid} wants to decelerate to {new_speed}m/s")
-        else:
-            new_speed = self._speed
-            LOG.trace(f"{self._vid} wants to keep the speed of {new_speed}m/s")
-
-        # vsafe
-        if speed_predecessor >= 0 and predecessor_rear_position >= 0:
-            # we have a predecessor
-            gap_to_predecessor = predecessor_rear_position - self._position
-            LOG.trace(f"{self._vid}'s front gap {gap_to_predecessor}m")
-            if gap_to_predecessor < 0:
-                LOG.warning(f"{self._vid}'s front gap is negative ({gap_to_predecessor}m)")
-            LOG.trace(f"{self._vid}'s predecessor speed {speed_predecessor}m/s")
-            LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
-            speed_safe = safe_speed(
-                speed_predecessor=speed_predecessor,
-                speed_current=self._speed,
-                gap_to_predecessor=gap_to_predecessor,
-                desired_headway_time=self.desired_headway_time,
-                max_deceleration=self.max_deceleration,
-                min_gap=self.min_gap,
-            )
-            LOG.trace(f"{self._vid}'s safe speed {speed_safe}m/s")
-
-            if speed_safe < new_speed:
-                LOG.debug(f"{self._vid} is blocked by a slow vehicle!")
-                if not dry_run:
-                    self._blocked_front = True
-
-                # we cannot brake stronger than we actually can
-                new_speed = max(
-                    speed_safe,
-                    self._speed - acceleration2speed(self.max_deceleration, self._simulator.step_length)
-                )
-                LOG.trace(f"{self._vid}'s new speed after safe speed is {new_speed}m/s")
-                if speed_safe < new_speed:
-                    LOG.warning(f"{self._vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({speed_safe}m/s)! This may lead to a crash!")
-            else:
-                if not dry_run:
-                    self._blocked_front = False
-        else:
-            # we have no predecessor
-            if not dry_run:
-                self._blocked_front = False
-
-        # TODO dawdling? we do not support dawdling at the moment (sigma == 0.0)
-        # new_speed -= random() * new_speed
-
-        # make sure we do not drive backwards
-        if (new_speed < 0):
-            new_speed = 0
-
-        # avoid issues due to floating point precision
-        if math.isclose(new_speed, self._speed):
-            new_speed = self._speed
-
-        LOG.debug(f"{self._vid}'s new speed is {new_speed}m/s")
-
-        return new_speed
 
     def action(self, step: int):
         """

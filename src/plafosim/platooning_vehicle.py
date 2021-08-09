@@ -26,7 +26,6 @@ from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
 from .speed_position import SpeedPosition
-from .util import FAKELOG
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
@@ -330,124 +329,6 @@ class PlatooningVehicle(Vehicle):
                 * (-gap_to_predecessor + desired_gap)
             )
         )
-
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int, dry_run: bool = False) -> float:
-        """
-        Calculates the new speed for a vehicle using the currently active car following model.
-
-        Parameters
-        ----------
-        speed_predecessor : float
-            The driving speed of the vehicle in the front
-        predecessor_rear_position : float
-            The rear position of the vehicle in the front
-        predecessor_id : int
-            The id of the vehicle in the front. This should only be used for debugging.
-        """
-
-        # hide logger to disable logging in dry_run mode
-        LOG = FAKELOG if dry_run else globals()["LOG"]
-
-        if self._cf_model is CF_Model.ACC:
-            # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different models
-            if speed_predecessor >= 0 and predecessor_rear_position >= 0:
-                gap_to_predecessor = predecessor_rear_position - self._position
-                LOG.trace(f"{self._vid}'s front gap {gap_to_predecessor}m")
-                if gap_to_predecessor < 0:
-                    LOG.warning(f"{self._vid}'s front gap is negative ({gap_to_predecessor}m)")
-                LOG.trace(f"{self._vid}'s desired gap {self.desired_gap}m")
-                LOG.trace(f"{self._vid}'s target speed {self._cc_target_speed}m/s")
-                LOG.trace(f"{self._vid}'s predecessor ({predecessor_id}) speed {speed_predecessor}m/s")
-
-                u = self._acc_acceleration(speed_predecessor, gap_to_predecessor, self.desired_gap)
-
-                LOG.trace(f"{self._vid}'s ACC safe speed {self._speed + u}m/s")
-
-                u = min(self.max_acceleration, u)  # we cannot accelerate stronger than we actually can
-                LOG.trace(f"{self._vid}'s ACC max acceleration speed {self._speed + u}m/s")
-
-                # we cannot decelerate stronger than we actually can
-                if u < -self.max_deceleration:
-                    LOG.warn(f"{self._vid}'s is performing an emergency braking! Its new speed ({self._speed - self.max_deceleration}m/s) is still faster than its ACC target speed ({self._speed + u}m/s)! This may lead to a crash!")
-                    u = -self.max_deceleration
-                LOG.trace(f"{self._vid}'s ACC max deceleration speed {self._speed + u}m/s")
-
-                new_speed = self._speed + u
-                new_speed = min(self.max_speed, new_speed)  # only drive as fast as possible
-                LOG.trace(f"{self._vid}'s ACC max possible speed {new_speed}m/s")
-
-                # make sure we do not drive backwards
-                if (new_speed < 0):
-                    new_speed = 0
-
-                # avoid issues due to floating point precision
-                if math.isclose(new_speed, self._speed):
-                    new_speed = self._speed
-
-                if self._platoon_role is PlatoonRole.LEADER:
-
-                    LOG.trace(f"{self._vid}'s ACC new individual speed {new_speed}m/s")
-
-                    # make sure that the leader uses the platoon's parameters for ACC
-
-                    # only accelerate as fast as the maximum acceleration of the individual platoon members
-                    new_speed = min(new_speed, self._platoon.speed + self._platoon.max_acceleration)
-
-                    # only decelerate as fast as the maximum deceleration of the individual platoon members
-                    new_speed = max(new_speed, self._platoon.speed - self._platoon.max_deceleration)
-
-                    # only drive as fast as the maximum speed of the individual platoon members
-                    new_speed = min(new_speed, self._platoon.max_speed)
-
-                    LOG.trace(f"{self._vid}'s CACC possible speed {new_speed}m/s")
-
-                    # only drive as fast as the platoon's desired speed
-                    new_speed = min(new_speed, self.platoon.desired_speed)
-                    LOG.trace(f"{self._vid}'s CACC target speed {new_speed}m/s")
-
-                    LOG.debug(f"{self._vid}'s CACC new speed {new_speed}m/s")
-
-                else:
-                    # the vehicle is not in a platoon
-                    assert(not (self._platoon_role is PlatoonRole.LEADER or self._platoon_role is PlatoonRole.FOLLOWER))
-
-                    new_speed = min(self._cc_target_speed, new_speed)  # only drive as fast as target speed
-                    LOG.trace(f"{self._vid}'s ACC target speed {new_speed}m/s")
-
-                    LOG.debug(f"{self._vid}'s ACC new speed {new_speed}m/s")
-
-                if new_speed < self._cc_target_speed and u <= 0:
-                    LOG.debug(f"{self._vid} is blocked by slow vehicle!")
-                    if not dry_run:
-                        self._blocked_front = True
-                else:
-                    if not dry_run:
-                        self._blocked_front = False
-
-                return new_speed
-
-            # no predecessor --> use default CC (see below)
-        elif self._cf_model is CF_Model.CACC:
-            assert(self._platoon_role is PlatoonRole.FOLLOWER)  # only followers can use CACC
-
-            # sanity checks for front vehicle in platoon
-            assert(speed_predecessor >= 0 and predecessor_rear_position >= 0)
-            # check whether there is a vehicle between us and our front vehicle
-
-            assert(self._platoon.get_front(self).vid == predecessor_id)
-
-            ### HACK FOR AVOIDING COMMUNICATION AND CACC CALCULATION ###
-            speed_leader = self._platoon.leader.speed
-
-            gap_to_predecessor = predecessor_rear_position - self._position
-            # avoid issues due to floating point precision
-            assert(math.isclose(gap_to_predecessor, self._cacc_spacing))
-
-            LOG.trace(f"{self._vid} uses new speed {speed_leader}m/s from platoon leader {self._platoon.leader.vid}")
-            return speed_leader
-
-        # default: use CC or driving freely
-        return super().new_speed(speed_predecessor, predecessor_rear_position, predecessor_id)
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
         """

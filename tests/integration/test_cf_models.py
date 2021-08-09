@@ -19,8 +19,8 @@ import pandas as pd
 import pytest
 
 from plafosim.cf_model import CF_Model
+from plafosim.mobility import is_gap_safe
 from plafosim.simulator import Simulator, _desired_headway_time, vtype
-from plafosim.vehicle import safe_speed
 
 SPEED = [20, 30, 40]
 HEADWAY_TIME = [1.0, 1.25, 1.5]
@@ -84,14 +84,15 @@ def test_cf_models_blocked(
     assert s._vehicles[0].position > s._vehicles[1].position
     assert not s._vehicles[0].blocked_front
     assert not s._vehicles[1].blocked_front
-    # FIXME: safe_speed will go when we move to vectorized code, use consistent safe-gap function
-    assert s._vehicles[1].speed <= safe_speed(
-        speed_predecessor=s._vehicles[0].speed,
-        speed_current=s._vehicles[1].speed,
-        gap_to_predecessor=s._vehicles[0].rear_position - s._vehicles[1].position,
-        desired_headway_time=s._vehicles[1].desired_headway_time,
-        max_deceleration=vtype.max_deceleration,
-        min_gap=vtype.min_gap,
+    assert is_gap_safe(
+        front_position=s._vehicles[0].position,
+        front_speed=s._vehicles[0].speed,
+        front_max_acceleration=vtype.max_acceleration,
+        front_length=vtype.length,
+        back_position=s._vehicles[1].position,
+        back_speed=s._vehicles[1].speed,
+        back_max_acceleration=vtype.max_acceleration,
+        step_length=s._step_length
     )
 
     # run the simulation to record the trace file
