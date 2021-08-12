@@ -83,6 +83,34 @@ TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
 CFModelDtype = pd.CategoricalDtype(list(CF_Model), ordered=True)
 
 
+def report_rough_braking(
+    vdf: pd.DataFrame,
+    new_speed: pd.Series,
+    rough_factor: float = 0.5
+) -> None:
+    """
+    Report about vehicle preforming rough braking maneuvers.
+
+    Rough braking meaning more than rough_factor times max_deceleration.
+    """
+    brakers = (
+        (vdf['speed'] - new_speed) > (vdf.max_deceleration * rough_factor)
+    )
+    if not brakers.any():
+        return
+
+    fields = ['lane', 'position', 'speed', 'new_speed', 'max_deceleration']
+    brake_df = (
+        vdf.assign(new_speed=new_speed)
+        .loc[brakers, fields]
+        .sort_values(["lane", "position"], ascending=False)
+    )
+    LOG.warning(
+        "The following vehicles performed rough braking:\n%s",
+        brake_df
+    )
+
+
 class Simulator:
     """A collection of parameters and information of the simulator."""
 
@@ -1666,6 +1694,7 @@ class Simulator:
 
                 # adjust speed (of all vehicles)
                 new_speed = compute_new_speeds(vdf, self._step_length)
+                report_rough_braking(vdf, new_speed)
                 vdf['old_speed'] = vdf['speed']
                 vdf['speed'] = new_speed
                 vdf['blocked_front'] = (
