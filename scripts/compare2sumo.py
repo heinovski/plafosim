@@ -16,8 +16,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# NOTE: limits were set with SUMO 1.6.0 and seed 1337
-
 import argparse
 import re
 import sys
