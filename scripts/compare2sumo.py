@@ -108,11 +108,11 @@ sumo_traces.dropna(inplace=True)
 sumo_traces.replace(r'static\.', '', regex=True, inplace=True)
 sumo_traces.replace(r'v\.', '', regex=True, inplace=True)
 sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
-# Remove trace values that do not correspond to plafosim (timestep of 1.0s)
-# TODO use average of values within 1.0s timestep?
-sumo_traces = sumo_traces[sumo_traces.step.mod(1.0) == 0.0]
-sumo_traces = sumo_traces.astype({'step': int, 'id': int, 'lane': int})
+sumo_traces = sumo_traces.astype({'step': float, 'id': int, 'lane': int})
 sumo_traces.sort_values(by='step', inplace=True)
+# Aggregate values for finer-grained trace resolution than plafosim (timestep of 1.0s)
+sumo_traces = sumo_traces.assign(step=lambda df: df.step.round(0)).groupby(['step', 'id']).mean().reset_index()
+sumo_traces = sumo_traces.astype({'step': int})
 assert(len(sumo_traces.id.unique()) == args.vehicles)
 
 plafosim_traces = pandas.read_csv(
@@ -144,8 +144,11 @@ try:
     sumo_changes.replace(r'static\.', '', regex=True, inplace=True)
     sumo_changes.replace(r'v\.', '', regex=True, inplace=True)
     sumo_changes.replace('edge_0_0_', '', regex=True, inplace=True)
-    sumo_changes = sumo_changes.astype({'step': int, 'id': int, 'from': int, 'to': int})
+    sumo_changes = sumo_changes.astype({'step': float, 'id': int, 'from': int, 'to': int})
     sumo_changes.sort_values(by='step', inplace=True)
+    # Aggregate values for finer-grained trace resolution than plafosim (timestep of 1.0s)
+    sumo_changes = sumo_changes.assign(step=lambda df: df.step.round(0)).groupby(['step', 'id']).mean().reset_index()
+    sumo_changes = sumo_changes.astype({'step': int})
     assert(len(sumo_changes.id.unique()) <= args.vehicles)
 except pandas.errors.EmptyDataError:
     print("No changes detected for SUMO")
@@ -180,11 +183,11 @@ sumo_emission_traces = sumo_emission_traces.rename(columns=lambda x: re.sub('veh
 sumo_emission_traces.dropna(inplace=True)
 sumo_emission_traces.replace(r'static\.', '', regex=True, inplace=True)
 sumo_emission_traces.replace(r'v\.', '', regex=True, inplace=True)
-# Remove trace values that do not correspond to plafosim (timestep of 1.0s)
-# TODO use average of values within 1.0s timestep?
-sumo_emission_traces = sumo_emission_traces[sumo_emission_traces.step.mod(1.0) == 0.0]
-sumo_emission_traces = sumo_emission_traces.astype({'step': int, 'id': int})
+sumo_emission_traces = sumo_emission_traces.astype({'step': float, 'id': int})
 sumo_emission_traces.sort_values(by='step', inplace=True)
+# Aggregate values for finer-grained trace resolution than plafosim (timestep of 1.0s)
+sumo_emission_traces = sumo_emission_traces.assign(step=lambda df: df.step.round(0)).groupby(['step', 'id']).mean().reset_index()
+sumo_emission_traces = sumo_emission_traces.astype({'step': int})
 assert(len(sumo_emission_traces.id.unique()) == args.vehicles)
 
 plafosim_emission_traces = pandas.read_csv(f'{args.experiment}_emission_traces.csv')
