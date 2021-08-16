@@ -116,9 +116,9 @@ sumo_traces = sumo_traces.astype({'step': int})
 assert(len(sumo_traces.id.unique()) == args.vehicles)
 
 plafosim_traces = pandas.read_csv(
-    '%s_vehicle_traces.csv' %
-    args.experiment, usecols=[
-        'step', 'id', 'position', 'lane', 'speed'])
+    '%s_vehicle_traces.csv' % args.experiment,
+    usecols=['step', 'id', 'position', 'lane', 'speed']
+)
 plafosim_traces = plafosim_traces.round(2)
 plafosim_traces.sort_values(by='step', inplace=True)
 assert(len(plafosim_traces.id.unique()) == args.vehicles)
