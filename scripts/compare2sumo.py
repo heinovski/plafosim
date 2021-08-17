@@ -235,28 +235,52 @@ pl.savefig('%s_runtime.png' % args.experiment)
 trip_equal_labels = ['depart', 'departLane', 'departSpeed', 'arrivalPos']
 
 trip_equality = abs(plafosim_trips[trip_equal_labels] - sumo_trips[trip_equal_labels]) <= 0.01  # for floats
-failed_equality = trip_equality.mask(trip_equality).reset_index().melt('id').dropna()[['id', 'variable']]
+failed_equality = (
+    trip_equality
+    .mask(trip_equality)
+    .reset_index()
+    .melt('id')
+    .dropna()
+    [['id', 'variable']]
+)
 
 if not failed_equality.empty:
     print("Some metrics are not equal!")
-    failed_equality = failed_equality.set_index(['id', 'variable']).assign(
-        sumo=sumo_trips.reset_index().melt('id').set_index(['id', 'variable']),
-        plafosim=plafosim_trips.reset_index().melt('id').set_index(['id', 'variable'])
-    ).reset_index()
+    failed_equality = (
+        failed_equality
+        .set_index(['id', 'variable'])
+        .assign(
+            sumo=sumo_trips.reset_index().melt('id').set_index(['id', 'variable']),
+            plafosim=plafosim_trips.reset_index().melt('id').set_index(['id', 'variable'])
+        )
+        .reset_index()
+    )
     print(failed_equality.values)
 
 # HACK for small diff in departPos and routeLength
 trip_equal_labels = ['departPos', 'routeLength']
 
 trip_equality = abs(plafosim_trips[trip_equal_labels] - sumo_trips[trip_equal_labels]) <= 0.11
-failed_equality = trip_equality.mask(trip_equality).reset_index().melt('id').dropna()[['id', 'variable']]
+failed_equality = (
+    trip_equality
+    .mask(trip_equality)
+    .reset_index()
+    .melt('id')
+    .dropna()
+    [['id', 'variable']]
+)
 
 if not failed_equality.empty:
     print("Some metrics are not equal!")
-    failed_equality = failed_equality.set_index(['id', 'variable']).assign(
-        sumo=sumo_trips.reset_index().melt('id').set_index(['id', 'variable']),
-        plafosim=plafosim_trips.reset_index().melt('id').set_index(['id', 'variable'])
-    ).reset_index()
+    failed_equality = (
+        failed_equality
+        .set_index(['id', 'variable'])
+        .assign(
+            sumo=sumo_trips.reset_index().melt('id').set_index(['id', 'variable']),
+            plafosim=plafosim_trips.reset_index().melt('id').set_index(['id', 'variable'])
+        )
+        .reset_index()
+    )
     print(failed_equality.values)
 # END HACK for small diff in departPos and routeLength
 
@@ -273,45 +297,69 @@ emission_labels = ['CO', 'CO2', 'HC', 'NOx', 'PMx', 'fuel']
 sumo_traces = sumo_traces.set_index(['id', 'step'], drop=False).sort_index()
 plafosim_traces = plafosim_traces.set_index(['id', 'step'], drop=False).sort_index()
 
-plafosim_traces = plafosim_traces.assign(lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
-                                         diff_desired=lambda x: x.speed - plafosim_trips.desiredSpeed,
-                                         diff_sumo_speed=lambda x: x.speed - sumo_traces.speed,
-                                         diff_sumo_position=lambda x: x.position - sumo_traces.position,
-                                         diff_sumo_lane=lambda x: abs(x.lane - sumo_traces.lane)
-                                         ).reset_index(drop=True)
+plafosim_traces = (
+    plafosim_traces
+    .assign(
+        lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
+        diff_desired=lambda x: x.speed - plafosim_trips.desiredSpeed,
+        diff_sumo_speed=lambda x: x.speed - sumo_traces.speed,
+        diff_sumo_position=lambda x: x.position - sumo_traces.position,
+        diff_sumo_lane=lambda x: abs(x.lane - sumo_traces.lane)
+    )
+    .reset_index(drop=True)
+)
 
-sumo_traces = sumo_traces.assign(
-    lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
-    diff_desired=lambda x: x.speed - sumo_trips.speedFactor * args.desired_speed).reset_index(drop=True)
+sumo_traces = (
+    sumo_traces
+    .assign(
+        lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
+        diff_desired=lambda x: x.speed - sumo_trips.speedFactor * args.desired_speed
+    )
+    .reset_index(drop=True)
+)
 
 sumo_traces = sumo_traces.set_index(['id', 'lifetime']).sort_index()
 plafosim_traces = plafosim_traces.set_index(['id', 'lifetime']).sort_index()
 
-merged_traces = pd.concat([sumo_traces, plafosim_traces], keys=[
-                              'sumo', 'plafosim'], names=['simulator']).reset_index()
+merged_traces = pd.concat(
+    [sumo_traces, plafosim_traces],
+    keys=['sumo', 'plafosim'],
+    names=['simulator']
+).reset_index()
 
 # Evaluate emission traces
 
 sumo_emission_traces = sumo_emission_traces.set_index(['id', 'step'], drop=False).sort_index()
 plafosim_emission_traces = plafosim_emission_traces.set_index(['id', 'step'], drop=False).sort_index()
 
-plafosim_emission_traces = plafosim_emission_traces.assign(lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
-                                                           diff_sumo_CO=lambda x: x.CO - sumo_emission_traces.CO,
-                                                           diff_sumo_CO2=lambda x: x.CO2 - sumo_emission_traces.CO2,
-                                                           diff_sumo_HC=lambda x: x.HC - sumo_emission_traces.HC,
-                                                           diff_sumo_NOx=lambda x: x.NOx - sumo_emission_traces.NOx,
-                                                           diff_sumo_PMx=lambda x: x.PMx - sumo_emission_traces.PMx,
-                                                           diff_sumo_fuel=lambda x: x.fuel - sumo_emission_traces.fuel
-                                                           ).reset_index(drop=True)
+plafosim_emission_traces = (
+    plafosim_emission_traces
+    .assign(
+        lifetime=lambda x: x.step - x.groupby(level='id').step.min(),
+        diff_sumo_CO=lambda x: x.CO - sumo_emission_traces.CO,
+        diff_sumo_CO2=lambda x: x.CO2 - sumo_emission_traces.CO2,
+        diff_sumo_HC=lambda x: x.HC - sumo_emission_traces.HC,
+        diff_sumo_NOx=lambda x: x.NOx - sumo_emission_traces.NOx,
+        diff_sumo_PMx=lambda x: x.PMx - sumo_emission_traces.PMx,
+        diff_sumo_fuel=lambda x: x.fuel - sumo_emission_traces.fuel
+    )
+    .reset_index(drop=True)
+)
 
-sumo_emission_traces = sumo_emission_traces.assign(
-    lifetime=lambda x: x.step - x.groupby(level='id').step.min()).reset_index(drop=True)
+sumo_emission_traces = (
+    sumo_emission_traces
+    .assign(lifetime=lambda x: x.step - x.groupby(level='id').step.min())
+    .reset_index(drop=True)
+)
 
 sumo_emission_traces = sumo_emission_traces.set_index(['id', 'lifetime']).sort_index()
 plafosim_emission_traces = plafosim_emission_traces.set_index(['id', 'lifetime']).sort_index()
 
-merged_emission_traces = pd.concat([sumo_emission_traces, plafosim_emission_traces], keys=[
-                                       'sumo', 'plafosim'], names=['simulator']).reset_index()
+merged_emission_traces = pd.concat(
+    [sumo_emission_traces, plafosim_emission_traces],
+    keys=['sumo', 'plafosim'],
+    names=['simulator']
+).reset_index()
 
 # Plotting
 
@@ -321,7 +369,11 @@ print("Plotting trips/emissions/traces...")
 
 pl.figure()
 pl.title("Desired Driving Speed for %d Vehicles" % args.vehicles)
-pl.boxplot([sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True, labels=['sumo', 'plasfosim'])
+pl.boxplot(
+    [sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed],
+    showmeans=True,
+    labels=['sumo', 'plasfosim']
+)
 # sns.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
 pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
