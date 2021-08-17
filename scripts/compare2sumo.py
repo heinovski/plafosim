@@ -372,7 +372,7 @@ for label in lifetime_labels:
 
     print(f"Plotting {label} over life time...")
     fig, ax = pl.subplots()
-    pl.title("Average %s for %d Vehicles in m/s, m, m/s, lid" % (label, args.vehicles))
+    pl.title(f"Average {label} for {args.vehicles} Vehicles in m/s, m, m/s, lane")
     seaborn.lineplot(
         data=merged_traces,
         x='lifetime',
@@ -417,7 +417,7 @@ for label in emission_labels:
 
     print(f"Plotting {label} over life time...")
     fig, ax = pl.subplots()
-    pl.title("Average %s for %d Vehicles in mg/ml" % (label, args.vehicles))
+    pl.title(f"Average {label} for {args.vehicles} Vehicles in mg/ml")
     seaborn.lineplot(
         data=merged_emission_traces,
         x='lifetime',
@@ -449,7 +449,7 @@ for label in lifetime_diff_labels:
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
-    pl.title("Average Deviation to Sumo in %s during trip for %d Vehicles" % (lal, args.vehicles))
+    pl.title(f"Average Deviation to Sumo in {lal} during trip for {args.vehicles} Vehicles")
 
     seaborn.lineplot(
         data=merged_traces,
@@ -474,7 +474,7 @@ for label in lifetime_diff_emission_labels:
     lal = re.sub('diff_sumo_', '', label)
 
     pl.figure()
-    pl.title("Average Deviation to Sumo in %s during trip for %d Vehicles in mg/ml" % (lal, args.vehicles))
+    pl.title(f"Average Deviation to Sumo in {lal} during trip for {args.vehicles} Vehicles in mg/ml")
 
     seaborn.lineplot(
         data=merged_emission_traces,
