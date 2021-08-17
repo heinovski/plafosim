@@ -353,6 +353,7 @@ for label in trip_labels:
     result = ks_2samp(plafosim_trips[label], sumo_trips[label])
     if result.pvalue < args.significance:
         print(f"Distributions of {label} are not the same!")
+        print(pd.concat([sumo_trips[label].describe(), plafosim_trips[label].describe()], axis=1))
         error = True
 
 # emissions
@@ -381,6 +382,7 @@ for label in emission_labels:
     result = ks_2samp(plafosim_emissions[label], sumo_trips[label])
     if result.pvalue < args.significance:
         print(f"Distributions of {label} are not the same!")
+        print(pd.concat([sumo_trips[label].describe(), plafosim_emissions[label].describe()], axis=1))
         error = True
 
 # lifetime plots
