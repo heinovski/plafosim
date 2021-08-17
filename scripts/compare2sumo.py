@@ -419,7 +419,7 @@ for label in lifetime_labels:
     result = ks_2samp(plafosim_traces[label], sumo_traces[label])
     if result.pvalue < args.significance:
         print(f"Distributions of {label} are not the same!")
-        print((sumo_traces[label] - plafosim_traces[label]).describe())
+        print(pd.concat([sumo_traces[label].describe(), plafosim_traces[label].describe()], axis=1))
         # error = True  # FIXME enable
 
 # emission lifetime
@@ -447,7 +447,7 @@ for label in emission_labels:
     result = ks_2samp(plafosim_emission_traces[label], sumo_emission_traces[label])
     if result.pvalue < args.significance:
         print(f"Distributions of {label} are not the same!")
-        print((sumo_emission_traces[label] - plafosim_emission_traces[label]).describe())
+        print(pd.concat([sumo_emission_traces[label].describe(), plafosim_emission_traces[label].describe()], axis=1))
         # error = True  # FIXME enable
 
 lifetime_diff_labels = ['diff_sumo_speed', 'diff_sumo_position', 'diff_sumo_lane']
