@@ -186,7 +186,13 @@ sumo_emission_traces.replace(r'v\.', '', regex=True, inplace=True)
 sumo_emission_traces = sumo_emission_traces.astype({'step': float, 'id': int})
 sumo_emission_traces.sort_values(by='step', inplace=True)
 # Aggregate values for finer-grained trace resolution than plafosim (timestep of 1.0s)
-sumo_emission_traces = sumo_emission_traces.assign(step=lambda df: df.step.round(0)).groupby(['step', 'id']).mean().reset_index()
+sumo_emission_traces = (
+    sumo_emission_traces
+    .assign(step=lambda df: df.step.round(0))
+    .groupby(['step', 'id'])
+    .mean()
+    .reset_index()
+)
 sumo_emission_traces = sumo_emission_traces.astype({'step': int})
 assert(len(sumo_emission_traces.id.unique()) == args.vehicles)
 
@@ -389,7 +395,12 @@ for label in lifetime_labels:
     elif label == 'position':
         sns.lineplot(
             x=range(0, merged_traces.lifetime.max()),
-            y=[step * args.desired_speed if step <= args.arrival_position / args.desired_speed else None for step in range(0, merged_traces.lifetime.max())],
+            y=[
+                step * args.desired_speed
+                if step <= args.arrival_position / args.desired_speed
+                else None
+                for step in range(0, merged_traces.lifetime.max())
+            ],
             color='black',
             ax=ax,
             n_boot=10,
@@ -466,7 +477,14 @@ for label in lifetime_diff_labels:
 
 # emission lifetime diff plots
 
-lifetime_diff_emission_labels = ['diff_sumo_CO', 'diff_sumo_CO2', 'diff_sumo_HC', 'diff_sumo_NOx', 'diff_sumo_PMx', 'diff_sumo_fuel']
+lifetime_diff_emission_labels = [
+    'diff_sumo_CO',
+    'diff_sumo_CO2',
+    'diff_sumo_HC',
+    'diff_sumo_NOx',
+    'diff_sumo_PMx',
+    'diff_sumo_fuel'
+]
 
 for label in lifetime_diff_emission_labels:
 
