@@ -243,13 +243,11 @@ if not failed_equality.empty:
 
 # metrics that can be different among the simulators
 # TODO add timeLoss after it is implemented correctly in plafosim
-trip_diff_labels = ['desiredSpeed', 'arrival', 'arrivalLane', 'arrivalSpeed', 'duration']
-diff_trips = plafosim_trips[trip_diff_labels] - sumo_trips[trip_diff_labels]
+trip_labels = ['desiredSpeed', 'arrival', 'arrivalLane', 'arrivalSpeed', 'duration']
 
 # Evaluate emissions
 
 emission_labels = ['CO', 'CO2', 'HC', 'NOx', 'PMx', 'fuel']
-diff_emissions = plafosim_emissions[emission_labels] - sumo_trips[emission_labels]
 
 # Evaluate traces
 
@@ -310,79 +308,60 @@ pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
 pl.savefig('%s_desired_speed.png' % args.experiment)
 
-# check distributions of desired speed
-print("Running sample test for desired speed...")
-assert(ks_2samp(sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed).pvalue >= args.significance)
+# trips
 
-# ecdfplot with desired driving speed
+for label in trip_labels:
 
-fig, ax = pl.subplots()
-pl.title("Desired Driving Speed for %d Vehicles in m/s" % args.vehicles)
-seaborn.ecdfplot(
-    sumo_trips.desiredSpeed,
-    label='sumo',
-    ax=ax
-)
-seaborn.ecdfplot(
-    plafosim_trips.desiredSpeed,
-    label='plafosim',
-    ax=ax
-)
-pl.legend(title="simulator")
-pl.xlabel("speed [m/s]")
-pl.savefig('%s_desired_speed_dist.png' % args.experiment)
+    print(f"Plotting {label}...")
 
-# diff labels
-
-for label in trip_diff_labels:
-
-    data = diff_trips[label]
-
-    print(f"Plotting diff in {label}...")
-    pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
-    pl.boxplot(data, showmeans=True)
-    pl.savefig('%s_diff_%s_box.png' % (args.experiment, label))
-
-    pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles" % (label, args.vehicles))
+    fig, ax = pl.subplots()
+    pl.title(f"{label} for {args.vehicles} Vehicles")
     seaborn.ecdfplot(
-        data,
+        data=sumo_trips[label],
+        label='sumo',
+        ax=ax,
     )
-    pl.savefig('%s_diff_%s_dist.png' % (args.experiment, label))
+    seaborn.ecdfplot(
+        data=plafosim_trips[label],
+        label='plafosim',
+        ax=ax,
+    )
+    pl.legend(title="simulator")
+    pl.xlabel(f"{label}")
+    pl.savefig(f"{args.experiment}_{label}_ecdf.png")
 
-    # check limits for deviation to sumo
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_trips[label], sumo_trips[label])
     if result.pvalue < args.significance:
-        print("Deviation to Sumo in %s exceeded limits!" % label)
-        print(data.describe())
+        print(f"Distributions of {label} are not the same!")
         error = True
 
 # emissions
 
 for label in emission_labels:
-    data = diff_emissions[label]
+    print(f"Plotting total {label}...")
 
-    print(f"Plotting diff in {label}...")
-    pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles in ml/mg" % (label, args.vehicles))
-    pl.boxplot(data, showmeans=True)
-    pl.savefig('%s_diff_%s_box.png' % (args.experiment, label))
-
-    pl.figure()
-    pl.title("Deviation to Sumo in %s for %d Vehicles in ml/mg" % (label, args.vehicles))
+    fig, ax = pl.subplots()
+    pl.title(f"Total {label} for {args.vehicles} Vehicles in mg/ml")
     seaborn.ecdfplot(
-        data,
+        data=sumo_trips[label],
+        label='sumo',
+        ax=ax,
     )
-    pl.savefig('%s_diff_%s_dist.png' % (args.experiment, label))
+    seaborn.ecdfplot(
+        data=plafosim_emissions[label],
+        label='plafosim',
+        ax=ax,
+    )
+    pl.legend(title="simulator")
+    pl.xlabel(f"{label} [mg/ml]")
+    pl.savefig(f"{args.experiment}_{label}_ecdf.png")
 
     # check limits for deviation to sumo
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_emissions[label], sumo_trips[label])
     if result.pvalue < args.significance:
-        print("Deviation to Sumo in %s exceeded limits!" % label)
-        print(data.describe())
+        print(f"Distributions of {label} are not the same!")
         error = True
 
 # lifetime plots
