@@ -407,7 +407,7 @@ for label in lifetime_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_traces[label], sumo_traces[label])
     if result.pvalue < args.significance:
-        print("Deviation to Sumo in %s over life time exceeded limits!" % label)
+        print(f"Distributions of {label} are not the same!")
         print((sumo_traces[label] - plafosim_traces[label]).describe())
         # error = True  # FIXME enable
 
@@ -435,7 +435,7 @@ for label in emission_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_emission_traces[label], sumo_emission_traces[label])
     if result.pvalue < args.significance:
-        print("Deviation to Sumo in %s over life time exceeded limits!" % label)
+        print(f"Distributions of {label} are not the same!")
         print((sumo_emission_traces[label] - plafosim_emission_traces[label]).describe())
         # error = True  # FIXME enable
 
