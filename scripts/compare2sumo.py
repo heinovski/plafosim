@@ -101,7 +101,8 @@ sumo_traces = pd.read_csv(
         'vehicle_id',
         'vehicle_lane',
         'vehicle_pos',
-        'vehicle_speed'])
+        'vehicle_speed']
+)
 sumo_traces = sumo_traces.round(2)
 sumo_traces.columns = ['step', 'id', 'lane', 'position', 'speed']
 sumo_traces.dropna(inplace=True)
@@ -111,7 +112,13 @@ sumo_traces.replace('edge_0_0_', '', regex=True, inplace=True)
 sumo_traces = sumo_traces.astype({'step': float, 'id': int, 'lane': int})
 sumo_traces.sort_values(by='step', inplace=True)
 # Aggregate values for finer-grained trace resolution than plafosim (timestep of 1.0s)
-sumo_traces = sumo_traces.assign(step=lambda df: df.step.round(0)).groupby(['step', 'id']).mean().reset_index()
+sumo_traces = (
+    sumo_traces
+    .assign(step=lambda df: df.step.round(0))
+    .groupby(['step', 'id'])
+    .mean()
+    .reset_index()
+)
 sumo_traces = sumo_traces.astype({'step': int})
 assert(len(sumo_traces.id.unique()) == args.vehicles)
 
@@ -147,7 +154,13 @@ try:
     sumo_changes = sumo_changes.astype({'step': float, 'id': int, 'from': int, 'to': int})
     sumo_changes.sort_values(by='step', inplace=True)
     # Aggregate values for finer-grained trace resolution than plafosim (timestep of 1.0s)
-    sumo_changes = sumo_changes.assign(step=lambda df: df.step.round(0)).groupby(['step', 'id']).mean().reset_index()
+    sumo_changes = (
+        sumo_changes
+        .assign(step=lambda df: df.step.round(0))
+        .groupby(['step', 'id'])
+        .mean()
+        .reset_index()
+    )
     sumo_changes = sumo_changes.astype({'step': int})
     assert(len(sumo_changes.id.unique()) <= args.vehicles)
 except pd.errors.EmptyDataError:
