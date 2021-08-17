@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.11.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.4) - 2021-07-21
+* Added bootstrapping to calculate confidence interval in comparison
+* Added explicit depart speed 0
+* Added KS test for desired speed in comparison
+* Added profile runs for all cf models to CI
+* Fixed lane change duration
+* Fixed simulation end upon no vehicles
+* Fixed typos
+* Renamed depart interval argument
+* Updated check of maximum vehicle number
+* Updated comparison script
+* Updated implicit default value for random seed
+* Updated validation scripts
+
 ## [v0.11.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.3) - 2021-07-19
 * Added check for invalid depart rate
 * Added check for useful depart probability
