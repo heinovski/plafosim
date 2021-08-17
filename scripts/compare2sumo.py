@@ -306,7 +306,7 @@ pl.boxplot([sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=Tru
 # seaborn.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
 pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
-pl.savefig('%s_desired_speed.png' % args.experiment)
+pl.savefig(f"{args.experiment}_desiredSpeed_box.png")
 
 # trips
 
@@ -401,7 +401,7 @@ for label in lifetime_labels:
     else:
         sys.exit(f"Unknown label {label}!")
 
-    fig.savefig('%s_%s.png' % (args.experiment, label))
+    fig.savefig(f"{args.experiment}_{label}_life.png")
 
     # check limits for deviation to sumo
     print(f"Running sample test for {label}...")
@@ -429,7 +429,7 @@ for label in emission_labels:
     )
     pl.xlabel("trip duration [s]")
 
-    fig.savefig('%s_%s.png' % (args.experiment, label))
+    fig.savefig(f"{args.experiment}_{label}_life.png")
 
     # check limits for deviation to sumo
     print(f"Running sample test for {label}...")
@@ -460,7 +460,7 @@ for label in lifetime_diff_labels:
     )
     pl.xlabel("trip duration [s]")
 
-    pl.savefig('%s_diff_%s_line.png' % (args.experiment, lal))
+    pl.savefig(f"{args.experiment}_{lal}_line_diff.png")
 
     # NOTE: deviation has already been checked above
 
@@ -485,7 +485,7 @@ for label in lifetime_diff_emission_labels:
     )
     pl.xlabel("trip duration [s]")
 
-    pl.savefig('%s_diff_%s_line.png' % (args.experiment, lal))
+    pl.savefig(f"{args.experiment}_{lal}_line_diff.png")
 
     # NOTE: deviation has already been checked above
 
