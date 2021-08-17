@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.11.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.3) - 2021-07-19
+* Added check for invalid depart rate
+* Added check for useful depart probability
+* Fixed calculation of depart position
+* Fixed join at the end of the trip
+* Fixed trace player
+* Removed depart method fixed
+* Updated default value of vehicle density parameter
+* Updated string representation of platoon
+
 ## [v0.11.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.2) - 2021-07-02
 * Added maximum trip length (#315)
 * Added recording of continuous simulation trace (#316)
