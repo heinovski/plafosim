@@ -24,8 +24,8 @@ import sys
 from scipy.stats import ks_2samp
 
 import matplotlib.pyplot as pl
-import pandas
-import seaborn
+import pandas as pd
+import seaborn as sns
 
 
 # Read parameters
@@ -53,14 +53,14 @@ error = False
 
 # Read runtimes
 
-runtimes = pandas.read_csv('%s_runtimes.csv' % args.experiment)
+runtimes = pd.read_csv('%s_runtimes.csv' % args.experiment)
 runtimes = runtimes.round(2)
 runtimes = runtimes.astype({'simulator': str})
 runtimes = runtimes.set_index('simulator')
 
 # Read trips/emissions
 
-sumo_trips = pandas.read_csv('%s-trips.csv' % args.experiment)
+sumo_trips = pd.read_csv('%s-trips.csv' % args.experiment)
 sumo_trips = sumo_trips.round(2)
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('tripinfo_', '', x))
 sumo_trips = sumo_trips.rename(columns=lambda x: re.sub('emissions_', '', x))
@@ -75,7 +75,7 @@ sumo_trips = sumo_trips.set_index('id').sort_index()
 assert(sumo_trips.index.is_unique)
 assert(len(sumo_trips.index == args.vehicles))
 
-plafosim_trips = pandas.read_csv('%s_vehicle_trips.csv' % args.experiment)
+plafosim_trips = pd.read_csv('%s_vehicle_trips.csv' % args.experiment)
 plafosim_trips = plafosim_trips.round(2)
 plafosim_trips = plafosim_trips.set_index('id').sort_index()
 assert(plafosim_trips.index.is_unique)
@@ -83,7 +83,7 @@ assert(len(plafosim_trips.index == args.vehicles))
 # assert same vehicles
 assert(list(sumo_trips.index) == list(plafosim_trips.index))
 
-plafosim_emissions = pandas.read_csv('%s_vehicle_emissions.csv' % args.experiment)
+plafosim_emissions = pd.read_csv('%s_vehicle_emissions.csv' % args.experiment)
 plafosim_emissions = plafosim_emissions.round(2)
 plafosim_emissions = plafosim_emissions.set_index('id').sort_index()
 assert(plafosim_emissions.index.is_unique)
@@ -93,7 +93,7 @@ assert(list(sumo_trips.index) == list(plafosim_emissions.index))
 
 # Read traces
 
-sumo_traces = pandas.read_csv(
+sumo_traces = pd.read_csv(
     '%s-traces.csv' %
     args.experiment,
     usecols=[
@@ -115,7 +115,7 @@ sumo_traces = sumo_traces.assign(step=lambda df: df.step.round(0)).groupby(['ste
 sumo_traces = sumo_traces.astype({'step': int})
 assert(len(sumo_traces.id.unique()) == args.vehicles)
 
-plafosim_traces = pandas.read_csv(
+plafosim_traces = pd.read_csv(
     '%s_vehicle_traces.csv' % args.experiment,
     usecols=['step', 'id', 'position', 'lane', 'speed']
 )
@@ -127,7 +127,7 @@ assert(sorted(list(sumo_traces.id.unique())) == sorted(list(plafosim_traces.id.u
 
 # Read lane-changes
 try:
-    sumo_changes = pandas.read_csv(
+    sumo_changes = pd.read_csv(
         '%s-changes.csv' %
         args.experiment,
         usecols=[
@@ -150,21 +150,21 @@ try:
     sumo_changes = sumo_changes.assign(step=lambda df: df.step.round(0)).groupby(['step', 'id']).mean().reset_index()
     sumo_changes = sumo_changes.astype({'step': int})
     assert(len(sumo_changes.id.unique()) <= args.vehicles)
-except pandas.errors.EmptyDataError:
+except pd.errors.EmptyDataError:
     print("No changes detected for SUMO")
 
 try:
-    plafosim_changes = pandas.read_csv('%s_vehicle_changes.csv' % args.experiment)
+    plafosim_changes = pd.read_csv('%s_vehicle_changes.csv' % args.experiment)
     plafosim_changes = plafosim_changes.round(2)
     plafosim_changes.sort_values(by='step', inplace=True)
     assert(len(plafosim_changes.id.unique()) <= args.vehicles)
-except pandas.errors.EmptyDataError:
+except pd.errors.EmptyDataError:
     print("No changes detected for PlaFoSim")
 # TODO use changes
 
 # Read emission traces
 
-sumo_emission_traces = pandas.read_csv(
+sumo_emission_traces = pd.read_csv(
     f'{args.experiment}-emissions.csv',
     usecols=[
         'timestep_time',
@@ -190,7 +190,7 @@ sumo_emission_traces = sumo_emission_traces.assign(step=lambda df: df.step.round
 sumo_emission_traces = sumo_emission_traces.astype({'step': int})
 assert(len(sumo_emission_traces.id.unique()) == args.vehicles)
 
-plafosim_emission_traces = pandas.read_csv(f'{args.experiment}_emission_traces.csv')
+plafosim_emission_traces = pd.read_csv(f'{args.experiment}_emission_traces.csv')
 plafosim_emission_traces = plafosim_emission_traces.round(2)
 plafosim_emission_traces.sort_values(by='step', inplace=True)
 assert(len(plafosim_emission_traces.id.unique()) == args.vehicles)
@@ -203,7 +203,7 @@ pl.figure()
 pl.title("Runtime for %d Vehicles" % args.vehicles)
 data = runtimes.reset_index().melt('simulator', var_name='kind').set_index('simulator')
 # does not work because of incompatibility between matplotlib and seaborn
-# seaborn.scatterplot(data=data, x='kind', y='value', hue='simulator')
+# sns.scatterplot(data=data, x='kind', y='value', hue='simulator')
 pl.scatter(data=data.loc['sumo'], x='kind', y='value', label='sumo')
 pl.scatter(data=data.loc['plafosim'], x='kind', y='value', label='plafosim')
 pl.ylabel("time [s]")
@@ -268,7 +268,7 @@ sumo_traces = sumo_traces.assign(
 sumo_traces = sumo_traces.set_index(['id', 'lifetime']).sort_index()
 plafosim_traces = plafosim_traces.set_index(['id', 'lifetime']).sort_index()
 
-merged_traces = pandas.concat([sumo_traces, plafosim_traces], keys=[
+merged_traces = pd.concat([sumo_traces, plafosim_traces], keys=[
                               'sumo', 'plafosim'], names=['simulator']).reset_index()
 
 # Evaluate emission traces
@@ -291,7 +291,7 @@ sumo_emission_traces = sumo_emission_traces.assign(
 sumo_emission_traces = sumo_emission_traces.set_index(['id', 'lifetime']).sort_index()
 plafosim_emission_traces = plafosim_emission_traces.set_index(['id', 'lifetime']).sort_index()
 
-merged_emission_traces = pandas.concat([sumo_emission_traces, plafosim_emission_traces], keys=[
+merged_emission_traces = pd.concat([sumo_emission_traces, plafosim_emission_traces], keys=[
                                        'sumo', 'plafosim'], names=['simulator']).reset_index()
 
 # Plotting
@@ -303,7 +303,7 @@ print("Plotting trips/emissions/traces...")
 pl.figure()
 pl.title("Desired Driving Speed for %d Vehicles" % args.vehicles)
 pl.boxplot([sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True, labels=['sumo', 'plasfosim'])
-# seaborn.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
+# sns.boxplot(x=['sumo', 'plafosim'], y=[sumo_trips.desiredSpeed, plafosim_trips.desiredSpeed], showmeans=True)
 pl.xlabel("simulator")
 pl.ylabel("speed [m/s]")
 pl.savefig(f"{args.experiment}_desiredSpeed_box.png")
@@ -316,12 +316,12 @@ for label in trip_labels:
 
     fig, ax = pl.subplots()
     pl.title(f"{label} for {args.vehicles} Vehicles")
-    seaborn.ecdfplot(
+    sns.ecdfplot(
         data=sumo_trips[label],
         label='sumo',
         ax=ax,
     )
-    seaborn.ecdfplot(
+    sns.ecdfplot(
         data=plafosim_trips[label],
         label='plafosim',
         ax=ax,
@@ -343,12 +343,12 @@ for label in emission_labels:
 
     fig, ax = pl.subplots()
     pl.title(f"Total {label} for {args.vehicles} Vehicles in mg/ml")
-    seaborn.ecdfplot(
+    sns.ecdfplot(
         data=sumo_trips[label],
         label='sumo',
         ax=ax,
     )
-    seaborn.ecdfplot(
+    sns.ecdfplot(
         data=plafosim_emissions[label],
         label='plafosim',
         ax=ax,
@@ -373,7 +373,7 @@ for label in lifetime_labels:
     print(f"Plotting {label} over life time...")
     fig, ax = pl.subplots()
     pl.title(f"Average {label} for {args.vehicles} Vehicles in m/s, m, m/s, lane")
-    seaborn.lineplot(
+    sns.lineplot(
         data=merged_traces,
         x='lifetime',
         y=label,
@@ -387,7 +387,7 @@ for label in lifetime_labels:
     if label == 'speed':
         ax.hlines(args.desired_speed, 0, merged_traces.lifetime.max(), color='black', label='desired')
     elif label == 'position':
-        seaborn.lineplot(
+        sns.lineplot(
             x=range(0, merged_traces.lifetime.max()),
             y=[step * args.desired_speed if step <= args.arrival_position / args.desired_speed else None for step in range(0, merged_traces.lifetime.max())],
             color='black',
@@ -418,7 +418,7 @@ for label in emission_labels:
     print(f"Plotting {label} over life time...")
     fig, ax = pl.subplots()
     pl.title(f"Average {label} for {args.vehicles} Vehicles in mg/ml")
-    seaborn.lineplot(
+    sns.lineplot(
         data=merged_emission_traces,
         x='lifetime',
         y=label,
@@ -451,7 +451,7 @@ for label in lifetime_diff_labels:
     pl.figure()
     pl.title(f"Average Deviation to Sumo in {lal} during trip for {args.vehicles} Vehicles")
 
-    seaborn.lineplot(
+    sns.lineplot(
         data=merged_traces,
         x='lifetime',
         y=label,
@@ -476,7 +476,7 @@ for label in lifetime_diff_emission_labels:
     pl.figure()
     pl.title(f"Average Deviation to Sumo in {lal} during trip for {args.vehicles} Vehicles in mg/ml")
 
-    seaborn.lineplot(
+    sns.lineplot(
         data=merged_emission_traces,
         x='lifetime',
         y=label,
