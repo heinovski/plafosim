@@ -489,6 +489,7 @@ class Vehicle:
                     f"{self._position},"
                     f"{self._lane},"
                     f"{self._speed},"
+                    f"{self._blocked_front},"
                     f"{self.travel_time},"
                     f"{self.travel_distance},"
                     f"{self.desired_speed},"  # use potential other desired driving speed

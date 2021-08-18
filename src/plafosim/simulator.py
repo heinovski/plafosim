@@ -1349,6 +1349,7 @@ class Simulator:
                     "position,"
                     "lane,"
                     "speed,"
+                    "blocked,"
                     "duration,"
                     "routeLength,"
                     "desiredSpeed,"
