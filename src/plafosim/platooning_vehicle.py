@@ -908,6 +908,7 @@ class PlatooningVehicle(Vehicle):
         # the actual join procedure starts here
         assert(not leader.in_maneuver)
         leader.in_maneuver = True
+        assert(leader.cf_model == CF_Model.ACC)
 
         # delay teleport by approach duration
         if self._simulator._delay_teleports and total_approach_time > 0:
