@@ -27,7 +27,13 @@ steps:
     - pip3 install -r requirements.opt.txt
     - export PYTHONPATH=$(pwd)/src
     - pytest -v --cov=plafosim tests/unit_tests
-
+- name: integration
+  image: python:3.8-buster
+  commands:
+    - pip3 install -r requirements.txt
+    - pip3 install -r requirements.opt.txt
+    - export PYTHONPATH=$(pwd)/src
+    - pytest -v tests/integration
 - name: coverage
   image: python:3.8-buster
   environment:
