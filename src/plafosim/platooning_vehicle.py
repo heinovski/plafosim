@@ -1131,6 +1131,7 @@ class PlatooningVehicle(Vehicle):
             # thus, the follower now drives as fast as the already existing platoon
             # (i.e., only the leader in the worst case)
             vehicle._platoon = leader.platoon
+            vehicle._cc_target_speed = vehicle._platoon.desired_speed
 
         # set color of vehicle
         if self._simulator._gui:
