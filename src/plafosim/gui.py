@@ -1,0 +1,126 @@
+#
+# Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+from .infrastructure import Infrastructure
+
+
+def draw_ramps(road_length: int, interval: int, labels: bool):
+    """
+    Draws on-/off-ramps in the GUI.
+
+    Parameters
+    ----------
+    road_length : int
+        The length of the road in m
+    interval : int
+        The ramp interval in m
+    labels : bool
+        Whether to draw ramp labels
+    """
+
+    y = 241
+    color = (0, 0, 0)
+    width = 4
+    height = 150
+
+    import traci
+    for x in range(0, road_length + 1, interval):
+        traci.polygon.add(f"ramp-{x}", [
+            (x - width / 2, y),  # top left
+            (x + width / 2, y),  # top right
+            (x + width / 2, y - height),  # bottom right
+            (x - width / 2, y - height)   # bottom left
+        ], color, fill=True)
+        if labels:
+            traci.poi.add(
+                f"Ramp at {x}m",
+                x=x,
+                y=y - height - 10,
+                color=(51, 128, 51),
+            )
+
+
+def draw_road_end(length: int, label: bool):
+    """
+    Draws the end of the road in the GUI.
+
+    Parameters
+    ----------
+    length : int
+        The length of the road in m
+    label : bool
+        Whether to draw a label
+    """
+
+    y_top = 340
+    y_bottom = 241
+    width = 4
+    color = (255, 0, 0)
+
+    import traci
+    traci.polygon.add("road-end", [
+        (length - width / 2, y_bottom),  # bottom left
+        (length + width / 2, y_bottom),  # bottom right
+        (length + width / 2, y_top),  # top right
+        (length - width / 2, y_top)  # top left
+    ], color, fill=True, layer=3)
+    if label:
+        traci.poi.add(
+            "Road End",
+            x=length + 50,
+            y=300,
+            color=(51, 128, 51),
+        )
+
+
+def draw_infrastructures(infrastructures: list, labels: bool):
+    """
+    Draws infrastructures in the GUI.
+
+    Parameters
+    ----------
+    infrastructures : list
+        The list of infrastructure objects to add
+    labels : bool
+        Whether to draw infrastructure labels
+    """
+
+    y = 280
+    width = 20
+    color = (0, 0, 255)
+
+    import traci
+    for infrastructure in infrastructures:
+        assert isinstance(infrastructure, Infrastructure)
+        iid = str(infrastructure.iid)
+        position = infrastructure.position
+
+        # add infrastructure
+        if iid not in traci.polygon.getIDList():
+            traci.polygon.add(f"rsu-{iid}", [
+                (position - width / 2, y),  # bottom left
+                (position + width / 2, y),  # bottom right
+                (position + width / 2, y + width),  # top right
+                (position - width / 2, y + width)  # top left
+            ], color, fill=True)
+            if labels:
+                traci.poi.add(
+                    f"RSU {iid}",
+                    x=position,
+                    y=y + width + 10,
+                    color=(51, 128, 51),
+                )

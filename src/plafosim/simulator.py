@@ -29,6 +29,11 @@ from tqdm import tqdm
 
 from .cf_model import CF_Model
 from .emission_class import EmissionClass
+from .gui import (
+    draw_infrastructures,
+    draw_ramps,
+    draw_road_end,
+)
 from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
@@ -1568,51 +1573,25 @@ class Simulator:
 
         # draw ramps
         if self._draw_ramps:
-            y = 241
-            color = (0, 0, 0)
-            width = 4
-            height = 150
-            for x in range(0, self._road_length + 1, self._ramp_interval):
-                traci.polygon.add(f"ramp-{x}", [
-                    (x - width / 2, y),  # top left
-                    (x + width / 2, y),  # top right
-                    (x + width / 2, y - height),  # bottom right
-                    (x - width / 2, y - height)   # bottom left
-                ], color, fill=True)
-                if self._draw_ramp_labels:
-                    traci.poi.add(f"Ramp at {x}m", x=x, y=y - height - 10, color=(51, 128, 51))
+            draw_ramps(
+                road_length=self._road_length,
+                interval=self._ramp_interval,
+                labels=self._draw_ramp_labels
+            )
 
         # draw road end
         if self._draw_road_end:
-            y_top = 340
-            y_bottom = 241
-            width = 4
-            color = (255, 0, 0)
-            traci.polygon.add("road-end", [
-                (self._road_length - width / 2, y_bottom),  # bottom left
-                (self._road_length + width / 2, y_bottom),  # bottom right
-                (self._road_length + width / 2, y_top),  # top right
-                (self._road_length - width / 2, y_top)  # top left
-            ], color, fill=True, layer=3)
-            if self._draw_road_end_label:
-                traci.poi.add("Road End", x=self._road_length + 50, y=300, color=(51, 128, 51))
+            draw_road_end(
+                length=self._road_length,
+                label=self._draw_road_end_label
+            )
 
         # draw infrastructures
         if self._draw_infrastructures:
-            y = 280
-            width = 20
-            color = (0, 0, 255)
-            for infrastructure in self._infrastructures.values():
-                # add infrastructure
-                if (str(infrastructure._iid)) not in traci.polygon.getIDList():
-                    traci.polygon.add(f"rsu-{str(infrastructure._iid)}", [
-                        (infrastructure._position - width / 2, y),  # bottom left
-                        (infrastructure._position + width / 2, y),  # bottom right
-                        (infrastructure._position + width / 2, y + width),  # top right
-                        (infrastructure._position - width / 2, y + width)  # top left
-                    ], color, fill=True)
-                    if self._draw_infrastructure_labels:
-                        traci.poi.add(f"RSU {infrastructure._iid}", x=infrastructure._position, y=y + width + 10, color=(51, 128, 51))
+            draw_infrastructures(
+                infrastructures=self._infrastructures.values(),
+                labels=self._draw_infrastructure_labels
+            )
 
         # draw pre-filled vehicles
         for vehicle in self._vehicles.values():
