@@ -56,6 +56,20 @@ def add_gui_vehicle(vehicle: Vehicle, track: bool = False):
             traci.gui.setZoom("View #0", 1000000)
 
 
+def remove_gui_vehicle(vid: int):
+    """
+    Removes a vehicle from the GUI.
+
+    Parameters
+    ----------
+    vid : int
+        The id of the vehicle to remove
+    """
+
+    import traci
+    traci.vehicle.remove(str(vid), 2)
+
+
 def draw_ramps(road_length: int, interval: int, labels: bool):
     """
     Draws on-/off-ramps in the GUI.

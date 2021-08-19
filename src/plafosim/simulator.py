@@ -34,6 +34,7 @@ from .gui import (
     draw_infrastructures,
     draw_ramps,
     draw_road_end,
+    remove_gui_vehicle,
 )
 from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
@@ -774,8 +775,7 @@ class Simulator:
             self._vehicles[vid].finish()
             # remove arrived vehicle from gui
             if self._gui and self._step >= self._gui_start:
-                import traci
-                traci.vehicle.remove(str(vid), 2)
+                remove_gui_vehicle(vid)
             # remove from vehicles
             del self._vehicles[vid]
 
@@ -1610,7 +1610,7 @@ class Simulator:
         # remove vehicles not in simulator
         for vid in traci.vehicle.getIDList():
             if int(vid) not in self._vehicles.keys():
-                traci.vehicle.remove(vid, 2)
+                remove_gui_vehicle(vid)
 
         # sleep for visualization
         time.sleep(self._gui_delay)
@@ -1845,8 +1845,7 @@ class Simulator:
             # we do not want to write statistics for not finished vehicles
             # therefore, we do not call finish here
             if self._gui and self._step >= self._gui_start:
-                import traci
-                traci.vehicle.remove(str(vehicle._vid), 2)
+                remove_gui_vehicle(vehicle._vid)
             # remove from vehicles
             del vehicle
 
