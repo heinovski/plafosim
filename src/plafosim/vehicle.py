@@ -533,7 +533,8 @@ class Vehicle:
                     f"{self.travel_time},"
                     f"{self.travel_distance},"
                     f"{self.desired_speed},"  # use potential other desired driving speed
-                    f"{self._cc_target_speed}"
+                    f"{self._cc_target_speed},"
+                    f"{self._cf_model.name}"
                     "\n"
                 )
 
