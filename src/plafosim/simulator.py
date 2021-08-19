@@ -30,6 +30,7 @@ from tqdm import tqdm
 from .cf_model import CF_Model
 from .emission_class import EmissionClass
 from .gui import (
+    add_gui_vehicle,
     draw_infrastructures,
     draw_ramps,
     draw_road_end,
@@ -1186,7 +1187,7 @@ class Simulator:
         )
 
         if self._gui and self._step >= self._gui_start:
-            self._add_gui_vehicle(vehicle)
+            add_gui_vehicle(vehicle, track=vehicle.vid == self._gui_track_vehicle)
 
         LOG.info(f"Spawned vehicle {vid} ({depart_position}-{vehicle.rear_position},{depart_lane})")
 
@@ -1595,7 +1596,7 @@ class Simulator:
 
         # draw pre-filled vehicles
         for vehicle in self._vehicles.values():
-            self._add_gui_vehicle(vehicle)
+            add_gui_vehicle(vehicle, track=vehicle.vid == self._gui_track_vehicle)
 
     def _update_gui(self):
         """Updates the GUI via TraCI."""
@@ -1613,30 +1614,6 @@ class Simulator:
 
         # sleep for visualization
         time.sleep(self._gui_delay)
-
-    def _add_gui_vehicle(self, vehicle: Vehicle):
-        """
-        Adds a vehicle to the GUI via TraCI.
-
-        Parameters
-        ----------
-        vehicle : Vehicle
-            The vehicle to add to the GUI
-        """
-
-        import traci
-        if str(vehicle._vid) not in traci.vehicle.getIDList():
-            traci.vehicle.add(str(vehicle._vid), 'route', departPos=str(vehicle._position), departSpeed=str(vehicle._speed), departLane=str(vehicle._lane), typeID='vehicle')
-            if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon:
-                traci.vehicle.setColor(str(vehicle._vid), vehicle.platoon.leader._color)
-            else:
-                traci.vehicle.setColor(str(vehicle._vid), vehicle._color)
-            traci.vehicle.setSpeedMode(str(vehicle._vid), 0)
-            traci.vehicle.setLaneChangeMode(str(vehicle._vid), 0)
-            # track vehicle
-            if vehicle._vid == self._gui_track_vehicle:
-                traci.gui.trackVehicle("View #0", str(vehicle._vid))
-                traci.gui.setZoom("View #0", 1000000)
 
     def run(self):
         """

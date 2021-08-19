@@ -16,6 +16,44 @@
 #
 
 from .infrastructure import Infrastructure
+from .platooning_vehicle import PlatooningVehicle
+from .vehicle import Vehicle
+
+
+def add_gui_vehicle(vehicle: Vehicle, track: bool = False):
+    """
+    Adds a vehicle to the GUI.
+
+    Parameters
+    ----------
+    vehicle : Vehicle
+        The vehicle to add to the GUI
+    track_vehicle : int
+        The id of a vehicle to track within the GUI
+    """
+
+    assert isinstance(vehicle, Vehicle)
+    vid = str(vehicle.vid)
+    import traci
+    if vid not in traci.vehicle.getIDList():
+        traci.vehicle.add(
+            vehID=vid,
+            routeID='route',
+            departPos=str(vehicle.position),
+            departSpeed=str(vehicle.speed),
+            departLane=str(vehicle.lane),
+            typeID='vehicle'
+        )
+        if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon:
+            traci.vehicle.setColor(vid, vehicle.platoon.leader._color)
+        else:
+            traci.vehicle.setColor(vid, vehicle._color)
+        traci.vehicle.setSpeedMode(vid, 0)
+        traci.vehicle.setLaneChangeMode(vid, 0)
+        # track vehicle
+        if track:
+            traci.gui.trackVehicle("View #0", vid)
+            traci.gui.setZoom("View #0", 1000000)
 
 
 def draw_ramps(road_length: int, interval: int, labels: bool):
