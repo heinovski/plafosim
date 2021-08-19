@@ -169,6 +169,8 @@ class Simulator:
         if vehicle_density > 0:
             # override vehicles
             number_of_vehicles = int(vehicle_density * (self._road_length / 1000) * self._number_of_lanes)
+        if number_of_vehicles == 0:
+            sys.exit("ERROR: A simulation with 0 vehicles does not make sense!")
         if number_of_vehicles == -1:
             if not depart_flow:
                 LOG.warning("Using an unlimited number of vehicles without a depart flow!")
