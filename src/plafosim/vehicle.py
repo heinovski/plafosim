@@ -622,7 +622,7 @@ class Vehicle:
 
         expected_travel_time = (self._arrival_position - self._depart_position) / self._desired_speed  # use explicit individual desired speed
         assert(self.travel_time != 0)
-        time_loss = self.travel_time - expected_travel_time
+        time_loss = self.travel_time - self._depart_time
         assert(expected_travel_time != 0)
         travel_time_ratio = self.travel_time / expected_travel_time
         # NOTE: this also contains teleports
