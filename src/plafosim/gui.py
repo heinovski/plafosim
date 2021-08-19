@@ -56,6 +56,26 @@ def add_gui_vehicle(vehicle: Vehicle, track: bool = False):
             traci.gui.setZoom("View #0", 1000000)
 
 
+def move_gui_vehicle(vehicle: Vehicle):
+    """
+    Moves a vehicle in the GUI.
+
+    Parameters
+    ----------
+    vehicle : Vehicle
+        The vehicle to move
+    """
+
+    assert isinstance(vehicle, Vehicle)
+    vid = str(vehicle.vid)
+    speed = float(vehicle.speed)
+    position = float(vehicle.position)
+
+    import traci
+    traci.vehicle.setSpeed(vehID=vid, speed=speed)
+    traci.vehicle.moveTo(vehID=vid, pos=position, laneID=f'edge_0_0_{vehicle.lane}')
+
+
 def remove_gui_vehicle(vid: int):
     """
     Removes a vehicle from the GUI.

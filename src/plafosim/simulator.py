@@ -34,6 +34,7 @@ from .gui import (
     draw_infrastructures,
     draw_ramps,
     draw_road_end,
+    move_gui_vehicle,
     remove_gui_vehicle,
 )
 from .infrastructure import Infrastructure
@@ -1604,8 +1605,7 @@ class Simulator:
         import traci
         for vehicle in self._vehicles.values():
             # update vehicles
-            traci.vehicle.setSpeed(str(vehicle._vid), vehicle._speed)
-            traci.vehicle.moveTo(vehID=str(vehicle._vid), pos=vehicle._position, laneID=f'edge_0_0_{vehicle._lane}')
+            move_gui_vehicle(vehicle)
 
         # remove vehicles not in simulator
         for vid in traci.vehicle.getIDList():
