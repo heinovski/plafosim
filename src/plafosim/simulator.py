@@ -202,6 +202,8 @@ class Simulator:
             sys.exit("ERROR: random-depart-position is only possible in conjunction with depart-desired!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         self._depart_method = depart_method  # the departure method to use
+        if depart_interval < 1:
+            sys.exit("ERROR: The depart interval has to be at least 1!")
         self._depart_interval = depart_interval  # the interval between two vehicle departures
         if depart_probability < 0 or depart_probability > 1:
             sys.exit("ERROR: The depart probability needs to be between 0 and 1!")
