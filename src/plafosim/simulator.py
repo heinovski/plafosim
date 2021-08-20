@@ -21,7 +21,7 @@ import random
 import sys
 import time
 from collections import namedtuple
-from math import copysign
+from math import copysign, isclose
 from timeit import default_timer as timer
 
 import pandas as pd
@@ -712,14 +712,48 @@ class Simulator:
             # followers are not allowed to change the lane on their own
             return
 
-        if vehicle._blocked_front:
-            if vehicle._lane < self._number_of_lanes - 1:
-                target_lane = vehicle._lane + 1
-                # TODO determine whether it is useful to overtake
+        if vehicle._blocked_front and vehicle._lane < self._number_of_lanes - 1:
+            # consider changing left for speedGain
+            target_lane = vehicle._lane + 1
+
+            # compare difference to desired speeds for current and target lane
+            pred_target = self._get_predecessor(vehicle, target_lane)
+            if pred_target is None:
+                # left lane is free, try changing there
                 self._change_lane(vehicle, target_lane, "speedGain")
-        else:
-            if vehicle._lane > 0:
-                target_lane = vehicle._lane - 1
+                return
+
+            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target._vid)
+            pred_current = self._get_predecessor(vehicle, vehicle._lane)
+            if not pred_current:
+                # no more predecessor, no more reason to change right
+                return
+            speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current._vid)
+            # restore blocked_front (could have been overridden by new_speed)
+            vehicle._blocked_front = False  # FIXME: remove this
+            if speed_target > speed_current:
+                self._change_lane(vehicle, target_lane, "speedGain")
+
+        elif not vehicle._blocked_front and vehicle._lane > 0:
+            # consider changing right to keepRight
+            target_lane = vehicle._lane - 1
+
+            # compare difference to desired speeds for current and target lane
+            pred_target = self._get_predecessor(vehicle, target_lane)
+            if pred_target is None:
+                # right lane is free, try changing there
+                self._change_lane(vehicle, target_lane, "keepRight")
+                return
+
+            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target._vid)
+            pred_current = self._get_predecessor(vehicle, vehicle._lane)
+            if pred_current is not None:
+                speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current._vid)
+            else:
+                speed_current = vehicle.new_speed(-1, -1, -1)
+            # restore blocked_front (could have been overridden by new_speed)
+            vehicle._blocked_front = True  # FIXME: remove this
+            if speed_target >= speed_current or isclose(speed_target, vehicle._cc_target_speed):
                 self._change_lane(vehicle, target_lane, "keepRight")
 
     def _adjust_speeds(self):
