@@ -695,15 +695,19 @@ class Simulator:
             The vehicle to be adjusted
         """
 
+        if (
+            isinstance(vehicle, PlatooningVehicle)
+            and vehicle._platoon_role == PlatoonRole.FOLLOWER
+        ):
+            # followers are not allowed to change the lane on their own
+            return
+
         if vehicle._blocked_front:
             if vehicle._lane < self._number_of_lanes - 1:
                 target_lane = vehicle._lane + 1
                 # TODO determine whether it is useful to overtake
                 self._change_lane(vehicle, target_lane, "speedGain")
         else:
-            if isinstance(vehicle, PlatooningVehicle) and vehicle._platoon_role == PlatoonRole.FOLLOWER:
-                # followers are not allowed to change the lane on their own
-                return
             if vehicle._lane > 0:
                 target_lane = vehicle._lane - 1
                 self._change_lane(vehicle, target_lane, "keepRight")
