@@ -21,6 +21,7 @@ import sys
 from typing import TYPE_CHECKING
 
 from .cf_model import CF_Model
+from .gui import change_gui_vehicle_color
 from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
@@ -1136,8 +1137,7 @@ class PlatooningVehicle(Vehicle):
 
         # set color of vehicle
         if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
-            import traci
-            traci.vehicle.setColor(str(vehicle.vid), leader._color)
+            change_gui_vehicle_color(vehicle.vid, leader._color)
 
         LOG.info(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
 
@@ -1212,8 +1212,7 @@ class PlatooningVehicle(Vehicle):
 
                 # reset color of vehicle
                 if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
-                    import traci
-                    traci.vehicle.setColor(str(follower.vid), follower._color)
+                    change_gui_vehicle_color(follower.vid, follower._color)
 
                 # statistics
                 follower._leaves_attempted += 1
@@ -1243,8 +1242,7 @@ class PlatooningVehicle(Vehicle):
 
                 # reset color of vehicle
                 if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
-                    import traci
-                    traci.vehicle.setColor(str(leader.vid), leader._color)
+                    change_gui_vehicle_color(leader.vid, leader._color)
 
                 # statistics
                 leader._leaves_attempted += 1
@@ -1311,8 +1309,7 @@ class PlatooningVehicle(Vehicle):
 
         # reset color of vehicle
         if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
-            import traci
-            traci.vehicle.setColor(str(self._vid), self._color)
+            change_gui_vehicle_color(self._vid, self._color)
 
         self.in_maneuver = False
         leader.in_maneuver = False

@@ -17,8 +17,8 @@
 
 import os
 
-from .infrastructure import Infrastructure
-from .platooning_vehicle import PlatooningVehicle
+# from .infrastructure import Infrastructure  # TODO fix circular import
+# from .platooning_vehicle import PlatooningVehicle  # TODO fix circular import
 from .vehicle import Vehicle
 
 
@@ -62,6 +62,7 @@ def add_gui_vehicle(vehicle: Vehicle, track: bool = False):
             departLane=str(vehicle.lane),
             typeID='vehicle'
         )
+        from .platooning_vehicle import PlatooningVehicle
         if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon:
             traci.vehicle.setColor(vid, vehicle.platoon.leader._color)
         else:
@@ -92,6 +93,22 @@ def move_gui_vehicle(vehicle: Vehicle):
     import traci
     traci.vehicle.setSpeed(vehID=vid, speed=speed)
     traci.vehicle.moveTo(vehID=vid, pos=position, laneID=f'edge_0_0_{vehicle.lane}')
+
+
+def change_gui_vehicle_color(vid: int, color: tuple):
+    """
+    Changes the color of a vehicle in the GUI.
+
+    Parameters
+    ----------
+    vid : int
+        The id of the vehicle to change
+    color : tuple
+        The color (R, G, B) to use for the vehicle
+    """
+
+    import traci
+    traci.vehicle.setColor(str(vid), color)
 
 
 def remove_gui_vehicle(vid: int):
@@ -205,6 +222,7 @@ def draw_infrastructures(infrastructures: list, labels: bool):
 
     import traci
     for infrastructure in infrastructures:
+        from .infrastructure import Infrastructure
         assert isinstance(infrastructure, Infrastructure)
         iid = str(infrastructure.iid)
         position = infrastructure.position
