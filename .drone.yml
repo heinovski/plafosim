@@ -20,7 +20,7 @@ type: docker
 name: tests
 
 steps:
-- name: unittests
+- name: unit
   image: python:3.8-buster
   commands:
     - pip3 install -r requirements.txt
