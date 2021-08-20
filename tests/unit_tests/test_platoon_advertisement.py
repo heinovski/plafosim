@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim import Message, PlatoonAdvertisement
+from plafosim.message import Message, PlatoonAdvertisement
 
 
 def test_creation():

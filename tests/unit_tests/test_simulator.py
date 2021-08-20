@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim import Simulator
+from plafosim.simulator import Simulator
 
 
 class TestSimulator:

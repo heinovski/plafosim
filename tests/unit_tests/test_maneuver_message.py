@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim import ManeuverMessage, ManeuverType, Message
+from plafosim.message import ManeuverMessage, ManeuverType, Message
 
 
 def test_creation():

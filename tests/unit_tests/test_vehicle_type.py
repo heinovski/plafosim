@@ -15,8 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim import EmissionClass, VehicleType
-from plafosim.emission_class import EMISSION_FACTORS
+from plafosim.emission_class import EMISSION_FACTORS, EmissionClass
+from plafosim.vehicle_type import VehicleType
 
 
 def test_creation():

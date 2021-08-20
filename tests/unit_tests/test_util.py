@@ -17,7 +17,7 @@
 
 import pandas as pd
 
-from plafosim import (
+from plafosim.util import (
     acceleration2speed,
     distance2speed,
     get_crashed_vehicles,

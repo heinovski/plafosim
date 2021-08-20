@@ -15,8 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim import EmissionClass
-from plafosim.emission_class import EMISSION_FACTORS
+from plafosim.emission_class import EMISSION_FACTORS, EmissionClass
 
 
 def test_emission_factors():

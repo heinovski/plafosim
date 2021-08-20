@@ -23,7 +23,8 @@ import sys
 from distutils.util import strtobool
 from timeit import default_timer as timer
 
-from src.plafosim import Simulator, __version__
+from src.plafosim import __version__
+from src.plafosim.simulator import Simulator
 
 
 class CustomFormatter(
