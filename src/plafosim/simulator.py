@@ -31,6 +31,7 @@ from .cf_model import CF_Model
 from .emission_class import EmissionClass
 from .gui import (
     add_gui_vehicle,
+    close_gui,
     draw_infrastructures,
     draw_ramps,
     draw_road_end,
@@ -1848,5 +1849,4 @@ class Simulator:
             del vehicle
 
         if self._gui and self._step >= self._gui_start:
-            import traci
-            traci.close(False)
+            close_gui()

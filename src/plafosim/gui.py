@@ -108,6 +108,16 @@ def remove_gui_vehicle(vid: int):
     traci.vehicle.remove(str(vid), 2)
 
 
+def close_gui():
+    """
+    Closes the GUI.
+
+    """
+
+    import traci
+    traci.close(False)
+
+
 def draw_ramps(road_length: int, interval: int, labels: bool):
     """
     Draws on-/off-ramps in the GUI.
