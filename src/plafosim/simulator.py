@@ -1601,12 +1601,12 @@ class Simulator:
     def _update_gui(self):
         """Updates the GUI via TraCI."""
 
-        import traci
         for vehicle in self._vehicles.values():
             # update vehicles
             move_gui_vehicle(vehicle)
 
         # remove vehicles not in simulator
+        import traci
         for vid in traci.vehicle.getIDList():
             if int(vid) not in self._vehicles.keys():
                 remove_gui_vehicle(vid)
