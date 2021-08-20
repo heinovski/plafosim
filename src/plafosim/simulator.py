@@ -36,6 +36,7 @@ from .gui import (
     draw_road_end,
     move_gui_vehicle,
     remove_gui_vehicle,
+    start_gui,
 )
 from .infrastructure import Infrastructure
 from .platoon_role import PlatoonRole
@@ -1567,11 +1568,8 @@ class Simulator:
     def _initialize_gui(self):
         """Initializes the GUI via TraCI."""
 
-        sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-        sumoCmd = [sumoBinary, '-Q', '-c', self._gui_sumo_config, '--collision.mingap-factor', '0', '--collision.action', 'none']
-
-        import traci
-        traci.start(sumoCmd)
+        # start gui
+        start_gui(self._gui_sumo_config)
 
         # draw ramps
         if self._draw_ramps:

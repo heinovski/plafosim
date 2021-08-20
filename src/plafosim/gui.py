@@ -15,9 +15,27 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import os
+
 from .infrastructure import Infrastructure
 from .platooning_vehicle import PlatooningVehicle
 from .vehicle import Vehicle
+
+
+def start_gui(config: str):
+    """
+    Starts the GUI.
+
+    Parameters
+    ----------
+    config : str
+        The name of the configuration file
+    """
+
+    binary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
+    command = [binary, '-Q', '-c', config, '--collision.mingap-factor', '0', '--collision.action', 'none']
+    import traci
+    traci.start(command)
 
 
 def add_gui_vehicle(vehicle: Vehicle, track: bool = False):
