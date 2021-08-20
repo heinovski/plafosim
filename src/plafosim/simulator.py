@@ -723,14 +723,12 @@ class Simulator:
                 self._change_lane(vehicle, target_lane, "speedGain")
                 return
 
-            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target._vid)
+            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target.vid, dry_run=True)
             pred_current = self._get_predecessor(vehicle, vehicle._lane)
             if not pred_current:
                 # no more predecessor, no more reason to change right
                 return
-            speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current._vid)
-            # restore blocked_front (could have been overridden by new_speed)
-            vehicle._blocked_front = False  # FIXME: remove this
+            speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current.vid, dry_run=True)
             if speed_target > speed_current:
                 self._change_lane(vehicle, target_lane, "speedGain")
 
@@ -745,14 +743,12 @@ class Simulator:
                 self._change_lane(vehicle, target_lane, "keepRight")
                 return
 
-            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target._vid)
+            speed_target = vehicle.new_speed(pred_target._speed, pred_target.rear_position, pred_target.vid, dry_run=True)
             pred_current = self._get_predecessor(vehicle, vehicle._lane)
             if pred_current is not None:
-                speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current._vid)
+                speed_current = vehicle.new_speed(pred_current._speed, pred_current.rear_position, pred_current.vid, dry_run=True)
             else:
                 speed_current = vehicle.new_speed(-1, -1, -1)
-            # restore blocked_front (could have been overridden by new_speed)
-            vehicle._blocked_front = True  # FIXME: remove this
             if speed_target >= speed_current or isclose(speed_target, vehicle._cc_target_speed):
                 self._change_lane(vehicle, target_lane, "keepRight")
 

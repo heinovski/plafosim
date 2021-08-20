@@ -24,7 +24,7 @@ import numpy as np
 
 from .cf_model import CF_Model
 from .message import Message
-from .util import acceleration2speed, speed2distance
+from .util import FAKELOG, acceleration2speed, speed2distance
 from .vehicle_type import VehicleType
 
 if TYPE_CHECKING:
@@ -357,7 +357,7 @@ class Vehicle:
 
         return self._blocked_front
 
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int, dry_run: bool = False) -> float:
         """
         Calculates the new speed for a vehicle using the kraus model.
 
@@ -381,6 +381,9 @@ class Vehicle:
         predecessor_id : int
             The id of the vehicle in the front. This should only be used for debugging.
         """
+
+        # hide logger to disable logging in dry_run mode
+        LOG = FAKELOG if dry_run else globals()["LOG"]
 
         LOG.trace(f"{self._vid}'s target speed is {self._cc_target_speed}m/s")
 
@@ -428,7 +431,8 @@ class Vehicle:
 
             if speed_safe < new_speed:
                 LOG.debug(f"{self._vid} is blocked by a slow vehicle!")
-                self._blocked_front = True
+                if not dry_run:
+                    self._blocked_front = True
 
                 # we cannot brake stronger than we actually can
                 new_speed = max(
@@ -439,10 +443,12 @@ class Vehicle:
                 if speed_safe < new_speed:
                     LOG.warning(f"{self._vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({speed_safe}m/s)! This may lead to a crash!")
             else:
-                self._blocked_front = False
+                if not dry_run:
+                    self._blocked_front = False
         else:
             # we have no predecessor
-            self._blocked_front = False
+            if not dry_run:
+                self._blocked_front = False
 
         # TODO dawdling? we do not support dawdling at the moment (sigma == 0.0)
         # new_speed -= random() * new_speed

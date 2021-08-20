@@ -26,6 +26,7 @@ from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
 from .speed_position import SpeedPosition
+from .util import FAKELOG
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
@@ -330,7 +331,7 @@ class PlatooningVehicle(Vehicle):
             )
         )
 
-    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int) -> float:
+    def new_speed(self, speed_predecessor: float, predecessor_rear_position: float, predecessor_id: int, dry_run: bool = False) -> float:
         """
         Calculates the new speed for a vehicle using the currently active car following model.
 
@@ -343,6 +344,9 @@ class PlatooningVehicle(Vehicle):
         predecessor_id : int
             The id of the vehicle in the front. This should only be used for debugging.
         """
+
+        # hide logger to disable logging in dry_run mode
+        LOG = FAKELOG if dry_run else globals()["LOG"]
 
         if self._cf_model is CF_Model.ACC:
             # TODO we should use different maximum accelerations/decelerations and headway times/gaps for different models
@@ -414,9 +418,11 @@ class PlatooningVehicle(Vehicle):
 
                 if new_speed < self._cc_target_speed and u <= 0:
                     LOG.debug(f"{self._vid} is blocked by slow vehicle!")
-                    self._blocked_front = True
+                    if not dry_run:
+                        self._blocked_front = True
                 else:
-                    self._blocked_front = False
+                    if not dry_run:
+                        self._blocked_front = False
 
                 return new_speed
 

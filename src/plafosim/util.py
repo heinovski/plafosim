@@ -229,3 +229,30 @@ def addLoggingLevel(levelName, levelNum, methodName=None):
     setattr(logging, levelName, levelNum)
     setattr(logging.getLoggerClass(), methodName, logForLevel)
     setattr(logging, methodName, logToRoot)
+
+
+class FakeLog:
+    """A fake logger, hide LOG behind this and be happy."""
+    def trace(self, *arg, **kwd):
+        pass
+
+    def debug(self, *arg, **kwd):
+        pass
+
+    def info(self, *arg, **kwd):
+        pass
+
+    def warning(self, *arg, **kwd):
+        pass
+
+    def warn(self, *arg, **kwd):
+        pass
+
+    def error(self, *arg, **kwd):
+        pass
+
+    def fatal(self, *arg, **kwd):
+        pass
+
+
+FAKELOG = FakeLog()  # default fake logger
