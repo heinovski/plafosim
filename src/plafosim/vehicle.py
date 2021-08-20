@@ -437,7 +437,7 @@ class Vehicle:
                 )
                 LOG.trace(f"{self._vid}'s new speed after safe speed is {new_speed}m/s")
                 if speed_safe < new_speed:
-                    LOG.warn(f"{self._vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({speed_safe}m/s)! This may lead to a crash!")
+                    LOG.warning(f"{self._vid}'s is performing an emergency braking! Its new speed ({new_speed}m/s) is still faster than its safe speed ({speed_safe}m/s)! This may lead to a crash!")
             else:
                 self._blocked_front = False
         else:
