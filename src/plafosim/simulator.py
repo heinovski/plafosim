@@ -44,9 +44,12 @@ from .gui import (
 )
 from .infrastructure import Infrastructure
 from .mobility import (
+    compute_lane_changes,
     compute_new_speeds,
     get_crashed_vehicles,
+    get_predecessors,
     is_gap_safe,
+    lane_predecessors,
     safe_speed,
     single_vehicle_new_speed,
     update_position,
@@ -112,6 +115,7 @@ TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
 # vehicle data fram type collections
 # TODO: extract to module or class later
 CFModelDtype = pd.CategoricalDtype(list(CF_Model), ordered=True)
+PlatoonRoleDtype = pd.CategoricalDtype(list(PlatoonRole), ordered=True)
 
 # default values in SI units
 DEFAULTS = {
@@ -1591,27 +1595,41 @@ class Simulator:
                 # call regular actions on infrastructure
                 self._call_infrastructure_actions()
 
-                # TODO update neighbor data (predecessor, successor, front)
-                # this is necessary due to the position updates at the end of the last step
-                # and the spawning of new vehicles
-
-                # perform lane changes (for all vehicles)
-                if self._lane_changes:
-                    self._change_lanes()
-
                 # BEGIN VECTORIZATION PART
                 # TODO move upwards/get rid of it entirely
                 # convert dict of vehicles to dataframe (temporary)
                 vdf = self._get_vehicles_df()
+                vdf = vdf.sort_values(["position", "lane"], ascending=False)
 
-                # TODO update neighbor data (predecessor, successor, front)
-                # this is necessary due to the lane changes
-                # however, it might be sufficient to update the neighbors only
-                # for vehicles that did change the lane
-                # TODO: take care to de-duplicate this from compute_new_speeds
+                # perform lane changes (for all vehicles)
+                # update neighbor data (predecessor, successor, front)
+                lane_changes = compute_lane_changes(
+                    vdf=vdf,
+                    max_lane=self._number_of_lanes - 1,
+                    step_length=self._step_length,
+                )
+                vdf['old_lane'] = vdf['lane']
+                vdf['lane'] = lane_changes['lane']
+                vdf['lc_reason'] = lane_changes['reason']
+
+                # record lane changes
+                # TODO move to better location
+                if self._record_vehicle_changes or self._record_platoon_changes:
+                    self._record_lane_changes(vdf)
+
+                # update neighbor data (predecessor, successor, front)
+                predecessor_map = lane_predecessors(vdf, self._number_of_lanes - 1)
+                predecessor = get_predecessors(
+                    vdf=vdf,
+                    predecessor_map=predecessor_map,
+                    target_lane=vdf.lane,
+                ).rename(columns=lambda col: "predecessor_" + col)
 
                 # adjust speed (of all vehicles)
-                new_speed = compute_new_speeds(vdf, self._step_length)
+                new_speed = compute_new_speeds(
+                    vdf.merge(predecessor, left_index=True, right_index=True),
+                    step_length=self._step_length,
+                )
                 report_rough_braking(vdf, new_speed)
                 vdf['old_speed'] = vdf['speed']
                 vdf['speed'] = new_speed
@@ -1683,6 +1701,40 @@ class Simulator:
             # write continuous simulation traces
             record_simulation_trace(basename=self._result_base_filename, simulator=self, runtime=runtime)
 
+    def _record_lane_changes(self, vdf: pd.DataFrame):
+        for row in vdf.query('lane != old_lane').itertuples():
+            if row.cf_model != CF_Model.CACC:
+                if self._record_vehicle_changes:
+                    record_vehicle_change(
+                        basename=self._result_base_filename,
+                        step=self._step,
+                        vid=row.Index,
+                        position=row.position,
+                        speed=row.speed,
+                        source_lane=row.old_lane,
+                        target_lane=row.lane,
+                        reason=row.lc_reason,
+                    )
+                if self._record_platoon_changes and row.platoon_role == PlatoonRole.LEADER:
+                    record_platoon_change(
+                        basename=self._result_base_filename,
+                        step=self._step,
+                        leader=self._vehicles[row.Index],
+                        source_lane=row.old_lane,
+                        target_lane=row.lane,
+                        reason=row.lc_reason,
+                    )
+            else:
+                if self._record_platoon_changes:
+                    record_vehicle_platoon_change(
+                        basename=self._result_base_filename,
+                        step=self._step,
+                        member=self._vehicles[row.Index],
+                        source_lane=row.old_lane,
+                        target_lane=row.lane,
+                        reason=row.lc_reason,
+                    )
+
     def _get_vehicles_df(self) -> pd.DataFrame:
         """Returns a pandas dataframe from the internal data structure."""
         platoon_fields = [
@@ -1691,21 +1743,27 @@ class Simulator:
             "platoon_max_speed",
             "platoon_max_acceleration",
             "platoon_max_deceleration",
+            "platoon_position",
+            "platoon_rear_position",
         ]
 
         def get_platoon_data(vehicle):
             data = {key: 1e15 for key in platoon_fields}
             data["leader_id"] = -1
+            data["platoon_role"] = None
 
             if not isinstance(vehicle, PlatooningVehicle):
                 return data
 
             platoon = vehicle._platoon
             data["leader_id"] = platoon._formation[0].vid
+            data["platoon_role"] = vehicle._platoon_role
             data["platoon_desired_speed"] = platoon._desired_speed
             data["platoon_max_speed"] = platoon.max_speed
             data["platoon_max_acceleration"] = platoon.max_acceleration
             data["platoon_max_deceleration"] = platoon.max_deceleration
+            data["platoon_position"] = platoon.position
+            data["platoon_rear_position"] = platoon.rear_position
             return data
 
         fields = [
@@ -1738,7 +1796,7 @@ class Simulator:
                 )
                 for vehicle in self._vehicles.values()
             ])
-            .astype({"cf_model": CFModelDtype})
+            .astype({"cf_model": CFModelDtype, "platoon_role": PlatoonRoleDtype})
             .set_index('vid')
             # compute effective limits
             # These computations may negatively impact performance, but will
@@ -1748,6 +1806,8 @@ class Simulator:
                 max_speed=lambda df: df[["max_speed", "cf_target_speed", "platoon_max_speed", "platoon_desired_speed"]].min(axis="columns"),
                 max_acceleration=lambda df: df[["max_acceleration", "platoon_max_acceleration"]].min(axis="columns"),
                 max_deceleration=lambda df: df[["max_deceleration", "platoon_max_deceleration"]].min(axis="columns"),
+                # effective rear_position including platoon followers
+                rear_position=lambda df: df.apply(lambda x: min(x["position"] - x["length"], x["platoon_rear_position"]), axis=1),
             )
             .drop(["cf_target_speed"], axis="columns")
         )
@@ -1774,6 +1834,7 @@ class Simulator:
             vehicle._speed = row.speed
             vehicle._acceleration = row.speed - row.old_speed
             vehicle._blocked_front = row.blocked_front
+            vehicle._lane = row.lane
 
     def stop(self, msg: str):
         """
