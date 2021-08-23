@@ -485,7 +485,7 @@ for label in lifetime_labels:
     if result.pvalue < args.significance:
         print(f"Distributions of {label} are not the same!")
         print(pd.concat([sumo_traces[label].describe(), plafosim_traces[label].describe()], axis=1))
-        # error = True  # FIXME enable
+        error = True
 
 # emission lifetime
 
@@ -513,7 +513,7 @@ for label in emission_labels:
     if result.pvalue < args.significance:
         print(f"Distributions of {label} are not the same!")
         print(pd.concat([sumo_emission_traces[label].describe(), plafosim_emission_traces[label].describe()], axis=1))
-        # error = True  # FIXME enable
+        error = True
 
 lifetime_diff_labels = ['diff_sumo_speed', 'diff_sumo_position', 'diff_sumo_lane']
 
