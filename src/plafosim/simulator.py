@@ -58,6 +58,11 @@ from .statistics import (
     initialize_vehicle_platoon_traces,
     initialize_vehicle_traces,
     initialize_vehicle_trips,
+    record_general_data_begin,
+    record_general_data_end,
+    record_platoon_change,
+    record_simulation_trace,
+    record_vehicle_change,
 )
 from .util import addLoggingLevel, get_crashed_vehicles, update_position
 from .vehicle import Vehicle
@@ -668,17 +673,14 @@ class Simulator:
 
                         if self._record_platoon_changes:
                             # log lane change
-                            with open(f'{self._result_base_filename}_platoon_changes.csv', 'a') as f:
-                                f.write(
-                                    f"{self._step},"
-                                    f"{member._vid},"
-                                    f"{member._position},"
-                                    f"{source_lane},"
-                                    f"{target_lane},"
-                                    f"{member._speed},"
-                                    f"{reason}"
-                                    "\n"
-                                )
+                            record_platoon_change(
+                                basename=self._result_base_filename,
+                                step=self._step,
+                                member=member,
+                                source_lane=source_lane,
+                                target_lane=target_lane,
+                                reason=reason,
+                            )
 
                     return abs(lane_diff) <= 1
                 LOG.debug(f"{vehicle._vid}'s lane change is not safe")
@@ -695,17 +697,16 @@ class Simulator:
 
             if self._record_vehicle_changes:
                 # log lane change
-                with open(f'{self._result_base_filename}_vehicle_changes.csv', 'a') as f:
-                    f.write(
-                        f"{self._step},"
-                        f"{vehicle._vid},"
-                        f"{vehicle._position},"
-                        f"{source_lane},"
-                        f"{target_lane},"
-                        f"{vehicle._speed},"
-                        f"{reason}"
-                        "\n"
-                    )
+                record_vehicle_change(
+                    basename=self._result_base_filename,
+                    step=self._step,
+                    vid=vehicle.vid,
+                    position=vehicle.position,
+                    speed=vehicle.speed,
+                    source_lane=source_lane,
+                    target_lane=target_lane,
+                    reason=reason,
+                )
 
             return abs(lane_diff) <= 1
         LOG.debug(f"{vehicle._vid}'s lane change is not safe")
@@ -1364,9 +1365,7 @@ class Simulator:
         """Creates output files for all (enabled) statistics and writes the headers."""
 
         # write some general information about the simulation
-        with open(f'{self._result_base_filename}_general.out', 'w') as f:
-            f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
-            f.write(f"parameters {str(self)}\n")
+        record_general_data_begin(basename=self._result_base_filename, simulator=self)
 
         if self._record_vehicle_trips:
             # create output file for vehicle trips
@@ -1600,7 +1599,7 @@ class Simulator:
 
         return self._step
 
-    def _statistics(self, run_time: float):
+    def _statistics(self, runtime: float):
         """Record some period statistics."""
 
         self._avg_number_vehicles = (
@@ -1610,13 +1609,7 @@ class Simulator:
 
         if self._record_simulation_trace:
             # write continuous simulation traces
-            with open(f'{self._result_base_filename}_simulation_trace.csv', 'a') as f:
-                f.write(
-                    f"{self._step},"
-                    f"{len(self._vehicles)},"
-                    f"{run_time}"
-                    "\n"
-                )
+            record_simulation_trace(basename=self._result_base_filename, simulator=self, runtime=runtime)
 
     def _get_vehicles_df(self) -> pd.DataFrame:
         """Returns a pandas dataframe from the internal data structure."""
@@ -1740,9 +1733,7 @@ class Simulator:
             return
 
         # write some general information about the simulation
-        with open(f'{self._result_base_filename}_general.out', 'a') as f:
-            f.write(f"simulation end: {time.asctime(time.localtime(time.time()))}\n")
-            f.write(f"average number of vehicles: {self._avg_number_vehicles}\n")
+        record_general_data_end(basename=self._result_base_filename, simulator=self)
 
         # call finish on infrastructures
         for infrastructure in self._infrastructures.values():

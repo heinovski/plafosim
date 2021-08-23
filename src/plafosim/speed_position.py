@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING
 
 from .formation_algorithm import FormationAlgorithm
 from .platoon_role import PlatoonRole
+from .statistics import record_infrastructure_assignments
 
 if TYPE_CHECKING:
     from .platooning_vehicle import Platoon  # noqa 401
@@ -170,20 +171,11 @@ class SpeedPosition(FormationAlgorithm):
         assert(isinstance(self._owner, Infrastructure))
 
         if self._owner._simulator._record_infrastructure_assignments:
-            with open(f'{self._owner._simulator._result_base_filename}_infrastructure_assignments.csv', 'a') as f:
-                f.write(
-                    f"{self._owner.iid},"
-                    f"{self._assignments_solved},"
-                    f"{self._assignments_not_solvable},"
-                    f"{self._assignments_solved_optimal},"
-                    f"{self._assignments_solved_feasible},"
-                    f"{self._assignments_none},"
-                    f"{self._assignments_self},"
-                    f"{self._assignments_candidate_joined_already},"
-                    f"{self._assingments_vehicle_became_leader},"
-                    f"{self._assignments_successful}"
-                    "\n"
-                )
+            record_infrastructure_assignments(
+                basename=self._owner._simulator._result_base_filename,
+                iid=self._owner.iid,
+                algorithm=self,
+            )
 
     def _do_formation_distributed(self):
         """

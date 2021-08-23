@@ -26,6 +26,13 @@ from .message import Message, PlatoonAdvertisement
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
 from .speed_position import SpeedPosition
+from .statistics import (
+    record_platoon_formation,
+    record_platoon_trace,
+    record_platoon_trip,
+    record_vehicle_platoon_maneuvers,
+    record_vehicle_platoon_trace,
+)
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
@@ -436,69 +443,26 @@ class PlatooningVehicle(Vehicle):
             distance_until_first_platoon = self._first_platoon_join_position - self._depart_position
             assert(distance_until_first_platoon >= 0)
 
-        # TODO log savings from platoon?
         if self._simulator._record_platoon_trips:
-            with open(f'{self._simulator._result_base_filename}_vehicle_platoon_trips.csv', 'a') as f:
-                f.write(
-                    f"{self._vid},"
-                    f"{self._time_in_platoon},"
-                    f"{self._distance_in_platoon},"
-                    f"{platoon_time_ratio},"
-                    f"{platoon_distance_ratio},"
-                    f"{self._number_platoons},"
-                    f"{time_until_first_platoon},"
-                    f"{distance_until_first_platoon}"
-                    "\n"
-                )
+            record_platoon_trip(
+                basename=self._simulator._result_base_filename,
+                vehicle=self,
+                platoon_time_ratio=platoon_time_ratio,
+                platoon_distance_ratio=platoon_distance_ratio,
+                time_until_first_platoon=time_until_first_platoon,
+                distance_until_first_platoon=distance_until_first_platoon,
+            )
 
         if self._simulator._record_platoon_maneuvers:
-            with open(f'{self._simulator._result_base_filename}_vehicle_platoon_maneuvers.csv', 'a') as f:
-                f.write(
-                    f"{self._vid},"
-                    f"{self._joins_attempted},"
-                    f"{self._joins_succesful},"
-                    f"{self._joins_aborted},"
-                    f"{self._joins_aborted_front},"
-                    f"{self._joins_aborted_arbitrary},"
-                    f"{self._joins_aborted_road_begin},"
-                    f"{self._joins_aborted_trip_begin},"
-                    f"{self._joins_aborted_road_end},"
-                    f"{self._joins_aborted_trip_end},"
-                    f"{self._joins_aborted_leader_maneuver},"
-                    f"{self._joins_aborted_max_speed},"
-                    f"{self._joins_aborted_teleport_threshold},"
-                    f"{self._joins_aborted_approaching},"
-                    f"{self._joins_aborted_no_space},"
-                    f"{self._joins_aborted_leave_other},"
-                    f"{self._joins_front},"
-                    f"{self._joins_arbitrary},"
-                    f"{self._joins_back},"
-                    f"{self._joins_teleport_position},"
-                    f"{self._joins_teleport_lane},"
-                    f"{self._joins_teleport_speed},"
-                    f"{self._joins_correct_position},"
-                    f"{self._leaves_attempted},"
-                    f"{self._leaves_successful},"
-                    f"{self._leaves_aborted},"
-                    f"{self._leaves_front},"
-                    f"{self._leaves_arbitrary},"
-                    f"{self._leaves_back}"
-                    "\n"
-                )
+            record_vehicle_platoon_maneuvers(basename=self._simulator._result_base_filename, vehicle=self)
 
         if self._simulator._record_platoon_formation:
-            with open(f'{self._simulator._result_base_filename}_vehicle_platoon_formation.csv', 'a') as f:
-                f.write(
-                    f"{self._vid},"
-                    f"{self._formation_iterations},"
-                    f"{self._candidates_found},"
-                    f"{candidates_found_avg},"
-                    f"{self._candidates_filtered},"
-                    f"{candidates_filtered_avg},"
-                    f"{self._candidates_filtered_follower},"
-                    f"{self._candidates_filtered_maneuver}"
-                    "\n"
-                )
+            record_platoon_formation(
+                basename=self._simulator._result_base_filename,
+                vehicle=self,
+                candidates_found_avg=candidates_found_avg,
+                candidates_filtered_avg=candidates_filtered_avg,
+            )
 
     def _action(self, step: int):
         """
@@ -556,32 +520,19 @@ class PlatooningVehicle(Vehicle):
 
         if self._simulator._record_platoon_traces:
             # write statistics about the current platoon
-            with open(f'{self._simulator._result_base_filename}_vehicle_platoon_traces.csv', 'a') as f:
-                f.write(
-                    f"{self._simulator.step},"
-                    f"{self._vid},"
-                    f"{self._platoon.platoon_id},"
-                    f"{self._platoon_role.name},"
-                    f"{self._platoon.get_member_index(self)}"
-                    "\n"
-                )
+            record_vehicle_platoon_trace(
+                basename=self._simulator._result_base_filename,
+                step=self._simulator.step,
+                vehicle=self
+            )
 
             if self._platoon_role is PlatoonRole.LEADER:
                 # write statistics about the platoon
-                with open(f'{self._simulator._result_base_filename}_platoon_traces.csv', 'a') as f:
-                    f.write(
-                        f"{self._simulator.step},"
-                        f"{self._platoon.platoon_id},"
-                        f"{self._platoon.leader.vid},"
-                        f"{self._platoon.position},"
-                        f"{self._platoon.rear_position},"
-                        f"{self._platoon.lane},"
-                        f"{self._platoon.speed},"
-                        f"{self._platoon.size},"
-                        f"{self._platoon.length},"
-                        f"{self._platoon.desired_speed}"
-                        "\n"
-                    )
+                record_platoon_trace(
+                    basename=self._simulator._result_base_filename,
+                    step=self._simulator.step,
+                    vehicle=self
+                )
 
     # TODO rework to only include "neighbors" and move platoon extraction to formation algorithm
     def _get_available_platoons(self):
