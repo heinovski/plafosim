@@ -29,7 +29,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from .cf_model import CF_Model
-from .emission_class import EmissionClass
+from .emissions import EmissionClass
 from .gui import (
     add_gui_vehicle,
     close_gui,

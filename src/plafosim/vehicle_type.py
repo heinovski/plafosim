@@ -16,7 +16,7 @@
 #
 
 
-from .emission_class import EmissionClass
+from .emissions import EmissionClass
 
 
 class VehicleType:

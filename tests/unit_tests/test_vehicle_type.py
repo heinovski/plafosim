@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim.emission_class import EMISSION_FACTORS, EmissionClass
+from plafosim.emissions import EMISSION_FACTORS, EmissionClass
 from plafosim.vehicle_type import VehicleType
 
 
