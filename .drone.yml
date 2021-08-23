@@ -104,7 +104,7 @@ name: correctness
 steps:
 - name: CC
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
-  failure: ignore  # FIXME: remove after comparison (script) has been fixed
+  failure: ignore  # FIXME: remove after seeds and models have been fixed
   commands:
     - apt update
     - apt install time
@@ -113,7 +113,7 @@ steps:
     - ./scripts/validate-cf-model-cc-single.sh
     - ./scripts/validate-cf-model-cc-100.sh
 - name: ACC
-  failure: ignore  # FIXME: remove after comparison (script) has been fixed
+  failure: ignore  # FIXME: remove after seeds and models have been fixed
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
@@ -124,7 +124,7 @@ steps:
     - ./scripts/validate-cf-model-acc-single.sh
     - ./scripts/validate-cf-model-acc-100.sh
 - name: CACC
-  failure: ignore  # FIXME: remove after comparison (script) has been fixed
+  failure: ignore  # FIXME: remove after seeds and models have been fixed
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
