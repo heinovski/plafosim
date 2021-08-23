@@ -44,6 +44,21 @@ from .infrastructure import Infrastructure
 from .mobility import compute_new_speeds, safe_speed, single_vehicle_new_speed
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
+from .statistics import (
+    initialize_emission_traces,
+    initialize_infrastructure_assignments,
+    initialize_platoon_changes,
+    initialize_platoon_formation,
+    initialize_platoon_maneuvers,
+    initialize_platoon_traces,
+    initialize_platoon_trips,
+    initialize_simulation_trace,
+    initialize_vehicle_changes,
+    initialize_vehicle_emissions,
+    initialize_vehicle_platoon_traces,
+    initialize_vehicle_traces,
+    initialize_vehicle_trips,
+)
 from .util import addLoggingLevel, get_crashed_vehicles, update_position
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
@@ -1353,228 +1368,58 @@ class Simulator:
             f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
             f.write(f"parameters {str(self)}\n")
 
-        if self._record_simulation_trace:
-            # write continuous simulation trace
-            with open(f'{self._result_base_filename}_simulation_trace.csv', 'w') as f:
-                f.write(
-                    "step,"
-                    "numberOfVehicles,"
-                    "executionTime"
-                    "\n"
-                )
-
         if self._record_vehicle_trips:
             # create output file for vehicle trips
-            with open(f'{self._result_base_filename}_vehicle_trips.csv', 'w') as f:
-                f.write(
-                    "id,"
-                    "vType,"
-                    "eClass,"
-                    "vClass,"
-                    "depart,"
-                    "departLane,"
-                    "departPos,"
-                    "departSpeed,"
-                    "arrival,"
-                    "arrivalLane,"
-                    "arrivalPos,"
-                    "arrivalSpeed,"
-                    "duration,"
-                    "routeLength,"
-                    "timeLoss,"
-                    "desiredSpeed,"
-                    "expectedTravelTime,"
-                    "travelTimeRatio,"
-                    "avgDrivingSpeed,"
-                    "avgDeviationDesiredSpeed"
-                    "\n"
-                )
+            initialize_vehicle_trips(basename=self._result_base_filename)
 
         if self._record_vehicle_emissions:
             # create output file for vehicle emissions
-            with open(f'{self._result_base_filename}_vehicle_emissions.csv', 'w') as f:
-                f.write(
-                    "id,"
-                    "CO,"
-                    "CO2,"
-                    "HC,"
-                    "NOx,"
-                    "PMx,"
-                    "fuel"
-                    "\n"
-                )
-
-        if self._record_vehicle_traces:
-            # create output file for vehicle traces
-            with open(f'{self._result_base_filename}_vehicle_traces.csv', 'w') as f:
-                f.write(
-                    "step,"
-                    "id,"
-                    "position,"
-                    "lane,"
-                    "speed,"
-                    "blocked,"
-                    "duration,"
-                    "routeLength,"
-                    "desiredSpeed,"
-                    "ccTargetSpeed,"
-                    "cfModel"
-                    "\n"
-                )
-
-        if self._record_vehicle_changes:
-            # create output file for vehicle lane changes
-            with open(f'{self._result_base_filename}_vehicle_changes.csv', 'w') as f:
-                f.write(
-                    "step,"
-                    "id,"
-                    "position,"
-                    "from,"
-                    "to,"
-                    "speed,"
-                    "reason"
-                    "\n"
-                )
-
-        if self._record_emission_traces:
-            # create output file for emission traces
-            with open(f'{self._result_base_filename}_emission_traces.csv', 'w') as f:
-                f.write(
-                    "step,"
-                    "id,"
-                    "CO,"
-                    "CO2,"
-                    "HC,"
-                    "NOx,"
-                    "PMx,"
-                    "fuel"
-                    "\n"
-                )
+            initialize_vehicle_emissions(basename=self._result_base_filename)
 
         if self._record_platoon_trips:
             # create output file for platoon trips
-            with open(f'{self._result_base_filename}_vehicle_platoon_trips.csv', 'w') as f:
-                f.write(
-                    "id,"
-                    "timeInPlatoon,"
-                    "distanceInPlatoon,"
-                    "platoonTimeRatio,"
-                    "platoonDistanceRatio,"
-                    "numberOfPlatoons,"
-                    "timeUntilFirstPlatoon,"
-                    "distanceUntilFirstPlatoon"
-                    "\n"
-                )
+            initialize_platoon_trips(basename=self._result_base_filename)
 
         if self._record_platoon_maneuvers:
             # create output file for platoon maneuvers
-            with open(f'{self._result_base_filename}_vehicle_platoon_maneuvers.csv', 'w') as f:
-                f.write(
-                    "id,"
-                    "joinsAttempted,"
-                    "joinsSuccessful,"
-                    "joinsAborted,"
-                    "joinsAbortedFront,"
-                    "joinsAbortedArbitrary,"
-                    "joinsAbortedRoadBegin,"
-                    "joinsAbortedTripBegin,"
-                    "joinsAbortedRoadEnd,"
-                    "joinsAbortedTripEnd,"
-                    "joinsAbortedLeaderManeuver,"
-                    "joinsAbortedMaxSpeed,"
-                    "joinsAbortedTeleportThreshold,"
-                    "joinsAbortedApproaching,"
-                    "joinsAbortedNoSpace,"
-                    "joinsAbortedLeaveOther,"
-                    "joinsFront,"
-                    "joinsArbitrary,"
-                    "joinsBack,"
-                    "joinsTeleportPosition,"
-                    "joinsTeleportLane,"
-                    "joinsTeleportSpeed,"
-                    "joinsCorrectPosition,"
-                    "leavesAttempted,"
-                    "leavesSuccessful,"
-                    "leavesAborted,"
-                    "leavesFront,"
-                    "leavesArbitrary,"
-                    "leavesBack"
-                    "\n"
-                )
+            initialize_platoon_maneuvers(basename=self._result_base_filename)
 
         if self._record_platoon_formation:
             # create output file for platoon formation
-            with open(f'{self._result_base_filename}_vehicle_platoon_formation.csv', 'w') as f:
-                f.write(
-                    "id,"
-                    "formationIterations,"
-                    "candidatesFound,"
-                    "candidatesFoundAvg,"
-                    "candidatesFiltered,"
-                    "candidatesFilteredAvg,"
-                    "candidatesFilteredFollower,"
-                    "candidatesFilteredManeuver"
-                    "\n"
-                )
-
-        if self._record_platoon_traces:
-            # create output file for vehicle platoon traces
-            with open(f'{self._result_base_filename}_vehicle_platoon_traces.csv', 'w') as f:
-                f.write(
-                    "step,"
-                    "id,"
-                    "platoon,"
-                    "platoonRole,"
-                    "platoonPosition"
-                    "\n"
-                )
-
-            # create output file for platoon traces
-            with open(f'{self._result_base_filename}_platoon_traces.csv', 'w') as f:
-                f.write(
-                    "step,"
-                    "id,"
-                    "leader,"
-                    "position,"
-                    "rearPosition,"
-                    "lane,"
-                    "speed,"
-                    "size,"
-                    "length,"
-                    "desiredSpeed"
-                    "\n"
-                )
-
-        if self._record_platoon_changes:
-            # create output file for platoon lane changes
-            with open(f'{self._result_base_filename}_platoon_changes.csv', 'w') as f:
-                f.write(
-                    "step,"
-                    "id,"
-                    "position,"
-                    "from,"
-                    "to,"
-                    "speed,"
-                    "reason"
-                    "\n"
-                )
+            initialize_platoon_formation(basename=self._result_base_filename)
 
         if self._record_infrastructure_assignments:
             # create output file for infrastructure assignments
-            with open(f'{self._result_base_filename}_infrastructure_assignments.csv', 'w') as f:
-                f.write(
-                    "id,"
-                    "assignmentsSolved,"
-                    "assignmentsNotSolvable,"
-                    "assignmentsSolvedOptimal,"
-                    "assignmentsSolvedFeasible,"
-                    "assignmentsNone,"
-                    "assignmentsSelf,"
-                    "assignmentsCandidateJoinedAlready,"
-                    "assignmentsVehicleBecameLeader,"
-                    "assignmentsSuccessful"
-                    "\n"
-                )
+            initialize_infrastructure_assignments(basename=self._result_base_filename)
+
+        # traces
+
+        if self._record_vehicle_traces:
+            # create output file for vehicle traces
+            initialize_vehicle_traces(basename=self._result_base_filename)
+
+        if self._record_vehicle_changes:
+            # create output file for vehicle lane changes
+            initialize_vehicle_changes(basename=self._result_base_filename)
+
+        if self._record_emission_traces:
+            # create output file for emission traces
+            initialize_emission_traces(basename=self._result_base_filename)
+
+        if self._record_platoon_traces:
+            # create output file for vehicle platoon traces
+            initialize_vehicle_platoon_traces(basename=self._result_base_filename)
+
+            # create output file for platoon traces
+            initialize_platoon_traces(basename=self._result_base_filename)
+
+        if self._record_platoon_changes:
+            # create output file for platoon lane changes
+            initialize_platoon_changes(basename=self._result_base_filename)
+
+        if self._record_simulation_trace:
+            # create output file for continuous simulation trace
+            initialize_simulation_trace(basename=self._result_base_filename)
 
     def _initialize_gui(self):
         """Initializes the GUI via TraCI."""
