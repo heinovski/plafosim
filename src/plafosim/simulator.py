@@ -90,7 +90,7 @@ class Simulator:
             number_of_lanes: int = 3,
             ramp_interval: int = 5 * 1000,
             pre_fill: bool = False,
-            number_of_vehicles: int = -1,
+            number_of_vehicles: int = 100,
             vehicle_density: float = -1,
             max_speed: float = 55,
             acc_headway_time: float = 1.0,
@@ -179,16 +179,9 @@ class Simulator:
         if vehicle_density > 0:
             # override vehicles
             number_of_vehicles = int(vehicle_density * (self._road_length / 1000) * self._number_of_lanes)
-        if number_of_vehicles == 0:
+        if number_of_vehicles <= 0:
             sys.exit("ERROR: A simulation with 0 vehicles does not make sense!")
-        if number_of_vehicles == -1:
-            if not depart_flow:
-                LOG.warning("Using an unlimited number of vehicles without a depart flow!")
-            self._number_of_vehicles = sys.maxsize
-        else:
-            if depart_flow:
-                LOG.warning(f"Using a limited number of vehicles ({number_of_vehicles}) for a depart flow!")
-            self._number_of_vehicles = number_of_vehicles
+        self._number_of_vehicles = number_of_vehicles
         self._max_speed = max_speed  # the maximum driving speed # FIXME not used
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
         if acc_headway_time < 1.0:
@@ -211,6 +204,8 @@ class Simulator:
         if random_depart_position and not depart_desired:
             sys.exit("ERROR: random-depart-position is only possible in conjunction with depart-desired!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
+        if not depart_flow and depart_method == "number":
+            sys.exit("ERROR: The depart method number can only be used in conjuction with a depart flow!")
         self._depart_method = depart_method  # the departure method to use
         if depart_interval < 1:
             sys.exit("ERROR: The depart interval has to be at least 1!")
@@ -1065,19 +1060,12 @@ class Simulator:
     def _spawn_vehicles(self):
         """Spawns vehicles within the current step"""
 
-        if self._depart_flow:
-            # similator to SUMO's flows
-            if len(self._vehicles) >= self._number_of_vehicles:
-                # limit the flow by a maximum number of concurrent vehicles
-                LOG.debug(f"Maximum number of vehicles ({self._number_of_vehicles}) is reached already")
-                return
-        else:
-            if self._last_vehicle_id >= self._number_of_vehicles - 1:
-                # limit the spawn by a maximum number of total vehicles
-                LOG.debug(f"All {self._number_of_vehicles} vehicles have been spawned already")
-                # clear scheduled vehicles
-                self._vehicles_scheduled = 0
-                return
+        if not self._depart_flow and self._last_vehicle_id >= self._number_of_vehicles - 1:
+            # limit the spawn by a maximum number of total vehicles
+            LOG.debug(f"All {self._number_of_vehicles} vehicles have been spawned already")
+            # clear scheduled vehicles
+            self._vehicles_scheduled = 0
+            return
 
         if self._random_depart_position:
             # enable spawning at multiple ramps
@@ -1095,6 +1083,10 @@ class Simulator:
             self._spawn_vehicles_interval(depart_interval, num_spawn_ramps)
         elif self._depart_method == "number":
             # spawn #number vehicles, similar to SUMO's flow param number
+            if len(self._vehicles) >= self._number_of_vehicles:
+                # limit the flow by a maximum number of concurrent vehicles
+                LOG.debug(f"Maximum number of vehicles ({self._number_of_vehicles}) is reached already")
+                return
             depart_interval = self._max_step / self._number_of_vehicles
             self._spawn_vehicles_interval(depart_interval, num_spawn_ramps)
         elif self._depart_method == "probability":

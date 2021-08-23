@@ -104,14 +104,14 @@ def main():
     vehicle.add_argument(
         "--vehicles",
         type=int,
-        default=-1,
-        help="The (maximum) number of vehicles that are in the simulation at once. A value of -1 disables this value.",
+        default=100,
+        help="The (maximum) number of vehicles that are in the simulation at once. Is used for pre-fill, without a depart flow, and for some depart methods. A value of -1 disables this value.",
     )
     vehicle.add_argument(
         "--density",
         type=float,
         default=-1,
-        help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. A value of -1 disables this value. Overrides --vehicles.",
+        help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles but behaves similarly. A value of -1 disables this value",
     )
     vehicle.add_argument(
         "--max-speed",
@@ -204,14 +204,14 @@ def main():
         type=lambda x: bool(strtobool(x)),
         default=False,
         choices=(True, False),
-        help="Whether to spawn vehicles in a continuous flow",
+        help="Whether to spawn vehicles in a continuous flow or as fixed number of vehicles",
     )
     trip.add_argument(
         "--depart-method",
         type=str,
         choices=("interval", "probability", "rate", "number"),
         default="interval",
-        help="The departure method of vehicles",
+        help="The departure method of vehicles. Can be limited when depart-flow is disabled.",
     )
     trip.add_argument(
         "--depart-interval",
