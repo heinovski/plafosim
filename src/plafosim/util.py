@@ -191,7 +191,7 @@ def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
     # TODO one check might be enough
     crash = (crash_in_back | crash_in_front)
 
-    return list(crash[crash].index.values)
+    return list(sorted(crash[crash].index.values))
 
 
 def addLoggingLevel(levelName, levelNum, methodName=None):
