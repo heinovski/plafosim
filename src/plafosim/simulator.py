@@ -43,7 +43,12 @@ from .gui import (
     start_gui,
 )
 from .infrastructure import Infrastructure
-from .mobility import compute_new_speeds, safe_speed, single_vehicle_new_speed
+from .mobility import (
+    compute_new_speeds,
+    is_gap_safe,
+    safe_speed,
+    single_vehicle_new_speed,
+)
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
 from .statistics import (
@@ -1224,31 +1229,28 @@ class Simulator:
 
     def _is_insert_unsafe(self, depart_position, depart_speed, vtype, other_vehicle):
         # would it be unsafe to insert the vehicle?
-        # we use the same safety checks as in the lane change
-        unsafe = False
         if other_vehicle._position <= depart_position:
-            # unsafe if the other vehicle cannot reach the safe speed within the next simulation step
-            speed_safe = safe_speed(
-                speed_predecessor=depart_speed,
-                speed_current=other_vehicle.speed,
-                gap_to_predecessor=depart_position - vtype._length - other_vehicle._position,
-                desired_headway_time=other_vehicle.desired_headway_time,
-                max_deceleration=other_vehicle.max_deceleration,
-                desired_gap=other_vehicle.desired_gap,
+            return not is_gap_safe(
+                front_position=depart_position,
+                front_speed=depart_speed,
+                front_max_acceleration=vtype.max_acceleration,
+                front_length=vtype.length,
+                back_position=other_vehicle.position,
+                back_speed=other_vehicle.speed,
+                back_max_acceleration=other_vehicle.max_acceleration,
+                step_length=self._step_length
             )
-            unsafe = other_vehicle._speed - speed_safe >= other_vehicle.max_deceleration
         else:
-            # unsafe if the new vehicle cannot reach the safe speed within the next simulation step
-            speed_safe = safe_speed(
-                speed_predecessor=other_vehicle.speed,
-                speed_current=depart_speed,
-                gap_to_predecessor=other_vehicle.rear_position - depart_position,
-                desired_headway_time=other_vehicle.desired_headway_time,
-                max_deceleration=other_vehicle.max_deceleration,
-                desired_gap=other_vehicle.desired_gap,
+            return not is_gap_safe(
+                front_position=other_vehicle.position,
+                front_speed=other_vehicle.speed,
+                front_max_acceleration=other_vehicle.max_acceleration,
+                front_length=other_vehicle.length,
+                back_position=depart_position,
+                back_speed=depart_speed,
+                back_max_acceleration=vtype.max_acceleration,
+                step_length=self._step_length
             )
-            unsafe = depart_speed - speed_safe >= vtype.max_deceleration
-        return unsafe
 
     def _add_vehicle(
             self,
