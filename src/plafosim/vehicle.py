@@ -110,7 +110,7 @@ class Vehicle:
         self._lane = self._depart_lane  # the current lane of the vehicle
         self._speed = self._depart_speed  # the current speed of the vehicle
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
-        self._acceleration = 0  # the current acceleration of the vehicle
+        self._acceleration = 0  # the current acceleration of the vehicle, used (only) for the emission model
         self._cf_model = CF_Model.CC  # the current car following model
         self._cc_target_speed = desired_speed  # the target speed for CC
 
@@ -282,12 +282,6 @@ class Vehicle:
         """Returns the current driving speed of the vehicle."""
 
         return self._speed
-
-    @property
-    def acceleration(self) -> int:
-        """Returns the current acceleration of the vehicle."""
-
-        return self._acceleration
 
     @property
     def cf_model(self) -> CF_Model:
