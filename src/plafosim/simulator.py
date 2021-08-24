@@ -1699,6 +1699,7 @@ class Simulator:
             vehicle = self._vehicles[row.Index]
             vehicle._position = row.position
             vehicle._speed = row.speed
+            vehicle._acceleration = row.speed - row.old_speed
             vehicle._blocked_front = row.blocked_front
 
     def stop(self, msg: str):
