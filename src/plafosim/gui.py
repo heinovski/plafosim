@@ -95,6 +95,21 @@ def move_gui_vehicle(vehicle: Vehicle):
     traci.vehicle.moveTo(vehID=vid, pos=position, laneID=f'edge_0_0_{vehicle.lane}')
 
 
+def gui_step(target_step: int):
+    """
+    Increases the simulation step in the GUI.
+
+    Parameters
+    ----------
+    target_step : int
+        The target simulation step
+    """
+
+    import traci
+    traci.simulationStep(target_step)
+    assert(traci.simulation.getTime() == float(target_step))
+
+
 def change_gui_vehicle_color(vid: int, color: tuple):
     """
     Changes the color of a vehicle in the GUI.

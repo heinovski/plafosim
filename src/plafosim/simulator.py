@@ -36,6 +36,7 @@ from .gui import (
     draw_infrastructures,
     draw_ramps,
     draw_road_end,
+    gui_step,
     move_gui_vehicle,
     prune_vehicles,
     remove_gui_vehicle,
@@ -1586,9 +1587,7 @@ class Simulator:
             self._step += self._step_length
             progress_bar.update(self._step_length)
             if self._gui and self._step > self._gui_start:
-                import traci
-                traci.simulationStep(self._step)
-                assert(traci.simulation.getTime() == float(self._step))
+                gui_step(target_step=self._step)
 
         # We reach this point only by setting self._running to False
         # which is only done by calling self.stop()
