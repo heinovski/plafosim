@@ -63,6 +63,8 @@ def is_gap_safe(
 def safe_speed_df(vdf: pd.DataFrame) -> pd.Series:
     """
     Compute the safe speed akkording to the Krauss model, DataFrame variant.
+
+    See S. Krauss, Microscopic Modeling of Traffic Flow: Investigation of Collision Free Vehicle Dynamics, 1998.
     """
 
     tau_b = (vdf.predecessor_speed + vdf.speed) / (2 * vdf.max_deceleration)
@@ -88,8 +90,9 @@ def speed_acc_df(vdf: pd.DataFrame, step_length: float = 1.0) -> pd.Series:
     """
     Compute new speed for ACC vehicles, DataFrame variant.
 
-    Taken from Segata's dissertation / plexe.
     Clamping is done outside this function.
+
+    See Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
     """
 
     acceleration = (
