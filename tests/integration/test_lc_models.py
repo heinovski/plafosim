@@ -145,14 +145,15 @@ def test_lc_models(penetration_rate: float, headway_time: float):
     # when changing right there is enough headway between vehicle 1 and 0
     # i.e., if v0 accelerated and v1 decelerated both as hard as possible,
     # they still would not crash
-    step_length = s.step_length
-    # TODO: replace this with the safe_gap function once available
-    assert (
-        v_front.position
-        - vtype.length
-        + (v_front.speed - vtype.max_deceleration * step_length) * step_length
-        > v_back.position
-        + (v_back.speed + vtype.max_acceleration * step_length) * step_length
+    assert is_gap_safe(
+        front_position=s._vehicles[1].position,
+        front_speed=s._vehicles[1].speed,
+        front_max_acceleration=vtype.max_acceleration,
+        front_length=vtype.length,
+        back_position=s._vehicles[0].position,
+        back_speed=s._vehicles[0].speed,
+        back_max_acceleration=vtype.max_acceleration,
+        step_length=s._step_length
     )
 
 
