@@ -125,6 +125,22 @@ def remove_gui_vehicle(vid: int):
     traci.vehicle.remove(str(vid), 2)
 
 
+def prune_vehicles(keep_vids: list):
+    """
+    Prunes vehicles from the GUI.
+
+    Parameters
+    ----------
+    keep_vids : list
+        The ids of the vehicle that should be kept
+    """
+
+    import traci
+    for vid in traci.vehicle.getIDList():
+        if int(vid) not in keep_vids:
+            remove_gui_vehicle(vid)
+
+
 def close_gui():
     """
     Closes the GUI.

@@ -37,6 +37,7 @@ from .gui import (
     draw_ramps,
     draw_road_end,
     move_gui_vehicle,
+    prune_vehicles,
     remove_gui_vehicle,
     start_gui,
 )
@@ -1453,17 +1454,14 @@ class Simulator:
             add_gui_vehicle(vehicle, track=vehicle.vid == self._gui_track_vehicle)
 
     def _update_gui(self):
-        """Updates the GUI via TraCI."""
+        """Updates the GUI."""
 
         for vehicle in self._vehicles.values():
             # update vehicles
             move_gui_vehicle(vehicle)
 
         # remove vehicles not in simulator
-        import traci
-        for vid in traci.vehicle.getIDList():
-            if int(vid) not in self._vehicles.keys():
-                remove_gui_vehicle(vid)
+        prune_vehicles(keep_vids=self._vehicles.keys())
 
         # sleep for visualization
         time.sleep(self._gui_delay)
