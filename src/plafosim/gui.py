@@ -17,8 +17,6 @@
 
 import os
 
-# from .infrastructure import Infrastructure  # TODO fix circular import
-# from .platooning_vehicle import PlatooningVehicle  # TODO fix circular import
 from .vehicle import Vehicle
 
 
