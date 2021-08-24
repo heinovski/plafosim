@@ -1423,7 +1423,7 @@ class Simulator:
             initialize_simulation_trace(basename=self._result_base_filename)
 
     def _initialize_gui(self):
-        """Initializes the GUI via TraCI."""
+        """Initializes the GUI."""
 
         # start gui
         start_gui(self._gui_sumo_config)
