@@ -1715,7 +1715,8 @@ class Simulator:
         """
 
         self._running = False
-        print(f"\n{msg}")
+        if self._progress:
+            print(f"\n{msg}")
 
     def __str__(self) -> str:
         """Returns a str representation of a simulator instance."""
