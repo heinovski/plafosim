@@ -414,6 +414,13 @@ def main():
         choices=["error", "warn", "info", "debug", "trace"],
         help="The minimum level of logs to be printed",
     )
+    simulation.add_argument(
+        "--progress",
+        type=lambda x: bool(strtobool(x)),
+        default=True,
+        choices=(True, False),
+        help="Whether to enable the (simulation) progress bar",
+    )
 
     # gui properties
     gui = parser.add_argument_group("gui properties")
@@ -673,6 +680,7 @@ def main():
             args.collisions,
             args.random_seed,
             getattr(logging, args.log_level.upper(), 5),  # implicitly use trace level
+            args.progress,
             args.gui,
             args.gui_delay,
             args.track_vehicle,

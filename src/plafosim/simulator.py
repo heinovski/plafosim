@@ -193,6 +193,7 @@ class Simulator:
             collisions: bool = True,
             random_seed: int = -1,
             log_level: int = logging.WARNING,
+            progress: bool = True,
             gui: bool = False,
             gui_delay: int = 0,
             gui_track_vehicle: int = -1,
@@ -379,6 +380,7 @@ class Simulator:
             self._random_seed = random_seed  # the random.seed to use for the RNG
             LOG.info(f"Using random seed {random_seed}")
             random.seed(random_seed)
+        self._progress = progress  # whether to enable the (simulation) progress bar
 
         # gui properties
         self._gui = gui  # whether to show a live sumo-gui
@@ -859,7 +861,7 @@ class Simulator:
 
         LOG.info(f"Pre-filling the road network with {self._number_of_vehicles} vehicles")
 
-        for num in tqdm(range(0, self._number_of_vehicles), desc="Generated vehicles"):
+        for num in tqdm(range(0, self._number_of_vehicles), desc="Generated vehicles", disable=not self._progress):
 
             vid = self._last_vehicle_id + 1
 
@@ -1346,7 +1348,7 @@ class Simulator:
 
         placement_interval = self._road_length / number_of_infrastructures
 
-        for num in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures"):
+        for num in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures", disable=not self._progress):
             iid = last_infrastructure_id + 1
             position = (iid + 0.5) * placement_interval
 
@@ -1492,7 +1494,7 @@ class Simulator:
             if self._start_as_platoon and vehicle._vid > 0:
                 vehicle._join(0, 0)
 
-        progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step')
+        progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step', disable=not self._progress)
         # let the simulator run
         while self._running:
             start_time = timer()
