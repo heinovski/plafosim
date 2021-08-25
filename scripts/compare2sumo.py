@@ -405,7 +405,7 @@ for label in trip_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_trips[label], sumo_trips[label])
     if result.pvalue < args.significance:
-        print(f"Distributions of {label} are not the same!")
+        print(f"Distributions of {label} are not the same ({result.pvalue})!")
         print(pd.concat([sumo_trips[label].describe(), plafosim_trips[label].describe()], axis=1))
         error = True
 
@@ -434,7 +434,7 @@ for label in emission_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_emissions[label], sumo_trips[label])
     if result.pvalue < args.significance:
-        print(f"Distributions of {label} are not the same!")
+        print(f"Distributions of {label} are not the same ({result.pvalue})!")
         print(pd.concat([sumo_trips[label].describe(), plafosim_emissions[label].describe()], axis=1))
         error = True
 
@@ -486,7 +486,7 @@ for label in lifetime_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_traces[label], sumo_traces[label])
     if result.pvalue < args.significance:
-        print(f"Distributions of {label} are not the same!")
+        print(f"Distributions of {label} are not the same ({result.pvalue})!")
         print(pd.concat([sumo_traces[label].describe(), plafosim_traces[label].describe()], axis=1))
         error = True
 
@@ -514,7 +514,7 @@ for label in emission_labels:
     print(f"Running sample test for {label}...")
     result = ks_2samp(plafosim_emission_traces[label], sumo_emission_traces[label])
     if result.pvalue < args.significance:
-        print(f"Distributions of {label} are not the same!")
+        print(f"Distributions of {label} are not the same ({result.pvalue})!")
         print(pd.concat([sumo_emission_traces[label].describe(), plafosim_emission_traces[label].describe()], axis=1))
         error = True
 
