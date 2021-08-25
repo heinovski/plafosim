@@ -43,8 +43,11 @@ parser.add_argument('--vehicles', type=int, default=100,
 parser.add_argument('--desired-speed', type=float, default=36.0, help="The desired speed to use for the comparison")
 parser.add_argument('--arrival-position', type=int, default=100000,
                     help="The arrival position to use for the comparison")
-parser.add_argument('--significance', type=float, default=0.05,
-                    help="The significance level to use for the KS tests")
+parser.add_argument(
+    '--significance', type=float, default=0.05,
+    help="""The significance level to use for the KS tests.
+    If the pvalue is below this level, the the distributions are different."""
+)
 args = parser.parse_args()
 
 error = False
