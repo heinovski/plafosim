@@ -47,7 +47,7 @@ echo "Running PlaFoSim..."
     --min-desired-speed 22 \
     --penetration 0 \
     --random-desired-speed true \
-    --random-seed 1337 \
+    --random-seed 2542 \
     --record-emission-traces true \
     --record-end-trace false \
     --record-vehicle-changes true \
