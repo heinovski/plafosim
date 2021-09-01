@@ -8,20 +8,10 @@
 
 The idea of PlaFoSim is to simulate the process of forming platoons from individually driven vehicle.
 While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is more abstract. That is V2V uses an Unit Disc Model (UDM) and maneuvers are implemented by teleports.
-<table>
-<tr>
-<td>Scenario</td>
-<td>Advertisement</td>
-<td>Assignment</td>
-<td>Maneuver</td>
-</tr>
-<tr>
-<td><img src="doc/scenario.png" /></td>
-<td><img src="doc/advertisement.png" /></td>
-<td><img src="doc/assignment.png" /></td>
-<td><img src="doc/maneuver.png" /></td>
-</tr>
-</table>
+
+| Scenario | Advertisement | Assignment | Maneuver |
+| -------- | ------------- | ---------- | -------- |
+![Scenario](doc/scenario.png) | ![Advertisement](doc/advertisement.png) | ![Assignment](doc/assignment.png) | ![Maneuver](doc/maneuver.png) |
 
 This tool is in active development and has not been published yet.
 For more information, contact Julian Heinovski ([heinovski@ccs-labs.org](mailto:heinovski@ccs-labs.org)).
