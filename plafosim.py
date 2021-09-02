@@ -24,7 +24,7 @@ from distutils.util import strtobool
 from timeit import default_timer as timer
 
 from src.plafosim import __version__
-from src.plafosim.simulator import Simulator
+from src.plafosim.simulator import DEFAULTS, Simulator
 
 
 class CustomFormatter(
@@ -76,25 +76,25 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     road.add_argument(
         "--road-length",
         type=int,
-        default=100,
+        default=int(DEFAULTS['road_length'] / 1000),  # m -> km
         help="The length of the road in km",
     )
     road.add_argument(
         "--lanes",
         type=int,
-        default=3,
+        default=DEFAULTS['lanes'],
         help="The number of lanes",
     )
     road.add_argument(
         "--ramp-interval",
         type=int,
-        default=5,
+        default=int(DEFAULTS['ramp_interval'] / 1000),  # m -> km
         help="The distance between any two on-/off-ramps in km",
     )
     road.add_argument(
         "--pre-fill",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['pre_fill'],
         choices=(True, False),
         help="Whether to fill the road network with vehicles using random positions and given vehicle number/density before the simulation starts",
     )
@@ -104,37 +104,37 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     vehicle.add_argument(
         "--vehicles",
         type=int,
-        default=100,
+        default=DEFAULTS['vehicles'],
         help="The (maximum) number of vehicles that are in the simulation at once. Is used for pre-fill, without a depart flow, and for some depart methods. A value of -1 disables this value.",
     )
     vehicle.add_argument(
         "--density",
         type=float,
-        default=-1,
+        default=DEFAULTS['vehicle_density'],
         help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles but behaves similarly. A value of -1 disables this value",
     )
     vehicle.add_argument(
         "--max-speed",
         type=float,
-        default=55,
+        default=DEFAULTS['max_speed'],
         help="The maximum possible driving speed in m/s",
     )
     vehicle.add_argument(
         "--acc-headway-time",
         type=float,
-        default=1.0,
+        default=DEFAULTS['acc_headway_time'],
         help="The headway time to be used for the ACC in s",
     )
     vehicle.add_argument(
         "--cacc-spacing",
         type=float,
-        default=5.0,
+        default=DEFAULTS['cacc_spacing'],
         help="The constant spacing to be used for the CACC in m",
     )
     vehicle.add_argument(
         "--penetration",
         type=float,
-        default=1.0,
+        default=DEFAULTS['penetration_rate'],
         help="Penetration rate of vehicles with platooning capabilities",
     )
 
@@ -143,66 +143,66 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     trip.add_argument(
         "--random-depart-position",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['random_depart_position'],
         choices=(True, False),
         help="Whether to use a random depart position for every vehicle instead of 0 m",
     )
     trip.add_argument(
         "--random-depart-lane",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['random_depart_lane'],
         choices=(True, False),
         help="Whether to use a random depart lane for every vehicle instead of lane 0",
     )
     trip.add_argument(
         "--desired-speed",
         type=float,
-        default=36.0,
+        default=DEFAULTS['desired_speed'],
         help="The desired driving speed im m/s",
     )
     trip.add_argument(
         "--random-desired-speed",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['random_desired_speed'],
         choices=(True, False),
         help="Whether to pick a random (normally distributed) desired driving speed",
     )
     trip.add_argument(
         "--speed-variation",
         type=float,
-        default=0.1,
+        default=DEFAULTS['speed_variation'],
         help="The deviation from the desired driving speed in ratio",
     )
     trip.add_argument(
         "--min-desired-speed",
         type=float,
-        default=22.0,
+        default=DEFAULTS['min_desired_speed'],
         help="The minimum desired driving speed im m/s",
     )
     trip.add_argument(
         "--max-desired-speed",
         type=float,
-        default=50.0,
+        default=DEFAULTS['max_desired_speed'],
         help="The maximum desired driving speed im m/s",
     )
     trip.add_argument(
         "--random-depart-speed",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['random_depart_speed'],
         choices=(True, False),
         help="Whether to use a random depart speed for every vehicle instead of 0 m/s",
     )
     trip.add_argument(
         "--depart-desired",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['depart_desired'],
         choices=(True, False),
         help="Whether the vehicle should depart with its desired speed. Overrides --random-depart-speed",
     )
     trip.add_argument(
         "--depart-flow",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['depart_flow'],
         choices=(True, False),
         help="Whether to spawn vehicles in a continuous flow or as fixed number of vehicles",
     )
@@ -210,44 +210,44 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--depart-method",
         type=str,
         choices=("interval", "probability", "rate", "number"),
-        default="interval",
+        default=DEFAULTS['depart_method'],
         help="The departure method of vehicles. Can be limited when depart-flow is disabled.",
     )
     trip.add_argument(
         "--depart-interval",
         type=int,
-        default=1,
+        default=DEFAULTS['depart_interval'],
         help="The interval between two vehicle departures in s for depart method 'interval'",
     )
     trip.add_argument(
         "--depart-probability",
         type=float,
-        default=1.0,
+        default=DEFAULTS['depart_probability'],
         help="The probability of departure per time step for depart method 'probability'",
     )
     trip.add_argument(
         "--depart-rate",
         type=int,
-        default=3600,
+        default=DEFAULTS['depart_rate'],
         help="The rate of departure in vehicles per hour for depart method 'rate'",
     )
     trip.add_argument(
         "--random-arrival-position",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['random_arrival_position'],
         choices=(True, False),
         help="Whether to use a random arrival position for every vehicle instead of the end of the road",
     )
     trip.add_argument(
         "--minimum-trip-length",
         type=int,
-        default=0,
+        default=int(DEFAULTS['minimum_trip_length'] / 1000),  # m -> km
         help="The minimum trip length for a vehicle in km",
     )
     trip.add_argument(
         "--maximum-trip-length",
         type=int,
-        default=-1,
+        default=int(DEFAULTS['maximum_trip_length'] / 1000),  # m -> km
         help="The maximum trip length for a vehicle in km",
     )
 
@@ -256,7 +256,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     communication.add_argument(
         "--communication-range",
         type=int,
-        default=1000,
+        default=DEFAULTS['communication_range'],
         help="The maximum communication range between two vehicles in m. A value of -1 disables the communication range check",
     )
 
@@ -265,40 +265,40 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     platoon.add_argument(
         "--start-as-platoon",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['start_as_platoon'],
         choices=(True, False),
         help="Whether vehicles should automatically start as one platoon",
     )
     platoon.add_argument(
         "--reduced-air-drag",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['reduced_air_drag'],
         choices=(True, False),
         help="Whether the reduced air drag due to platooning should be considered in the emissions calculation",
     )
     platoon.add_argument(
         "--maximum-teleport-distance",
         type=int,
-        default=2000,
+        default=DEFAULTS['maximum_teleport_distance'],
         help="The maximum teleport distance in m. A value of -1 disables the check",
     )
     platoon.add_argument(
         "--maximum-approach-time",
         type=int,
-        default=60,
+        default=DEFAULTS['maximum_approach_time'],
         help="The maximum time for approaching a platoon during a join maneuver in s. A value of -1 disables the check",
     )
     platoon.add_argument(
         "--delay-teleports",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['delay_teleports'],
         choices=(True, False),
         help="Whether teleports (i.e., during a join maneuver) should be delayed by the time for approaching the target platoon",
     )
     platoon.add_argument(
         "--update-desired-speed",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['update_desired_speed'],
         choices=(True, False),
         help="Whether to update the platoon's desired driving speed to the average speed of all members after the formation changed",
     )
@@ -308,52 +308,52 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     formation.add_argument(
         "--formation-algorithm",
         type=str,
-        default=None,
+        default=DEFAULTS['formation_algorithm'],
         choices=["speedposition"],
         help="The formation algorithm to use",
     )
     formation.add_argument(
         "--formation-strategy",
         type=str,
-        default="distributed",
+        default=DEFAULTS['formation_strategy'],
         choices=["distributed", "centralized"],
         help="The formation strategy to use",
     )
     formation.add_argument(
         "--formation-centralized-kind",
         type=str,
-        default="greedy",
+        default=DEFAULTS['formation_centralized_kind'],
         choices=["greedy", "optimal"],
         help="The kind of the centralized formation",
     )
     formation.add_argument(
         "--execution-interval",
         type=int,
-        default=60,
+        default=DEFAULTS['execution_interval'],
         help="The interval between two iterations of a formation algorithm in s",
     )
     formation.add_argument(
         "--alpha",
         type=float,
-        default=0.5,
+        default=DEFAULTS['alpha'],
         help="The weight of the speed deviation in comparison to the position deviation",
     )
     formation.add_argument(
         "--speed-deviation-threshold",
         type=float,
-        default=-1,
+        default=DEFAULTS['speed_deviation_threshold'],
         help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates. A value of -1 disables the threshold",
     )
     formation.add_argument(
         "--position-deviation-threshold",
         type=int,
-        default=2000,
+        default=DEFAULTS['position_deviation_threshold'],
         help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold",
     )
     formation.add_argument(
         "--solver-time-limit",
         type=int,
-        default=60,
+        default=int(DEFAULTS['solver_time_limit'] / 1000),  # ms -> s
         help="The time limit for the optimal solver per assignment problem in s. Influences the quality of the solution.",
     )
 
@@ -362,7 +362,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     infrastructures.add_argument(
         "--infrastructures",
         type=int,
-        default=0,
+        default=DEFAULTS['infrastructures'],
         help="The number of infrastructures",
     )
 
@@ -371,53 +371,53 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     simulation.add_argument(
         "--step-length",
         type=int,
-        default=1,
+        default=DEFAULTS['step_length'],
         help="The step length in s",
     )
     simulation.add_argument(
         "--time-limit",
         type=float,
-        default=1.0,
+        default=float(DEFAULTS['max_step'] / 3600),  # s -> h
         help="The simulation limit in h",
     )
     simulation.add_argument(
         "--actions",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['actions'],
         choices=(True, False),
         help="Whether to enable actions",
     )
     simulation.add_argument(
         "--lane-changes",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['lane_changes'],
         choices=(True, False),
         help="Whether to enable lane changes",
     )
     simulation.add_argument(
         "--collisions",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['collisions'],
         choices=(True, False),
         help="Whether to enable collision checks",
     )
     simulation.add_argument(
         "--random-seed",
         type=int,
-        default=-1,
+        default=DEFAULTS['random_seed'],
         help="The seed (>=0) for the random number generator instead of the current system time",
     )
     simulation.add_argument(
         "--log-level",
         type=str,
-        default="warn",
+        default=logging.getLevelName(DEFAULTS['log_level']).lower(),
         choices=["error", "warn", "info", "debug", "trace"],
         help="The minimum level of logs to be printed",
     )
     simulation.add_argument(
         "--progress",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['progress'],
         choices=(True, False),
         help="Whether to enable the (simulation) progress bar",
     )
@@ -432,66 +432,66 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     gui.add_argument(
         "--gui-delay",
         type=int,
-        default=0,
+        default=int(DEFAULTS['gui_delay'] * 1000),  # s -> ms
         help="The delay used in every simulation step to visualize the current network state in ms",
     )
     gui.add_argument(
         "--track-vehicle",
         type=int,
-        default=-1,
+        default=DEFAULTS['gui_track_vehicle'],
         help="The id of a vehicle to track in the gui",
     )
     gui.add_argument(
         "--sumo-config",
         type=str,
-        default="sumocfg/freeway.sumo.cfg",
+        default=DEFAULTS['gui_sumo_config'],
         help="The name of the SUMO config file",
     )
     gui.add_argument(
         "--gui-start",
         type=int,
-        default=0,
+        default=DEFAULTS['gui_start'],
         help="The time to connect to the GUI in s",
     )
     gui.add_argument(
         "--draw-ramps",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['draw_ramps'],
         choices=(True, False),
         help="Whether to draw on-/off-ramps",
     )
     gui.add_argument(
         "--draw-ramp-labels",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['draw_ramp_labels'],
         choices=(True, False),
         help="Whether to draw labels for on-/off-ramps",
     )
     gui.add_argument(
         "--draw-road-end",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['draw_road_end'],
         choices=(True, False),
         help="Whether to draw the end of the road",
     )
     gui.add_argument(
         "--draw-road-end-label",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['draw_road_end_label'],
         choices=(True, False),
         help="Whether to draw a label for the end of the road",
     )
     gui.add_argument(
         "--draw-infrastructures",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['draw_infrastructures'],
         choices=(True, False),
         help="Whether to draw infrastructures",
     )
     gui.add_argument(
         "--draw-infrastructure-labels",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['draw_infrastructure_labels'],
         choices=(True, False),
         help="Whether to draw labels for infrastructures",
     )
@@ -501,104 +501,104 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     results.add_argument(
         "--result-base-filename",
         type=str,
-        default="results",
+        default=DEFAULTS['result_base_filename'],
         help="The base filename of the result files",
     )
     results.add_argument(
         "--record-simulation-trace",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_simulation_trace'],
         choices=(True, False),
         help="Whether to record a continuous simulation trace",
     )
     results.add_argument(
         "--record-end-trace",
         type=lambda x: bool(strtobool(x)),
-        default=True,
+        default=DEFAULTS['record_end_trace'],
         choices=(True, False),
         help="Whether to record another trace item at the trip end",
     )
     results.add_argument(
         "--record-vehicle-trips",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_vehicle_trips'],
         choices=(True, False),
         help="Whether to record vehicle trips",
     )
     results.add_argument(
         "--record-vehicle-emissions",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_vehicle_emissions'],
         choices=(True, False),
         help="Whether to record vehicle emissions",
     )
     results.add_argument(
         "--record-vehicle-traces",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_vehicle_traces'],
         choices=(True, False),
         help="Whether to record continuous vehicles traces",
     )
     results.add_argument(
         "--record-vehicle-changes",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_vehicle_changes'],
         choices=(True, False),
         help="Whether to record vehicle lane changes",
     )
     results.add_argument(
         "--record-emission-traces",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_emission_traces'],
         choices=(True, False),
         help="Whether to record continuous emission traces",
     )
     results.add_argument(
         "--record-platoon-trips",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_platoon_trips'],
         choices=(True, False),
         help="Whether to record platoon trips",
     )
     results.add_argument(
         "--record-platoon-maneuvers",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_platoon_maneuvers'],
         choices=(True, False),
         help="Whether to record platoon maneuvers",
     )
     results.add_argument(
         "--record-platoon-formation",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_platoon_formation'],
         choices=(True, False),
         help="Whether to record platoon formation results",
     )
     results.add_argument(
         "--record-platoon-traces",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_platoon_traces'],
         choices=(True, False),
         help="Whether to record continuous platoon traces",
     )
     results.add_argument(
         "--record-platoon-changes",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_platoon_changes'],
         choices=(True, False),
         help="Whether to record platoon lane changes",
     )
     results.add_argument(
         "--record-infrastructure-assignments",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_infrastructure_assignments'],
         choices=(True, False),
         help="Whether to record infrastructure assignments",
     )
     results.add_argument(
         "--record-prefilled",
         type=lambda x: bool(strtobool(x)),
-        default=False,
+        default=DEFAULTS['record_prefilled'],
         choices=(True, False),
         help="Whether to record results for pre-filled vehicles",
     )
@@ -610,8 +610,8 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     args.ramp_interval *= 1000  # km -> m
     args.minimum_trip_length *= 1000  # km -> m
     args.maximum_trip_length *= 1000  # km -> m
-    args.solver_time_limit *= 1000  # km -> m
-    args.time_limit *= 60 * 60  # h -> s
+    args.solver_time_limit *= 1000  # s -> ms
+    args.time_limit *= 3600  # h -> s
     args.gui_delay /= 1000  # ms -> s
 
     return args, gui
