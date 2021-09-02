@@ -117,7 +117,7 @@ DEFAULTS = {
     'pre_fill': False,
     'vehicles': 100,
     'vehicle_density': -1,
-    'max_speed': 55,
+    'max_speed': 55,  # FIXME not used currently
     'acc_headway_time': 1.0,
     'cacc_spacing': 5.0,
     'penetration_rate': 1.0,
@@ -324,7 +324,7 @@ class Simulator:
         if number_of_vehicles <= 0:
             sys.exit("ERROR: A simulation with 0 vehicles does not make sense!")
         self._number_of_vehicles = number_of_vehicles
-        self._max_speed = max_speed  # the maximum driving speed # FIXME not used
+        self._max_speed = max_speed  # the maximum driving speed # FIXME not used currently
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
         if acc_headway_time < 1.0:
             LOG.warning("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
