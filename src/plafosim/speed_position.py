@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import argparse
 import logging
 from timeit import default_timer as timer
 from typing import TYPE_CHECKING
@@ -28,6 +29,12 @@ if TYPE_CHECKING:
     from .platooning_vehicle import PlatooningVehicle  # noqa 401
 
 LOG = logging.getLogger(__name__)
+DEFAULTS = {
+    'alpha': 0.5,
+    'speed_deviation_threshold': -1,
+    'position_deviation_threshold': 2000,
+    'solver_time_limit': 60 * 1000,  # s -> ms
+}
 
 
 class SpeedPosition(FormationAlgorithm):
@@ -42,9 +49,9 @@ class SpeedPosition(FormationAlgorithm):
     def __init__(
         self,
         owner: object,
-        alpha: float,
-        speed_deviation_threshold: float,
-        position_deviation_threshold: int,
+        alpha: float = DEFAULTS['alpha'],
+        speed_deviation_threshold: float = DEFAULTS['speed_deviation_threshold'],
+        position_deviation_threshold: int = DEFAULTS['position_deviation_threshold'],
     ):
 
         """
@@ -80,6 +87,34 @@ class SpeedPosition(FormationAlgorithm):
         self._assignments_candidate_joined_already = 0
         self._assingments_vehicle_became_leader = 0
         self._assignments_successful = 0
+
+    @classmethod
+    def add_parser_argument_group(cls, parser: argparse.ArgumentParser):
+        group = parser.add_argument_group("Formation Algorithm -- Speed Position")
+        group.add_argument(
+            "--alpha",
+            type=float,
+            default=DEFAULTS['alpha'],
+            help="The weight of the speed deviation in comparison to the position deviation",
+        )
+        group.add_argument(
+            "--speed-deviation-threshold",
+            type=float,
+            default=DEFAULTS['speed_deviation_threshold'],
+            help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates. A value of -1 disables the threshold",
+        )
+        group.add_argument(
+            "--position-deviation-threshold",
+            type=int,
+            default=DEFAULTS['position_deviation_threshold'],
+            help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold",
+        )
+        group.add_argument(
+            "--solver-time-limit",
+            type=int,
+            default=int(DEFAULTS['solver_time_limit'] / 1000),  # ms -> s
+            help="The time limit for the optimal solver per assignment problem in s. Influences the quality of the solution.",
+        )
 
     def ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """

@@ -51,6 +51,7 @@ from .mobility import (
 )
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
+from .speed_position import DEFAULTS as SPEED_POSITION_DEFAULTS
 from .statistics import (
     initialize_emission_traces,
     initialize_infrastructure_assignments,
@@ -146,13 +147,9 @@ DEFAULTS = {
     'delay_teleports': True,
     'update_desired_speed': True,
     'formation_algorithm': None,
-    'formation_strategy': 'distributed',
-    'formation_centralized_kind': 'greedy',
+    'formation_strategy': 'distributed',  # TODO rename
+    'formation_centralized_kind': 'greedy',  # TODO move to speed position
     'execution_interval': 1,
-    'alpha': 0.5,
-    'speed_deviation_threshold': -1,
-    'position_deviation_threshold': 2000,
-    'solver_time_limit': 60 * 1000,  # s -> ms
     'infrastructures': 0,
     'step_length': 1,
     'max_step': 1 * 3600,  # h -> s
@@ -262,10 +259,10 @@ class Simulator:
             formation_strategy: str = DEFAULTS['formation_strategy'],
             formation_centralized_kind: str = DEFAULTS['formation_centralized_kind'],
             execution_interval: int = DEFAULTS['execution_interval'],
-            alpha: float = DEFAULTS['alpha'],
-            speed_deviation_threshold: float = DEFAULTS['speed_deviation_threshold'],
-            position_deviation_threshold: int = DEFAULTS['position_deviation_threshold'],
-            solver_time_limit: int = DEFAULTS['solver_time_limit'],
+            alpha: float = SPEED_POSITION_DEFAULTS['alpha'],  # TODO remove here
+            speed_deviation_threshold: float = SPEED_POSITION_DEFAULTS['speed_deviation_threshold'],  # TODO remove here
+            position_deviation_threshold: int = SPEED_POSITION_DEFAULTS['position_deviation_threshold'],  # TODO remove here
+            solver_time_limit: int = SPEED_POSITION_DEFAULTS['solver_time_limit'],  # TODO remove here
             number_of_infrastructures: int = DEFAULTS['infrastructures'],
             step_length: int = DEFAULTS['step_length'],
             max_step: int = DEFAULTS['max_step'],

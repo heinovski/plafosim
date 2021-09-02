@@ -25,6 +25,7 @@ from timeit import default_timer as timer
 
 from src.plafosim import __version__
 from src.plafosim.simulator import DEFAULTS, Simulator
+from src.plafosim.speed_position import SpeedPosition
 
 
 class CustomFormatter(
@@ -332,30 +333,9 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         default=DEFAULTS['execution_interval'],
         help="The interval between two iterations of a formation algorithm in s",
     )
-    formation.add_argument(
-        "--alpha",
-        type=float,
-        default=DEFAULTS['alpha'],
-        help="The weight of the speed deviation in comparison to the position deviation",
-    )
-    formation.add_argument(
-        "--speed-deviation-threshold",
-        type=float,
-        default=DEFAULTS['speed_deviation_threshold'],
-        help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates. A value of -1 disables the threshold",
-    )
-    formation.add_argument(
-        "--position-deviation-threshold",
-        type=int,
-        default=DEFAULTS['position_deviation_threshold'],
-        help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold",
-    )
-    formation.add_argument(
-        "--solver-time-limit",
-        type=int,
-        default=int(DEFAULTS['solver_time_limit'] / 1000),  # ms -> s
-        help="The time limit for the optimal solver per assignment problem in s. Influences the quality of the solution.",
-    )
+
+    # formation algorithm speed position properties
+    SpeedPosition.add_parser_argument_group(parser)
 
     # infrastructure properties
     infrastructures = parser.add_argument_group("infrastructure properties")

@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import argparse
 import logging
 import sys
 from abc import ABC, abstractmethod
@@ -53,6 +54,16 @@ class FormationAlgorithm(ABC):
         """Prints the name of the formation algorithm."""
 
         return self._name
+
+    @abstractmethod
+    def add_parser_argument_group(cls, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
+        """
+        Abstract method for performing any type of platoon formation (i.e., assignment calculation).
+
+        This methods needs to be overridden in implementing sub-classes.
+        """
+
+        sys.exit("ERROR: There shouldn't be an instance of this abstract base class!")
 
     @abstractmethod
     def do_formation(self):
