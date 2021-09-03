@@ -1423,12 +1423,9 @@ class Simulator:
         if number_of_infrastructures <= 0:
             return
 
-        last_infrastructure_id = -1
-
         placement_interval = self._road_length / number_of_infrastructures
 
-        for num in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures", disable=not self._progress):
-            iid = last_infrastructure_id + 1
+        for iid in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures", disable=not self._progress):
             position = (iid + 0.5) * placement_interval
 
             infrastructure = Infrastructure(self,
@@ -1443,8 +1440,6 @@ class Simulator:
             self._infrastructures[iid] = infrastructure
 
             LOG.info(f"Generated infrastructure {infrastructure} at {position}")
-
-            last_infrastructure_id = iid
 
     def _initialize_result_recording(self):
         """Creates output files for all (enabled) statistics and writes the headers."""
