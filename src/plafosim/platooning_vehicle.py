@@ -1163,6 +1163,8 @@ class PlatooningVehicle(Vehicle):
         Maintains regular sending of platoon advertisements.
 
         Advertisement are in general not used at the moment.
+
+        THIS IS DEPRECATED AT THE MOMENT!!!
         """
 
         return  # TODO this is not necessary as a perfect communication guarantees information
