@@ -89,13 +89,14 @@ class PlatooningVehicle(Vehicle):
             The depart time of the vehicle
         communication_range : int
             The maximum communication range of the vehicle
-        acc_headway_time: float,
-        cacc_spacing: float,
-        formation_algorithm: str,
-        execution_interval: int,
-        alpha: float,
-        speed_deviation_threshold: float,
-        position_deviation_threshold: int):
+        acc_headway_time: float
+            The headway time for the ACC
+        cacc_spacing: float
+            The constant spacing for the CACC
+        formation_algorithm: str
+            The platoon formation algorithm to use
+        execution_interval: int
+            The interval for executing the formation algorithm
         """
 
         super().__init__(
