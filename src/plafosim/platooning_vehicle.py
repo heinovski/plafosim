@@ -56,13 +56,14 @@ class PlatooningVehicle(Vehicle):
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
-            communication_range: int,
-            acc_headway_time: float,
-            cacc_spacing: float,
-            formation_algorithm: str,
-            execution_interval: int,
+            communication_range: int = 1000,
+            acc_headway_time: float = 1.0,
+            cacc_spacing: float = 5.0,
+            formation_algorithm: str = None,
+            execution_interval: int = 1,
             **kw_args,
     ):
+        # TODO use global default values
         """
         Initializes a platooning vehicle instance.
 
