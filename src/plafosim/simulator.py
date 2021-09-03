@@ -456,7 +456,6 @@ class Simulator:
         self._lane_changes = lane_changes  # whether to enable lane changes
         self._collisions = collisions  # whether to check for collisions
         if random_seed >= 0:
-            self._random_seed = random_seed  # the random.seed to use for the RNG
             LOG.info(f"Using random seed {random_seed}")
             random.seed(random_seed)
         self._progress = progress  # whether to enable the (simulation) progress bar
