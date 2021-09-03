@@ -939,9 +939,10 @@ class Simulator:
 
         LOG.info(f"Pre-filling the road network with {self._number_of_vehicles} vehicles")
 
-        for num in tqdm(range(0, self._number_of_vehicles), desc="Generated vehicles", disable=not self._progress):
+        assert not self._vehicles
+        assert self._last_vehicle_id == -1
 
-            vid = self._last_vehicle_id + 1
+        for vid in tqdm(range(0, self._number_of_vehicles), desc="Generated vehicles", disable=not self._progress):
 
             desired_speed = self._get_desired_speed()
 
