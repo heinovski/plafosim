@@ -594,3 +594,635 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
     assert change_right_step > interferer.lane.diff().idxmin()
     # vehicle 1 eventually also overtakes vehicle 2
     assert (platoon_end.position > interferer.position).any()
+
+
+@pytest.mark.parametrize("size", PLATOON_SIZE)
+@pytest.mark.parametrize("cacc_spacing", CACC_SPACING)
+def test_lc_model_CACC_with_interferer_leader(size: int, cacc_spacing: float):
+    """
+    The platoon cannot change lane since there is an interferer at the leader
+    """
+
+    # create simulation environment
+    s = Simulator(
+        number_of_lanes=2,
+        number_of_vehicles=size,
+        penetration_rate=1,
+        record_vehicle_traces=True,
+        result_base_filename=f"test_lc_models_CACC_with_interferer_leader_size{size}_spacing{cacc_spacing}",
+        record_prefilled=True,
+        max_step=100,
+        start_as_platoon=True,
+        pre_fill=True,
+        random_desired_speed=False,
+        depart_desired=True,
+        desired_speed=30,
+        cacc_spacing=cacc_spacing,
+    )
+    platoon_top_position = s._vehicles[0].position
+
+    # add preceding (slow) vehicle
+    s._add_vehicle(
+        vid=size,
+        vtype=vtype,
+        depart_position=platoon_top_position + 80,
+        arrival_position=s.road_length,
+        desired_speed=20,
+        depart_lane=0,
+        depart_speed=20,
+        depart_time=0,
+        communication_range=None,
+    )
+
+    # add another (interfering) vehicle
+    s._add_vehicle(
+        vid=size + 1,
+        vtype=vtype,
+        depart_position=platoon_top_position - vtype.length,
+        arrival_position=s.road_length,
+        desired_speed=25,
+        depart_lane=1,
+        depart_speed=25,
+        depart_time=1,
+        communication_range=None,
+    )
+
+    assert len(s._vehicles) == size + 2
+
+    # run the simulation to record the trace file
+    s.run()
+
+    # read vehicle trace file
+    traces = pd.read_csv(
+        f"{s._result_base_filename}_vehicle_traces.csv"
+    ).sort_values(["step", "id"])
+    assert not traces.empty
+
+    platoon = (
+        traces.query(f"id < {size}")
+        .set_index("step")
+        .assign(platoon_rank=lambda df: size - df.id)
+    )
+    leader = platoon.query("id == 0")
+    followers = platoon.query(f"0 < id < {size}")
+    platoon_end = platoon.query(f"id == {size - 1}")
+    predecessor = traces.query(f"id == {size}").set_index("step")
+    interferer = traces.query(f"id == {size+1}").set_index("step")
+
+    # all platoon vehicles start in lane 0
+    assert (platoon.loc[0].lane == 0).all()
+    # preceding vehicle stays in lane 0 for the whole simulation
+    assert (predecessor.lane == 0).all()
+    # all platoon followers have the same lane and speed as the leader
+    assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
+    assert (
+        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
+    )
+    # the platoon maintains its order through the whole simulation
+    assert (
+        (
+            platoon.sort_values(["step", "platoon_rank"]).reset_index()
+            == platoon.sort_values(["step", "position"]).reset_index()
+        )
+        .all()
+        .all()
+    )
+
+    # now we can use vehicle `size` as the end of the platoon
+
+    # the platoon moves to lane 1 at some point
+    assert (platoon_end.lane == 1).any()
+    # the platoon lane-changes left and right exactly once each
+    assert (
+        platoon_end.lane.diff() == 1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    assert (
+        platoon_end.lane.diff() == -1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    # the platoon first changes left and then right
+    change_left_step = platoon_end.lane.diff().idxmax()
+    change_right_step = platoon_end.lane.diff().idxmin()
+    assert change_left_step < change_right_step
+    # when changing right, the platoon is faster than the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].speed
+        > predecessor.loc[change_right_step].speed
+    )
+    # when changing right, the platoon is in front of the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].position
+        > predecessor.loc[change_right_step].position
+    )
+    #     # when changing right there is enough headway the vehicles
+    step_length = s.step_length
+    assert (
+        platoon_end.loc[change_right_step].position
+        - vtype.length
+        + (
+            platoon_end.loc[change_right_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > predecessor.loc[change_right_step].position
+        + (
+            predecessor.loc[change_right_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+
+    # the platoon only changes to the left lane once there is enough space
+    # behind the interferer, like in the check above
+    assert (
+        interferer.loc[change_left_step].position
+        - vtype.length
+        + (
+            interferer.loc[change_left_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > leader.loc[change_left_step].position
+        + (
+            leader.loc[change_left_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+    # the platoon only changes back to the right lane after vehicle 2 did that
+    assert change_right_step > interferer.lane.diff().idxmin()
+    # vehicle 1 eventually also overtakes vehicle 2
+    assert (platoon_end.position > interferer.position).any()
+
+
+@pytest.mark.parametrize("size", [10, 15, 20])
+@pytest.mark.parametrize("cacc_spacing", CACC_SPACING)
+def test_lc_model_CACC_with_interferer_members(size: int, cacc_spacing: float):
+    """
+    The platoon cannot change lane since there is an interferer at an arbitrary follower (e.g., the last)
+    """
+
+    # create simulation environment
+    s = Simulator(
+        number_of_lanes=2,
+        number_of_vehicles=size,
+        penetration_rate=1,
+        record_vehicle_traces=True,
+        result_base_filename=f"test_lc_models_CACC_with_interferer_members_size{size}_spacing{cacc_spacing}",
+        record_prefilled=True,
+        max_step=120,
+        start_as_platoon=True,
+        pre_fill=True,
+        random_desired_speed=False,
+        depart_desired=True,
+        desired_speed=30,
+        cacc_spacing=cacc_spacing,
+    )
+    platoon_top_position = s._vehicles[0].position
+
+    # add preceding (slow) vehicle
+    s._add_vehicle(
+        vid=size,
+        vtype=vtype,
+        depart_position=platoon_top_position + 40,
+        arrival_position=s.road_length,
+        desired_speed=20,
+        depart_lane=0,
+        depart_speed=20,
+        depart_time=0,
+        communication_range=None,
+    )
+
+    # add another (interfering) vehicle
+    s._add_vehicle(
+        vid=size + 1,
+        vtype=vtype,
+        depart_position=vtype.length,
+        arrival_position=s.road_length,
+        desired_speed=25,
+        depart_lane=1,
+        depart_speed=25,
+        depart_time=1,
+        communication_range=None,
+    )
+
+    assert len(s._vehicles) == size + 2
+
+    # run the simulation to record the trace file
+    s.run()
+
+    # read vehicle trace file
+    traces = pd.read_csv(
+        f"{s._result_base_filename}_vehicle_traces.csv"
+    ).sort_values(["step", "id"])
+    assert not traces.empty
+
+    platoon = (
+        traces.query(f"id < {size}")
+        .set_index("step")
+        .assign(platoon_rank=lambda df: size - df.id)
+    )
+    leader = platoon.query("id == 0")
+    followers = platoon.query(f"0 < id < {size}")
+    platoon_end = platoon.query(f"id == {size - 1}")
+    predecessor = traces.query(f"id == {size}").set_index("step")
+    interferer = traces.query(f"id == {size+1}").set_index("step")
+
+    # all platoon vehicles start in lane 0
+    assert (platoon.loc[0].lane == 0).all()
+    # preceding vehicle stays in lane 0 for the whole simulation
+    assert (predecessor.lane == 0).all()
+    # all platoon followers have the same lane and speed as the leader
+    assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
+    assert (
+        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
+    )
+    # the platoon maintains its order through the whole simulation
+    assert (
+        (
+            platoon.sort_values(["step", "platoon_rank"]).reset_index()
+            == platoon.sort_values(["step", "position"]).reset_index()
+        )
+        .all()
+        .all()
+    )
+
+    # now we can use vehicle `size` as the end of the platoon
+
+    # the platoon moves to lane 1 at some point
+    assert (platoon_end.lane == 1).any()
+    # the platoon lane-changes left and right exactly once each
+    assert (
+        platoon_end.lane.diff() == 1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    assert (
+        platoon_end.lane.diff() == -1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    # the platoon first changes left and then right
+    change_left_step = platoon_end.lane.diff().idxmax()
+    change_right_step = platoon_end.lane.diff().idxmin()
+    assert change_left_step < change_right_step
+    # when changing right, the platoon is faster than the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].speed
+        > predecessor.loc[change_right_step].speed
+    )
+    # when changing right, the platoon is in front of the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].position
+        > predecessor.loc[change_right_step].position
+    )
+    #     # when changing right there is enough headway the vehicles
+    step_length = s.step_length
+    assert (
+        platoon_end.loc[change_right_step].position
+        - vtype.length
+        + (
+            platoon_end.loc[change_right_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > predecessor.loc[change_right_step].position
+        + (
+            predecessor.loc[change_right_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+
+    # the platoon only changes to the left lane once there is enough space
+    # behind the interferer, like in the check above
+    assert (
+        interferer.loc[change_left_step].position
+        - vtype.length
+        + (
+            interferer.loc[change_left_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > leader.loc[change_left_step].position
+        + (
+            leader.loc[change_left_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+    # the platoon only changes back to the right lane after vehicle 2 did that
+    assert change_right_step > interferer.lane.diff().idxmin()
+    # vehicle 1 eventually also overtakes vehicle 2
+    assert (platoon_end.position > interferer.position).any()
+
+
+@pytest.mark.parametrize("size", PLATOON_SIZE)
+@pytest.mark.parametrize("cacc_spacing", CACC_SPACING)
+def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
+    """
+    A vehicle wants to change left, the platoon wants to change right --> conflict
+    """
+
+    # create simulation environment
+    s = Simulator(
+        number_of_lanes=4,
+        number_of_vehicles=size,
+        penetration_rate=1,
+        record_vehicle_traces=True,
+        result_base_filename=f"test_lc_models_CACC_conflict_leader_size{size}_spacing{cacc_spacing}",
+        record_prefilled=True,
+        max_step=120,
+        start_as_platoon=True,
+        pre_fill=True,
+        random_desired_speed=False,
+        depart_desired=True,
+        desired_speed=30,
+        cacc_spacing=cacc_spacing,
+    )
+    platoon_top_position = s._vehicles[0].position
+
+    # add preceding (slow) vehicle
+    s._add_vehicle(
+        vid=size,
+        vtype=vtype,
+        depart_position=platoon_top_position + 50,
+        arrival_position=s.road_length,
+        desired_speed=20,
+        depart_lane=0,
+        depart_speed=20,
+        depart_time=0,
+        communication_range=None,
+    )
+
+    # add another (interfering) vehicle
+    s._add_vehicle(
+        vid=size + 1,
+        vtype=vtype,
+        depart_position=vtype.length,
+        arrival_position=s.road_length,
+        desired_speed=31,
+        depart_lane=2,
+        depart_speed=31,
+        depart_time=1,
+        communication_range=None,
+    )
+
+    assert len(s._vehicles) == size + 2
+
+    # run the simulation to record the trace file
+    s.run()
+
+    # read vehicle trace file
+    traces = pd.read_csv(
+        f"{s._result_base_filename}_vehicle_traces.csv"
+    ).sort_values(["step", "id"])
+    assert not traces.empty
+
+    platoon = (
+        traces.query(f"id < {size}")
+        .set_index("step")
+        .assign(platoon_rank=lambda df: size - df.id)
+    )
+    leader = platoon.query("id == 0")
+    followers = platoon.query(f"0 < id < {size}")
+    platoon_end = platoon.query(f"id == {size - 1}")
+    predecessor = traces.query(f"id == {size}").set_index("step")
+    interferer = traces.query(f"id == {size+1}").set_index("step")
+
+    # all platoon vehicles start in lane 0
+    assert (platoon.loc[0].lane == 0).all()
+    # preceding vehicle stays in lane 0 for the whole simulation
+    assert (predecessor.lane == 0).all()
+    # all platoon followers have the same lane and speed as the leader
+    assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
+    assert (
+        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
+    )
+    # the platoon maintains its order through the whole simulation
+    assert (
+        (
+            platoon.sort_values(["step", "platoon_rank"]).reset_index()
+            == platoon.sort_values(["step", "position"]).reset_index()
+        )
+        .all()
+        .all()
+    )
+
+    # now we can use vehicle `size` as the end of the platoon
+
+    # the platoon moves to lane 1 at some point
+    assert (platoon_end.lane == 1).any()
+    # the platoon lane-changes left and right exactly once each
+    assert (
+        platoon_end.lane.diff() == 1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    assert (
+        platoon_end.lane.diff() == -1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    # the platoon first changes left and then right
+    change_left_step = platoon_end.lane.diff().idxmax()
+    change_right_step = platoon_end.lane.diff().idxmin()
+    assert change_left_step < change_right_step
+    # when changing right, the platoon is faster than the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].speed
+        > predecessor.loc[change_right_step].speed
+    )
+    # when changing right, the platoon is in front of the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].position
+        > predecessor.loc[change_right_step].position
+    )
+    # when changing right there is enough headway the vehicles
+    step_length = s.step_length
+    assert (
+        platoon_end.loc[change_right_step].position
+        - vtype.length
+        + (
+            platoon_end.loc[change_right_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > predecessor.loc[change_right_step].position
+        + (
+            predecessor.loc[change_right_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+
+    # the platoon only changes to the left lane once there is enough space
+    # behind the interferer, like in the check above
+    assert (
+        interferer.loc[change_left_step].position
+        - vtype.length
+        + (
+            interferer.loc[change_left_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > leader.loc[change_left_step].position
+        + (
+            leader.loc[change_left_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+    # the platoon only changes back to the right lane after vehicle 2 did that
+    assert change_right_step > interferer.lane.diff().idxmin()
+    # platoon does not overtake the interferer
+    assert (platoon_end.query(f'step >= {change_right_step}').position < interferer.query(f'step >= {change_right_step}').position).all()
+
+
+@pytest.mark.parametrize("size", [10, 15, 20])
+@pytest.mark.parametrize("cacc_spacing", CACC_SPACING)
+def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
+    """
+    A vehicle wants to change left, the platoon wants to change right --> conflict
+    """
+
+    # create simulation environment
+    s = Simulator(
+        number_of_lanes=4,
+        number_of_vehicles=size,
+        penetration_rate=1,
+        record_vehicle_traces=True,
+        result_base_filename=f"test_lc_models_CACC_conflict_members_size{size}_spacing{cacc_spacing}",
+        record_prefilled=True,
+        max_step=120,
+        start_as_platoon=True,
+        pre_fill=True,
+        random_desired_speed=False,
+        depart_desired=True,
+        desired_speed=30,
+        cacc_spacing=cacc_spacing,
+    )
+    platoon_top_position = s._vehicles[0].position
+
+    # add preceding (slow) vehicle
+    s._add_vehicle(
+        vid=size,
+        vtype=vtype,
+        depart_position=platoon_top_position + 40,
+        arrival_position=s.road_length,
+        desired_speed=20,
+        depart_lane=0,
+        depart_speed=20,
+        depart_time=0,
+        communication_range=None,
+    )
+
+    # add another (interfering) vehicle
+    s._add_vehicle(
+        vid=size + 1,
+        vtype=vtype,
+        depart_position=vtype.length,
+        arrival_position=s.road_length,
+        desired_speed=31,
+        depart_lane=2,
+        depart_speed=31,
+        depart_time=1,
+        communication_range=None,
+    )
+
+    assert len(s._vehicles) == size + 2
+
+    # run the simulation to record the trace file
+    s.run()
+
+    # read vehicle trace file
+    traces = pd.read_csv(
+        f"{s._result_base_filename}_vehicle_traces.csv"
+    ).sort_values(["step", "id"])
+    assert not traces.empty
+
+    platoon = (
+        traces.query(f"id < {size}")
+        .set_index("step")
+        .assign(platoon_rank=lambda df: size - df.id)
+    )
+    leader = platoon.query("id == 0")
+    followers = platoon.query(f"0 < id < {size}")
+    platoon_end = platoon.query(f"id == {size - 1}")
+    predecessor = traces.query(f"id == {size}").set_index("step")
+    interferer = traces.query(f"id == {size+1}").set_index("step")
+
+    # all platoon vehicles start in lane 0
+    assert (platoon.loc[0].lane == 0).all()
+    # preceding vehicle stays in lane 0 for the whole simulation
+    assert (predecessor.lane == 0).all()
+    # all platoon followers have the same lane and speed as the leader
+    assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
+    assert (
+        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
+    )
+    # the platoon maintains its order through the whole simulation
+    assert (
+        (
+            platoon.sort_values(["step", "platoon_rank"]).reset_index()
+            == platoon.sort_values(["step", "position"]).reset_index()
+        )
+        .all()
+        .all()
+    )
+
+    # now we can use vehicle `size` as the end of the platoon
+
+    # the platoon moves to lane 1 at some point
+    assert (platoon_end.lane == 1).any()
+    # the platoon lane-changes left and right exactly once each
+    assert (
+        platoon_end.lane.diff() == 1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    assert (
+        platoon_end.lane.diff() == -1
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
+    # the platoon first changes left and then right
+    change_left_step = platoon_end.lane.diff().idxmax()
+    change_right_step = platoon_end.lane.diff().idxmin()
+    assert change_left_step < change_right_step
+    # when changing right, the platoon is faster than the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].speed
+        > predecessor.loc[change_right_step].speed
+    )
+    # when changing right, the platoon is in front of the (earlier) predecessor
+    assert (
+        platoon_end.loc[change_right_step].position
+        > predecessor.loc[change_right_step].position
+    )
+    # when changing right there is enough headway the vehicles
+    step_length = s.step_length
+    assert (
+        platoon_end.loc[change_right_step].position
+        - vtype.length
+        + (
+            platoon_end.loc[change_right_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > predecessor.loc[change_right_step].position
+        + (
+            predecessor.loc[change_right_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+
+    # the platoon only changes to the left lane once there is enough space
+    # behind the interferer, like in the check above
+    assert (
+        interferer.loc[change_left_step].position
+        - vtype.length
+        + (
+            interferer.loc[change_left_step].speed
+            - vtype.max_deceleration * step_length
+        )
+        * step_length
+        > leader.loc[change_left_step].position
+        + (
+            leader.loc[change_left_step].speed
+            + vtype.max_acceleration * step_length
+        )
+        * step_length
+    )
+    # the platoon only changes back to the right lane after vehicle 2 did that
+    assert change_right_step > interferer.lane.diff().idxmin()
+    # platoon does not overtake the interferer
+    assert (platoon_end.query(f'step >= {change_right_step}').position < interferer.query(f'step >= {change_right_step}').position).all()
