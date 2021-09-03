@@ -65,7 +65,8 @@ class Vehicle:
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
-            communication_range: int):
+            communication_range: int,
+    ):
         """
         Initializes a vehicle instance.
 

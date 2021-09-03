@@ -108,7 +108,7 @@ class PlatooningVehicle(Vehicle):
             depart_lane,
             depart_speed,
             depart_time,
-            communication_range
+            communication_range,
         )
 
         self._cf_model = CF_Model.ACC
