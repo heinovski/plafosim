@@ -383,7 +383,7 @@ class Simulator:
         if start_as_platoon:
             if penetration_rate < 1.0:
                 sys.exit("ERROR: The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
-            if formation_algorithm is not None:
+            if formation_algorithm:
                 sys.exit("ERROR: A formation algorithm cannot be used when all starting as one platoon!")
             if not pre_fill:
                 sys.exit("ERROR: start-as-platoon is only available when using prefill!")
