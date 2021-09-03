@@ -506,7 +506,6 @@ class Simulator:
         self._values_in_avg_number_vehicles = 0
 
         # TODO log generation parameters
-        self._pre_fill = pre_fill
         if pre_fill:
             self._generate_vehicles()
 
