@@ -116,7 +116,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
     assert (traces.query("id == 0").lane == 0).all()
     # vehicle 1 moves to lane 1 at some point
     assert (traces.query("id == 1").lane == 1).any()
-    # vehicle 1 lane-changes left and right exaclty once each
+    # vehicle 1 lane-changes left and right exactly once each
     assert (
         traces.query("id == 1").lane.diff() == 1
     ).sum() == 1, "vehicle 1 lane-changes left and right exaclty once each"
@@ -267,7 +267,7 @@ def test_lc_models_with_interferer(
     assert (traces.query("id == 0").lane == 0).all()
     # vehicle 1 moves to lane 1 at some point
     assert (traces.query("id == 1").lane == 1).any()
-    # vehicle 1 lane-changes left and right exaclty once each
+    # vehicle 1 lane-changes left and right exactly once each
     assert (
         traces.query("id == 1").lane.diff() == 1
     ).sum() == 1, "vehicle 1 lane-changes left and right exactly once each"
@@ -379,7 +379,7 @@ def test_lc_model_CACC(size: int, cacc_spacing: float):
     assert (traces.query("step == 0").lane == 0).all()
     # preceding vehicle stays in lane 0 for the whole simulation
     assert (traces.query(f"id == {size}").lane == 0).all()
-    # all platoon followers have the same lane and speed as the leasder
+    # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
     assert (
         followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
@@ -398,7 +398,7 @@ def test_lc_model_CACC(size: int, cacc_spacing: float):
 
     # the platoon moves to lane 1 at some point
     assert (platoon_end.lane == 1).any()
-    # the platoon lane-changes left and right exaclty once each
+    # the platoon lane-changes left and right exactly once each
     assert (
         platoon_end.lane.diff() == 1
     ).sum() == 1, "the platoon lane-changes left and right exactly once each"
@@ -515,7 +515,7 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
     assert (platoon.loc[0].lane == 0).all()
     # preceding vehicle stays in lane 0 for the whole simulation
     assert (predecessor.lane == 0).all()
-    # all platoon followers have the same lane and speed as the leasder
+    # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
     assert (
         followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
@@ -534,13 +534,13 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
 
     # the platoon moves to lane 1 at some point
     assert (platoon_end.lane == 1).any()
-    # the platoon lane-changes left and right exaclty once each
+    # the platoon lane-changes left and right exactly once each
     assert (
         platoon_end.lane.diff() == 1
-    ).sum() == 1, "the platoon lane-changes left and right exaclty once each"
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
     assert (
         platoon_end.lane.diff() == -1
-    ).sum() == 1, "the platoon lane-changes left and right exaclty once each"
+    ).sum() == 1, "the platoon lane-changes left and right exactly once each"
     # the platoon first changes left and then right
     change_left_step = platoon_end.lane.diff().idxmax()
     change_right_step = platoon_end.lane.diff().idxmin()

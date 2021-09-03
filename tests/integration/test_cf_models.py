@@ -299,7 +299,7 @@ def test_cf_model_CACC_blocked(
     # follower CACC
     assert (followers.cfModel == CF_Model.CACC.name).all()
 
-    # all platoon followers have the same speed as the leasder
+    # all platoon followers have the same speed as the leader
     assert (
         followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     )
