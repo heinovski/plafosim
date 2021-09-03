@@ -1183,7 +1183,7 @@ class Simulator:
             self._spawn_vehicles_interval(depart_interval, num_spawn_ramps)
         elif self._depart_method == "probability":
             # spawn probability per time step, similar to SUMO's flow param probability
-            for r in range(0, num_spawn_ramps):
+            for _ in range(num_spawn_ramps):
                 if random.random() <= self._depart_probability:
                     self._spawn_vehicle()
         else:
