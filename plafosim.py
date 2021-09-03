@@ -83,6 +83,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     road.add_argument(
         "--lanes",
         type=int,
+        dest='number_of_lanes',
         default=DEFAULTS['lanes'],
         help="The number of lanes",
     )
@@ -105,12 +106,14 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     vehicle.add_argument(
         "--vehicles",
         type=int,
+        dest='number_of_vehicles',
         default=DEFAULTS['vehicles'],
         help="The (maximum) number of vehicles that are in the simulation at once. Is used for pre-fill, without a depart flow, and for some depart methods. A value of -1 disables this value.",
     )
     vehicle.add_argument(
         "--density",
         type=float,
+        dest='vehicle_density',
         default=DEFAULTS['vehicle_density'],
         help="The (maximum) density (i.e., number of vehicles per km per lane) of vehicles that are in the simulation at once. Overrides --vehicles but behaves similarly. A value of -1 disables this value",
     )
@@ -135,6 +138,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     vehicle.add_argument(
         "--penetration",
         type=float,
+        dest='penetration_rate',
         default=DEFAULTS['penetration_rate'],
         help="Penetration rate of vehicles with platooning capabilities",
     )
@@ -342,6 +346,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     infrastructures.add_argument(
         "--infrastructures",
         type=int,
+        dest='number_of_infrastructures',
         default=DEFAULTS['infrastructures'],
         help="The number of infrastructures",
     )
@@ -357,6 +362,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     simulation.add_argument(
         "--time-limit",
         type=float,
+        dest='max_step',
         default=float(DEFAULTS['max_step'] / 3600),  # s -> h
         help="The simulation limit in h",
     )
@@ -418,13 +424,14 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     gui.add_argument(
         "--track-vehicle",
         type=int,
+        dest='gui_track_vehicle',
         default=DEFAULTS['gui_track_vehicle'],
         help="The id of a vehicle to track in the gui",
     )
     gui.add_argument(
         "--sumo-config",
         type=str,
-        default=DEFAULTS['gui_sumo_config'],
+        default=DEFAULTS['sumo_config'],
         help="The name of the SUMO config file",
     )
     gui.add_argument(
@@ -591,7 +598,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     args.minimum_trip_length *= 1000  # km -> m
     args.maximum_trip_length *= 1000  # km -> m
     args.solver_time_limit *= 1000  # s -> ms
-    args.time_limit *= 3600  # h -> s
+    args.max_step *= 3600  # h -> s
     args.gui_delay /= 1000  # ms -> s
 
     return args, gui
@@ -616,87 +623,17 @@ def save_snapshot(simulator: Simulator, snapshot_filename: str):
         pickle.dump(simulator, f)
 
 
-def create_simulator(args: argparse.Namespace) -> Simulator:
-    assert args
-    return Simulator(
-        args.road_length,
-        args.lanes,
-        args.ramp_interval,
-        args.pre_fill,
-        args.vehicles,
-        args.density,
-        args.max_speed,
-        args.acc_headway_time,
-        args.cacc_spacing,
-        args.penetration,
-        args.random_depart_position,
-        args.random_depart_lane,
-        args.desired_speed,
-        args.random_desired_speed,
-        args.speed_variation,
-        args.min_desired_speed,
-        args.max_desired_speed,
-        args.random_depart_speed,
-        args.depart_desired,
-        args.depart_flow,
-        args.depart_method,
-        args.depart_interval,
-        args.depart_probability,
-        args.depart_rate,
-        args.random_arrival_position,
-        args.minimum_trip_length,
-        args.maximum_trip_length,
-        args.communication_range,
-        args.start_as_platoon,
-        args.reduced_air_drag,
-        args.maximum_teleport_distance,
-        args.maximum_approach_time,
-        args.delay_teleports,
-        args.update_desired_speed,
-        args.formation_algorithm,
-        args.formation_strategy,
-        args.formation_centralized_kind,
-        args.execution_interval,
-        args.alpha,
-        args.speed_deviation_threshold,
-        args.position_deviation_threshold,
-        args.solver_time_limit,
-        args.infrastructures,
-        args.step_length,
-        int(args.time_limit),
-        args.actions,
-        args.lane_changes,
-        args.collisions,
-        args.random_seed,
-        getattr(logging, args.log_level.upper(), 5),  # implicitly use trace level
-        args.progress,
-        args.gui,
-        args.gui_delay,
-        args.track_vehicle,
-        args.sumo_config,
-        args.gui_start,
-        args.draw_ramps,
-        args.draw_ramp_labels,
-        args.draw_road_end,
-        args.draw_road_end_label,
-        args.draw_infrastructures,
-        args.draw_infrastructure_labels,
-        args.result_base_filename,
-        args.record_simulation_trace,
-        args.record_end_trace,
-        args.record_vehicle_trips,
-        args.record_vehicle_emissions,
-        args.record_vehicle_traces,
-        args.record_vehicle_changes,
-        args.record_emission_traces,
-        args.record_platoon_trips,
-        args.record_platoon_maneuvers,
-        args.record_platoon_formation,
-        args.record_platoon_traces,
-        args.record_platoon_changes,
-        args.record_infrastructure_assignments,
-        args.record_prefilled,
-    )
+def create_simulator(**kwargs: dict) -> Simulator:
+    assert kwargs
+
+    # prepare keyword arguments for simulator
+    kwargs.pop('load_snapshot')
+    kwargs.pop('save_snapshot')
+    kwargs['log_level'] = getattr(logging, kwargs['log_level'].upper(), 5)
+    kwargs['max_step'] = int(kwargs['max_step'])
+
+    # create new simulator
+    return Simulator(**kwargs)
 
 
 def main():
@@ -720,7 +657,7 @@ def main():
         print(f"Loaded a snapshot of the simulation from {args.load_snapshot}. Running simulation with the loaded state...")
     else:
         # create new simulator
-        simulator = create_simulator(args)
+        simulator = create_simulator(**vars(args))
 
     if args.save_snapshot:
         if args.load_snapshot:
