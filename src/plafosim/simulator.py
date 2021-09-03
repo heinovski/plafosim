@@ -1018,7 +1018,6 @@ class Simulator:
                 depart_lane,
                 depart_speed,
                 depart_time,
-                self._communication_range
             )
 
             LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
@@ -1299,7 +1298,6 @@ class Simulator:
             depart_lane,
             depart_speed,
             depart_time,
-            self._communication_range
         )
 
         if self._gui and self._step >= self._gui_start:
@@ -1342,7 +1340,7 @@ class Simulator:
             depart_lane,
             depart_speed,
             depart_time,
-            communication_range
+            communication_range: int = DEFAULTS['communication_range'],
     ):
         """
         Adds a vehicle to the simulation based on the given parameters.
