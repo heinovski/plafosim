@@ -325,13 +325,6 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="The formation strategy to use",
     )
     formation.add_argument(
-        "--formation-centralized-kind",
-        type=str,
-        default=DEFAULTS['formation_centralized_kind'],
-        choices=["greedy", "optimal"],
-        help="The kind of the centralized formation",
-    )
-    formation.add_argument(
         "--execution-interval",
         type=int,
         default=DEFAULTS['execution_interval'],

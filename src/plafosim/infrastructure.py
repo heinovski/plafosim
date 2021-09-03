@@ -33,12 +33,9 @@ class Infrastructure:
             iid: int,
             position: int,
             formation_algorithm: str,
-            formation_kind: str,
             execution_interval: int,
-            alpha: float,
-            speed_deviation_threshold: float,
-            position_deviation_threshold: int):
-        # TODO remove Speed Position specific values
+            **kw_args,
+    ):
         """
         Parameters
         ----------
@@ -50,16 +47,8 @@ class Infrastructure:
             The position (x) of the infrastructure
         formation_algorithm : str
             The platoon formation (i.e., assignment calculation) algorithm to run
-        formation_kind : str
-            The ??
         execution_interval : int
             The execution interval for the formation algorithm
-        alpha : float
-            The alpha value for the Speed Position formation algorithm
-        speed_deviation_threshold : float
-            The max. speed deviation for the Speed Position formation algorithm
-        position_deviation_threshold : int
-            The max. position deviation for the Speed Position formation algorithm
         """
 
         self._simulator = simulator  # the simulator
@@ -71,7 +60,7 @@ class Infrastructure:
             # TODO make enum
             if formation_algorithm == "speedposition":
                 from .speed_position import SpeedPosition
-                self._formation_algorithm = SpeedPosition(self, alpha, speed_deviation_threshold, position_deviation_threshold)
+                self._formation_algorithm = SpeedPosition(self, **kw_args)
             else:
                 sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}!")
             self._execution_interval = execution_interval
@@ -80,7 +69,6 @@ class Infrastructure:
             self._last_formation_step = 0  # initialize with vehicle start
         else:
             self._formation_algorithm = None
-        self._formation_kind = formation_kind
 
     @property
     def iid(self) -> int:

@@ -51,7 +51,6 @@ from .mobility import (
 )
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
-from .speed_position import DEFAULTS as SPEED_POSITION_DEFAULTS
 from .statistics import (
     initialize_emission_traces,
     initialize_infrastructure_assignments,
@@ -148,7 +147,6 @@ DEFAULTS = {
     'update_desired_speed': True,
     'formation_algorithm': None,
     'formation_strategy': 'distributed',  # TODO rename
-    'formation_centralized_kind': 'greedy',  # TODO move to speed position
     'execution_interval': 1,
     'infrastructures': 0,
     'step_length': 1,
@@ -258,12 +256,7 @@ class Simulator:
             update_desired_speed: bool = DEFAULTS['update_desired_speed'],
             formation_algorithm: str = DEFAULTS['formation_algorithm'],
             formation_strategy: str = DEFAULTS['formation_strategy'],
-            formation_centralized_kind: str = DEFAULTS['formation_centralized_kind'],
             execution_interval: int = DEFAULTS['execution_interval'],
-            alpha: float = SPEED_POSITION_DEFAULTS['alpha'],  # TODO remove here
-            speed_deviation_threshold: float = SPEED_POSITION_DEFAULTS['speed_deviation_threshold'],  # TODO remove here
-            position_deviation_threshold: int = SPEED_POSITION_DEFAULTS['position_deviation_threshold'],  # TODO remove here
-            solver_time_limit: int = SPEED_POSITION_DEFAULTS['solver_time_limit'],  # TODO remove here
             number_of_infrastructures: int = DEFAULTS['infrastructures'],
             step_length: int = DEFAULTS['step_length'],
             max_step: int = DEFAULTS['max_step'],
@@ -299,6 +292,7 @@ class Simulator:
             record_platoon_changes: bool = DEFAULTS['record_platoon_changes'],
             record_infrastructure_assignments: bool = DEFAULTS['record_infrastructure_assignments'],
             record_prefilled: bool = DEFAULTS['record_prefilled'],
+            **kwargs: dict,
     ):
         """Initializes a simulator instance."""
 
@@ -418,27 +412,11 @@ class Simulator:
         if formation_strategy == "centralized" and number_of_infrastructures <= 0:
             sys.exit("ERROR: When using a centralized strategy at least 1 infrastructure is needed!")
         self._formation_strategy = formation_strategy  # the formation strategy to use
-        self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
 
         # formation properties
-        # TODO find a different solution for algorithm specific parameters
         self._execution_interval = execution_interval  # the interval between two iterations of a formation algorithm
         if execution_interval <= 0:
             sys.exit("ERROR: Execution interval has to be at least 1 second!")
-        self._alpha = alpha  # the weight of the speed deviation
-        # the maximum deviation from the desired driving speed
-        if speed_deviation_threshold == -1:
-            self._speed_deviation_threshold = 1.0
-        else:
-            self._speed_deviation_threshold = speed_deviation_threshold
-        # the maximum deviation from the current position
-        if position_deviation_threshold == -1:
-            self._position_deviation_threshold = road_length
-        else:
-            self._position_deviation_threshold = position_deviation_threshold
-        if solver_time_limit < 2 * 1000:
-            LOG.warning("The time limit for the solver should be at least 2s! Otherwise it may not be possible for the solver to produce a solution (especially with many vehicles)!")
-        self._solver_time_limit = solver_time_limit  # the time limit for the optimal solver per assignment problem
 
         # infrastructure properties
         self._infrastructures = {}  # the list (dict) of infrastructures in the simulation
@@ -500,6 +478,9 @@ class Simulator:
         if record_prefilled and not start_as_platoon:
             LOG.warning("Recording results for pre-filled vehicles is not recommended to avoid broken statistics!")
         self._record_prefilled = record_prefilled  # whether to record results for pre-filled vehicles
+
+        # additional keyword arguments (e.g., for formation algorithms)
+        self._kwargs = kwargs
 
         # statistics
         self._avg_number_vehicles = 0
@@ -1385,9 +1366,8 @@ class Simulator:
                 self._cacc_spacing,
                 self._formation_algorithm if self._formation_strategy == "distributed" else None,
                 self._execution_interval,
-                self._alpha,
-                self._speed_deviation_threshold,
-                self._position_deviation_threshold)
+                **self._kwargs,
+            )
         else:
             vehicle = Vehicle(
                 self,
@@ -1426,15 +1406,14 @@ class Simulator:
         for iid in tqdm(range(0, number_of_infrastructures), desc="Generated infrastructures", disable=not self._progress):
             position = (iid + 0.5) * placement_interval
 
-            infrastructure = Infrastructure(self,
-                                            iid,
-                                            position,
-                                            self._formation_algorithm if self._formation_strategy == "centralized" else None,
-                                            self._formation_centralized_kind,
-                                            self._execution_interval,
-                                            self._alpha,
-                                            self._speed_deviation_threshold,
-                                            self._position_deviation_threshold)
+            infrastructure = Infrastructure(
+                self,
+                iid,
+                position,
+                self._formation_algorithm if self._formation_strategy == "centralized" else None,
+                self._execution_interval,
+                **self._kwargs,
+            )
             self._infrastructures[iid] = infrastructure
 
             LOG.info(f"Generated infrastructure {infrastructure} at {position}")

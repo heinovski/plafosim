@@ -17,6 +17,7 @@
 
 import argparse
 import logging
+import sys
 from timeit import default_timer as timer
 from typing import TYPE_CHECKING
 
@@ -33,6 +34,7 @@ DEFAULTS = {
     'alpha': 0.5,
     'speed_deviation_threshold': -1,
     'position_deviation_threshold': 2000,
+    'formation_centralized_kind': 'greedy',
     'solver_time_limit': 60 * 1000,  # s -> ms
 }
 
@@ -52,6 +54,9 @@ class SpeedPosition(FormationAlgorithm):
         alpha: float = DEFAULTS['alpha'],
         speed_deviation_threshold: float = DEFAULTS['speed_deviation_threshold'],
         position_deviation_threshold: int = DEFAULTS['position_deviation_threshold'],
+        formation_centralized_kind: str = DEFAULTS['formation_centralized_kind'],
+        solver_time_limit: int = DEFAULTS['solver_time_limit'],
+        **kw_args,
     ):
 
         """
@@ -72,10 +77,23 @@ class SpeedPosition(FormationAlgorithm):
 
         super().__init__(self.__class__.__name__, owner)
 
-        assert(alpha >= 0 and alpha <= 1.0)
-        self._alpha = alpha
-        self._speed_deviation_threshold = speed_deviation_threshold
-        self._position_deviation_threshold = position_deviation_threshold
+        if alpha < 0 or alpha > 1:
+            sys.exit("ERROR: The weighting factor alpha needs to be in [0,1]!")
+        self._alpha = alpha  # the weight of the speed deviation
+        # the maximum deviation from the desired driving speed
+        if speed_deviation_threshold == -1:
+            self._speed_deviation_threshold = 1.0
+        else:
+            self._speed_deviation_threshold = speed_deviation_threshold
+        # the maximum deviation from the current position
+        if position_deviation_threshold == -1:
+            self._position_deviation_threshold = self._owner._simulator.road_length  # FIXME
+        else:
+            self._position_deviation_threshold = position_deviation_threshold
+        if solver_time_limit < 2 * 1000:
+            LOG.warning("The time limit for the solver should be at least 2s! Otherwise it may not be possible for the solver to produce a solution (especially with many vehicles)!")
+        self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
+        self._solver_time_limit = solver_time_limit  # the time limit for the optimal solver per assignment problem
 
         # statistics
         self._assignments_solved = 0
@@ -108,6 +126,13 @@ class SpeedPosition(FormationAlgorithm):
             type=int,
             default=DEFAULTS['position_deviation_threshold'],
             help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold",
+        )
+        group.add_argument(
+            "--formation-centralized-kind",
+            type=str,
+            default=DEFAULTS['formation_centralized_kind'],
+            choices=["greedy", "optimal"],
+            help="The kind of the centralized formation",
         )
         group.add_argument(
             "--solver-time-limit",
@@ -181,10 +206,11 @@ class SpeedPosition(FormationAlgorithm):
 
         from .infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
-            LOG.info(f"{self._owner.iid} is running formation algorithm {self._name} ({self._owner._formation_kind}) at {self._owner._simulator.step}")
-            if self._owner._formation_kind == 'optimal':
+            LOG.info(f"{self._owner.iid} is running formation algorithm {self._name} ({self._formation_centralized_kind}) at {self._owner._simulator.step}")
+            if self._formation_centralized_kind == 'optimal':
                 self._do_formation_optimal()
             else:
+                # greedy
                 self._do_formation_centralized()
         else:
             self._do_formation_distributed()
@@ -434,7 +460,7 @@ class SpeedPosition(FormationAlgorithm):
         solver = pywraplp.Solver(f"{self._name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
         solver.SetNumThreads(1)
         # influences the quality of the solution
-        solver.set_time_limit(self._owner._simulator._solver_time_limit)
+        solver.set_time_limit(self._solver_time_limit)
 
         # import sys
         # infinity = sys.float_info.max  # does work

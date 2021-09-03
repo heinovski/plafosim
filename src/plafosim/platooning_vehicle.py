@@ -61,9 +61,8 @@ class PlatooningVehicle(Vehicle):
             cacc_spacing: float,
             formation_algorithm: str,
             execution_interval: int,
-            alpha: float,
-            speed_deviation_threshold: float,
-            position_deviation_threshold: int):
+            **kw_args,
+    ):
         """
         Initializes a platooning vehicle instance.
 
@@ -131,12 +130,7 @@ class PlatooningVehicle(Vehicle):
             # initialize formation algorithm
             # TODO make enum
             if formation_algorithm == "speedposition":
-                self._formation_algorithm = SpeedPosition(
-                    self,
-                    alpha,
-                    speed_deviation_threshold,
-                    position_deviation_threshold
-                )
+                self._formation_algorithm = SpeedPosition(self, **kw_args)
             else:
                 sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}!")
             self._execution_interval = execution_interval
