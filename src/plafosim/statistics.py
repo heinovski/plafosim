@@ -542,6 +542,48 @@ def initialize_platoon_changes(basename: str):
 def record_platoon_change(
     basename: str,
     step: int,
+    leader: 'PlatooningVehicle',
+    source_lane: int,
+    target_lane: int,
+    reason: str,
+):
+    assert basename
+    from .platooning_vehicle import PlatooningVehicle
+    assert isinstance(leader, PlatooningVehicle)
+    from .platoon_role import PlatoonRole
+    assert leader.platoon_role == PlatoonRole.LEADER and leader.platoon.leader.vid == leader.vid
+    with open(f'{basename}_platoon_changes.csv', 'a') as f:
+        f.write(
+            f"{step},"
+            f"{leader.platoon.platoon_id},"
+            f"{leader.position},"
+            f"{source_lane},"
+            f"{target_lane},"
+            f"{leader.speed},"
+            f"{reason}"
+            "\n"
+        )
+
+
+def initialize_vehicle_platoon_changes(basename: str):
+    assert basename
+    with open(f'{basename}_vehicle_platoon_changes.csv', 'w') as f:
+        f.write(
+            "step,"
+            "id,"
+            "platoon,"
+            "position,"
+            "from,"
+            "to,"
+            "speed,"
+            "reason"
+            "\n"
+        )
+
+
+def record_vehicle_platoon_change(
+    basename: str,
+    step: int,
     member: 'PlatooningVehicle',
     source_lane: int,
     target_lane: int,
@@ -550,10 +592,11 @@ def record_platoon_change(
     assert basename
     from .platooning_vehicle import PlatooningVehicle
     assert isinstance(member, PlatooningVehicle)
-    with open(f'{basename}_platoon_changes.csv', 'a') as f:
+    with open(f'{basename}_vehicle_platoon_changes.csv', 'a') as f:
         f.write(
             f"{step},"
             f"{member.vid},"
+            f"{member.platoon.platoon_id},"
             f"{member.position},"
             f"{source_lane},"
             f"{target_lane},"

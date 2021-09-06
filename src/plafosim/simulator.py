@@ -62,6 +62,7 @@ from .statistics import (
     initialize_simulation_trace,
     initialize_vehicle_changes,
     initialize_vehicle_emissions,
+    initialize_vehicle_platoon_changes,
     initialize_vehicle_platoon_traces,
     initialize_vehicle_traces,
     initialize_vehicle_trips,
@@ -70,6 +71,7 @@ from .statistics import (
     record_platoon_change,
     record_simulation_trace,
     record_vehicle_change,
+    record_vehicle_platoon_change,
 )
 from .util import addLoggingLevel, get_crashed_vehicles, update_position
 from .vehicle import Vehicle
@@ -731,6 +733,15 @@ class Simulator:
                         LOG.trace(f"lane change is not safe for member {member._vid}")
 
                 if can_change:
+                    record_platoon_change(
+                        basename=self._result_base_filename,
+                        step=self._step,
+                        leader=vehicle,
+                        source_lane=source_lane,
+                        target_lane=target_lane,
+                        reason=reason,
+                    )
+
                     # perform lane change for all vehicles in this platoon
                     for member in vehicle._platoon.formation:
                         assert(member._lane == source_lane)
@@ -741,7 +752,7 @@ class Simulator:
 
                         if self._record_platoon_changes:
                             # log lane change
-                            record_platoon_change(
+                            record_vehicle_platoon_change(
                                 basename=self._result_base_filename,
                                 step=self._step,
                                 member=member,
@@ -1472,6 +1483,9 @@ class Simulator:
         if self._record_platoon_changes:
             # create output file for platoon lane changes
             initialize_platoon_changes(basename=self._result_base_filename)
+
+            # create output file for vehicle_platoon lane changes
+            initialize_vehicle_platoon_changes(basename=self._result_base_filename)
 
         if self._record_simulation_trace:
             # create output file for continuous simulation trace
