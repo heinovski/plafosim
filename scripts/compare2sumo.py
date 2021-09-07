@@ -527,7 +527,7 @@ for label in lifetime_diff_labels:
     print(f"Plotting {label} over life time...")
     lal = re.sub('diff_sumo_', '', label)
 
-    pl.figure()
+    fig, ax = pl.subplots()
     pl.title(f"Average Deviation to Sumo in {lal} during trip for {args.vehicles} Vehicles")
 
     sns.lineplot(
@@ -536,7 +536,9 @@ for label in lifetime_diff_labels:
         y=label,
         estimator='mean',
         n_boot=10,
+        ax=ax,
     )
+    ax.hlines(0, 0, merged_traces.lifetime.max(), color='black', label='target', linestyle='dashed')
     pl.xlabel("trip duration [s]")
 
     pl.savefig(f"{args.experiment}_{lal}_line_diff.png")
@@ -559,7 +561,7 @@ for label in lifetime_diff_emission_labels:
     print(f"Plotting {label} over life time...")
     lal = re.sub('diff_sumo_', '', label)
 
-    pl.figure()
+    fig, ax = pl.subplots()
     pl.title(f"Average Deviation to Sumo in {lal} during trip for {args.vehicles} Vehicles in mg/ml")
 
     sns.lineplot(
@@ -568,7 +570,9 @@ for label in lifetime_diff_emission_labels:
         y=label,
         estimator='mean',
         n_boot=10,
+        ax=ax,
     )
+    ax.hlines(0, 0, merged_emission_traces.lifetime.max(), color='black', label='target', linestyle='dashed')
     pl.xlabel("trip duration [s]")
 
     pl.savefig(f"{args.experiment}_{lal}_line_diff.png")
