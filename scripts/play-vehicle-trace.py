@@ -93,6 +93,7 @@ def remove_vehicle(vid: str):
 def use_pandas():
     import pandas
     traces = pandas.read_csv(args.trace_file)
+    assert not traces.empty
 
     min_step = max(traces.step.min(), args.start)
     max_step = min(traces.step.max(), args.end) if args.end != -1 else traces.step.max()
