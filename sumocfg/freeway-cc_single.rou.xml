@@ -1,9 +1,0 @@
-<routes>
-    <!-- desired speed: normal distribution at mean=1.0, dev=0.0, min=1.0, max=1.0) of edge speed (36 [130 km/h]) -->
-    <vType id="cc" accel="2.5" decel="15.0" apparentDecel="15.0" emergencyDecel="15.0" sigma="0" tau="1.0" length="4.0" minGap="2.5" maxSpeed="55" speedFactor="normc(1.0,0.0,0.0,0.0)" color="0,1,0" carFollowModel="Krauss" laneChangeModel="LC2013" emissionClass="HBEFA3/PC_G_EU4" />
-
-    <route id="route" edges="edge_0_0" />
-
-    <!-- use depart pos 4 to get rid of the magic additional 0.1m -->
-    <flow id="static" begin="0" period="3" type="cc" number="1" route="route" departSpeed="0" arrivalPos="100000" departPos="4" departLane="first" />
-</routes>

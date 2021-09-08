@@ -23,6 +23,6 @@ class CF_Model(Enum):
     Car Following models that vehicles can use for their mobility.
     """
 
-    CC = 0  # safe speed
+    Human = 0  # safe speed
     ACC = 1  # fixed time gap
     CACC = 2  # small fixed distance

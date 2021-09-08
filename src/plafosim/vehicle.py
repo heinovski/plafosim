@@ -112,7 +112,7 @@ class Vehicle:
         self._speed = self._depart_speed  # the current speed of the vehicle
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
         self._acceleration = 0  # the current acceleration of the vehicle, used (only) for the emission model
-        self._cf_model = CF_Model.CC  # the current car following model
+        self._cf_model = CF_Model.Human  # the current car following model
         self._cc_target_speed = desired_speed  # the target speed for CC
 
         # communication properties
@@ -195,20 +195,20 @@ class Vehicle:
         return self._vehicle_type._min_gap
 
     @property
-    def cc_headway_time(self) -> float:
+    def headway_time(self) -> float:
         """
-        Returns the CC headway time of the vehicle.
+        Returns the human headway time of the vehicle.
 
         This is based on the vehicle type.
         """
 
-        return self._vehicle_type._cc_headway_time
+        return self._vehicle_type._headway_time
 
     @property
     def desired_headway_time(self) -> float:
         """Returns the desired headway time of the vehicle."""
 
-        return self._vehicle_type._cc_headway_time
+        return self._vehicle_type._headway_time
 
     @property
     def depart_position(self) -> int:

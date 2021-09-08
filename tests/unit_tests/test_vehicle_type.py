@@ -26,7 +26,7 @@ def test_creation():
     max_acceleration = 2.5
     max_deceleration = 15.0
     min_gap = 1.0
-    cc_headway_time = 1.0
+    headway_time = 1.0
     emission_class = EmissionClass.PC_G_EU4
 
     vtype = VehicleType(
@@ -36,7 +36,7 @@ def test_creation():
         max_acceleration,
         max_deceleration,
         min_gap,
-        cc_headway_time,
+        headway_time,
         emission_class.name,
     )
 
@@ -47,7 +47,7 @@ def test_creation():
     assert(vtype.max_acceleration == max_acceleration)
     assert(vtype.max_deceleration == max_deceleration)
     assert(vtype.min_gap == min_gap)
-    assert(vtype.cc_headway_time == cc_headway_time)
+    assert(vtype.headway_time == headway_time)
     assert(vtype.emission_class == emission_class)
     assert(vtype.emission_factors == EMISSION_FACTORS[emission_class.name])
     assert(str(vtype) == str(vtype.__dict__))

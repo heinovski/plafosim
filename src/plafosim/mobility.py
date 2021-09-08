@@ -75,9 +75,9 @@ def safe_speed_df(vdf: pd.DataFrame) -> pd.Series:
     )
 
 
-def speed_cc_df(vdf: pd.DataFrame) -> pd.Series:
+def speed_human_df(vdf: pd.DataFrame) -> pd.Series:
     """
-    Compute new speed for CC vehicles, DataFrame variant.
+    Compute new speed for human vehicles, DataFrame variant.
 
     Basically just safe_speed, clamping is done outside this function.
     """
@@ -183,7 +183,7 @@ def compute_new_speeds(
     # predecessor. If there is none, the values should just be large defaults.
     # The CF functions shouls be able to deal with this inherently.
 
-    m_cc = vdf.cf_model == CF_Model.CC
+    m_human = vdf.cf_model == CF_Model.Human
     m_acc = vdf.cf_model == CF_Model.ACC
     m_cacc = vdf.cf_model == CF_Model.CACC
 
@@ -192,9 +192,9 @@ def compute_new_speeds(
     # This should be faster than building and concatenating multiple series
     # and should avoid re-sorting the result -- but maybe benchmark this later
     new_speed = vdf.speed.copy()
-    new_speed.loc[m_cc] = speed_cc_df(vdf.loc[m_cc])
+    new_speed.loc[m_human] = speed_human_df(vdf.loc[m_human])
     new_speed.loc[m_acc] = speed_acc_df(vdf.loc[m_acc])
-    # TODO: apply clamping only to cc and acc vehicles (not cacc)
+    # TODO: apply clamping only to human and acc vehicles (not cacc)
     new_speed.loc[m_cacc] = new_speed[vdf.loc[m_cacc].leader_id].values
 
     # clamp speed by common constraints
@@ -288,7 +288,7 @@ def single_vehicle_new_speed(vehicle, predecessor, step_length):
     desired_gap = max(
         vtype.min_gap, vehicle.desired_headway_time * vehicle._speed
     )
-    if vehicle._cf_model == CF_Model.CC:
+    if vehicle._cf_model == CF_Model.Human:
         new_speed = safe_speed(
             speed_predecessor=predecessor.speed,
             speed_current=vehicle._speed,

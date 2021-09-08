@@ -102,7 +102,7 @@ type: docker
 name: correctness
 
 steps:
-- name: CC
+- name: Human
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   failure: ignore  # FIXME: remove after seeds and models have been fixed
   commands:
@@ -110,8 +110,8 @@ steps:
     - apt install time
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
-    - ./scripts/validate-cf-model-cc-single.sh
-    - ./scripts/validate-cf-model-cc-100.sh
+    - ./scripts/validate-cf-model-human-single.sh
+    - ./scripts/validate-cf-model-human-100.sh
 - name: ACC
   failure: ignore  # FIXME: remove after seeds and models have been fixed
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
@@ -180,7 +180,7 @@ type: docker
 name: performance
 
 steps:
-- name: CC
+- name: Human
   image: python:3.8-buster
   commands:
     - pip3 install -r requirements.txt

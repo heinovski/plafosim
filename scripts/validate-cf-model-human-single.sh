@@ -21,9 +21,9 @@ set -o pipefail
 
 ROOT=$(pwd)/$(dirname $0)/..
 
-### CC
+### Human
 
-experiment=cc
+experiment=human_single
 
 # check correct sumo version
 sumo --version | grep Version | head -n 1 | sed -E "s/.*([0-9]+\.[0-9]+\.[0-9]+)/\1/g" | xargs -i test "1.6.0" = "{}" || (echo "Incorrect SUMO version (expecting 1.6.0)!" && exit 1)
@@ -46,8 +46,8 @@ echo "Running PlaFoSim..."
     --max-speed 55 \
     --min-desired-speed 22 \
     --penetration 0 \
-    --random-desired-speed true \
-    --random-seed 2542 \
+    --random-desired-speed false \
+    --random-seed 1337 \
     --record-emission-traces true \
     --record-end-trace false \
     --record-vehicle-changes true \
@@ -58,8 +58,8 @@ echo "Running PlaFoSim..."
     --road-length 100 \
     --speed-variation 0.1 \
     --step-length 1 \
-    --time-limit 1.1 \
-    --vehicles 100 \
+    --time-limit 1.0 \
+    --vehicles 1 \
     2>&1 | tee ${experiment}_plafosim.log
 
 echo "Running SUMO..."
@@ -91,4 +91,4 @@ $SUMO_HOME/tools/xml/xml2csv.py $experiment-changes.xml -o $experiment-changes.c
 
 echo "Comparing results..."
 
-$ROOT/scripts/compare2sumo.py $experiment --vehicles 100 --desired-speed 36 --arrival-position 100000
+$ROOT/scripts/compare2sumo.py $experiment --vehicles 1 --desired-speed 36 --arrival-position 100000

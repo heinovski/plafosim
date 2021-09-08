@@ -29,7 +29,7 @@ class VehicleType:
             max_acceleration: float,
             max_deceleration: float,
             min_gap: float,
-            cc_headway_time: float,
+            headway_time: float,
             emission_class: str,
     ):
         """
@@ -49,8 +49,8 @@ class VehicleType:
             The maximum deceleration of the vehicle type
         min_gap : float
             The minimum safety gap to the vehicle in front of the vehicle type
-        cc_headway_time : float
-            The CC headway time of the vehicle type
+        headway_time : float
+            The human headway time of the vehicle type
         emission_class : EmissionClass
             The emission class of the vehicle type
         """
@@ -61,7 +61,7 @@ class VehicleType:
         self._max_acceleration = max_acceleration  # the maximum acceleration of the vehicle type
         self._max_deceleration = max_deceleration  # the maximum deceleration of the vehicle type
         self._min_gap = min_gap  # the minimum gap to the vehicle in front
-        self._cc_headway_time = cc_headway_time  # the desired cc headway time
+        self._headway_time = headway_time  # the desired human headway time
         self._emission_class = EmissionClass[emission_class]  # the emission class of the vehicle type
 
     @property
@@ -101,10 +101,10 @@ class VehicleType:
         return self._min_gap
 
     @property
-    def cc_headway_time(self) -> float:
-        """Returns the desired headway time of a vehicle type."""
+    def headway_time(self) -> float:
+        """Returns the desired human headway time of a vehicle type."""
 
-        return self._cc_headway_time
+        return self._headway_time
 
     @property
     def emission_class(self) -> EmissionClass:
