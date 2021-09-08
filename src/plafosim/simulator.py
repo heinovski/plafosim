@@ -551,10 +551,11 @@ class Simulator:
         predecessor = None  # there is no predecessor so far
         candidates = {
             v._vid: v.rear_position for v in self._vehicles.values() if
-            v is not vehicle and  # not this vehicle
             v._lane == lane and  # correct lane
             v._position >= vehicle._position  # in front this vehicle
         }
+        # not this vehicle
+        candidates.pop(vehicle._vid, None)
         # find candidate with smallest rear_position (min)
         # we do not check for collisions here because this method is also called within an update step
         if candidates:
@@ -580,10 +581,11 @@ class Simulator:
         successor = None  # there is no successor so far
         candidates = {
             v._vid: v._position for v in self._vehicles.values() if
-            v is not vehicle and  # not this vehicle
             v._lane == lane and  # correct lane
             v._position <= vehicle._position  # behind this vehicle
         }
+        # not this vehicle
+        candidates.pop(vehicle._vid, None)
         # find candidate with largest_position (max)
         # we do not check for collisions here because this method is also called within an update step
         if candidates:
