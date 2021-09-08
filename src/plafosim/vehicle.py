@@ -113,7 +113,7 @@ class Vehicle:
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
         self._acceleration = 0  # the current acceleration of the vehicle, used (only) for the emission model
         self._cf_model = CF_Model.Human  # the current car following model
-        self._cc_target_speed = desired_speed  # the target speed for CC
+        self._cf_target_speed = desired_speed  # the target speed for the car following
 
         # communication properties
         # TODO move to platooning vehicle

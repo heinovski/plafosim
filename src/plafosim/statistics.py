@@ -354,7 +354,7 @@ def initialize_vehicle_traces(basename: str):
             "duration,"
             "routeLength,"
             "desiredSpeed,"
-            "ccTargetSpeed,"
+            "cfTargetSpeed,"
             "cfModel"
             "\n"
         )
@@ -375,7 +375,7 @@ def record_vehicle_trace(basename: str, step: int, vehicle: 'Vehicle'):
             f"{vehicle.travel_time},"
             f"{vehicle.travel_distance},"
             f"{vehicle.desired_speed},"  # use potential other desired driving speed
-            f"{vehicle._cc_target_speed},"
+            f"{vehicle._cf_target_speed},"
             f"{vehicle._cf_model.name}"
             "\n"
         )

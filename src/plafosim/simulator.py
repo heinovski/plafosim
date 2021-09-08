@@ -870,7 +870,7 @@ class Simulator:
             speed_target = single_vehicle_new_speed(vehicle, pred_target, self._step_length)
             pred_current = self._get_predecessor(vehicle, vehicle._lane)
             speed_current = single_vehicle_new_speed(vehicle, pred_current, self._step_length)
-            if speed_target >= speed_current or isclose(speed_target, vehicle._cc_target_speed):
+            if speed_target >= speed_current or isclose(speed_target, vehicle._cf_target_speed):
                 self._change_lane(vehicle, target_lane, "keepRight")
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
@@ -1706,7 +1706,7 @@ class Simulator:
 
         fields = [
             "arrival_position",
-            "cc_target_speed",
+            "cf_target_speed",
             "position",
             "lane",
             "speed",
@@ -1722,7 +1722,7 @@ class Simulator:
         ]
 
         if not self._vehicles:
-            return pd.DataFrame({key: [] for key in fields + vtype_fields + platoon_fields + ["desired_headway_time", "acc_lambda"]}).drop(["cc_target_speed"], axis="columns")
+            return pd.DataFrame({key: [] for key in fields + vtype_fields + platoon_fields + ["desired_headway_time", "acc_lambda"]}).drop(["cf_target_speed"], axis="columns")
         return (
             pd.DataFrame([
                 dict(
@@ -1741,11 +1741,11 @@ class Simulator:
             # eventually be removed from here anyway once the DataFrame stays
             # and computations/updates move to actions (like platoon updates).
             .assign(
-                max_speed=lambda df: df[["max_speed", "cc_target_speed", "platoon_max_speed", "platoon_desired_speed"]].min(axis="columns"),
+                max_speed=lambda df: df[["max_speed", "cf_target_speed", "platoon_max_speed", "platoon_desired_speed"]].min(axis="columns"),
                 max_acceleration=lambda df: df[["max_acceleration", "platoon_max_acceleration"]].min(axis="columns"),
                 max_deceleration=lambda df: df[["max_deceleration", "platoon_max_deceleration"]].min(axis="columns"),
             )
-            .drop(["cc_target_speed"], axis="columns")
+            .drop(["cf_target_speed"], axis="columns")
         )
 
     def _write_back_vehicles_df(self, vdf: pd.DataFrame):

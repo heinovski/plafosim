@@ -696,7 +696,7 @@ class PlatooningVehicle(Vehicle):
             # we need to approach the platoon
             if self._speed <= leader.platoon.speed:
                 # we need to accelerate to approach the platoon
-                self._cc_target_speed = self.max_speed
+                self._cf_target_speed = self.max_speed
                 # the time we need to accelerate to our maximum speed (given a linear acceleration)
                 time_acceleration = (self.max_speed - self._speed) / self.max_acceleration
                 # the time we need to decelerate to target speed (given a linear deceleration)
@@ -927,7 +927,7 @@ class PlatooningVehicle(Vehicle):
             self._joins_teleport_lane += 1
         current_speed = self._speed
         new_speed = last.speed
-        self._cc_target_speed = new_speed
+        self._cf_target_speed = new_speed
         if current_speed != new_speed:
             self._speed = new_speed
             LOG.debug(f"{self._vid} changed speed to {self._speed}m/s (from {current_speed}m/s)")
@@ -967,7 +967,7 @@ class PlatooningVehicle(Vehicle):
             # thus, the follower now drives as fast as the already existing platoon
             # (i.e., only the leader in the worst case)
             vehicle._platoon = leader.platoon
-            vehicle._cc_target_speed = vehicle._platoon.desired_speed
+            vehicle._cf_target_speed = vehicle._platoon.desired_speed
 
         # set color of vehicle
         if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
@@ -1041,7 +1041,7 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"Only {follower.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
-                follower._cc_target_speed = follower._desired_speed
+                follower._cf_target_speed = follower._desired_speed
                 follower._platoon = Platoon(follower.vid, [follower], follower._desired_speed)
 
                 # reset color of vehicle
@@ -1071,7 +1071,7 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"Only the current leader {leader.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 leader._platoon_role = PlatoonRole.NONE
                 leader._cf_model = CF_Model.ACC  # TODO superfluous?
-                leader._cc_target_speed = leader._desired_speed  # TODO superfluous?
+                leader._cf_target_speed = leader._desired_speed  # TODO superfluous?
                 leader._platoon = Platoon(leader.vid, [leader], leader._desired_speed)
 
                 # reset color of vehicle

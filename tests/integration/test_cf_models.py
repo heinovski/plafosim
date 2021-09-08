@@ -104,8 +104,8 @@ def test_cf_models_blocked(
 
     # same desired speed over entire simulation
     assert (traces.groupby("id").desiredSpeed.std() == 0).all()
-    # same cc target speed over entire simulation
-    assert (traces.groupby("id").ccTargetSpeed.std() == 0).all()
+    # same cf target speed over entire simulation
+    assert (traces.groupby("id").cfTargetSpeed.std() == 0).all()
     # vehicle 0 has the same speed in the entire simulation
     assert traces.query("id == 0").speed.std() == 0
     # (constant) speed of vehicle 0
@@ -115,10 +115,10 @@ def test_cf_models_blocked(
         .loc[(0, traces.step.min()), "speed"]
     )
     # vehicle 0 is driving at its desired speed
-    assert speed_vehicle0 == traces.query("id == 0").ccTargetSpeed.min()
+    assert speed_vehicle0 == traces.query("id == 0").cfTargetSpeed.min()
 
     # vehicle 1 reaches its desired speed for the first time
-    first_step_desired = traces.query("id == 1 and speed == ccTargetSpeed").step.min()
+    first_step_desired = traces.query("id == 1 and speed == cfTargetSpeed").step.min()
     # there is a step where vehicle 1 reaches its desired speed
     assert not np.isnan(first_step_desired)
     # vehicle 1 did not start with desired speed
@@ -192,14 +192,14 @@ def test_cf_model_CACC(size: int, cacc_spacing: float):
 
     # same desired speed over entire simulation
     assert (traces.groupby("id").desiredSpeed.std() == 0).all()
-    # same cc target speed over entire simulation
-    assert (traces.groupby("id").ccTargetSpeed.std() == 0).all()
+    # same cf target speed over entire simulation
+    assert (traces.groupby("id").cfTargetSpeed.std() == 0).all()
     # same speed over entire simulation
     assert (traces.groupby("id").speed.std() == 0).all()
     # same desired and target speed
-    assert traces.desiredSpeed.min() == traces.ccTargetSpeed.min()
+    assert traces.desiredSpeed.min() == traces.cfTargetSpeed.min()
     # same speed and target speed
-    assert traces.speed.min() == traces.ccTargetSpeed.min()
+    assert traces.speed.min() == traces.cfTargetSpeed.min()
 
     # all followers have the same speed as the leader during the entire simulation
     leader_speed = traces.query("id == 0").set_index("step").speed
