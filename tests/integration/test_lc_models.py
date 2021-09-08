@@ -83,7 +83,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
     assert is_gap_safe(
         front_position=s._vehicles[0].position,
         front_speed=s._vehicles[0].speed,
-        front_max_acceleration=vtype.max_acceleration,
+        front_max_deceleration=vtype.max_deceleration,
         front_length=vtype.length,
         back_position=s._vehicles[1].position,
         back_speed=s._vehicles[1].speed,
@@ -148,7 +148,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
     assert is_gap_safe(
         front_position=s._vehicles[1].position,
         front_speed=s._vehicles[1].speed,
-        front_max_acceleration=vtype.max_acceleration,
+        front_max_deceleration=vtype.max_deceleration,
         front_length=vtype.length,
         back_position=s._vehicles[0].position,
         back_speed=s._vehicles[0].speed,
@@ -232,7 +232,7 @@ def test_lc_models_with_interferer(
     assert is_gap_safe(
         front_position=s._vehicles[0].position,
         front_speed=s._vehicles[0].speed,
-        front_max_acceleration=vtype.max_acceleration,
+        front_max_deceleration=vtype.max_deceleration,
         front_length=vtype.length,
         back_position=s._vehicles[1].position,
         back_speed=s._vehicles[1].speed,

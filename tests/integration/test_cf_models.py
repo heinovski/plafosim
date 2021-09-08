@@ -87,7 +87,7 @@ def test_cf_models_blocked(
     assert is_gap_safe(
         front_position=s._vehicles[0].position,
         front_speed=s._vehicles[0].speed,
-        front_max_acceleration=vtype.max_acceleration,
+        front_max_deceleration=vtype.max_deceleration,
         front_length=vtype.length,
         back_position=s._vehicles[1].position,
         back_speed=s._vehicles[1].speed,

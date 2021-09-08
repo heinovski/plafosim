@@ -1304,7 +1304,7 @@ class Simulator:
             return not is_gap_safe(
                 front_position=depart_position,
                 front_speed=depart_speed,
-                front_max_acceleration=vtype.max_acceleration,
+                front_max_deceleration=vtype.max_deceleration,
                 front_length=vtype.length,
                 back_position=other_vehicle.position,
                 back_speed=other_vehicle.speed,
@@ -1315,7 +1315,7 @@ class Simulator:
             return not is_gap_safe(
                 front_position=other_vehicle.position,
                 front_speed=other_vehicle.speed,
-                front_max_acceleration=other_vehicle.max_acceleration,
+                front_max_deceleration=other_vehicle.max_deceleration,
                 front_length=other_vehicle.length,
                 back_position=depart_position,
                 back_speed=depart_speed,

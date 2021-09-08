@@ -28,7 +28,7 @@ from .cf_model import CF_Model
 def is_gap_safe(
     front_position,
     front_speed,
-    front_max_acceleration,
+    front_max_deceleration,
     front_length,
     back_position,
     back_speed,
@@ -48,7 +48,7 @@ def is_gap_safe(
     next_front_position = (
         front_position
         - front_length
-        + (front_speed - front_max_acceleration * step_length) * step_length
+        + (front_speed - front_max_deceleration * step_length) * step_length
     )
     next_back_position = (
         back_position
