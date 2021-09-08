@@ -670,43 +670,7 @@ class PlatooningVehicle(Vehicle):
         assert(new_position <= self._simulator.road_length)
 
         # consider the actual approaching duration
-        initial_distance = new_position - self._position
-        total_approach_time = -1
-        if initial_distance > 0:
-            # we need to approach the platoon
-            if self._speed <= leader.platoon.speed:
-                # we need to accelerate to approach the platoon
-                self._cf_target_speed = self.max_speed
-                # the time we need to accelerate to our maximum speed (given a linear acceleration)
-                time_acceleration = (self.max_speed - self._speed) / self.max_acceleration
-                # the time we need to decelerate to target speed (given a linear deceleration)
-                time_deceleration = (self.max_speed - leader.platoon.speed) / self.max_deceleration
-                # the distance driven while accelerating to the maximum speed (given a linear acceleration
-                distance_acceleration = (self._speed + self.max_speed) / 2 * time_acceleration
-                # the distance driven while decelerating to the target speed (given a linear acceleration
-                distance_deceleration = (self.max_speed + leader.platoon.speed) / 2 * time_deceleration
-                # the distance to drive with maximum speed (i.e., after acceleration and before deceleration)
-                distance_max_speed = initial_distance - (distance_acceleration + distance_deceleration)
-                # the time we need drive with the maximum speed
-                time_max_speed = distance_max_speed / self.max_speed
-                # the total time we need for approaching our target position
-                total_approach_time = time_acceleration + time_max_speed + time_deceleration
-            else:
-                # we need to decelerate to approach the platoon
-                # the time we need to decelerate to target speed (given a linear deceleration)
-                time_deceleration = (self._speed - leader.platoon.speed) / self.max_deceleration
-                # the distance driven while decelerating to the target speed (given a linear acceleration
-                distance_deceleration = (self._speed + leader.platoon.speed) / 2 * time_deceleration
-                # the distance to drive with our current speed (i.e., before deceleration)
-                distance_current_speed = initial_distance - distance_deceleration
-                # the time we need drive with the current speed
-                time_current_speed = distance_current_speed / self._speed
-                # the total time we need for approaching our target position
-                total_approach_time = time_current_speed + time_deceleration
-        else:
-            # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing (e.g., 9m)
-            assert(abs(initial_distance) <= last.length + self._cacc_spacing)
-            total_approach_time = 0  # FIXME: we ignore that for now, since the time should be very small anyhow
+        total_approach_time = self.calculate_approaching_time(new_position, leader.platoon.speed)
 
         assert(total_approach_time != -1)
         if total_approach_time > self._simulator._maximum_appraoch_time:
@@ -962,6 +926,59 @@ class PlatooningVehicle(Vehicle):
             self._first_platoon_join_position = self._position
         self._joins_succesful += 1
         self._number_platoons += 1
+
+    def calculate_approaching_time(self, target_position: float, target_speed: float) -> float:
+        """
+        Calculate approximate time to approacht the target position at target speed
+
+        Parameters
+        ----------
+
+        target_position : float
+            The target position to approach
+        target_speed : float
+            The target speed after approaching
+        """
+
+        initial_distance = target_position - self._position
+        total_approach_time = -1
+        if initial_distance > 0:
+            # we need to approach the platoon
+            if self._speed <= target_speed:
+                # we need to accelerate to approach the platoon
+                self._cf_target_speed = self.max_speed
+                # the time we need to accelerate to our maximum speed (given a linear acceleration)
+                time_acceleration = (self.max_speed - self._speed) / self.max_acceleration
+                # the time we need to decelerate to target speed (given a linear deceleration)
+                time_deceleration = (self.max_speed - target_speed) / self.max_deceleration
+                # the distance driven while accelerating to the maximum speed (given a linear acceleration
+                distance_acceleration = (self._speed + self.max_speed) / 2 * time_acceleration
+                # the distance driven while decelerating to the target speed (given a linear acceleration
+                distance_deceleration = (self.max_speed + target_speed) / 2 * time_deceleration
+                # the distance to drive with maximum speed (i.e., after acceleration and before deceleration)
+                distance_max_speed = initial_distance - (distance_acceleration + distance_deceleration)
+                # the time we need drive with the maximum speed
+                time_max_speed = distance_max_speed / self.max_speed
+                # the total time we need for approaching our target position
+                total_approach_time = time_acceleration + time_max_speed + time_deceleration
+            else:
+                # we need to decelerate to approach the platoon
+                # the time we need to decelerate to target speed (given a linear deceleration)
+                time_deceleration = (self._speed - target_speed) / self.max_deceleration
+                # the distance driven while decelerating to the target speed (given a linear acceleration
+                distance_deceleration = (self._speed + target_speed) / 2 * time_deceleration
+                # the distance to drive with our current speed (i.e., before deceleration)
+                distance_current_speed = initial_distance - distance_deceleration
+                # the time we need drive with the current speed
+                time_current_speed = distance_current_speed / self._speed
+                # the total time we need for approaching our target position
+                total_approach_time = time_current_speed + time_deceleration
+        else:
+            # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing (e.g., 9m)
+            assert(abs(initial_distance) <= self.length + self._cacc_spacing)  # FIXME use length of last vehicle in platoon
+            total_approach_time = 0  # FIXME: we ignore that for now, since the time should be very small anyhow
+
+        return total_approach_time
 
     def _teleport(self, new_position: float, new_lane: int, new_speed: float):
         """
