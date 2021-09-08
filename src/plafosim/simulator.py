@@ -854,6 +854,7 @@ class Simulator:
                 return
             speed_current = single_vehicle_new_speed(vehicle, pred_current, self._step_length)
             if speed_target > speed_current:
+                # left lane is not free, try changing there
                 self._change_lane(vehicle, target_lane, "speedGain")
 
         elif not vehicle._blocked_front and vehicle._lane > 0:
@@ -871,6 +872,7 @@ class Simulator:
             pred_current = self._get_predecessor(vehicle, vehicle._lane)
             speed_current = single_vehicle_new_speed(vehicle, pred_current, self._step_length)
             if speed_target >= speed_current or isclose(speed_target, vehicle._cf_target_speed):
+                # right lane is not free, try changing there
                 self._change_lane(vehicle, target_lane, "keepRight")
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
