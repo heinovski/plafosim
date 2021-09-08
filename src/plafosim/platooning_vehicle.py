@@ -541,6 +541,13 @@ class PlatooningVehicle(Vehicle):
         Lets a vehicle join a platoon.
 
         Communication and fine-grained maneuver control is out-of-scope and thus omitted.
+
+        Parameters
+        ----------
+        platoon_id : int
+            The id of the target platoon
+        leader_id : int
+            The id of the leader of the target platoon
         """
 
         assert(not self.is_in_platoon())
@@ -754,7 +761,17 @@ class PlatooningVehicle(Vehicle):
             LOG.debug(f"The teleport for vehicle {self._vid} will be performed instantaneous.")
             self._join_teleport(leader, last, new_position)
 
-    def _join_teleport(self, leader, last, new_position):
+    def _join_teleport(self, leader: 'PlatooningVehicle', last: 'PlatooningVehicle', new_position: float):
+        """
+        Parameters
+        ----------
+        leader : PlatooningVehicle
+            The leader of the target platoon
+        last : PlatooningVehicle
+            The last vehicle of the target platoon
+        new_position : float
+            The new position for joining the target platoon
+        """
 
         LOG.debug(f"Continuing the join maneuver for vehicle {self._vid} -> {leader.platoon.platoon_id} ({leader.vid})")
 
