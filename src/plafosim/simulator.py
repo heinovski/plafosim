@@ -604,7 +604,7 @@ class Simulator:
         """
 
         p = self._get_predecessor(vehicle, lane)
-        if p is None:
+        if not p:
             return -1
         else:
             return p.rear_position
@@ -623,7 +623,7 @@ class Simulator:
         """
 
         p = self._get_predecessor(vehicle, lane)
-        if p is None:
+        if not p:
             return -1
         else:
             return p._speed
@@ -645,7 +645,7 @@ class Simulator:
 
         # check predecessor on target lane
         p = self._get_predecessor(vehicle, target_lane)
-        if p is not None:
+        if p:
             gap_to_predecessor_on_target_lane = p.rear_position - vehicle._position
             if gap_to_predecessor_on_target_lane < vehicle.desired_gap:
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its predecessor")
@@ -663,7 +663,7 @@ class Simulator:
 
         # check successor on target lane
         s = self._get_successor(vehicle, target_lane)
-        if s is not None:
+        if s:
             gap_to_successor_on_target_lane = vehicle.rear_position - s._position
             if gap_to_successor_on_target_lane < s.desired_gap:
                 LOG.trace(f"{vehicle._vid}'s lane change is not safe because of its successor")
@@ -842,7 +842,7 @@ class Simulator:
 
             # compare difference to desired speeds for current and target lane
             pred_target = self._get_predecessor(vehicle, target_lane)
-            if pred_target is None:
+            if not pred_target:
                 # left lane is free, try changing there
                 self._change_lane(vehicle, target_lane, "speedGain")
                 return
@@ -862,7 +862,7 @@ class Simulator:
 
             # compare difference to desired speeds for current and target lane
             pred_target = self._get_predecessor(vehicle, target_lane)
-            if pred_target is None:
+            if not pred_target:
                 # right lane is free, try changing there
                 self._change_lane(vehicle, target_lane, "keepRight")
                 return

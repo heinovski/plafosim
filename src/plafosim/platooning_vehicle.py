@@ -127,7 +127,7 @@ class PlatooningVehicle(Vehicle):
         # for a LEADER
         self._joiner = None
 
-        if formation_algorithm is not None:
+        if formation_algorithm:
             # initialize formation algorithm
             # TODO make enum
             if formation_algorithm == "speedposition":
@@ -483,7 +483,7 @@ class PlatooningVehicle(Vehicle):
                 self._join_data_last = None
                 self._join_data_new_position = None
 
-        if self._formation_algorithm is not None:
+        if self._formation_algorithm:
             # transmit regular platoon advertisements
             self._advertise()
 
@@ -1167,7 +1167,7 @@ class PlatooningVehicle(Vehicle):
 
         advertisement_interval = 600  # in s # TODO make parameter
         if (
-            self._last_advertisement_step is None
+            not self._last_advertisement_step
             or self._last_advertisement_step + advertisement_interval <= self._simulator.step
         ):
             self._send_advertisements()
