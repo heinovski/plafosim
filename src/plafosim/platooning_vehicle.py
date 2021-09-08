@@ -887,24 +887,7 @@ class PlatooningVehicle(Vehicle):
                 return
 
         # teleport the vehicle
-        current_position = self._position
-        if current_position != new_position:
-            self._position = new_position
-            LOG.debug(f"{self._vid} teleported to {self._position} (from {current_position}, {self._position - current_position}m)")
-            self._joins_teleport_position += 1
-        current_lane = self._lane
-        new_lane = leader.lane
-        if current_lane != new_lane:
-            self._lane = new_lane
-            LOG.debug(f"{self._vid} switched to lane {self._lane} (from {current_lane})")
-            self._joins_teleport_lane += 1
-        current_speed = self._speed
-        new_speed = last.speed
-        self._cf_target_speed = new_speed
-        if current_speed != new_speed:
-            self._speed = new_speed
-            LOG.debug(f"{self._vid} changed speed to {self._speed}m/s (from {current_speed}m/s)")
-            self._joins_teleport_speed += 1
+        self._teleport(new_position, leader.lane, last.speed)
 
         # update the leader
         if not leader.is_in_platoon():
@@ -962,6 +945,37 @@ class PlatooningVehicle(Vehicle):
             self._first_platoon_join_position = self._position
         self._joins_succesful += 1
         self._number_platoons += 1
+
+    def _teleport(self, new_position: float, new_lane: int, new_speed: float):
+        """
+        Teleport a vehicle to a given position.
+
+        Parameters
+        ----------
+        new_position : float
+            The new position
+        new_lane : int
+            The new lane
+        new_speed : int
+            The new speed
+        """
+
+        current_position = self._position
+        if current_position != new_position:
+            self._position = new_position
+            LOG.debug(f"{self._vid} teleported to {self._position} (from {current_position}, {self._position - current_position}m)")
+            self._joins_teleport_position += 1
+        current_lane = self._lane
+        if current_lane != new_lane:
+            self._lane = new_lane
+            LOG.debug(f"{self._vid} switched to lane {self._lane} (from {current_lane})")
+            self._joins_teleport_lane += 1
+        current_speed = self._speed
+        self._cf_target_speed = new_speed
+        if current_speed != new_speed:
+            self._speed = new_speed
+            LOG.debug(f"{self._vid} changed speed to {self._speed}m/s (from {current_speed}m/s)")
+            self._joins_teleport_speed += 1
 
     def _leave(self):
         """
