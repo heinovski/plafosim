@@ -306,33 +306,6 @@ class PlatooningVehicle(Vehicle):
 
         return self._distance_in_platoon
 
-    def _acc_acceleration(self, target_speed: float, gap_to_predecessor: float, desired_gap: float) -> float:
-        """
-        s Helper method to calculate the ACC acceleration based on the given parameters.
-
-        This is based on:
-        R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012
-        Equation 6.18
-
-        Parameters
-        ----------
-        speed_predecessor : float
-            The driving speed of the vehicle in the front
-        predecessor_rear_position : float
-            The rear position of the vehicle in the front
-        desired_gap : float
-            The desired gap to the front vehicle
-        """
-
-        return (
-            -1.0 / self.desired_headway_time * (
-                self._speed
-                - target_speed
-                + self._acc_lambda
-                * (-gap_to_predecessor + desired_gap)
-            )
-        )
-
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
         """
         Calculates the emitted pollutant amount using the given speed and acceleration.
