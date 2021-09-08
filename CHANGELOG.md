@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.12.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.12.0) - 2021-09-08
+* Added argument for connecting to the gui later (#340)
+* Added argument for showing the progress bar
+* Added arguments for drawing labels within the GUI
+* Added arguments for drawing objects within the GUI
+* Added bumpversion
+* Added dedicated CI step for validation data upload
+* Added dedicated module for writing statistics (#355)
+* Added dedicated trace files for platoon and member changes
+* Added emission class (#337)
+* Added integration tests (#347, #367)
+* Added pipeline step for uploading the validation plots to the wiki (#335)
+* Added snapshot feature (#341)
+* Cleaned up the code
+* Cleaned up trace player
+* Extracted GUI code to dedicated module (#350)
+* Fixed doc image path (#318)
+* Fixed emission calculation
+* Fixed lange change check. (#349)
+* Fixed leave maneuver (#322)
+* Fixed references to formulas from literature
+* Fixed safe speed calculation (#324)
+* Renamed CF Model CC to Human (#369)
+* Updated argument passing (#365)
+* Updated documentation
+* Updated predecessor/successor calculations
+* Updated validation comparison (#325, #326, #333, #336, #362)
+* Updated vehicle spawning (#321, #353)
+* Vectorized CF Models (#323, #354)
+
 ## [v0.11.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.4) - 2021-07-21
 * Added bootstrapping to calculate confidence interval in comparison
 * Added explicit depart speed 0
