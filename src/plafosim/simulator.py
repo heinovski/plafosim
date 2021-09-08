@@ -45,9 +45,11 @@ from .gui import (
 from .infrastructure import Infrastructure
 from .mobility import (
     compute_new_speeds,
+    get_crashed_vehicles,
     is_gap_safe,
     safe_speed,
     single_vehicle_new_speed,
+    update_position,
 )
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
@@ -73,7 +75,7 @@ from .statistics import (
     record_vehicle_change,
     record_vehicle_platoon_change,
 )
-from .util import addLoggingLevel, get_crashed_vehicles, update_position
+from .util import addLoggingLevel
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
