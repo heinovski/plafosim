@@ -672,7 +672,7 @@ class PlatooningVehicle(Vehicle):
         # consider the actual approaching duration
         total_approach_time = self.calculate_approaching_time(new_position, leader.platoon.speed)
 
-        assert(total_approach_time != -1)
+        assert(total_approach_time >= 0)
         if total_approach_time > self._simulator._maximum_appraoch_time:
             # approaching the platoon would take too long
             LOG.warning(f"It would take too long ({total_approach_time}s) for {self._vid} to approach the platoon {leader.platoon.platoon_id} ({leader.vid})! Aborting the join maneuver!")
