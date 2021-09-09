@@ -214,7 +214,7 @@ def test_lc_models_with_interferer(
     s._add_vehicle(
         vid=2,
         vtype=vtype,
-        depart_position=50,
+        depart_position=60,
         arrival_position=s.road_length,
         desired_speed=25,
         depart_lane=1,
@@ -996,20 +996,23 @@ def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
         step_length=s.step_length,
     )
 
+    # find all steps where platoon and interferer are on the same lane
+    same_lane_steps = interferer.loc[(interferer.lane == leader.lane)].index
+
     # the platoon only changes to the left lane once there is enough space
     # behind the interferer, like in the check above
     assert is_gap_safe(
-        front_position=interferer.loc[change_left_step].position,
-        front_speed=interferer.loc[change_left_step].speed,
+        front_position=interferer.loc[same_lane_steps].position,
+        front_speed=interferer.loc[same_lane_steps].speed,
         front_max_deceleration=vtype.max_deceleration,
         front_length=vtype.length,
-        back_position=leader.loc[change_left_step].position,
-        back_speed=leader.loc[change_left_step].speed,
+        back_position=leader.loc[same_lane_steps].position,
+        back_speed=leader.loc[same_lane_steps].speed,
         back_max_acceleration=vtype.max_acceleration,
         step_length=s.step_length,
-    )
-    # the platoon only changes back to the right lane after vehicle 2 did that
-    assert change_right_step > interferer.lane.diff().idxmin()
+    ).all()
+    # the platoon changes back to the right lane before vehicle 2 did that
+    assert change_right_step < interferer.lane.diff().idxmin()
     # platoon does not overtake the interferer
     assert (platoon_end.query(f'step >= {change_right_step}').position < interferer.query(f'step >= {change_right_step}').position).all()
 
@@ -1141,21 +1144,24 @@ def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
         back_speed=predecessor.loc[change_right_step].speed,
         back_max_acceleration=vtype.max_acceleration,
         step_length=s.step_length,
-    )
+    )  # or platoon_end.lane != predecessor.lane
+
+    # find all steps where platoon and interferer are on the same lane
+    same_lane_steps = interferer.loc[(interferer.lane == leader.lane)].index
 
     # the platoon only changes to the left lane once there is enough space
     # behind the interferer, like in the check above
     assert is_gap_safe(
-        front_position=interferer.loc[change_left_step].position,
-        front_speed=interferer.loc[change_left_step].speed,
+        front_position=interferer.loc[same_lane_steps].position,
+        front_speed=interferer.loc[same_lane_steps].speed,
         front_max_deceleration=vtype.max_deceleration,
         front_length=vtype.length,
-        back_position=leader.loc[change_left_step].position,
-        back_speed=leader.loc[change_left_step].speed,
+        back_position=leader.loc[same_lane_steps].position,
+        back_speed=leader.loc[same_lane_steps].speed,
         back_max_acceleration=vtype.max_acceleration,
         step_length=s.step_length,
-    )
-    # the platoon only changes back to the right lane after vehicle 2 did that
-    assert change_right_step > interferer.lane.diff().idxmin()
+    ).all()
+    # the platoon changes back to the right lane before vehicle 2 did that
+    assert change_right_step < interferer.lane.diff().idxmin()
     # platoon does not overtake the interferer
     assert (platoon_end.query(f'step >= {change_right_step}').position < interferer.query(f'step >= {change_right_step}').position).all()
