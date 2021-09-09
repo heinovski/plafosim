@@ -25,7 +25,7 @@ PLATOON_SIZE = [2, 3, 4]
 CACC_SPACING = [5.0, 4.0, 4.5, 5.5, 6.0]
 
 
-@pytest.mark.parametrize("penetration_rate", [0, 1], ids=["CC", "ACC"])
+@pytest.mark.parametrize("penetration_rate", [0, 1], ids=["HUMAN", "ACC"])
 @pytest.mark.parametrize("headway_time", HEADWAY_TIME)
 def test_lc_models(penetration_rate: float, headway_time: float):
     """
@@ -34,7 +34,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
 
     if penetration_rate == 0 and headway_time != _desired_headway_time:
         pytest.skip(
-            f"The CC can only be configured with {_desired_headway_time}s desired headway time."
+            f"The Human CF Model can only be configured with {_desired_headway_time}s desired headway time."
         )
 
     # create simulation environment
@@ -157,7 +157,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
     )
 
 
-@pytest.mark.parametrize("penetration_rate", [0, 1], ids=["CC", "ACC"])
+@pytest.mark.parametrize("penetration_rate", [0, 1], ids=["HUMAN", "ACC"])
 @pytest.mark.parametrize("headway_time", HEADWAY_TIME)
 def test_lc_models_with_interferer(
     penetration_rate: float, headway_time: float
@@ -170,7 +170,7 @@ def test_lc_models_with_interferer(
 
     if penetration_rate == 0 and headway_time != _desired_headway_time:
         pytest.skip(
-            f"The CC can only be configured with {_desired_headway_time}s desired headway time."
+            f"The Human CF model can only be configured with {_desired_headway_time}s desired headway time."
         )
 
     # create simulation environment
