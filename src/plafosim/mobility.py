@@ -506,66 +506,6 @@ def safe_speed(
     return safe_speed_df(data)
 
 
-def single_vehicle_new_speed(vehicle, predecessor, step_length):
-    """
-    Compute the new speed of a single vehicle object (DEPRECATED).
-
-    Legacy function to use until furhter vectorization is done.
-    The predecessor may be None.
-    """
-    vtype = vehicle._vehicle_type
-    if predecessor is None:
-        predecessor = FAKE_PREDECESSOR(
-            vid=-1,
-            position=HIGHVAL,
-            speed=HIGHVAL,
-            length=vtype.length,
-        )
-    gap_to_predecessor = (
-        predecessor.position - predecessor.length - vehicle._position
-    )
-    desired_gap = max(
-        vtype.min_gap, vehicle.desired_headway_time * vehicle._speed
-    )
-    if vehicle._cf_model == CF_Model.Human:
-        new_speed = safe_speed(
-            speed_predecessor=predecessor.speed,
-            speed_current=vehicle._speed,
-            gap_to_predecessor=gap_to_predecessor,
-            desired_gap=desired_gap,
-            max_deceleration=vtype.max_deceleration,
-            desired_headway_time=vehicle.desired_headway_time,
-        )
-    elif vehicle._cf_model == CF_Model.ACC:
-        new_speed = speed_acc_df(
-            vdf=ACC_SPEED_DF(
-                predecessor_speed=predecessor.speed,
-                speed=vehicle._speed,
-                acc_lambda=vehicle._acc_lambda,
-                desired_gap=desired_gap,
-                predecessor_gap=gap_to_predecessor,
-                desired_headway_time=vehicle.desired_headway_time,
-            ),
-            step_length=step_length,
-        )
-    elif vehicle._cf_model == CF_Model.CACC:
-        new_speed = vehicle._platoon._formation[0]._speed
-    else:
-        raise NotImplementedError(f"Unknown CF Model: {vehicle._cf_model}")
-
-    new_speed = min(
-        new_speed,
-        vehicle.max_speed,
-        vehicle._speed + vtype.max_acceleration * step_length,
-    )
-    new_speed = max(
-        new_speed,
-        vehicle._speed - vtype.max_deceleration * step_length,
-        0,  # do not drive backwards
-    )
-    return new_speed
-
-
 # position update components
 
 
