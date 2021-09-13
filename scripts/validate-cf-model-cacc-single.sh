@@ -42,7 +42,6 @@ echo "Running PlaFoSim..."
     --depart-interval 3 \
     --depart-method interval \
     --desired-speed 36 \
-    --lane-changes true \
     --lanes 4 \
     --max-speed 55 \
     --penetration 1 \

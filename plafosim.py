@@ -367,13 +367,6 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to enable actions",
     )
     simulation.add_argument(
-        "--lane-changes",
-        type=lambda x: bool(strtobool(x)),
-        default=DEFAULTS['lane_changes'],
-        choices=(True, False),
-        help="Whether to enable lane changes",
-    )
-    simulation.add_argument(
         "--collisions",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['collisions'],

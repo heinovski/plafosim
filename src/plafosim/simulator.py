@@ -157,7 +157,6 @@ DEFAULTS = {
     'step_length': 1,
     'max_step': 1 * 3600,  # h -> s
     'actions': True,
-    'lane_changes': True,
     'collisions': True,
     'random_seed': -1,
     'log_level': logging.WARNING,
@@ -266,7 +265,6 @@ class Simulator:
             step_length: int = DEFAULTS['step_length'],
             max_step: int = DEFAULTS['max_step'],
             actions: bool = DEFAULTS['actions'],
-            lane_changes: bool = DEFAULTS['lane_changes'],
             collisions: bool = DEFAULTS['collisions'],
             random_seed: int = DEFAULTS['random_seed'],
             log_level: int = DEFAULTS['log_level'],
@@ -437,7 +435,6 @@ class Simulator:
         self._max_step = max_step
         self._running = False  # whether the simulation is running
         self._actions = actions  # whether to enable actions
-        self._lane_changes = lane_changes  # whether to enable lane changes
         self._collisions = collisions  # whether to check for collisions
         if random_seed >= 0:
             LOG.info(f"Using random seed {random_seed}")
