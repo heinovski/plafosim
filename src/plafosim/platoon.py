@@ -107,7 +107,7 @@ class Platoon:
         The maximum speed is based on the slowest vehicle within the platoon.
         """
 
-        return min(self._formation, key=lambda x: x.max_speed).max_speed
+        return min([v.max_speed for v in self._formation])
 
     @property
     def max_acceleration(self) -> float:
@@ -117,7 +117,7 @@ class Platoon:
         The maximum acceleration is based on the slowest vehicle within the platoon.
         """
 
-        return min(self._formation, key=lambda x: x.max_acceleration).max_acceleration
+        return min([v.max_acceleration for v in self._formation])
 
     @property
     def max_deceleration(self) -> float:
@@ -127,7 +127,7 @@ class Platoon:
         The maximum deceleration is based on the slowest vehicle within the platoon.
         """
 
-        return min(self._formation, key=lambda x: x.max_deceleration).max_deceleration
+        return min([v.max_deceleration for v in self._formation])
 
     @property
     def size(self) -> int:
