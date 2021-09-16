@@ -17,12 +17,13 @@
 
 from plafosim.platoon import Platoon
 from plafosim.platooning_vehicle import PlatooningVehicle
+from plafosim.simulator import vtype
 
 
 def test_creation():
-    v1 = PlatooningVehicle(None, 1, None, 0, 1000, 36, 0, 0, 0)
-    v2 = PlatooningVehicle(None, 2, None, 0, 1000, 36, 0, 0, 1)
-    v3 = PlatooningVehicle(None, 3, None, 0, 1000, 36, 0, 0, 2)
+    v1 = PlatooningVehicle(None, 1, vtype, 0, 1000, 36, 0, 0, 0)
+    v2 = PlatooningVehicle(None, 2, vtype, 0, 1000, 36, 0, 0, 1)
+    v3 = PlatooningVehicle(None, 3, vtype, 0, 1000, 36, 0, 0, 2)
 
     platoon_id = 2
     formation = [v1, v2, v3]
