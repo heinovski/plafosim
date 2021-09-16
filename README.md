@@ -136,14 +136,15 @@ You can have a look at `.drone.yml` for details regarding the execution.
 
 If you are working with `PlaFoSim`, please cite the following paper:
 
-> Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Ulm, Germany, November 2021. (to appear)
+> Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021. (to appear)
 
 ```bibtex
 @inproceedings{heinovski2021scalable,
     author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
     note = {to appear},
     title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
-    address = {Ulm, Germany},
+    publisher = {IEEE},
+    address = {Virtual Conference},
     booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
     month = {11},
     year = {2021},

@@ -55,8 +55,8 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     Julian Heinovski, Dominik S. Buse and Falko Dressler,
     "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
-    Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session,
-    Ulm, Germany, November 2021. (to appear)
+    Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
+    Poster Session, Virtual Conference, November 2021. (to appear)
     """,
     )
 
@@ -70,7 +70,8 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
     note = {to appear},
     title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
-    address = {Ulm, Germany},
+    publisher = {IEEE},
+    address = {Virtual Conference},
     booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
     month = {11},
     year = {2021},
