@@ -21,9 +21,12 @@ from plafosim.simulator import vtype
 
 
 def test_creation():
-    v1 = PlatooningVehicle(None, 1, vtype, 0, 1000, 36, 0, 0, 0)
-    v2 = PlatooningVehicle(None, 2, vtype, 0, 1000, 36, 0, 0, 1)
-    v3 = PlatooningVehicle(None, 3, vtype, 0, 1000, 36, 0, 0, 2)
+    v1 = PlatooningVehicle(None, 1, vtype, 100, 1000, 36, 0, 0, 0)
+    v2 = PlatooningVehicle(None, 2, vtype, 90, 1000, 36, 0, 0, 1)
+    v3 = PlatooningVehicle(None, 3, vtype, 80, 1000, 36, 0, 0, 2)
+    v3._vehicle_type._max_speed = vtype.max_speed - 10
+    v3._vehicle_type._max_acceleration = vtype.max_acceleration - 1
+    v3._vehicle_type._max_deceleration = vtype.max_deceleration - 5
 
     platoon_id = 2
     formation = [v1, v2, v3]
@@ -37,12 +40,13 @@ def test_creation():
     assert(platoon.desired_speed == v1.desired_speed)
     assert(platoon.speed == 0)
     assert(platoon.lane == 0)
-    # TODO max_acceleration
-    # TODO max_deceleration
+    assert platoon.max_speed == v3.max_speed
+    assert platoon.max_acceleration == v3.max_acceleration
+    assert platoon.max_deceleration == v3.max_deceleration
     assert(platoon.size == 3)
-    assert(platoon.position == 0)
-    # TODO rear_position
-    # TODO length
+    assert(platoon.position == v1.position)
+    assert platoon.rear_position == v3.rear_position
+    assert platoon.length == v1.position - v3.rear_position
     assert(platoon.member_ids == [1, 2, 3])
     assert(platoon.get_member_index(v2) == 1)
-    assert(platoon.get_front(v3) is v2)
+    assert(platoon.get_front(v3) == v2)
