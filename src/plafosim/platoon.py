@@ -48,6 +48,12 @@ class Platoon:
         #TODO convert to dict?
         self._formation = formation  # the current formation of the platoon
         self._desired_speed = desired_speed  # the current (desired) speed of the platoon
+        self._max_speed = None
+        self.update_max_speed()
+        self._max_acceleration = None
+        self.update_max_acceleration()
+        self._max_deceleration = None
+        self.update_max_deceleration()
 
     @property
     def platoon_id(self) -> int:
@@ -107,7 +113,16 @@ class Platoon:
         The maximum speed is based on the slowest vehicle within the platoon.
         """
 
-        return min(v.max_speed for v in self._formation)
+        return self._max_speed
+
+    def update_max_speed(self):
+        """
+        Updates the maximum speed of the platoon.
+
+        The maximum speed is based on the slowest vehicle within the platoon.
+        """
+
+        self._max_speed = min(v.max_speed for v in self._formation)
 
     @property
     def max_acceleration(self) -> float:
@@ -117,7 +132,16 @@ class Platoon:
         The maximum acceleration is based on the slowest vehicle within the platoon.
         """
 
-        return min(v.max_acceleration for v in self._formation)
+        return self._max_acceleration
+
+    def update_max_acceleration(self):
+        """
+        Updates the maximum acceleration of the platoon.
+
+        The maximum acceleration is based on the slowest vehicle within the platoon.
+        """
+
+        self._max_acceleration = min(v.max_acceleration for v in self._formation)
 
     @property
     def max_deceleration(self) -> float:
@@ -127,7 +151,16 @@ class Platoon:
         The maximum deceleration is based on the slowest vehicle within the platoon.
         """
 
-        return min(v.max_deceleration for v in self._formation)
+        return self._max_deceleration
+
+    def update_max_deceleration(self):
+        """
+        Updates the maximum deceleration of the platoon.
+
+        The maximum deceleration is based on the slowest vehicle within the platoon.
+        """
+
+        self._max_deceleration = min(v.max_deceleration for v in self._formation)
 
     @property
     def size(self) -> int:
@@ -207,6 +240,11 @@ class Platoon:
         old_desired_speed = self._desired_speed
         self._desired_speed = min(mean([v._desired_speed for v in self._formation]), self.max_speed)
         LOG.debug(f"Updated platoon {self.platoon_id}'s desired speed to {self.desired_speed} (from {old_desired_speed})")
+
+    def update_limits(self):
+        self.update_max_speed()
+        self.update_max_acceleration()
+        self.update_max_deceleration()
 
     def __str__(self) -> str:
         """Returns the str representation of the platoon."""

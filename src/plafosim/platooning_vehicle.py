@@ -894,6 +894,7 @@ class PlatooningVehicle(Vehicle):
         # update the desired speed of the platoon to the average of all platoon members
         if self._simulator._update_desired_speed:
             leader.platoon.update_desired_speed()
+        leader.platoon.update_limits()
 
         # switch to CACC
         self._cf_model = CF_Model.CACC
@@ -1148,6 +1149,7 @@ class PlatooningVehicle(Vehicle):
         self._platoon.formation.remove(self)
         if self._simulator._update_desired_speed:
             self._platoon.update_desired_speed()
+        self._platoon.update_limits()
 
         # update formation for all (remaining) members
         # TODO this could be nicer, e.g., by taking the (new) leader's updated formation
