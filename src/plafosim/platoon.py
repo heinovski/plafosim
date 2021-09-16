@@ -232,7 +232,7 @@ class Platoon:
 
     def update_desired_speed(self):
         """
-        Update the desired driving speed of the platoon.
+        Updates the desired driving speed of the platoon.
 
         This is based on the desired driving speed of all members.
         """
