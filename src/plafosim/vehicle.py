@@ -322,7 +322,8 @@ class Vehicle:
         self._start()
 
         # log status information
-        LOG.info(self.info())
+        if LOG.getEffectiveLevel() <= logging.INFO:
+            LOG.info(self.info())
 
         # record periodic statistics
         self._statistics()
