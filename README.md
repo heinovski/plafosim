@@ -13,9 +13,6 @@ While the main focus of the simulator is on the assignment process, simulation o
 | -------- | ------------- | ---------- | -------- |
 ![Scenario](doc/scenario.png) | ![Advertisement](doc/advertisement.png) | ![Assignment](doc/assignment.png) | ![Maneuver](doc/maneuver.png) |
 
-This tool is in active development and has not been published yet.
-For more information, contact Julian Heinovski ([heinovski@ccs-labs.org](mailto:heinovski@ccs-labs.org)).
-
 ---
 
 ## Quickstart
@@ -135,6 +132,23 @@ To validate the behavior of PlaFoSim, it is compared to SUMO 1.6.0 by means of s
 The corresponding scripts are located under `scripts` and executed withn CI/CD pipelines.
 You can have a look at `.drone.yml` for details regarding the execution.
 
+## Citing
+
+If you are working with `PlaFoSim`, please cite the following paper:
+
+> Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Ulm, Germany, November 2021. (to appear)
+
+```bibtex
+@inproceedings{heinovski2021scalable,
+    author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
+    note = {to appear},
+    title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
+    address = {Ulm, Germany},
+    booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
+    month = {11},
+    year = {2021},
+}
+```
 ## References
 
 [1] Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
