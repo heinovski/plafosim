@@ -83,7 +83,7 @@ class Platoon:
     def member_ids(self) -> list:
         """Returns the ids of all platoon members."""
 
-        return [x.vid for x in self._formation]
+        return [x._vid for x in self._formation]
 
     @property
     def desired_speed(self) -> float:
