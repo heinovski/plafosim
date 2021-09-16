@@ -149,6 +149,7 @@ If you are working with `PlaFoSim`, please cite the following paper:
     year = {2021},
 }
 ```
+
 ## References
 
 [1] Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
