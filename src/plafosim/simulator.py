@@ -1251,6 +1251,26 @@ class Simulator:
             # create output file for continuous simulation trace
             initialize_simulation_trace(basename=self._result_base_filename)
 
+    def _initialize_prefilled_platoon(self):
+        """
+        Initializes all pre-filled vehicles as one platoon.
+        """
+
+        # we avoid the complicated join procedure and simply set all parameters
+        leader = self._vehicles[0]
+        leader._platoon_role = PlatoonRole.LEADER
+        leader._platoon._formation = list(self._vehicles.values())
+        if self._update_desired_speed:
+            leader.platoon.update_desired_speed()
+        leader.platoon.update_limits()
+        leader._cf_target_speed = leader.platoon.desired_speed
+        for vehicle in list(self._vehicles.values())[1:]:
+            vehicle._platoon_role = PlatoonRole.FOLLOWER
+            vehicle._cf_model = CF_Model.CACC
+            vehicle._blocked_front = False
+            vehicle._platoon = leader.platoon
+            vehicle._cf_target_speed = vehicle._platoon.desired_speed
+
     def _initialize_gui(self):
         """Initializes the GUI."""
 
@@ -1314,22 +1334,8 @@ class Simulator:
 
         self._initialize_result_recording()
 
-        # initialize pre-filled vehicles in platoon
-        # we avoid the complicated join procedure and simply set all parameters
         if self._start_as_platoon:
-            leader = self._vehicles[0]
-            leader._platoon_role = PlatoonRole.LEADER
-            leader._platoon._formation = list(self._vehicles.values())
-            if self._update_desired_speed:
-                leader.platoon.update_desired_speed()
-            leader.platoon.update_limits()
-            leader._cf_target_speed = leader.platoon.desired_speed
-            for vehicle in list(self._vehicles.values())[1:]:
-                vehicle._platoon_role = PlatoonRole.FOLLOWER
-                vehicle._cf_model = CF_Model.CACC
-                vehicle._blocked_front = False
-                vehicle._platoon = leader.platoon
-                vehicle._cf_target_speed = vehicle._platoon.desired_speed
+            self._initialize_prefilled_platoon()
 
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step', disable=not self._progress)
         # let the simulator run
