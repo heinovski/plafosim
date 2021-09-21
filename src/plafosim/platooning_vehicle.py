@@ -887,35 +887,16 @@ class PlatooningVehicle(Vehicle):
         else:
             assert(leader.platoon_role is PlatoonRole.LEADER)
 
+        # update self
         self._platoon_role = PlatoonRole.FOLLOWER
-
-        # update all members
-        leader.platoon._formation.append(self)
-        # update the desired speed of the platoon to the average of all platoon members
-        if self._simulator._update_desired_speed:
-            leader.platoon.update_desired_speed()
-        leader.platoon.update_limits()
-
         # switch to CACC
         self._cf_model = CF_Model.CACC
         self._blocked_front = False
-
-        for vehicle in leader.platoon.formation:
-            # we copy all parameters from the platoon (for now)
-            # thus, the follower now drives as fast as the already existing platoon
-            # (i.e., only the leader in the worst case)
-            vehicle._platoon = leader.platoon
-            vehicle._cf_target_speed = vehicle._platoon.desired_speed
-
         # set color of vehicle
         if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
             change_gui_vehicle_color(self._vid, leader._color)
 
-        LOG.info(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
-
-        self.in_maneuver = False
-        leader.in_maneuver = False
-
+        # collect statistics
         # the last time we joined is now
         self._last_platoon_join_time = self._simulator.step
         self._last_platoon_join_position = self._position
@@ -927,6 +908,25 @@ class PlatooningVehicle(Vehicle):
             self._first_platoon_join_position = self._position
         self._joins_succesful += 1
         self._number_platoons += 1
+
+        # update all members
+        leader.platoon._formation.append(self)
+        # update the desired speed of the platoon to the average of all platoon members
+        if self._simulator._update_desired_speed:
+            leader.platoon.update_desired_speed()
+        leader.platoon.update_limits()
+        # update formation for all members
+        for vehicle in leader.platoon.formation:
+            # we copy all parameters from the platoon (for now)
+            # thus, the follower now drives as fast as the already existing platoon
+            # (i.e., only the leader in the worst case)
+            vehicle._platoon = leader.platoon
+            vehicle._cf_target_speed = vehicle._platoon.desired_speed
+
+        LOG.info(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
+
+        self.in_maneuver = False
+        leader.in_maneuver = False
 
     def calculate_approaching_time(self, target_position: float, target_speed: float) -> float:
         """
