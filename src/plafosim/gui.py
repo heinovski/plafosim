@@ -20,7 +20,7 @@ import os
 from .vehicle import Vehicle
 
 
-def start_gui(config: str):
+def start_gui(config: str, play: bool = True):
     """
     Starts the GUI.
 
@@ -31,7 +31,14 @@ def start_gui(config: str):
     """
 
     binary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-    command = [binary, '-Q', '-c', config, '--collision.mingap-factor', '0', '--collision.action', 'none']
+    command = [
+        binary,
+        '-Q',
+        '-c', config,
+        '--collision.mingap-factor', '0',
+        '--collision.action', 'none',
+        '--start', str(play),
+    ]
     import traci
     traci.start(command)
 

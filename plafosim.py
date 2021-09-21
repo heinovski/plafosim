@@ -445,6 +445,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="The name of the SUMO config file",
     )
     gui.add_argument(
+        "--gui-play",
+        type=lambda x: bool(strtobool(x)),
+        default=DEFAULTS['gui_play'],
+        help="Whether to start the simulation immediately",
+    )
+    gui.add_argument(
         "--gui-start",
         type=int,
         default=DEFAULTS['gui_start'],

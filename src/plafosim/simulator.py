@@ -165,6 +165,7 @@ DEFAULTS = {
     'gui_delay': 0,
     'gui_track_vehicle': -1,
     'sumo_config': 'sumocfg/freeway.sumo.cfg',
+    'gui_play': True,
     'gui_start': 0,
     'draw_ramps': True,
     'draw_ramp_labels': True,
@@ -273,6 +274,7 @@ class Simulator:
             gui_delay: int = DEFAULTS['gui_delay'],
             gui_track_vehicle: int = DEFAULTS['gui_track_vehicle'],
             sumo_config: str = DEFAULTS['sumo_config'],
+            gui_play: int = DEFAULTS['gui_play'],
             gui_start: int = DEFAULTS['gui_start'],
             draw_ramps: bool = DEFAULTS['draw_ramps'],
             draw_ramp_labels: bool = DEFAULTS['draw_ramp_labels'],
@@ -452,6 +454,7 @@ class Simulator:
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
         self._sumo_config = sumo_config  # the name of the SUMO config file
+        self._gui_play = gui_play  # whether to start the simulation immediately
         if gui_start < 0:
             sys.exit("ERROR: GUI start time cannot be negative!")
         self._gui_start = gui_start  # the time when to connect to the GUI
@@ -1252,7 +1255,7 @@ class Simulator:
         """Initializes the GUI."""
 
         # start gui
-        start_gui(self._sumo_config)
+        start_gui(self._sumo_config, self._gui_play)
 
         # draw ramps
         if self._draw_ramps:
