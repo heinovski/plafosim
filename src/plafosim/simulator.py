@@ -775,6 +775,9 @@ class Simulator:
 
             LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
 
+        if self._start_as_platoon:
+            self._initialize_prefilled_platoon()
+
     def _get_desired_speed(self) -> float:
         """Returns a (random) depart speed."""
 
@@ -1333,9 +1336,6 @@ class Simulator:
             LOG.warning("Simulation is already running!")
 
         self._initialize_result_recording()
-
-        if self._start_as_platoon:
-            self._initialize_prefilled_platoon()
 
         progress_bar = tqdm(desc='Simulation progress', total=self._max_step, unit='step', disable=not self._progress)
         # let the simulator run
