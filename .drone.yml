@@ -185,19 +185,19 @@ steps:
   commands:
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
-    - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 30 --vehicles 1000 --random-depart-position true --lanes 4 --depart-method number --penetration 0
+    - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 0
 - name: ACC
   image: python:3.8-buster
   commands:
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
-    - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 30 --vehicles 1000 --random-depart-position true --lanes 4 --depart-method number --penetration 1
+    - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 1
 - name: CACC
   image: python:3.8-buster
   commands:
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
-    - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 30 --vehicles 1000 --lanes 4 --penetration 1 --start-as-platoon true
+    - python3 ./plafosim.py --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --lanes 4 --penetration 1 --start-as-platoon true
 
 trigger:
   ref:
