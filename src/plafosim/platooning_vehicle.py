@@ -909,7 +909,7 @@ class PlatooningVehicle(Vehicle):
 
         # set color of vehicle
         if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
-            change_gui_vehicle_color(vehicle.vid, leader._color)
+            change_gui_vehicle_color(self._vid, leader._color)
 
         LOG.info(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
 
