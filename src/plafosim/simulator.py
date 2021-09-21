@@ -1507,6 +1507,7 @@ class Simulator:
         """Returns a pandas dataframe from the internal data structure."""
         platoon_fields = [
             "leader_id",
+            "platoon_id",
             "platoon_desired_speed",
             "platoon_max_speed",
             "platoon_max_acceleration",
@@ -1518,6 +1519,7 @@ class Simulator:
         def get_platoon_data(vehicle):
             data = {key: 1e15 for key in platoon_fields}
             data["leader_id"] = -1
+            data["leader_id"] = -1
             data["platoon_role"] = None
 
             if not isinstance(vehicle, PlatooningVehicle):
@@ -1525,6 +1527,7 @@ class Simulator:
 
             platoon = vehicle._platoon
             data["leader_id"] = platoon._formation[0].vid
+            data["platoon_id"] = platoon._platoon_id
             data["platoon_role"] = vehicle._platoon_role
             data["platoon_desired_speed"] = platoon._desired_speed
             data["platoon_max_speed"] = platoon.max_speed
