@@ -1543,6 +1543,7 @@ class Simulator:
                     **get_platoon_data(vehicle),
                     desired_headway_time=vehicle.desired_headway_time,
                     acc_lambda=getattr(vehicle, "_acc_lambda", np.nan),
+                    rear_position=vehicle.rear_position,
                 )
                 for vehicle in self._vehicles.values()
             ])
@@ -1556,8 +1557,7 @@ class Simulator:
                 max_speed=lambda df: df[["max_speed", "cf_target_speed", "platoon_max_speed", "platoon_desired_speed"]].min(axis="columns"),
                 max_acceleration=lambda df: df[["max_acceleration", "platoon_max_acceleration"]].min(axis="columns"),
                 max_deceleration=lambda df: df[["max_deceleration", "platoon_max_deceleration"]].min(axis="columns"),
-                # effective rear_position including platoon followers
-                rear_position=lambda df: df.apply(lambda x: min(x["position"] - x["length"], x["platoon_rear_position"]), axis=1),
+                rear_position=lambda df: df[["rear_position", "platoon_rear_position"]].min(axis="columns"),
             )
             .drop(["cf_target_speed"], axis="columns")
         )
