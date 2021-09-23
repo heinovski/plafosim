@@ -435,8 +435,8 @@ class Simulator:
             LOG.warning("Values for step length other than 1s are not yet properly implemented and tested!")
         if step_length < 1.0:
             LOG.warning("Values for step length small than 1s are not recommended in order to avoid crashes!")
-        self._step_length = step_length  # the length of a simulation step
-        self._max_step = max_step
+        self._step_length = int(step_length)  # the length of a simulation step
+        self._max_step = int(max_step)
         self._running = False  # whether the simulation is running
         self._actions = actions  # whether to enable actions
         self._collisions = collisions  # whether to check for collisions
