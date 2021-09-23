@@ -351,6 +351,8 @@ class Simulator:
         self._depart_interval = depart_interval  # the interval between two vehicle departures
         if depart_probability < 0 or depart_probability > 1:
             sys.exit("ERROR: The depart probability needs to be between 0 and 1!")
+        if depart_probability == 0:
+            sys.exit("ERROR: A depart probability of 0 does not make sense!")
         self._depart_probability = depart_probability  # the departure probability
         if depart_rate <= 0:
             sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
