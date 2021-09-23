@@ -108,7 +108,7 @@ class Infrastructure:
 
         LOG.debug(f"{self.iid} was triggered at {step}")
 
-        if self._formation_algorithm is not None:
+        if self._formation_algorithm:
             if step >= self._last_formation_step + self._execution_interval:
                 # search for a platoon (depending on the algorithm)
                 self._formation_algorithm.do_formation()
