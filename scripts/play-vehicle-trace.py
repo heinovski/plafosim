@@ -139,7 +139,7 @@ def main():
 
     logging.info("Replaying vehicle trace")
 
-    traces = pandas.read_csv(args.trace_file)
+    traces = pandas.read_csv(args.trace_file).astype({'step': int})
     assert not traces.empty
 
     min_step = max(traces.step.min(), args.start)
