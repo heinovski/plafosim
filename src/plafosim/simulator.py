@@ -452,6 +452,8 @@ class Simulator:
                 sys.exit("ERROR: Environment variable 'SUMO_HOME' was not declared!")
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
             sys.path.append(tools)
+            if number_of_lanes > 4:
+                sys.exit("ERROR: The current maximum number of lanes supported in the GUI is 4!")
 
         self._gui_delay = gui_delay  # the delay in every simulation step for the gui
         self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
