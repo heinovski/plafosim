@@ -16,7 +16,6 @@
 #
 
 import logging
-import random
 from typing import TYPE_CHECKING
 
 from .cf_model import CF_Model
@@ -130,7 +129,11 @@ class Vehicle:
         }
 
         # gui properties
-        self._color = (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1))
+        self._color = (
+            self._simulator._rng.randrange(0, 255, 1),
+            self._simulator._rng.randrange(0, 255, 1),
+            self._simulator._rng.randrange(0, 255, 1),
+        )
 
     @property
     def vid(self) -> int:

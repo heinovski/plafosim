@@ -15,15 +15,21 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import random
+
 from plafosim.platoon import Platoon
 from plafosim.platooning_vehicle import PlatooningVehicle
 from plafosim.simulator import vtype
 
 
+class FakeSimulator:
+    _rng = random
+
+
 def test_creation():
-    v1 = PlatooningVehicle(None, 1, vtype, 100, 1000, 36, 0, 0, 0)
-    v2 = PlatooningVehicle(None, 2, vtype, 90, 1000, 36, 0, 0, 1)
-    v3 = PlatooningVehicle(None, 3, vtype, 80, 1000, 36, 0, 0, 2)
+    v1 = PlatooningVehicle(FakeSimulator(), 1, vtype, 100, 1000, 36, 0, 0, 0)
+    v2 = PlatooningVehicle(FakeSimulator(), 2, vtype, 90, 1000, 36, 0, 0, 1)
+    v3 = PlatooningVehicle(FakeSimulator(), 3, vtype, 80, 1000, 36, 0, 0, 2)
     v3._vehicle_type._max_speed = vtype.max_speed - 10
     v3._vehicle_type._max_acceleration = vtype.max_acceleration - 1
     v3._vehicle_type._max_deceleration = vtype.max_deceleration - 5

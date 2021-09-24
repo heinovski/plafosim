@@ -61,6 +61,7 @@ def test_collision_detection():
     )
 
     assert len(s._vehicles) == 2
+    s._last_vehicle_id = 1
 
     # situation is clear at the beginning
     assert s._vehicles[0].position > s._vehicles[1].position

@@ -15,7 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from plafosim.simulator import Simulator
+from plafosim.simulator import Simulator, vtype
 
 
 class TestSimulator:
@@ -32,21 +32,36 @@ class TestSimulator:
 
     def test_get_predecessor(self):
         self.setup()
-        self.s._step = 1
-        self.s._spawn_vehicle()
-#        self.s._vehicles[0]._started = True
-        self.s._step = 2
-        self.s._spawn_vehicle()
-#        self.s._vehicles[1]._started = True
-        self.s._step = 3
-        self.s._spawn_vehicle()
-#        self.s._vehicles[2]._started = True
-        self.s._vehicles[0]._position = 100
-        self.s._vehicles[0]._lane = 0
-        self.s._vehicles[1]._position = 60
-        self.s._vehicles[1]._lane = 0
-        self.s._vehicles[2]._position = 20
-        self.s._vehicles[2]._lane = 0
+        self.s._add_vehicle(
+            0,
+            vtype,
+            100,
+            1000,
+            36,
+            0,
+            36,
+            0,
+        )
+        self.s._add_vehicle(
+            1,
+            vtype,
+            60,
+            1000,
+            36,
+            0,
+            36,
+            1,
+        )
+        self.s._add_vehicle(
+            2,
+            vtype,
+            20,
+            1000,
+            36,
+            0,
+            36,
+            2,
+        )
 
         # test simple situation
         assert(self.s._get_predecessor(self.s._vehicles[0]) is None)
@@ -90,21 +105,36 @@ class TestSimulator:
 
     def test_get_predecessor_rear_position(self):
         self.setup()
-        self.s._step = 1
-        self.s._spawn_vehicle()
-#        self.s._vehicles[0]._started = True
-        self.s._step = 2
-        self.s._spawn_vehicle()
-#        self.s._vehicles[1]._started = True
-        self.s._step = 3
-        self.s._spawn_vehicle()
-#        self.s._vehicles[2]._started = True
-        self.s._vehicles[0]._position = 100
-        self.s._vehicles[0]._lane = 0
-        self.s._vehicles[1]._position = 60
-        self.s._vehicles[1]._lane = 0
-        self.s._vehicles[2]._position = 20
-        self.s._vehicles[2]._lane = 0
+        self.s._add_vehicle(
+            0,
+            vtype,
+            100,
+            1000,
+            36,
+            0,
+            36,
+            0,
+        )
+        self.s._add_vehicle(
+            1,
+            vtype,
+            60,
+            1000,
+            36,
+            0,
+            36,
+            1,
+        )
+        self.s._add_vehicle(
+            2,
+            vtype,
+            20,
+            1000,
+            36,
+            0,
+            36,
+            2,
+        )
 
         # test simple situation
         assert(self.s._get_predecessor_rear_position(self.s._vehicles[0]) == -1)
@@ -115,24 +145,36 @@ class TestSimulator:
 
     def test_get_predecessor_speed(self):
         self.setup()
-        self.s._step = 1
-        self.s._spawn_vehicle()
-#        self.s._vehicles[0]._started = True
-        self.s._step = 2
-        self.s._spawn_vehicle()
-#        self.s._vehicles[1]._started = True
-        self.s._step = 3
-        self.s._spawn_vehicle()
-#        self.s._vehicles[2]._started = True
-        self.s._vehicles[0]._position = 100
-        self.s._vehicles[0]._lane = 0
-        self.s._vehicles[0]._speed = 36.0
-        self.s._vehicles[1]._position = 60
-        self.s._vehicles[1]._lane = 0
-        self.s._vehicles[1]._speed = 40.0
-        self.s._vehicles[2]._position = 20
-        self.s._vehicles[2]._lane = 0
-        self.s._vehicles[2]._speed = 27.5
+        self.s._add_vehicle(
+            0,
+            vtype,
+            100,
+            1000,
+            36,
+            0,
+            36,
+            0,
+        )
+        self.s._add_vehicle(
+            1,
+            vtype,
+            60,
+            1000,
+            40,
+            0,
+            36,
+            1,
+        )
+        self.s._add_vehicle(
+            2,
+            vtype,
+            20,
+            1000,
+            36,
+            0,
+            27.5,
+            2,
+        )
 
         # test simple situation
         assert(self.s._get_predecessor_speed(self.s._vehicles[0]) == -1)
@@ -140,17 +182,3 @@ class TestSimulator:
         assert(self.s._get_predecessor_speed(self.s._vehicles[2]) == self.s._vehicles[1].speed)
 
         # we are skipping more complex scenarios, since they are handled by test_predecessor
-
-    def test_spawn_vehicle(self):
-        self.setup()
-
-        # test simple spawning
-        assert(len(self.s._vehicles) == 0)
-        self.s._spawn_vehicle()
-        assert(len(self.s._vehicles) == 1)
-
-        # test only one spawn per time step
-        self.s._spawn_vehicle()
-        assert(len(self.s._vehicles) == 2)
-
-        # TODO test depart methods

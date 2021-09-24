@@ -79,6 +79,7 @@ def test_cf_models_blocked(
     )
 
     assert len(s._vehicles) == 2
+    s._last_vehicle_id = 1
 
     # situation is clear at the beginning
     assert s._vehicles[0].position > s._vehicles[1].position
@@ -177,6 +178,7 @@ def test_cf_model_CACC(size: int, cacc_spacing: float):
     )
 
     assert len(s._vehicles) == size
+    s._last_vehicle_id = size - 1
 
     # run the simulation to record the trace file
     s.run()
@@ -275,6 +277,7 @@ def test_cf_model_CACC_blocked(
     )
 
     assert len(s._vehicles) == size + 1
+    s._last_vehicle_id = size
 
     # run the simulation to record the trace file
     s.run()

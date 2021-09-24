@@ -75,6 +75,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
     )
 
     assert len(s._vehicles) == 2
+    s._last_vehicle_id = 1
 
     # situation is clear at the beginning
     assert s._vehicles[0].position > s._vehicles[1].position
@@ -224,6 +225,7 @@ def test_lc_models_with_interferer(
     )
 
     assert len(s._vehicles) == 3
+    s._last_vehicle_id = 2
 
     # situation is clear at the beginning
     assert s._vehicles[0].position > s._vehicles[1].position
@@ -349,6 +351,7 @@ def test_lc_model_CACC(size: int, cacc_spacing: float):
     )
 
     assert len(s._vehicles) == size + 1
+    s._last_vehicle_id = size
 
     # run the simulation to record the trace file
     s.run()
@@ -478,6 +481,7 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
     )
 
     assert len(s._vehicles) == size + 2
+    s._last_vehicle_id = size + 1
 
     # run the simulation to record the trace file
     s.run()
@@ -625,6 +629,7 @@ def test_lc_model_CACC_with_interferer_leader(size: int, cacc_spacing: float):
     )
 
     assert len(s._vehicles) == size + 2
+    s._last_vehicle_id = size + 1
 
     # run the simulation to record the trace file
     s.run()
@@ -772,6 +777,7 @@ def test_lc_model_CACC_with_interferer_members(size: int, cacc_spacing: float):
     )
 
     assert len(s._vehicles) == size + 2
+    s._last_vehicle_id = size + 1
 
     # run the simulation to record the trace file
     s.run()
@@ -919,6 +925,7 @@ def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
     )
 
     assert len(s._vehicles) == size + 2
+    s._last_vehicle_id = size + 1
 
     # run the simulation to record the trace file
     s.run()
@@ -1069,6 +1076,7 @@ def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
     )
 
     assert len(s._vehicles) == size + 2
+    s._last_vehicle_id = size + 1
 
     # run the simulation to record the trace file
     s.run()

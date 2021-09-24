@@ -43,6 +43,7 @@ from .gui import (
 )
 from .infrastructure import Infrastructure
 from .mobility import (
+    HIGHVAL,
     compute_lane_changes,
     compute_new_speeds,
     get_crashed_vehicles,
@@ -53,6 +54,7 @@ from .mobility import (
 )
 from .platoon_role import PlatoonRole
 from .platooning_vehicle import PlatooningVehicle
+from .spawning import get_arrival_position, get_depart_speed, get_desired_speed
 from .statistics import (
     initialize_emission_traces,
     initialize_infrastructure_assignments,
@@ -310,10 +312,13 @@ class Simulator:
         if road_length % ramp_interval != 0:
             sys.exit("ERROR: The road length has to be a multiple of the ramp interval!")
         self._ramp_interval = ramp_interval  # the distance between any two on-/off-ramps
+        self._ramp_positions = list(range(0, self._road_length + 1, self._ramp_interval))
 
         # vehicle properties
         self._vehicles = {}  # the list (dict) of vehicles in the simulation
         self._last_vehicle_id = -1  # the id of the last vehicle generated
+        # set up queue for vehicles to be spawned
+        self._vehicle_spawn_queue = []
         # the maximum number of vehicles
         if vehicle_density > 0:
             # override vehicles
@@ -361,7 +366,22 @@ class Simulator:
         if depart_rate <= 0:
             sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
         self._depart_rate = depart_rate  # the departure rate
-        self._vehicles_scheduled = 1
+        if self._depart_method == "interval":
+            self._effective_depart_rate = int(step_length) / self._depart_interval
+        elif self._depart_method == "rate":
+            # spawn #vehicles per hour, similar to SUMO's flow param vehsPerHour
+            self._effective_depart_rate = self._depart_rate / 3600
+        elif self._depart_method == "number":
+            # spawn #number vehicles, similar to SUMO's flow param number
+            # TODO other depart method for constant number of concurrent vehicles
+            # thus: all vehicles have an equal spacing
+            self._effective_depart_rate = self._number_of_vehicles / max_step
+        elif self._depart_method != "probability":
+            sys.exit("ERROR: Unknown depart method!")
+        if self._effective_depart_rate > 1 and not self._random_depart_position:
+            sys.exit("ERROR: an effective depart rate > 1 is incompatible with just spawning at the origin (random depart position == false)")
+        if self._effective_depart_rate < 0:
+            sys.exit("ERROR: effective spawn rate < 0 vehicles per step.")
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
@@ -444,9 +464,10 @@ class Simulator:
         self._running = False  # whether the simulation is running
         self._actions = actions  # whether to enable actions
         self._collisions = collisions  # whether to check for collisions
-        if random_seed >= 0:
-            LOG.info(f"Using random seed {random_seed}")
-            random.seed(random_seed)
+        if random_seed < 0:
+            random_seed = random.randint(0, 10000)
+        LOG.info(f"Using random seed {random_seed}")
+        self._rng = random.Random(random_seed)
         self._progress = progress  # whether to enable the (simulation) progress bar
 
         # gui properties
@@ -502,6 +523,10 @@ class Simulator:
         # TODO log generation parameters
         if pre_fill:
             self._generate_vehicles()
+            self._last_vehicle_id = list(self._vehicles.keys())[-1] + 1
+            self._number_of_prefilled_vehicles = len(self._vehicles)
+        else:
+            self._number_of_prefilled_vehicles = 0
 
         self._generate_infrastructures(number_of_infrastructures)
 
@@ -704,7 +729,14 @@ class Simulator:
 
         for vid in tqdm(range(0, self._number_of_vehicles), desc="Generated vehicles", disable=not self._progress):
 
-            desired_speed = self._get_desired_speed()
+            desired_speed = get_desired_speed(
+                desired_speed=self._desired_speed,
+                rng=self._rng,
+                speed_variation=self._speed_variation,
+                min_desired_speed=self._min_desired_speed,
+                max_desired_speed=self._max_desired_speed,
+                random_desired_speed=self._random_desired_speed,
+            )
 
             # TODO remove duplicated code
             if self._start_as_platoon:
@@ -716,7 +748,12 @@ class Simulator:
 
                 if vid == 0:
                     # pick regular depart speed
-                    depart_speed = self._get_depart_speed(desired_speed)
+                    depart_speed = get_depart_speed(
+                        desired_speed=desired_speed,
+                        rng=self._rng,
+                        depart_desired=self._depart_desired,
+                        random_depart_speed=self._random_depart_speed,
+                    )
                 else:
                     # always set speed to leader speed
                     depart_speed = self._vehicles[0]._depart_speed
@@ -735,9 +772,9 @@ class Simulator:
                     # we do not consider depart interval here since this is supposed to be a snapshot from an earlier point of simulation
                     # make sure to also include the end of the road itself
                     # consider length, equal to departPos="base" in SUMO
-                    depart_position = random.uniform(vtype._length, self._road_length)
+                    depart_position = self._rng.uniform(vtype._length, self._road_length)
                     # always use random lane for pre-filled vehicle
-                    depart_lane = random.randrange(0, self._number_of_lanes, 1)
+                    depart_lane = self._rng.randrange(0, self._number_of_lanes, 1)
 
                     LOG.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
 
@@ -770,17 +807,26 @@ class Simulator:
                             or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
                         )
 
-            arrival_position = self._get_arrival_position(depart_position, pre_fill=True)
+            arrival_position = get_arrival_position(
+                depart_position=depart_position,
+                road_length=self._road_length,
+                ramp_interval=self._ramp_interval,
+                min_trip_length=self._minimum_trip_length,
+                max_trip_length=self._maximum_trip_length,
+                rng=self._rng,
+                random_arrival_position=self._random_arrival_position,
+                pre_fill=True,
+            )
 
             self._add_vehicle(
-                vid,
-                vtype,
-                depart_position,
-                arrival_position,
-                desired_speed,
-                depart_lane,
-                depart_speed,
-                depart_time,
+                vid=vid,
+                vtype=vtype,
+                depart_position=depart_position,
+                arrival_position=arrival_position,
+                desired_speed=desired_speed,
+                depart_lane=depart_lane,
+                depart_speed=depart_speed,
+                depart_time=depart_time,
             )
 
             LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
@@ -788,288 +834,129 @@ class Simulator:
         if self._start_as_platoon:
             self._initialize_prefilled_platoon()
 
-    def _get_desired_speed(self) -> float:
-        """Returns a (random) depart speed."""
-
-        if self._random_desired_speed:
-            # normal distribution
-            desired_speed = self._desired_speed * random.normalvariate(1.0, self._speed_variation)
-            desired_speed = max(desired_speed, self._min_desired_speed)
-            desired_speed = min(desired_speed, self._max_desired_speed)
-        else:
-            desired_speed = self._desired_speed
-
-        return desired_speed
-
-    def _get_depart_speed(self, desired_speed: float) -> float:
+    def _vehicles_to_be_scheduled(self):
         """
-        Returns a (random) depart speed.
-
-        Parameters
-        ----------
-        desired_speed : float
-            The desired speed to consider
+        1) Calculate how many vehicles should be spawned according to the depart method
         """
 
-        if self._random_depart_speed:
-            # make sure to also include the desired speed itself
-            depart_speed = random.randrange(0, desired_speed + 1, 1)
-        else:
-            depart_speed = 0
-
-        if self._depart_desired:
-            depart_speed = desired_speed
-
-        return depart_speed
-
-    def _get_depart_position(self) -> int:
-        """
-        Returns a (random) depart position for a given depart position.
-
-        This considers the ramp interval, road length, and minimum trip length.
-        """
-
-        # NOTE: this should only be called for non-pre-filled vehicles
-        if self._random_depart_position:
-            # set maximum theoretical depart position
-            # make sure that the vehicles can drive for at least the minimum length of a trip
-            # and at least for one ramp
-            max_depart = self._road_length - max(self._minimum_trip_length, self._ramp_interval)
-            if not self._random_arrival_position:
-                min_depart = max(self._road_length - self._maximum_trip_length, 0)
-                min_depart_ramp = min_depart - (self._ramp_interval + min_depart) % self._ramp_interval
-            else:
-                min_depart_ramp = 0
-            max_depart_ramp = max_depart - (self._ramp_interval + max_depart) % self._ramp_interval
-            assert(max_depart_ramp <= self._road_length)
-            assert(max_depart_ramp >= 0)
-            if max_depart_ramp == 0:
-                # start at beginning
-                depart_position = 0
-            else:
-                depart_position = random.randrange(min_depart_ramp, max_depart_ramp + 1, self._ramp_interval)
-            assert(depart_position <= max_depart_ramp)
-            if not self._random_arrival_position:
-                assert(depart_position >= self._road_length - self._maximum_trip_length)
-        else:
-            # simply start at beginning
-            depart_position = 0
-
-        assert(depart_position >= 0)
-        assert(depart_position < self._road_length)
-
-        return depart_position
-
-    def _get_arrival_position(self, depart_position: int, pre_fill: bool = False) -> int:
-        """
-        Returns a (random) arrival position for a given depart position.
-
-        This considers the ramp interval, road length, and minimum trip length.
-
-        Parameters
-        ----------
-        depart_position : int
-            The depart position to consider
-        prefill : bool, optional
-            Whether the trip is for a pre-filled vehicle
-        """
-
-        if self._random_arrival_position:
-            # set minimum theoretical arrival position
-            if pre_fill:
-                # We cannot use the minimum trip time here,
-                # since the pre-generation is supposed to produce a snapshot of a realistic simulation.
-                # But we can assume that a vehicle has to drive at least 1m
-                min_arrival = depart_position + 1
-                max_arrival = min(depart_position + self._maximum_trip_length - self._ramp_interval, self._road_length)
-            else:
-                # make sure that the vehicles drive at least for the minimum length of a trip
-                # and at least for one ramp
-                min_arrival = depart_position + max(self._minimum_trip_length, self._ramp_interval)
-                max_arrival = min(depart_position + self._maximum_trip_length, self._road_length)
-            min_arrival_ramp = min_arrival + (self._ramp_interval - min_arrival) % self._ramp_interval
-            max_arrival_ramp = max_arrival + (self._ramp_interval - max_arrival) % self._ramp_interval
-            assert(min_arrival_ramp >= 0)
-            assert(min_arrival_ramp <= self._road_length)
-            assert(min_arrival_ramp <= max_arrival_ramp)
-            assert(max_arrival_ramp <= self._road_length)
-            if min_arrival % self._ramp_interval == 0:
-                assert(min_arrival == min_arrival_ramp)
-            if min_arrival_ramp == self._road_length:
-                # avoid empty randrange
-                # exit at end
-                arrival_position = self._road_length
-            else:
-                # make sure to also include the end of the road itself
-                arrival_position = random.randrange(min_arrival_ramp, max_arrival_ramp + 1, self._ramp_interval)
-            assert(arrival_position >= min_arrival_ramp)
-        else:
-            # simply drive until the end
-            arrival_position = self._road_length
-
-        assert(arrival_position <= self._road_length)
-        assert(arrival_position > depart_position)
-        assert(arrival_position - depart_position <= self._maximum_trip_length)
-
-        return arrival_position
-
-    def _spawn_vehicles(self):
-        """Spawns vehicles within the current step"""
-
+        vehicles_to_be_scheduled = -1
         if not self._depart_flow and self._last_vehicle_id >= self._number_of_vehicles - 1:
             # limit the spawn by a maximum number of total vehicles
             LOG.debug(f"All {self._number_of_vehicles} vehicles have been spawned already")
             # clear scheduled vehicles
-            self._vehicles_scheduled = 0
-            return
-
-        if self._random_depart_position:
-            # enable spawning at multiple ramps
-            num_spawn_ramps = int(self._road_length / self._ramp_interval)
+            vehicles_to_be_scheduled = 0
         else:
-            # spawn only at first ramp (i.e., beginning of the road)
-            num_spawn_ramps = 1
+            # 1) number of new vehicles
+            if self._depart_method == "probability":
+                # spawn probability per time step, similar to SUMO's flow param probability
+                vehicles_to_be_scheduled = int(self._rng.random <= self._depart_probability)
+            else:
+                # 1) estimate how many vehicles their need to be with the given effective depart rate
+                # 2) subtract all already generated (i.e., finished, spawned, queued)
+                # and all pre-filled vehicles
+                desired_number_vehicles = int(self._step * self._effective_depart_rate) + 1
+                # without pre-filled vehicles
+                total_number_scheduled_vehicles = self._last_vehicle_id + 1 - self._number_of_prefilled_vehicles
+                vehicles_to_be_scheduled = desired_number_vehicles - total_number_scheduled_vehicles
+        return vehicles_to_be_scheduled
 
-        if self._depart_method == "interval":
-            # spawn interval, similar to SUMO's flow param period
-            self._spawn_vehicles_interval(self._depart_interval, num_spawn_ramps)
-        elif self._depart_method == "rate":
-            # spawn #vehicles per hour, similar to SUMO's flow param vehsPerHour
-            depart_interval = 3600 / self._step_length / self._depart_rate
-            self._spawn_vehicles_interval(depart_interval, num_spawn_ramps)
-        elif self._depart_method == "number":
-            # spawn #number vehicles, similar to SUMO's flow param number
-            if len(self._vehicles) >= self._number_of_vehicles:
-                # limit the flow by a maximum number of concurrent vehicles
-                LOG.debug(f"Maximum number of vehicles ({self._number_of_vehicles}) is reached already")
-                return
-            depart_interval = self._max_step / self._number_of_vehicles
-            self._spawn_vehicles_interval(depart_interval, num_spawn_ramps)
-        elif self._depart_method == "probability":
-            # spawn probability per time step, similar to SUMO's flow param probability
-            for _ in range(num_spawn_ramps):
-                if random.random() <= self._depart_probability:
-                    self._spawn_vehicle()
-        else:
-            sys.exit("ERROR: Unknown depart method!")
-
-    def _spawn_vehicles_interval(self, depart_interval: float, num_spawn_ramps: int):
+    def _spawn_vehicles(self, vdf: pd.DataFrame):
         """
-        Spawns vehicles within the current step based on the depart interval.
-        Note that this does not automatically spawn a vehicle at step 0 (cf. SUMO's flow param begin).
+        Spawns vehicles within the current step.
 
-        Parameters
-        ----------
-        depart_interval : float
-            The (equally spaced) depart interval between vehicles
-        num_spawn_ramps : int
-            The number of depart ramps
+        1) Calculate how many vehicles should be spawned according to the depart method
+        2) Calculate properties for these vehicles (e.g., desired speed)
+        3) Add vehicles to spawn queue
+        4) Spawn as many vehicles as possible from the queue (sorted by waiting time)
+        5) Update queue
         """
 
-        # spawn rate per spawn ramp
-        spawn_rate = self._step_length / depart_interval
-        LOG.trace(f"The spawn rate per step per ramp is {spawn_rate}")
-        # total spawn rate for all ramps
-        spawn_rate = spawn_rate * num_spawn_ramps
-        LOG.trace(f"The total spawn rate per step is {spawn_rate}")
+        # 1) how many vehicles
+        vehicles_to_be_scheduled = self._vehicles_to_be_scheduled()
+        assert vehicles_to_be_scheduled >= 0
+        LOG.trace(f"I need to schedule {vehicles_to_be_scheduled} new vehicles in this step ({self._step}).")
 
-        LOG.debug(f"Currently scheduled vehicles {self._vehicles_scheduled} ({self._step})")
+        # 2) vehicle properties
+        new_vehicles = []
+        for vid in range(vehicles_to_be_scheduled):
+            vid += self._last_vehicle_id + 1
+            desired_speed = get_desired_speed(
+                desired_speed=self._desired_speed,
+                rng=self._rng,
+                speed_variation=self._speed_variation,
+                min_desired_speed=self._min_desired_speed,
+                max_desired_speed=self._max_desired_speed,
+                random_desired_speed=self._random_desired_speed,
+            )
+            new_vehicles.append(
+                {
+                    'vid': vid,
+                    'desired_speed': desired_speed,
+                    'depart_speed': get_depart_speed(
+                        desired_speed=desired_speed,
+                        rng=self._rng,
+                        depart_desired=self._depart_desired,
+                        random_depart_speed=self._random_depart_speed,
+                    ),
+                    'schedule_time': self._step,
+                    'min_trip_length': self._minimum_trip_length,
+                    'max_trip_length': self._maximum_trip_length,
+                }
+            )
 
-        # spawn all vehicles
-        num_vehicles = int(self._vehicles_scheduled)
-        LOG.debug(f"I will spawn {num_vehicles} total vehicles now ({self._step})")
-        for v in range(0, num_vehicles):
-            self._spawn_vehicle()
+        # 3) enqueue
+        LOG.trace(f"Adding {len(new_vehicles)} vehicles to the spawn queue.")
+        if new_vehicles:
+            self._last_vehicle_id = new_vehicles[-1]["vid"]
+            self._vehicle_spawn_queue.extend(new_vehicles)
 
-        # update scheduled vehicles
-        self._vehicles_scheduled -= num_vehicles  # remove spawned vehicles
-        self._vehicles_scheduled += spawn_rate  # add spawn rate
-
-    def _spawn_vehicle(self):
-        """Spawns a vehicle within the simulation"""
-
-        vid = self._last_vehicle_id + 1
-
-        depart_time = self._step
-
-        if self._random_depart_lane:
-            depart_lane = random.randrange(0, self._number_of_lanes, 1)
-        else:
-            depart_lane = 0
-
-        depart_position = self._get_depart_position()
-        arrival_position = self._get_arrival_position(depart_position)
-        depart_position += vtype._length  # equal to departPos="base" in SUMO
-
-        desired_speed = self._get_desired_speed()
-
-        depart_speed = self._get_depart_speed(desired_speed)
-
-        LOG.debug(f"Spawning vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
-
-        # TODO remove duplicated code
-        # check whether the vehicle can actually be inserted safely
-        # assume we have a collision to check at least once
-        collision = bool(self._vehicles)
-        LOG.debug(f"Checking for a collision with an existing vehicle for new vehicle {vid}")
-        while collision:
-            collision = False  # so far we do not have a collision
-            # avoid a collision with an existing vehicle
-            # check all vehicles
-            for other_vehicle in self._vehicles.values():
-                LOG.trace(f"Checking vehicle {other_vehicle._vid}")
-                if other_vehicle._lane != depart_lane:
-                    # we do not care about other lanes
-                    continue
-
-                # do we have a collision?
-                # avoid being inserted in between two platoon members by also considering the min gap
-                tv = TV(
-                    depart_position + vtype._min_gap,  # front collider
-                    depart_position - vtype._length,  # rear collider
-                    depart_lane
-                )
-                otv = TV(
-                    other_vehicle._position + other_vehicle.min_gap,  # front collider
-                    other_vehicle.rear_position,  # rear collider
-                    other_vehicle._lane
-                )
-
-                # do we have a "collision" (now or in the next step)?
-                collision = (
-                    collision
-                    or self.has_collision(tv, otv)
-                    or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
-                )
-
-            if collision:
-                # can we avoid the collision by switching the departure lane?
-                if depart_lane == self._number_of_lanes - 1:
-                    # reached maximum number of lanes already
-                    LOG.warning(f"Could not further increase depart lane ({depart_lane}) for vehicle {vid}! You might want to reduce the number of vehicles to reduce the traffic. Vehicle {vid} will be delayed!")
-                    # delay insertion of vehicle
-                    # TODO add real delaying incl. depart time and time loss
-                    self._vehicles_scheduled += 1
-                    return  # do not insert this vehicle but also do not abort the simulation
-                depart_lane = depart_lane + 1
-                LOG.info(f"Increased depart lane for {vid} to avoid a collision (now lane {depart_lane})")
-                # we need to check again
-
-        vehicle = self._add_vehicle(
-            vid,
-            vtype,
-            depart_position,
-            arrival_position,
-            desired_speed,
-            depart_lane,
-            depart_speed,
-            depart_time,
+        # 4) spawn
+        LOG.trace(f"Trying to spawn {len(self._vehicle_spawn_queue)} new vehicles")
+        # TODO sort by waiting time
+        spawned_vehicles_df, not_spawned_vehicles = compute_vehicle_spawns(
+            vehicles=self._vehicle_spawn_queue,
+            vdf=vdf,
+            ramp_positions=self._ramp_positions,
+            current_step=self._step,
+            rng=self._rng,
+            random_arrival_position=self._random_arrival_position,
+            random_depart_position=self._random_depart_position,
         )
+        LOG.debug(f"Spawned {len(spawned_vehicles_df)} new vehicles")
+        for row in spawned_vehicles_df.itertuples():
+            # already adds the vehicle to the dict
+            # TODO remove asserts here
+            assert row.depart_position >= 0
+            assert row.depart_position < self._road_length
+            assert row.arrival_position <= self._road_length
+            assert row.arrival_position > row.depart_position
+            assert row.arrival_position - row.depart_position <= self._maximum_trip_length
+            # TODO duplicate
+            assert row.arrival_position <= row.depart_position + self._maximum_trip_length
+            assert row.depart_position - vtype.length <= self._road_length - self._minimum_trip_length
+            # TODO duplicate
+            assert row.arrival_position >= row.depart_position + self._minimum_trip_length - vtype.length
 
-        if self._gui and self._step >= self._gui_start:
-            add_gui_vehicle(vehicle, track=vehicle.vid == self._gui_track_vehicle)
+            # FIXME: add to global vdf once it is available
+            vehicle = self._add_vehicle(
+                vid=row.vid,
+                vtype=vtype,
+                depart_position=row.depart_position,
+                arrival_position=row.arrival_position,
+                desired_speed=row.desired_speed,
+                depart_lane=row.depart_lane,
+                depart_speed=row.depart_speed,
+                depart_time=row.depart_time,
+            )
+            if self._gui and self._step >= self._gui_start:
+                add_gui_vehicle(vehicle, track=vehicle.vid == self._gui_track_vehicle)
+            LOG.trace(f"Spawned vehicle {vehicle.vid} ({vehicle.depart_position}-{vehicle.rear_position},{vehicle.depart_lane}).")
 
-        LOG.info(f"Spawned vehicle {vid} ({depart_position}-{vehicle.rear_position},{depart_lane})")
+        # 5) enque remaining
+        if not_spawned_vehicles:
+            LOG.warning(f"Could not spawn {len(not_spawned_vehicles)} vehicles, putting them back into the queue!")
+        self._vehicle_spawn_queue = not_spawned_vehicles
+        assert len({v['vid'] for v in self._vehicle_spawn_queue}) == len(self._vehicle_spawn_queue)
 
     def _is_insert_unsafe(self, depart_position, depart_speed, vtype, other_vehicle):
         # would it be unsafe to insert the vehicle?
@@ -1097,19 +984,21 @@ class Simulator:
             )
 
     def _add_vehicle(
-            self,
-            vid,
-            vtype,
-            depart_position,
-            arrival_position,
-            desired_speed,
-            depart_lane,
-            depart_speed,
-            depart_time,
-            communication_range: int = DEFAULTS['communication_range'],
+        self,
+        vid: int,
+        vtype: VehicleType,
+        depart_position: float,
+        arrival_position: float,
+        desired_speed: float,
+        depart_lane: int,
+        depart_speed: float,
+        depart_time: int,
+        communication_range: int = DEFAULTS['communication_range'],
     ):
         """
         Adds a vehicle to the simulation based on the given parameters.
+
+        NOTE: Make sure that you set last_vehicle_id correctly.
 
         Parameters
         ----------
@@ -1134,7 +1023,7 @@ class Simulator:
         """
 
         # choose vehicle "type" depending on the penetration rate
-        if random.random() <= self._penetration_rate:
+        if self._rng.random() <= self._penetration_rate:
             vehicle = PlatooningVehicle(
                 simulator=self,
                 vid=vid,
@@ -1168,7 +1057,6 @@ class Simulator:
 
         # add instance
         self._vehicles[vid] = vehicle
-        self._last_vehicle_id = vid
 
         return vehicle
 
@@ -1369,7 +1257,7 @@ class Simulator:
                 self._initialize_gui()
 
             # spawn vehicle based on given parameters
-            self._spawn_vehicles()
+            self._spawn_vehicles(self._get_vehicles_df())
 
             if self._vehicles:
                 # update the GUI
@@ -1453,7 +1341,7 @@ class Simulator:
                 del vdf
                 # END VECTORIZATION PART
             else:
-                if self._vehicles_scheduled == 0:
+                if not self._vehicle_spawn_queue:
                     self.stop("No more vehicles in the simulation")  # do we really want to exit here?
 
             end_time = timer()
@@ -1674,3 +1562,132 @@ class Simulator:
 
         if self._gui and self._step >= self._gui_start:
             close_gui()
+
+
+DUMMY = pd.DataFrame([
+    {'vid': -1, 'position': HIGHVAL, 'speed': HIGHVAL, 'lane': 0},
+    {'vid': -1, 'position': -HIGHVAL, 'speed': 0, 'lane': 0},
+])
+
+
+def compute_vehicle_spawns(
+    vehicles: list,
+    vdf: pd.DataFrame,
+    ramp_positions: list,
+    current_step: int,
+    rng: random.Random,
+    random_depart_position: bool,
+    random_arrival_position: bool,
+):
+    """
+    Schritt 4, siehe oben
+
+    Assumption: list of vehicles is already sorted ascending by depart priority (e.g., waiting time)
+    Assumption: ramp positions is sorted in ascending manner
+    """
+
+    if not vehicles:
+        return pd.DataFrame(), []
+
+    # add dummy predecessor to use for all front gap calculations
+    vdf = vdf.append(DUMMY, ignore_index=True)
+
+    spawn_positions = ramp_positions if random_depart_position else [ramp_positions[0]]
+
+    vehicles_to_spawn = {}
+
+    # this is done for every vehicle we want to spawn
+    for position in rng.sample(spawn_positions, len(spawn_positions)):
+        if not vehicles:
+            # no more vehicles to process
+            break
+
+        spawn_position = position + vtype.length
+
+        # select predecessor at spawn position
+        # since we have the dummy, we can assume there is always at least one vehicle
+        vehicle_after_spawn_position = (
+            vdf
+            .loc[vdf.position >= spawn_position]
+            .sort_values("position", ascending=True)
+            .iloc[0]
+        )
+        gap_to_next_vehicle = vehicle_after_spawn_position.position - vtype.length - spawn_position
+
+        # select successor of spawn position
+        # since we have the dummy, we can assume there is always at least one vehicle
+        vehicle_before_spawn_position = (
+            vdf
+            .loc[vdf.position < spawn_position]
+            .sort_values("position", ascending=True)
+            .iloc[-1]
+        )
+        gap_to_previous_vehicle = spawn_position - vtype.length - vehicle_before_spawn_position.position
+
+        max_remanining_trip_length = ramp_positions[-1] - position
+
+        vehicle_to_spawn_now = None
+        for v in vehicles:
+            if (
+                max_remanining_trip_length >= v['min_trip_length']
+                and gap_to_next_vehicle >= vtype.headway_time * v['depart_speed']
+                and gap_to_previous_vehicle >= vtype.headway_time * vehicle_before_spawn_position.speed
+            ):
+                vehicle_to_spawn_now = v
+                break
+
+        # vehicles are sorted, so we always pick the longest waiting vehicle first :-)
+        if not vehicle_to_spawn_now:
+            continue
+
+        vehicles_to_spawn[vehicle_to_spawn_now['vid']] = {
+            'vid': vehicle_to_spawn_now['vid'],
+            'desired_speed': vehicle_to_spawn_now['desired_speed'],
+            'depart_speed': vehicle_to_spawn_now['depart_speed'],
+            'speed': vehicle_to_spawn_now['depart_speed'],
+            'depart_position': spawn_position,
+            'position': spawn_position,
+            'depart_lane': 0,
+            'lane': 0,
+            'depart_time': current_step,
+            'depart_delay': current_step - vehicle_to_spawn_now['schedule_time'],
+            'arrival_position': get_arrival_position(
+                depart_position=position,
+                road_length=ramp_positions[-1],
+                ramp_interval=ramp_positions[1] - ramp_positions[0],
+                min_trip_length=vehicle_to_spawn_now['min_trip_length'],
+                max_trip_length=vehicle_to_spawn_now['max_trip_length'],
+                rng=rng,
+                random_arrival_position=random_arrival_position,
+                pre_fill=False,
+            ),
+            'schedule_time': vehicle_to_spawn_now['schedule_time'],
+            'min_trip_length': vehicle_to_spawn_now['min_trip_length'],
+            'max_trip_length': vehicle_to_spawn_now['max_trip_length'],
+        }
+        vehicles.remove(vehicle_to_spawn_now)
+
+    # TODO make global
+    columns = {
+        'vid': int,
+        'desired_speed': float,
+        'depart_speed': float,
+        'speed': float,
+        'depart_position': float,
+        'position': float,
+        'depart_lane': int,
+        'lane': int,
+        'depart_time': int,
+        'depart_delay': int,
+        'arrival_position': float,
+        'schedule_time': int,
+        'min_trip_length': int,
+        'max_trip_length': int,
+    }
+    spawned_vehicles_df = pd.DataFrame(
+        data=vehicles_to_spawn.values(),
+        columns=columns.keys()
+    ).astype(columns)
+    not_spawned_vehicles = vehicles
+
+    return spawned_vehicles_df, not_spawned_vehicles
