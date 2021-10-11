@@ -850,7 +850,7 @@ class Simulator:
             depart_position = 0
 
         assert(depart_position >= 0)
-        assert(depart_position <= self._road_length)
+        assert(depart_position < self._road_length)
 
         return depart_position
 
