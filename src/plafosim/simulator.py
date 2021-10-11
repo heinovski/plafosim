@@ -365,7 +365,7 @@ class Simulator:
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
-        self._minimum_trip_length = minimum_trip_length  # the minimum trip length
+        self._minimum_trip_length = max(minimum_trip_length, ramp_interval)  # the minimum trip length
         if maximum_trip_length == -1 * 1000:
             self._maximum_trip_length = road_length
         else:
