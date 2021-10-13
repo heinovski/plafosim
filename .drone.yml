@@ -132,7 +132,6 @@ steps:
     - pip3 install -r requirements.txt
     - pip3 install -r requirements.opt.txt
     - pip3 install git+https://github.com/michele-segata/plexe-pyapi.git
-    - ./scripts/validate-cf-model-cacc-single.sh
     - ./scripts/validate-cf-model-cacc-100.sh
 - name: data
   image: maurosoft1973/alpine-lftp
