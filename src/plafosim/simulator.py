@@ -1523,7 +1523,7 @@ class Simulator:
         def get_platoon_data(vehicle):
             data = {key: 1e15 for key in platoon_fields}
             data["leader_id"] = -1
-            data["leader_id"] = -1
+            data["platoon_id"] = -1
             data["platoon_role"] = None
 
             if not isinstance(vehicle, PlatooningVehicle):
