@@ -1277,6 +1277,10 @@ class Simulator:
             vehicle._blocked_front = False
             vehicle._platoon = leader.platoon
             vehicle._cf_target_speed = vehicle._platoon.desired_speed
+            vehicle._first_platoon_join_time = 0
+            vehicle._last_platoon_join_time = 0
+            vehicle._first_platoon_join_position = vehicle._position
+            vehicle._last_platoon_join_position = vehicle._position
 
     def _initialize_gui(self):
         """Initializes the GUI."""
