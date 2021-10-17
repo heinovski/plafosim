@@ -137,7 +137,7 @@ DEFAULTS = {
     'depart_desired': False,
     'depart_flow': False,
     'depart_method': 'interval',
-    'depart_interval': 1,
+    'depart_interval': 1.0,
     'depart_probability': 1.0,
     'depart_rate': 3600,
     'random_arrival_position': False,
@@ -246,7 +246,7 @@ class Simulator:
             depart_desired: bool = DEFAULTS['depart_desired'],
             depart_flow: bool = DEFAULTS['depart_flow'],
             depart_method: str = DEFAULTS['depart_method'],
-            depart_interval: int = DEFAULTS['depart_interval'],
+            depart_interval: float = DEFAULTS['depart_interval'],
             depart_probability: float = DEFAULTS['depart_probability'],
             depart_rate: int = DEFAULTS['depart_rate'],
             random_arrival_position: bool = DEFAULTS['random_arrival_position'],
@@ -350,8 +350,8 @@ class Simulator:
         if not depart_flow and depart_method == "number":
             sys.exit("ERROR: The depart method number can only be used in conjuction with a depart flow!")
         self._depart_method = depart_method  # the departure method to use
-        if depart_interval < 1:
-            sys.exit("ERROR: The depart interval has to be at least 1!")
+        if depart_interval <= 0:
+            sys.exit("ERROR: The depart interval has to be bigger than 0!")
         self._depart_interval = depart_interval  # the interval between two vehicle departures
         if depart_probability < 0 or depart_probability > 1:
             sys.exit("ERROR: The depart probability needs to be between 0 and 1!")

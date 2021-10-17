@@ -244,7 +244,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     )
     trip.add_argument(
         "--depart-interval",
-        type=int,
+        type=float,
         default=DEFAULTS['depart_interval'],
         help="The interval between two vehicle departures in s for depart method 'interval'",
     )
