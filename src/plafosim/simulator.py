@@ -708,6 +708,8 @@ class Simulator:
             if self._start_as_platoon:
                 depart_time = 0
                 depart_position = (self._number_of_vehicles - vid) * (vtype._length + self._cacc_spacing) - self._cacc_spacing
+                if depart_position >= self._road_length:
+                    sys.exit("Too many vehicles for this road length!")
                 depart_lane = 0
 
                 if vid == 0:
