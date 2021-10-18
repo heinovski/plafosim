@@ -46,6 +46,7 @@ echo "Running PlaFoSim..."
     --max-speed 55 \
     --min-desired-speed 22 \
     --penetration 1 \
+    --ramp-interval 5 \
     --random-desired-speed false \
     --random-seed 1337 \
     --record-emission-traces true \
@@ -55,10 +56,10 @@ echo "Running PlaFoSim..."
     --record-vehicle-traces true \
     --record-vehicle-trips true \
     --result-base-filename $experiment \
-    --road-length 100 \
+    --road-length 5 \
     --speed-variation 0.1 \
     --step-length 1 \
-    --time-limit 1.0 \
+    --time-limit 1 \
     --vehicles 1 \
     2>&1 | tee ${experiment}_plafosim.log
 
