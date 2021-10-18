@@ -1277,6 +1277,10 @@ class Simulator:
             leader.platoon.update_desired_speed()
         leader.platoon.update_limits()
         leader._cf_target_speed = leader.platoon.desired_speed
+        leader._first_platoon_join_time = 0
+        leader._last_platoon_join_time = 0
+        leader._first_platoon_join_position = leader._position
+        leader._last_platoon_join_position = leader._position
         for vehicle in list(self._vehicles.values())[1:]:
             vehicle._platoon_role = PlatoonRole.FOLLOWER
             vehicle._cf_model = CF_Model.CACC
