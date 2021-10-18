@@ -473,10 +473,10 @@ class Vehicle:
         # by this check, we should also already avoid logging if the minimum trip length has not been fulfilled
         # HACK: adding length here to cope for departPos="base"
         # TODO we might need to travel 'length' more than arrival position
-        if self.travel_distance < (self._simulator._minimum_trip_length - self.length):
+        if self.travel_distance < (self._simulator._minimum_trip_length - self.length) and not self._simulator._start_as_platoon:
             # we are only interested in vehicles that did complete the minimum trip length
             # this should only be the case for pre-filled vehicles
-            assert(self._depart_time == -1)
+            assert self._depart_time == -1
             return
         # we could still have pre-filled vehicles that drove at least for the minimum trip length
 
