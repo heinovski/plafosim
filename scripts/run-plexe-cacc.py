@@ -42,7 +42,7 @@ SPEED = 36
 LEADER = "v.0"
 
 SEED = 1337
-ARRIVAL = 100000
+ARRIVAL = 5000
 
 
 def start_sumo(config_file, gui=False, experiment="cacc"):

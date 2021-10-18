@@ -46,6 +46,7 @@ echo "Running PlaFoSim..."
     --max-speed 55 \
     --penetration 1 \
     --pre-fill true \
+    --ramp-interval 5 \
     --random-desired-speed false \
     --random-seed 1337 \
     --record-emission-traces true \
@@ -57,7 +58,7 @@ echo "Running PlaFoSim..."
     --record-vehicle-trips true \
     --reduced-air-drag false \
     --result-base-filename $experiment \
-    --road-length 100 \
+    --road-length 5 \
     --start-as-platoon true \
     --step-length 1 \
     --time-limit 1 \
