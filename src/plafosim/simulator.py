@@ -307,6 +307,8 @@ class Simulator:
         # road network properties
         self._road_length = road_length  # the length of the road
         self._number_of_lanes = number_of_lanes  # the number of lanes
+        if road_length % ramp_interval != 0:
+            sys.exit("ERROR: The road length has to be a multiple of the ramp interval!")
         self._ramp_interval = ramp_interval  # the distance between any two on-/off-ramps
 
         # vehicle properties
