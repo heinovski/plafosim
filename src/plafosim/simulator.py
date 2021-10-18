@@ -338,6 +338,8 @@ class Simulator:
         self._speed_variation = speed_variation  # the deviation from the desired driving speed
         self._min_desired_speed = min_desired_speed  # the minimum desired driving speed
         self._max_desired_speed = max_desired_speed  # the maximum desired driving speed
+        if not (min_desired_speed <= desired_speed <= max_desired_speed):
+            sys.exit("ERROR: desired speed has to be between limits!")
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to depart with the desired driving speed
         if random_depart_position and not depart_desired:
