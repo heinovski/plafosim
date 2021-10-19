@@ -362,6 +362,8 @@ class Simulator:
             sys.exit("ERROR: The depart probability needs to be between 0 and 1!")
         if depart_probability == 0:
             sys.exit("ERROR: A depart probability of 0 does not make sense!")
+        if 0.5 <= depart_probability == 1 and (not random_depart_position or ramp_interval == road_length):
+            LOG.warning("The current effective depart rate will lead to depature delays for vehicles!")
         self._depart_probability = depart_probability  # the departure probability
         if depart_rate <= 0:
             sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
