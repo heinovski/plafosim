@@ -349,50 +349,55 @@ def test_depart_method_probability_flow(probability: float, step_length: int = 1
 # TODO multiple ramps for all
 
 
-@pytest.mark.parametrize("vehicles", VEHICLES)
-def test_depart_method_number(vehicles: int, step_length: int = 1):
-    """
-    """
-
-    # create simulation environment
-    s = Simulator(
-        number_of_vehicles=vehicles,
-        number_of_lanes=1,
-        result_base_filename=f"test_depart_method_number_vehicles{vehicles}",
-        record_vehicle_trips=True,
-        road_length=1000,
-        ramp_interval=1000,
-        random_desired_speed=False,
-        desired_speed=30,
-        random_depart_lane=False,
-        random_depart_speed=False,
-        random_depart_position=False,
-        depart_desired=True,
-        depart_method="number",
-        depart_flow=True,
-        step_length=step_length,
-    )
-
-    # run the simulation to record the trace file
-    s.run()
-
-    # read vehicle trace file
-    trips = pd.read_csv(f"{s._result_base_filename}_vehicle_trips.csv").sort_values("id", ascending=True)
-    assert not trips.empty
-
-    # correct number of vehicles
-    assert trips.id.count() == vehicles
-    # increasing id
-    assert trips.id.is_monotonic
-    # increasing depart time
-    assert trips.depart.is_monotonic
-
-    # correct depart interval
-    interval = s._max_step / vehicles
-    assert ((trips.depart - trips.shift(1).depart).dropna() >= int(interval)).all()
-    # correct depart position (vehicle length)
-    assert (trips.departPos == 4).all()
-    # correct depart lane
-    assert (trips.departLane == 0).all()
-    # correct depart speed
-    assert (trips.departSpeed == 30).all()
+# TODO depart method number
+#@pytest.mark.parametrize("vehicles", VEHICLES)
+#def test_depart_method_number(vehicles: int, step_length: int = 1):
+#    """
+#    """
+#
+#    vehicles *= 100
+#
+#    # create simulation environment
+#    s = Simulator(
+#        number_of_vehicles=vehicles,
+#        number_of_lanes=1,
+#        result_base_filename=f"test_depart_method_number_vehicles{vehicles}",
+#        record_vehicle_trips=True,
+#        road_length=1000,
+#        ramp_interval=1000,
+#        random_desired_speed=False,
+#        desired_speed=30,
+#        random_depart_lane=False,
+#        random_depart_speed=False,
+#        random_depart_position=False,
+#        depart_desired=True,
+#        depart_method="number",
+#        depart_flow=True,
+#        step_length=step_length,
+#        max_step=1800,
+#    )
+#
+#    # run the simulation to record the trace file
+#    s.run()
+#
+#    # read vehicle trace file
+#    trips = pd.read_csv(f"{s._result_base_filename}_vehicle_traces.csv").sort_values("id", ascending=True)
+#    assert not trips.empty
+#    trips = trips.groupby('id').first
+#
+#    # correct number of vehicles
+#    assert trips.id.count() == vehicles
+#    # increasing id
+#    assert trips.id.is_monotonic
+#    # increasing depart time
+#    assert trips.depart.is_monotonic
+#
+#    # correct depart interval
+#    interval = s._max_step / vehicles
+#    assert ((trips.depart - trips.shift(1).depart).dropna() >= int(interval)).all()
+#    # correct depart position (vehicle length)
+#    assert (trips.departPos == 4).all()
+#    # correct depart lane
+#    assert (trips.departLane == 0).all()
+#    # correct depart speed
+#    assert (trips.departSpeed == 30).all()

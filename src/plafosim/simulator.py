@@ -375,6 +375,7 @@ class Simulator:
             # spawn #vehicles per hour, similar to SUMO's flow param vehsPerHour
             self._effective_depart_rate = self._depart_rate / 3600
         elif self._depart_method == "number":
+            LOG.warning("This depart method is not yet tested!")
             # spawn #number vehicles, similar to SUMO's flow param number
             # TODO other depart method for constant number of concurrent vehicles
             # thus: all vehicles have an equal spacing
