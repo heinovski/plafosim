@@ -25,7 +25,7 @@ from plafosim.simulator import Simulator, _desired_headway_time, vtype
 SPEED = [20, 30, 40]
 HEADWAY_TIME = [1.0, 1.25, 1.5]
 PLATOON_SIZE = [2, 3, 4]
-CACC_SPACING = [5.0, 4.0, 4.5, 5.5, 6.0]
+CACC_SPACING = [5.0, 4.0, 5.5]
 
 
 @pytest.mark.parametrize("penetration_rate", [0, 1], ids=["HUMAN", "ACC"])
