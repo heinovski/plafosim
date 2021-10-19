@@ -139,7 +139,7 @@ DEFAULTS = {
     'depart_desired': False,
     'depart_flow': False,
     'depart_method': 'interval',
-    'depart_interval': 1.0,
+    'depart_interval': 2.0,
     'depart_probability': 1.0,
     'depart_rate': 3600,
     'random_arrival_position': False,
@@ -368,6 +368,7 @@ class Simulator:
         if depart_rate <= 0:
             sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
         self._depart_rate = depart_rate  # the departure rate
+        self._effective_depart_rate = None
         if self._depart_method == "interval":
             self._effective_depart_rate = int(step_length) / self._depart_interval
         elif self._depart_method == "rate":
@@ -380,10 +381,13 @@ class Simulator:
             self._effective_depart_rate = self._number_of_vehicles / max_step
         elif self._depart_method != "probability":
             sys.exit("ERROR: Unknown depart method!")
-        if self._effective_depart_rate > 1 and not self._random_depart_position:
-            sys.exit("ERROR: an effective depart rate > 1 is incompatible with just spawning at the origin (random depart position == false)")
-        if self._effective_depart_rate < 0:
-            sys.exit("ERROR: effective spawn rate < 0 vehicles per step.")
+        if self._effective_depart_rate is not None:
+            if 0.5 <= self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
+                LOG.warning("The current effective depart rate will lead to depature delays for vehicles!")
+            if self._effective_depart_rate > 1 and not self._random_depart_position:
+                sys.exit("ERROR: an effective depart rate > 1 is incompatible with just spawning at the origin (random depart position == false)")
+            if self._effective_depart_rate < 0:
+                sys.exit("ERROR: effective spawn rate < 0 vehicles per step.")
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
