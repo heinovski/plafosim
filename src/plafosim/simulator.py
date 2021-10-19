@@ -849,7 +849,11 @@ class Simulator:
             # 1) number of new vehicles
             if self._depart_method == "probability":
                 # spawn probability per time step, similar to SUMO's flow param probability
-                vehicles_to_be_scheduled = int(self._rng.random <= self._depart_probability)
+                if self._step == 0:
+                    # special case in step 0 to avoid not having any vehicles and thus stopping the simulation
+                    vehicles_to_be_scheduled = 1
+                else:
+                    vehicles_to_be_scheduled = int(self._rng.random() <= self._depart_probability)
             else:
                 # 1) estimate how many vehicles their need to be with the given effective depart rate
                 # 2) subtract all already generated (i.e., finished, spawned, queued)
