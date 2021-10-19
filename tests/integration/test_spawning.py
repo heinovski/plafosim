@@ -27,11 +27,11 @@ VEHICLES = [
 ]
 INTERVAL = [
     pytest.param(0, marks=MARKER_SYSTEM_EXIT),
-    *range(1, 10),
+    *range(2, 10),
 ]
 RATE = [
     pytest.param(0, marks=MARKER_SYSTEM_EXIT),
-    *range(1000, 5000, 1000),
+    *range(300, 1800, 300),
 ]
 PROBABILITY = [
     pytest.param(0, marks=MARKER_SYSTEM_EXIT),
