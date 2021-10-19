@@ -23,11 +23,11 @@ from plafosim.simulator import Simulator
 MARKER_SYSTEM_EXIT = pytest.mark.xfail(raises=SystemExit, strict=True)
 VEHICLES = [
     pytest.param(0, marks=MARKER_SYSTEM_EXIT),
-    *range(1, 10),
+    *range(1, 5),
 ]
 INTERVAL = [
     pytest.param(0, marks=MARKER_SYSTEM_EXIT),
-    *range(2, 10),
+    *range(2, 5),
 ]
 RATE = [
     pytest.param(0, marks=MARKER_SYSTEM_EXIT),
