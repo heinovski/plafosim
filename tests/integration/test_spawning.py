@@ -126,7 +126,8 @@ def test_depart_method_interval_flow(interval: int, step_length: int = 1):
     departure = traces.set_index(['id', 'step']).loc[list(zip(spawn_step.index, spawn_step.values))].reset_index().sort_values('id')
 
     # correct number of vehicles
-    assert departure.id.count() == int(s._max_step / interval)
+    roughly = s._max_step / interval
+    assert np.floor(roughly) <= departure.id.count() == np.ceil(roughly)
     # increasing id
     assert departure.id.is_monotonic
     # increasing depart time
