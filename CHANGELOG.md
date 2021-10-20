@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.0) - 2021-10-20
+* Added citation information of accepted poster publication
+* Added flag to start gui in paused mode
+* Added integration tests for spawning (#348)
+* Added new spawn procedure (#374)
+* Added various checks for input parameters
+* Added various tests
+* Implemented vectorized lane changes (#372)
+* Updated correctness tests
+* Updated generation of pre-filled platoon
+* Updated Platoon Data (#373)
+
 ## [0.12.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.12.0) - 2021-09-08
 * Added argument for connecting to the gui later (#340)
 * Added argument for showing the progress bar
