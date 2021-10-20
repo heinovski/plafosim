@@ -54,7 +54,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     If you are working with PlaFoSim, please cite the following paper:
 
     Julian Heinovski, Dominik S. Buse and Falko Dressler,
-    "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
+    "Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
     Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
     Poster Session, Virtual Conference, November 2021. (to appear)
     """,
