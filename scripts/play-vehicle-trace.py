@@ -53,9 +53,36 @@ def parse_args() -> argparse.Namespace:
     Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
     This program comes with ABSOLUTELY NO WARRANTY.
     This is free software, and you are welcome to redistribute it under certain conditions.
+
+    If you are working with PlaFoSim, please cite the following paper:
+
+    Julian Heinovski, Dominik S. Buse and Falko Dressler,
+    "Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
+    Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
+    Poster Session, Virtual Conference, November 2021. (to appear)
     """,
     )
 
+    # miscellaneous
+    parser.add_argument(
+        "-C", "--citation",
+        action="version",
+        help="show the citation information and exit",
+        version="""
+@inproceedings{heinovski2021scalable,
+    author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
+    note = {to appear},
+    title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
+    publisher = {IEEE},
+    address = {Virtual Conference},
+    booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
+    month = {11},
+    year = {2021},
+}
+        """,
+    )
+
+    # functionality
     parser.add_argument(
         'trace_file',
         type=str,
