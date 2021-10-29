@@ -45,7 +45,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         formatter_class=CustomFormatter,
         allow_abbrev=False,
         description="""
-    Platoon Formation Simulator (PlaFoSim) -- A simple simulator for platoon formation.
+    Platoon Formation Simulator (PlaFoSim) -- A simple and scalable simulator for platoon formation.
 
     Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
     This program comes with ABSOLUTELY NO WARRANTY.
