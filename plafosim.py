@@ -177,13 +177,6 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to use a random depart position for every vehicle instead of 0 m",
     )
     trip.add_argument(
-        "--random-depart-lane",
-        type=lambda x: bool(strtobool(x)),
-        default=DEFAULTS['random_depart_lane'],
-        choices=(True, False),
-        help="Whether to use a random depart lane for every vehicle instead of lane 0",
-    )
-    trip.add_argument(
         "--desired-speed",
         type=float,
         default=DEFAULTS['desired_speed'],

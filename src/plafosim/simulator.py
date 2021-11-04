@@ -129,7 +129,6 @@ DEFAULTS = {
     'cacc_spacing': 5.0,
     'penetration_rate': 1.0,
     'random_depart_position': False,
-    'random_depart_lane': False,
     'desired_speed': 36.0,
     'random_desired_speed': True,
     'speed_variation': 0.1,
@@ -238,7 +237,6 @@ class Simulator:
             cacc_spacing: float = DEFAULTS['cacc_spacing'],
             penetration_rate: float = DEFAULTS['penetration_rate'],
             random_depart_position: bool = DEFAULTS['random_depart_position'],
-            random_depart_lane: bool = DEFAULTS['random_depart_lane'],
             desired_speed: float = DEFAULTS['desired_speed'],
             random_desired_speed: bool = DEFAULTS['random_desired_speed'],
             speed_variation: float = DEFAULTS['speed_variation'],
@@ -339,7 +337,6 @@ class Simulator:
 
         # trip properties
         self._random_depart_position = random_depart_position  # whether to use random depart positions
-        self._random_depart_lane = random_depart_lane  # whether to use random depart lanes
         self._desired_speed = desired_speed  # the desired driving speed
         self._random_desired_speed = random_desired_speed  # whether to use random desired driving speeds
         self._speed_variation = speed_variation  # the deviation from the desired driving speed
@@ -424,8 +421,6 @@ class Simulator:
                 sys.exit("ERROR: Vehicles can not spawn in a flow when starting as one platoon!")
             if random_depart_position:
                 sys.exit("ERROR: Vehicles can not have random departure positions when starting as one platoon!")
-            if random_depart_lane:
-                sys.exit("ERROR: Vehicles can not have random departure lanes when starting as one platoon!")
         self._reduced_air_drag = reduced_air_drag  # whether the reduced air drag due to platooning should be considered in the emissions calculation
         if maximum_teleport_distance == -1:
             self._maximum_teleport_distance = road_length
