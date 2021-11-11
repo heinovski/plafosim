@@ -26,6 +26,7 @@ import time
 
 from tqdm import tqdm
 
+from plafosim import __version__
 from plafosim.simulator import DEFAULTS
 from plafosim.util import find_resource
 
@@ -84,6 +85,11 @@ def parse_args() -> argparse.Namespace:
     year = {2021},
 }
         """,
+    )
+    parser.add_argument(
+        "-V", "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
 
     # functionality
