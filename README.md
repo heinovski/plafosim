@@ -28,10 +28,6 @@ This tool will be published here:
 ```
 pip3 install -r requirements.txt
 ```
-- Install the optional requirements (for testing and CI):
-```
-pip3 install -r requirements.opt.txt
-```
 
 ## Running a Simulation
 
@@ -124,7 +120,10 @@ In order to add a new formation algorithm, you need to follow these steps:
 ## Contributing
 
 In order to contribute, please follow these steps:
-- Make sure to install all dependencies
+- Install also the optional requirements (for testing and CI):
+```
+pip3 install -r requirements.opt.txt
+```
 - Make your desired changes
 - Submit a Pull Request (PR)
 
