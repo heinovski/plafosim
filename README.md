@@ -113,7 +113,15 @@ To see all options of this script, run:
 
 ```python3 scripts/play-vehicle-trace.py -h, --help```
 
-## Development
+## Extending
+
+In order to add a new formation algorithm, you need to follow these steps:
+- Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`)
+- Add the name of your algorithm to the list of available algorithms within `plafosim.py`
+- Add the argument parser group of your new algorithm to `plafosim.py`
+- Add parsing of the algorithm name to `__init__` within `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`)
+
+## Contributing
 
 In order to contribute, please follow these steps:
 - Make sure to install all dependencies

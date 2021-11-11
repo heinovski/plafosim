@@ -334,6 +334,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         type=str,
         default=DEFAULTS['formation_algorithm'],
         choices=["speedposition"],
+        # TODO use enum
         help="The formation algorithm to use",
     )
     formation.add_argument(
