@@ -673,8 +673,6 @@ def find_resource(path: str) -> str:
     return str(resource_path)
 
 
-
-
 def main():
 
     # get argument values (and gui argument group)
