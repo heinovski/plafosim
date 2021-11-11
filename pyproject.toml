@@ -37,8 +37,8 @@ statsmodels = "^0.12"
 ipython = "^7.29.0"
 
 [tool.poetry.scripts]
-plafosim = "plafosim.cli:main"
-# TODO: other scripts
+plafosim = "plafosim.cli.plafosim:main"
+plafosim-replay = "plafosim.cli.trace_replay:main"
 # with poetry 1.2, we can be more flexible
 # see https://github.com/python-poetry/poetry/issues/241
 
