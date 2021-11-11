@@ -8,11 +8,11 @@ steps:
   image: alpine/flake8
   commands:
       # comments, import order, line-length, line-break binary operator*2
-    - flake8 --ignore=E265,E266,E402,E501,W503,W504 src tests plafosim.py
+    - flake8 --ignore=E265,E266,E402,E501,W503,W504 src tests
 - name: isort
   image: xcgd/isort
   commands:
-    - isort --profile black --check-only --diff src tests plafosim.py
+    - isort --profile black --check-only --diff src tests
 
 ---
 kind: pipeline
