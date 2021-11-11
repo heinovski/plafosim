@@ -18,9 +18,11 @@
 
 import argparse
 import logging
+import os
 import pickle
 import sys
 from distutils.util import strtobool
+from importlib import resources
 from timeit import default_timer as timer
 
 from plafosim import __version__
@@ -442,7 +444,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     )
     gui.add_argument(
         "--sumo-config",
-        type=str,
+        type=find_resource,
         default=DEFAULTS['sumo_config'],
         help="The name of the SUMO config file",
     )
@@ -652,6 +654,25 @@ def create_simulator(**kwargs: dict) -> Simulator:
 
     # create new simulator
     return Simulator(**kwargs)
+
+
+def find_resource(path: str) -> str:
+    """
+    Find the resouces under relpath locally or as a packaged resource.
+    """
+
+    # prioritize local paths
+    if os.path.exists(path):
+        return path
+
+    resource_path = resources.files("plafosim").joinpath(path)
+    if not resource_path.exists():
+        raise ValueError(
+            f"Path is not a local file or packaged resource: {path}."
+        )
+    return str(resource_path)
+
+
 
 
 def main():
