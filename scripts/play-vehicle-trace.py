@@ -26,6 +26,9 @@ import time
 
 from tqdm import tqdm
 
+from plafosim.simulator import DEFAULTS
+from plafosim.util import find_resource
+
 if 'SUMO_HOME' not in os.environ:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
@@ -90,10 +93,10 @@ def parse_args() -> argparse.Namespace:
         help="The name of the vehicle trace file"
     )
     parser.add_argument(
-        '--sumo-config',
-        type=str,
-        default="sumocfg/freeway.sumo.cfg",
-        help="The name of the SUMO config file"
+        "--sumo-config",
+        type=find_resource,
+        default=DEFAULTS['sumo_config'],
+        help="The name of the SUMO config file",
     )
     parser.add_argument(
         '--gui-delay',

@@ -18,7 +18,6 @@
 
 import argparse
 import logging
-import os
 import pickle
 import sys
 from distutils.util import strtobool
@@ -27,6 +26,7 @@ from timeit import default_timer as timer
 from plafosim import __version__
 from plafosim.algorithms.speed_position import SpeedPosition
 from plafosim.simulator import DEFAULTS, Simulator
+from plafosim.util import find_resource
 
 
 class CustomFormatter(
@@ -653,23 +653,6 @@ def create_simulator(**kwargs: dict) -> Simulator:
 
     # create new simulator
     return Simulator(**kwargs)
-
-
-def find_resource(path: str) -> str:
-    """
-    Find the resouces under relpath locally or as a packaged resource.
-    """
-
-    # prioritize local paths
-    if os.path.exists(path):
-        return path
-
-    resource_path = os.path.join(os.path.dirname(__file__), path)
-    if not os.path.exists(resource_path):
-        raise ValueError(
-            f"Path is not a local file or packaged resource: {path}."
-        )
-    return str(resource_path)
 
 
 def main():

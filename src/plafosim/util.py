@@ -16,6 +16,24 @@
 #
 
 import logging
+import os
+
+
+def find_resource(path: str) -> str:
+    """
+    Find the resouces under relpath locally or as a packaged resource.
+    """
+
+    # prioritize local paths
+    if os.path.exists(path):
+        return path
+
+    resource_path = os.path.join(os.path.dirname(__file__), path)
+    if not os.path.exists(resource_path):
+        raise ValueError(
+            f"Path is not a local file or packaged resource: {path}."
+        )
+    return str(resource_path)
 
 
 def assert_index_equal(a, b):
