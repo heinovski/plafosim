@@ -27,7 +27,6 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from .cf_model import CF_Model
 from .emissions import EmissionClass
 from .gui import (
     add_gui_vehicle,
@@ -44,6 +43,7 @@ from .gui import (
 from .infrastructure import Infrastructure
 from .mobility import (
     HIGHVAL,
+    CF_Model,
     compute_lane_changes,
     compute_new_speeds,
     get_crashed_vehicles,

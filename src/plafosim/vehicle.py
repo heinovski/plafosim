@@ -18,8 +18,8 @@
 import logging
 from typing import TYPE_CHECKING
 
-from .cf_model import CF_Model
 from .message import Message
+from .mobility import CF_Model
 from .statistics import (
     record_emission_trace_prefix,
     record_emission_trace_suffix,

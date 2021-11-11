@@ -18,8 +18,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from plafosim.cf_model import CF_Model
-from plafosim.mobility import is_gap_safe
+from plafosim.mobility import CF_Model, is_gap_safe
 from plafosim.simulator import Simulator, _desired_headway_time, vtype
 
 SPEED = [20, 30, 40]

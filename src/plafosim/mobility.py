@@ -16,11 +16,11 @@
 #
 
 from collections import namedtuple
+from enum import Enum
 
 import numpy as np
 import pandas as pd
 
-from .cf_model import CF_Model
 from .util import assert_index_equal
 
 # misc constants
@@ -32,6 +32,17 @@ DUMMY_PREDECESSOR = pd.Series(
 DUMMY_SUCCESSOR = pd.Series(
     {"speed": 0, "position": -HIGHVAL, "desired_headway_time": 0}, name=-1
 )
+
+
+class CF_Model(Enum):
+    """
+    Car Following models that vehicles can use for their mobility.
+    """
+
+    Human = 0  # safe speed
+    ACC = 1  # fixed time gap
+    CACC = 2  # small fixed distance
+
 
 # gap safety checks
 
