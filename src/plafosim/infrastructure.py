@@ -59,7 +59,7 @@ class Infrastructure:
             # initialize formation algorithm
             # TODO make enum
             if formation_algorithm == "speedposition":
-                from .speed_position import SpeedPosition
+                from .algorithms.speed_position import SpeedPosition
                 self._formation_algorithm = SpeedPosition(self, **kw_args)
             else:
                 sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}!")

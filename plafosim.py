@@ -24,8 +24,8 @@ from distutils.util import strtobool
 from timeit import default_timer as timer
 
 from src.plafosim import __version__
+from src.plafosim.algorithms.speed_position import SpeedPosition
 from src.plafosim.simulator import DEFAULTS, Simulator
-from src.plafosim.speed_position import SpeedPosition
 
 
 class CustomFormatter(

@@ -21,13 +21,13 @@ import sys
 from timeit import default_timer as timer
 from typing import TYPE_CHECKING
 
-from .formation_algorithm import FormationAlgorithm
-from .platoon_role import PlatoonRole
-from .statistics import record_infrastructure_assignments
+from ..formation_algorithm import FormationAlgorithm
+from ..platoon_role import PlatoonRole
+from ..statistics import record_infrastructure_assignments
 
 if TYPE_CHECKING:
-    from .platooning_vehicle import Platoon  # noqa 401
-    from .platooning_vehicle import PlatooningVehicle  # noqa 401
+    from ..platooning_vehicle import Platoon  # noqa 401
+    from ..platooning_vehicle import PlatooningVehicle  # noqa 401
 
 LOG = logging.getLogger(__name__)
 DEFAULTS = {
@@ -204,7 +204,7 @@ class SpeedPosition(FormationAlgorithm):
         and performs the corresponding join  maneuver.
         """
 
-        from .infrastructure import Infrastructure
+        from ..infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
             LOG.info(f"{self._owner.iid} is running formation algorithm {self._name} ({self._formation_centralized_kind}) at {self._owner._simulator.step}")
             if self._formation_centralized_kind == 'optimal':
@@ -228,7 +228,7 @@ class SpeedPosition(FormationAlgorithm):
         if self._owner._formation_kind != 'optimal':
             return
 
-        from .infrastructure import Infrastructure
+        from ..infrastructure import Infrastructure
         assert(isinstance(self._owner, Infrastructure))
 
         if self._owner._simulator._record_infrastructure_assignments:
@@ -317,7 +317,7 @@ class SpeedPosition(FormationAlgorithm):
 
         all_found_candidates = []
 
-        from .platooning_vehicle import PlatooningVehicle  # noqa 811
+        from ..platooning_vehicle import PlatooningVehicle  # noqa 811
 
         # select all searching vehicles
         for vehicle in self._owner._simulator._vehicles.values():
@@ -472,7 +472,7 @@ class SpeedPosition(FormationAlgorithm):
 
         decision_variables = {}
 
-        from .platooning_vehicle import PlatooningVehicle  # noqa 811
+        from ..platooning_vehicle import PlatooningVehicle  # noqa 811
 
         LOG.debug(f"{self._owner.iid} is adding assignment variables for vehicles")
 

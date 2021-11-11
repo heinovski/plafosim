@@ -20,12 +20,12 @@ import math
 import sys
 from typing import TYPE_CHECKING
 
+from .algorithms.speed_position import SpeedPosition
 from .gui import change_gui_vehicle_color
 from .message import Message, PlatoonAdvertisement
 from .mobility import CF_Model
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
-from .speed_position import SpeedPosition
 from .statistics import (
     record_platoon_formation,
     record_platoon_trace,
