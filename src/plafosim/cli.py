@@ -22,7 +22,6 @@ import os
 import pickle
 import sys
 from distutils.util import strtobool
-from importlib import resources
 from timeit import default_timer as timer
 
 from plafosim import __version__
@@ -665,8 +664,8 @@ def find_resource(path: str) -> str:
     if os.path.exists(path):
         return path
 
-    resource_path = resources.files("plafosim").joinpath(path)
-    if not resource_path.exists():
+    resource_path = os.path.join(os.path.dirname(__file__), path)
+    if not os.path.exists(resource_path):
         raise ValueError(
             f"Path is not a local file or packaged resource: {path}."
         )
