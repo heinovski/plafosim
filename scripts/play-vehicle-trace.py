@@ -74,6 +74,8 @@ def parse_args() -> argparse.Namespace:
     note = {to appear},
     title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
     publisher = {IEEE},
+    issn = {2157-9865},
+    isbn = {978-1-66544-450-7},
     address = {Virtual Conference},
     booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
     month = {11},

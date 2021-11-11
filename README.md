@@ -144,6 +144,8 @@ If you are working with `PlaFoSim`, please cite the following paper:
     note = {to appear},
     title = {{Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
     publisher = {IEEE},
+    issn = {2157-9865},
+    isbn = {978-1-66544-450-7},
     address = {Virtual Conference},
     booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
     month = {11},
