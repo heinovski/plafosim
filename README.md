@@ -6,8 +6,8 @@
 
 [PlaFoSim](https://www.plafosim.de) - A simple and scalable simulator for platoon formation.
 
-The idea of PlaFoSim is to simulate the process of forming platoons from individually driven vehicle.
-While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is more abstract. That is V2V uses an Unit Disc Model (UDM) and maneuvers are implemented by teleports.
+PlaFoSim aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
+While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is implemented in a more abstract way.
 
 | Scenario | Advertisement | Assignment | Maneuver |
 | -------- | ------------- | ---------- | -------- |
@@ -18,10 +18,6 @@ This tool will be published here:
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021. (to appear)
 
 ---
-
-## Quickstart
-
-```./plafosim.py```
 
 ## Installation
 
@@ -42,7 +38,7 @@ pip3 install -r requirements.opt.txt
 You can use the simulator as module as well as from the command-line.
 Currently, only command-line is thorougly tested and thus completely available though.
 
-### Command-line
+### Quickstart
 
 Use the following command to run a simulation with the default configuration:
 
