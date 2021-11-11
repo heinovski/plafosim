@@ -27,7 +27,6 @@ pandas = "^1.1"
 tqdm = "^4.61"
 
 [tool.poetry.dev-dependencies]
-
 coverage = "^5.5"
 coverage-badge = "^1.0"
 matplotlib = "^3.4"
@@ -38,7 +37,7 @@ statsmodels = "^0.12"
 ipython = "^7.29.0"
 
 [tool.poetry.scripts]
-plafosim = "plafosim.plafosim:main"
+plafosim = "plafosim.cli:main"
 # TODO: other scripts
 # with poetry 1.2, we can be more flexible
 # see https://github.com/python-poetry/poetry/issues/241
