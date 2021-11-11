@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "plafosim"
+version = "0.13.2"
+description = "A simple and scalable simulator for platoon formation."
+license = "GPL-3.0-or-later"
+authors = [
+    "Julian Heinovski <heinovski@ccs-labs.org>",
+    "Dominik S. Buse <buse@ccs-labs.org",
+]
+readme = "README.md"
+homepage = "https://www.plafosim.de"
+repository = "https://github.com/heinovski/plafosim"
+documentation = "https://plafosim.readthedocs.io/"
+packages = [
+    { include = "plafosim", from="src" },
+]
+include = [
+    "LICENSE",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+numpy = "^1.19"
+ortools = "~9.0"
+pandas = "^1.1"
+tqdm = "^4.61"
+
+[tool.poetry.dev-dependencies]
+
+coverage = "^5.5"
+coverage-badge = "^1.0"
+matplotlib = "^3.4"
+pytest = "^6.2"
+pytest-cov = "^2.12"
+seaborn = "^0.11"
+statsmodels = "^0.12"
+ipython = "^7.29.0"
+
+[tool.poetry.scripts]
+plafosim = "plafosim.plafosim:main"
+# TODO: other scripts
+# with poetry 1.2, we can be more flexible
+# see https://github.com/python-poetry/poetry/issues/241
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
