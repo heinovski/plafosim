@@ -13,9 +13,11 @@ While the main focus of the simulator is on the assignment process, simulation o
 | -------- | ------------- | ---------- | -------- |
 ![Scenario](doc/scenario.png) | ![Advertisement](doc/advertisement.png) | ![Assignment](doc/assignment.png) | ![Maneuver](doc/maneuver.png) |
 
-This tool will be published here:
+PlaSoSim is published here:
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021. (to appear)
+
+Please note that PlaFoSim is still under heavy development.
 
 ---
 
