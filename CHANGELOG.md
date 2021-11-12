@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.1) - 2021-11-12
+* Added dedicated directory for algorithms
+* Added dedicated directory for algorithms (#376)
+* Fixed ignoring failed CI steps (#380)
+* Moved CF_Model to mobility module (#377)
+* Removed obsolete argument
+* Updated README
+
 ## [0.13.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.0) - 2021-10-20
 * Added citation information of accepted poster publication
 * Added flag to start gui in paused mode
