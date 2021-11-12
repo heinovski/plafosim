@@ -112,7 +112,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--experiment', type=str, help="The name of the experiment to use for all result files")
     parser.add_argument('--vehicles', type=int, default=100, help="The number of vehicles to simulate.")
-    parser.add_argument('--sumo-config', type=str, default="sumocfg/freeway-acc.sumo.cfg", help="The name of the SUMO config file")
+    parser.add_argument('--sumo-config', type=str, default="src/plafosim/sumocfg/freeway-acc.sumo.cfg", help="The name of the SUMO config file")
     args = parser.parse_args()
 
     main(args.sumo_config, args.vehicles, args.experiment)
