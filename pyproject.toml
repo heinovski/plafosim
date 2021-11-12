@@ -18,6 +18,9 @@ include = [
     "LICENSE",
 ]
 
+[tool.poetry.urls]
+Changelog = "https://github.com/heinovski/plafosim/CHANGELOG.md"
+
 [tool.poetry.dependencies]
 python = "^3.7"
 
