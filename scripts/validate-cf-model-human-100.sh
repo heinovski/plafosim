@@ -75,7 +75,7 @@ echo "Running SUMO..."
     --gui-settings-file $ROOT/src/plafosim/sumocfg/freeway.gui.xml \
     --lanechange-output $experiment-changes.xml \
     --net-file $ROOT/src/plafosim/sumocfg/freeway.net.xml \
-    --route-files $ROOT/src/plafosim/sumocfg/freeway-$experiment.rou.xml \
+    --route-files $ROOT/scripts/sumocfg/freeway-$experiment.rou.xml \
     --seed 1338 \
     --step-length 1 \
     --step-method.ballistic false \
