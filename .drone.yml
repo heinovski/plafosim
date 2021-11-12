@@ -104,7 +104,6 @@ name: correctness
 steps:
 - name: Human
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
-  failure: ignore  # FIXME: remove after seeds and models have been fixed
   commands:
     - apt update
     - apt install time
@@ -113,7 +112,6 @@ steps:
     - ./scripts/validate-cf-model-human-single.sh
     - ./scripts/validate-cf-model-human-100.sh
 - name: ACC
-  failure: ignore  # FIXME: remove after seeds and models have been fixed
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
@@ -124,7 +122,6 @@ steps:
     - ./scripts/validate-cf-model-acc-single.sh
     - ./scripts/validate-cf-model-acc-100.sh
 - name: CACC
-  failure: ignore  # FIXME: remove after seeds and models have been fixed
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
