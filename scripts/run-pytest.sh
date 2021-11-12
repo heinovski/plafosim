@@ -18,7 +18,5 @@
 
 ROOT=$(pwd)/$(dirname $0)/..
 
-export PYTHONPATH=${ROOT}/src
-
 # NOTE: make sure to have pytest-cov installed as well
 pytest -v --cov=plafosim --cov-report term-missing:skip-covered ${ROOT}/tests/unit_tests ${ROOT}/tests/integration
