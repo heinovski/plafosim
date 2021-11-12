@@ -94,7 +94,7 @@ python3 plafosim.py --formation-algorithm speedposition --formation-strategy dis
 
 You can get a very simple live GUI based on SUMO by using the parameter `gui`:
 
-```python3 plafosim.py --gui true```
+```python3 plafosim.py --gui```
 
 ![](doc/gui.png)
 
