@@ -72,10 +72,10 @@ echo "Running SUMO..."
     --device.fcd.deterministic \
     --emission-output $experiment-emissions.xml \
     --fcd-output $experiment-traces.xml \
-    --gui-settings-file $ROOT/sumocfg/freeway.gui.xml \
+    --gui-settings-file $ROOT/src/plafosim/sumocfg/freeway.gui.xml \
     --lanechange-output $experiment-changes.xml \
-    --net-file $ROOT/sumocfg/freeway.net.xml \
-    --route-files $ROOT/sumocfg/freeway-$experiment.rou.xml \
+    --net-file $ROOT/src/plafosim/sumocfg/freeway.net.xml \
+    --route-files $ROOT/src/plafosim/sumocfg/freeway-$experiment.rou.xml \
     --seed 1338 \
     --step-length 1 \
     --step-method.ballistic false \

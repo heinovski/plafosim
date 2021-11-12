@@ -68,7 +68,7 @@ echo "Running SUMO..."
 /usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
     $ROOT/scripts/run-plexe-acc.py \
     --experiment $experiment \
-    --sumo-config sumocfg/freeway-acc.sumo.cfg \
+    --sumo-config ${ROOT}/src/plafosim/sumocfg/freeway-acc.sumo.cfg \
     --vehicles 100 \
     2>&1 | tee ${experiment}_sumo.log
 
