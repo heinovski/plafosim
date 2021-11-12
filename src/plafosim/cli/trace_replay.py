@@ -19,11 +19,11 @@
 import argparse
 import logging
 import os
-import pandas
 import random
 import sys
 import time
 
+import pandas
 from tqdm import tqdm
 
 from plafosim import __version__
