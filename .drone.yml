@@ -20,18 +20,28 @@ type: docker
 name: tests
 
 steps:
+- name: build
+  image: python:3.8-buster
+  commands:
+    - pip install poetry
+    - poetry build
+- name: install (wheel)
+  image: python:3.8-buster
+  commands:
+    - python3 -m venv .venv
+    - . .venv/bin/activate
+    - pip install --upgrade wheel pip pytest pytest-cov
+    - pip install dist/plafosim-*-py3-none-any.whl
 - name: unit
   image: python:3.8-buster
   commands:
-    - pip install poetry
-    - poetry install
-    - poetry run pytest -v --cov=plafosim tests/unit_tests
+    - . .venv/bin/activate
+    - pytest -v --cov=plafosim tests/unit_tests
 - name: integration
   image: python:3.8-buster
   commands:
-    - pip install poetry
-    - poetry install
-    - poetry run pytest -v tests/integration
+    - . .venv/bin/activate
+    - pytest -v tests/integration
 - name: coverage
   image: python:3.8-buster
   environment:
@@ -54,42 +64,50 @@ type: docker
 name: execution
 
 steps:
+- name: build
+  image: python:3.8-buster
+  commands:
+    - pip install poetry
+    - poetry build
+- name: install (wheel)
+  image: python:3.8-buster
+  commands:
+    - python3 -m venv .venv
+    - . .venv/bin/activate
+    - pip install --upgrade wheel pip
+    - pip install dist/plafosim-*-py3-none-any.whl
 - name: no formation
   image: python:3.8-buster
   environment:
     SEED: ${DRONE_BUILD_NUMBER}
   commands:
-    - pip install poetry
-    - poetry install
+    - . .venv/bin/activate
       # we are testing both vehicle types
-    - poetry run plafosim --vehicles 100 --penetration 0.5 --random-seed $SEED
+    - plafosim --vehicles 100 --penetration 0.5 --random-seed $SEED
 - name: distributed formation
   image: python:3.8-buster
   environment:
     SEED: ${DRONE_BUILD_NUMBER}
   commands:
-    - pip install poetry
-    - poetry install
+    - . .venv/bin/activate
       # we are testing both vehicle types
-    - poetry run plafosim --vehicles 100 --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
+    - plafosim --vehicles 100 --penetration 0.5 --formation-algorithm speedposition --formation-strategy distributed --random-seed $SEED
 - name: centralized formation (greedy)
   image: python:3.8-buster
   environment:
     SEED: ${DRONE_BUILD_NUMBER}
   commands:
-    - pip install poetry
-    - poetry install
+    - . .venv/bin/activate
       # we are testing both vehicle types
-    - poetry run plafosim --vehicles 100 --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
+    - plafosim --vehicles 100 --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
 - name: centralized formation (optimal)
   image: python:3.8-buster
   environment:
     SEED: ${DRONE_BUILD_NUMBER}
   commands:
-    - pip install poetry
-    - poetry install
+    - . .venv/bin/activate
       # we are testing both vehicle types
-    - poetry run plafosim --vehicles 100 --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
+    - plafosim --vehicles 100 --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 
 trigger:
   ref:
@@ -104,34 +122,37 @@ type: docker
 name: correctness
 
 steps:
+- name: setup
+  image: python:3.8-buster
+  environment:
+    POETRY_VIRTUALENVS_IN_PROJECT: true
+  commands:
+    - pip install poetry
+    - poetry install
+    - poetry run pip install git+https://github.com/michele-segata/plexe-pyapi.git
 - name: Human
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
     - apt install time
-    - pip install poetry
-    - poetry install
-    - poetry run ./scripts/validate-cf-model-human-single.sh
-    - poetry run ./scripts/validate-cf-model-human-100.sh
+    - . .venv/bin/activate
+    - ./scripts/validate-cf-model-human-single.sh
+    - ./scripts/validate-cf-model-human-100.sh
 - name: ACC
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
     - apt install time
-    - pip install poetry
-    - poetry install
-    - poetry run pip install git+https://github.com/michele-segata/plexe-pyapi.git
-    - poetry run ./scripts/validate-cf-model-acc-single.sh
-    - poetry run ./scripts/validate-cf-model-acc-100.sh
+    - . .venv/bin/activate
+    - ./scripts/validate-cf-model-acc-single.sh
+    - ./scripts/validate-cf-model-acc-100.sh
 - name: CACC
   image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
     - apt install time
-    - pip install poetry
-    - poetry install
-    - poetry run pip install git+https://github.com/michele-segata/plexe-pyapi.git
-    - poetry run ./scripts/validate-cf-model-cacc-100.sh
+    - . .venv/bin/activate
+    - ./scripts/validate-cf-model-cacc-100.sh
 - name: data
   image: maurosoft1973/alpine-lftp
   environment:
@@ -178,24 +199,33 @@ type: docker
 name: performance
 
 steps:
+- name: build
+  image: python:3.8-buster
+  commands:
+    - pip install poetry
+    - poetry build
+- name: install (wheel)
+  image: python:3.8-buster
+  commands:
+    - python3 -m venv .venv
+    - . .venv/bin/activate
+    - pip install --upgrade wheel pip
+    - pip install dist/plafosim-*-py3-none-any.whl
 - name: Human
   image: python:3.8-buster
   commands:
-    - pip install poetry
-    - poetry install
-    - poetry run plafosim --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 0
+    - . .venv/bin/activate
+    - plafosim --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 0
 - name: ACC
   image: python:3.8-buster
   commands:
-    - pip install poetry
-    - poetry install
-    - poetry run plafosim --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 1
+    - . .venv/bin/activate
+    - plafosim --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 1
 - name: CACC
   image: python:3.8-buster
   commands:
-    - pip install poetry
-    - poetry install
-    - poetry run plafosim --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --lanes 4 --penetration 1 --start-as-platoon true
+    - . .venv/bin/activate
+    - plafosim --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --lanes 4 --penetration 1 --start-as-platoon true
 
 trigger:
   ref:
