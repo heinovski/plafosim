@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.13.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.2) - 2021-11-17
+* Fixed typo in README
+* Updated citation information
+
 ## [0.13.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.1) - 2021-11-12
 * Added dedicated directory for algorithms
 * Added dedicated directory for algorithms (#376)
