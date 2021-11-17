@@ -54,9 +54,9 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     If you are working with PlaFoSim, please cite the following paper:
 
     Julian Heinovski, Dominik S. Buse and Falko Dressler,
-    "Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
+    "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
     Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
-    Poster Session, Virtual Conference, November 2021. (to appear)
+    Poster Session, Virtual Conference, November 2021.
     """,
     )
 
@@ -68,7 +68,6 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         version="""
 @inproceedings{heinovski2021scalable,
     author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
-    note = {to appear},
     title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
     publisher = {IEEE},
     issn = {2157-9865},

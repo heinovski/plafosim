@@ -15,7 +15,7 @@ While the main focus of the simulator is on the assignment process, simulation o
 
 PlaFoSim is published here:
 
-> Julian Heinovski, Dominik S. Buse and Falko Dressler, "Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021. (to appear)
+> Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021.
 
 Please note that PlaFoSim is still under heavy development.
 
@@ -145,13 +145,12 @@ You can have a look at `.drone.yml` for details regarding the execution.
 
 If you are working with `PlaFoSim`, please cite the following paper:
 
-> Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021. (to appear)
+> Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021.
 
 ```bibtex
 @inproceedings{heinovski2021scalable,
     author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
-    note = {to appear},
-    title = {{Poster: Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
+    title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
     publisher = {IEEE},
     issn = {2157-9865},
     isbn = {978-1-66544-450-7},
