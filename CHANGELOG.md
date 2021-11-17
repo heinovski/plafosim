@@ -1,10 +1,10 @@
 # Changelog
 
-## [0.13.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.2) - 2021-11-17
+## [0.13.2](https://github.com/heinovski/plafosim/releases/tag/v0.13.2) - 2021-11-17
 * Fixed typo in README
 * Updated citation information
 
-## [0.13.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.1) - 2021-11-12
+## [0.13.1](https://github.com/heinovski/plafosim/releases/tag/v0.13.1) - 2021-11-12
 * Added dedicated directory for algorithms
 * Added dedicated directory for algorithms (#376)
 * Fixed ignoring failed CI steps (#380)
@@ -12,7 +12,7 @@
 * Removed obsolete argument
 * Updated README
 
-## [0.13.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.13.0) - 2021-10-20
+## [0.13.0](https://github.com/heinovski/plafosim/releases/tag/v0.13.0) - 2021-10-20
 * Added citation information of accepted poster publication
 * Added flag to start gui in paused mode
 * Added integration tests for spawning (#348)
@@ -24,7 +24,7 @@
 * Updated generation of pre-filled platoon
 * Updated Platoon Data (#373)
 
-## [0.12.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.12.0) - 2021-09-08
+## [0.12.0](https://github.com/heinovski/plafosim/releases/tag/v0.12.0) - 2021-09-08
 * Added argument for connecting to the gui later (#340)
 * Added argument for showing the progress bar
 * Added arguments for drawing labels within the GUI
@@ -54,7 +54,7 @@
 * Updated vehicle spawning (#321, #353)
 * Vectorized CF Models (#323, #354)
 
-## [v0.11.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.4) - 2021-07-21
+## [v0.11.4](https://github.com/heinovski/plafosim/releases/tag/v0.11.4) - 2021-07-21
 * Added bootstrapping to calculate confidence interval in comparison
 * Added explicit depart speed 0
 * Added KS test for desired speed in comparison
@@ -68,7 +68,7 @@
 * Updated implicit default value for random seed
 * Updated validation scripts
 
-## [v0.11.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.3) - 2021-07-19
+## [v0.11.3](https://github.com/heinovski/plafosim/releases/tag/v0.11.3) - 2021-07-19
 * Added check for invalid depart rate
 * Added check for useful depart probability
 * Fixed calculation of depart position
@@ -78,15 +78,15 @@
 * Updated default value of vehicle density parameter
 * Updated string representation of platoon
 
-## [v0.11.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.2) - 2021-07-02
+## [v0.11.2](https://github.com/heinovski/plafosim/releases/tag/v0.11.2) - 2021-07-02
 * Added maximum trip length (#315)
 * Added recording of continuous simulation trace (#316)
 * Added safety check for insertions (#265, #317)
 
-## [v0.11.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.1) - 2021-06-24
+## [v0.11.1](https://github.com/heinovski/plafosim/releases/tag/v0.11.1) - 2021-06-24
 * Updated result files for platoon related data
 
-## [v0.11.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.11.0) - 2021-06-21
+## [v0.11.0](https://github.com/heinovski/plafosim/releases/tag/v0.11.0) - 2021-06-21
 * Added additional constraints to optimization problem (#304)
 * Added distinction between desired speed and CC target speed (#309)
 * Added deprecation warning to communication code
@@ -119,7 +119,7 @@
 * Updated validation scripts
 * Updated variable access to gain speed
 
-## [v0.10.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.10.0) - 2021-06-02
+## [v0.10.0](https://github.com/heinovski/plafosim/releases/tag/v0.10.0) - 2021-06-02
 * Added comparison of cf models with single vehicle (#229, #293)
 * Added comparison to Plexe for CACC (#84)
 * Added emissions to comparison (#177)
@@ -136,11 +136,11 @@
 * Updated docstrings
 * Updated logging
 
-## [v0.9.6](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.6) - 2021-05-25
+## [v0.9.6](https://github.com/heinovski/plafosim/releases/tag/v0.9.6) - 2021-05-25
 * Fixed assert in result recording (#278)
 * Fixed spawning of static platoon (#277)
 
-## [v0.9.5](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.5) - 2021-05-17
+## [v0.9.5](https://github.com/heinovski/plafosim/releases/tag/v0.9.5) - 2021-05-17
 * Added argument for sumo gui config
 * Added average candidate metric (#276)
 * Added checking the maximum speed
@@ -151,7 +151,7 @@
 * Updated argument help
 * Updated CACC calculation
 
-## [v0.9.4](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.4) - 2021-05-10
+## [v0.9.4](https://github.com/heinovski/plafosim/releases/tag/v0.9.4) - 2021-05-10
 * Added flag for updating a platoon's desired speed after a maneuver
 * Fixed a lot of typos
 * Fixed vehicle moving while join maneuver
@@ -160,23 +160,23 @@
 * Updated documentation
 * Updated maximum teleport distance
 
-## [v0.9.3](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.3) - 2021-04-28
+## [v0.9.3](https://github.com/heinovski/plafosim/releases/tag/v0.9.3) - 2021-04-28
 * Updated copyright headers
 * Updated dependencies
 * Updated documentation
 
-## [v0.9.2](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.2) - 2021-04-20
+## [v0.9.2](https://github.com/heinovski/plafosim/releases/tag/v0.9.2) - 2021-04-20
 * Added requirements.txt
 * Added version argument
 * Updated comments
 * Updated README
 
-## [v0.9.1](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.1) - 2021-03-19
+## [v0.9.1](https://github.com/heinovski/plafosim/releases/tag/v0.9.1) - 2021-03-19
 * Added drawing ramps and road end (#253)
 * Added maximum teleport distance (#267)
 * Fixed candidate metrics (#266)
 
-## [v0.9.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.9.0) - 2021-03-04
+## [v0.9.0](https://github.com/heinovski/plafosim/releases/tag/v0.9.0) - 2021-03-04
 * Added all leave cases (simplified) (#206)
 * Added formation statistics
 * Added make space before a teleporting during a join (#232)
@@ -212,7 +212,7 @@
 * Updated result recording (#222, #223)
 * Updated warnings
 
-## [v0.8.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.8.0) - 2020-12-03
+## [v0.8.0](https://github.com/heinovski/plafosim/releases/tag/v0.8.0) - 2020-12-03
 * Added communication range between vehicles (#167)
 * Added desired headway time
 * Added emission model (#50)
@@ -242,7 +242,7 @@
 * Updated the minimum gap parameter
 * Updated units in cli script
 
-## [v0.7.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.7.0) - 2020-10-15
+## [v0.7.0](https://github.com/heinovski/plafosim/releases/tag/v0.7.0) - 2020-10-15
 * Added a more complex join (#124)
 * Added dedicated modules (#111)
 * Added default values to all simulator arguments
@@ -274,7 +274,7 @@
 * Updated testing of Simulator (#126)
 * Updated trace playing script
 
-## [v0.6.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.6.0) - 2020-09-22
+## [v0.6.0](https://github.com/heinovski/plafosim/releases/tag/v0.6.0) - 2020-09-22
 * Added an abstract base class for formation algorithms
 * Added functionality to track a vehicle in the gui (#89)
 * Added proper logging (#92)
@@ -286,7 +286,7 @@
 * Updated platoon class (#93)
 * Updated traffic generation (#79)
 
-## [v0.5.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.5.0) - 2020-09-04
+## [v0.5.0](https://github.com/heinovski/plafosim/releases/tag/v0.5.0) - 2020-09-04
 * Added ACC car-following model (#51)
 * Added CACC car-following model (#61)
 * Added comparison to Sumo for ACC
@@ -296,14 +296,14 @@
 * Reworked lane change safety check
 * Updated comparison script (#71, #73, #74)
 
-## [v0.4.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.4.0) - 2020-08-10
+## [v0.4.0](https://github.com/heinovski/plafosim/releases/tag/v0.4.0) - 2020-08-10
 * Added comparison step to CI
 * Added execution step to CI
 * Added script to compare the simulator to Sumo
 * Added simple lane change model
 * Updated car-following model
 
-## [v0.3.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.3.0) - 2020-08-03
+## [v0.3.0](https://github.com/heinovski/plafosim/releases/tag/v0.3.0) - 2020-08-03
 * Added blocked warning
 * Added platoon class
 * Added testing framework
@@ -312,7 +312,7 @@
 * Updated trip generation
 * Update the step log
 
-## [v0.2.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.2.0) - 2020-07-06
+## [v0.2.0](https://github.com/heinovski/plafosim/releases/tag/v0.2.0) - 2020-07-06
 * Added functionality to removed finished vehicles
 * Added neighbor table stub
 * Added simple live GUI by using Sumo
@@ -322,7 +322,7 @@
 * Updated messaging
 * Updated result recording
 
-## [v0.1.0](https://webgit.ccs-labs.org/git/CCS/plafosim/releases/tag/v0.1.0) - 2020-06-04
+## [v0.1.0](https://github.com/heinovski/plafosim/releases/tag/v0.1.0) - 2020-06-04
 * Began a new project
 * Added a VehicleType class
 * Added CLI script with arguments
