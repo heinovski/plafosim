@@ -93,13 +93,15 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--save-snapshot",
         type=str,
         default=None,
-        help="The name of a snapshot file to save",
+        metavar="FILE",
+        help="Save a snapshot of the scenario to FILE and exit",
     )
     parser.add_argument(
         "--load-snapshot",
         type=str,
         default=None,
-        help="The name of a snapshot file to load",
+        metavar="FILE",
+        help="Load a snapshot of the scenario from FILE and run the simulation",
     )
 
     # road network properties
