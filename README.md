@@ -34,7 +34,7 @@ pip3 install -r requirements.txt
 ## Running a Simulation
 
 You can use the simulator as module as well as from the command-line.
-Currently, only command-line is thorougly tested and thus completely available though.
+Currently, only command-line is thoroughly tested and thus completely available though.
 
 ### Quickstart
 
