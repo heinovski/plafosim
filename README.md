@@ -81,7 +81,7 @@ python3 plafosim.py --random-driving-speed true --desired-speed 36
 python3 plafosim.py --vehicles 500 --random-depart-position true --random-arrival-position true --depart-desired true
 
 # Pre fill the freeway with 1000 vehicles
-python3 plafosim.py --vehicles 1000 --pre fill true
+python3 plafosim.py --vehicles 1000 --pre-fill true
 
 # Configure 50% of the vehicles with Advanced Cruise Control (ACC) and a headway time of 1.5s
 python3 plafosim.py --penetration 0.5 --acc-headway-time 1.5
