@@ -72,7 +72,7 @@ You can see the complete list of available parameters in the help:
 
 ```
 # Configure a 100km freeway with ramps at every 10km
-python3 plafosim.py --road-length 100 --ramp-interval 10000
+python3 plafosim.py --road-length 100 --ramp-interval 10
 
 # Configure random (normally distributed) desired driving speed of 130km/h
 python3 plafosim.py --random-driving-speed true --desired-speed 36
