@@ -85,6 +85,11 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         version=f"%(prog)s {__version__}",
     )
     parser.add_argument(
+        "-n", "--dry-run",
+        action="store_true",
+        help="show the current configuration and exit",
+    )
+    parser.add_argument(
         "--save-snapshot",
         type=str,
         default=None,
@@ -651,6 +656,10 @@ def main():
 
     # get argument values (and gui argument group)
     args, gui = parse_args()
+
+    if args.dry_run:
+        print(f"Current configuration:\n{dict(sorted(vars(args).items()))}")
+        return
 
     simulator = None
     if args.load_snapshot:
