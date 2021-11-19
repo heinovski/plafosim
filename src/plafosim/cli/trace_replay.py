@@ -27,6 +27,7 @@ import pandas
 from tqdm import tqdm
 
 from plafosim import __version__
+from plafosim.gui import remove_gui_vehicle
 from plafosim.simulator import DEFAULTS
 from plafosim.util import find_resource
 
@@ -160,11 +161,6 @@ def move_vehicle(vid: str, position: str, speed: str, lane: str):
     # traci.vehicle.moveToXY(vehID=str(vid), x=position, y=traci.vehicle.getPosition3D(str(vid))[1], lane=lane, edgeID='')
 
 
-def remove_vehicle(vid: str):
-    LOG.debug(f"Removing vehicle {vid}")
-    traci.vehicle.remove(vid, 2)
-
-
 def main():
     args = parse_args()
 
@@ -197,7 +193,7 @@ def main():
         # remove vehicles not in trace file
         for vid in traci.vehicle.getIDList():
             if int(vid) not in list(traces.loc[traces.step == step]['id']):
-                remove_vehicle(vid)
+                remove_gui_vehicle(vid)
 
         # sleep for visualization
         time.sleep(args.gui_delay / 1000)
@@ -207,7 +203,7 @@ def main():
 
     # remove all vehicles
     for vid in traci.vehicle.getIDList():
-        remove_vehicle(vid)
+        remove_gui_vehicle(vid)
 
     traci.close(False)
 

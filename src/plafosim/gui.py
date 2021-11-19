@@ -145,6 +145,7 @@ def remove_gui_vehicle(vid: int):
     """
 
     import traci
+    LOG.debug(f"Removing vehicle {vid}")
     traci.vehicle.remove(str(vid), 2)
 
 
