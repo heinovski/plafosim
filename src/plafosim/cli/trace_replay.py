@@ -30,6 +30,8 @@ from plafosim import __version__
 from plafosim.simulator import DEFAULTS
 from plafosim.util import find_resource
 
+LOG = logging.getLogger(__name__)
+
 if 'SUMO_HOME' not in os.environ:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
@@ -140,7 +142,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def add_vehicle(vid: str, position: str, speed: str, lane: str, track_vid: int):
-    logging.debug(f"Adding vehicle {vid} at {position},{lane} with {speed}")
+    LOG.debug(f"Adding vehicle {vid} at {position},{lane} with {speed}")
     traci.vehicle.add(vid, 'route', departPos=float(position), departSpeed=speed, departLane=lane, typeID='vehicle')
     traci.vehicle.setColor(vid, (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1)))
     traci.vehicle.setSpeedMode(vid, 0)
@@ -152,14 +154,14 @@ def add_vehicle(vid: str, position: str, speed: str, lane: str, track_vid: int):
 
 
 def move_vehicle(vid: str, position: str, speed: str, lane: str):
-    logging.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
+    LOG.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
     traci.vehicle.setSpeed(vid, float(speed))
     traci.vehicle.moveTo(vid, pos=float(position), laneID=f'edge_0_0_{lane}')
     # traci.vehicle.moveToXY(vehID=str(vid), x=position, y=traci.vehicle.getPosition3D(str(vid))[1], lane=lane, edgeID='')
 
 
 def remove_vehicle(vid: str):
-    logging.debug(f"Removing vehicle {vid}")
+    LOG.debug(f"Removing vehicle {vid}")
     traci.vehicle.remove(vid, 2)
 
 
@@ -167,14 +169,14 @@ def main():
     args = parse_args()
 
     # TODO add custom filter that prepends the log entry with the step time
-    logging.basicConfig(level=getattr(logging, args.log_level.upper(), None), format="%(levelname)s: %(message)s")
+    logging.basicConfig(level=getattr(LOG, args.log_level.upper(), None), format="%(levelname)s: %(message)s")
 
     sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
     sumoCmd = [sumoBinary, '-Q', '-c', args.sumo_config, '--collision.mingap-factor', '0', '--collision.action', 'none']
 
     traci.start(sumoCmd)
 
-    logging.info("Replaying vehicle trace")
+    LOG.info("Replaying vehicle trace")
 
     traces = pandas.read_csv(args.trace_file).astype({'step': int})
     assert not traces.empty
@@ -201,7 +203,7 @@ def main():
         time.sleep(args.gui_delay / 1000)
 
     # end of file
-    logging.info("Reached end of trace file")
+    LOG.info("Reached end of trace file")
 
     # remove all vehicles
     for vid in traci.vehicle.getIDList():
