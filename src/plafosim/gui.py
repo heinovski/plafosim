@@ -160,9 +160,8 @@ def prune_vehicles(keep_vids: list):
     """
 
     import traci
-    for vid in traci.vehicle.getIDList():
-        if int(vid) not in keep_vids:
-            remove_gui_vehicle(vid)
+    for vid in set(map(int, traci.vehicle.getIDList())) - set(keep_vids):
+        remove_gui_vehicle(vid)
 
 
 def close_gui():
