@@ -23,13 +23,10 @@ Please note that PlaFoSim is still under heavy development.
 
 ## Installation
 
-- Install Python3 (>=3.6.9)
+- Install Python (>=3.7.0)
 - Optionally install SUMO (>=1.6.0)
-- Clone the repository
-- Install the minimum requirements (for running a simulation):
-```
-pip3 install -r requirements.txt
-```
+- Install via pypi:
+```pip install plafosim```
 
 ## Running a Simulation
 
@@ -38,16 +35,16 @@ Currently, only command-line is thoroughly tested and thus completely available 
 
 ### Quickstart
 
-Use the following command to run a simulation with the default configuration:
+Use PlaFoSim's binary to run a simulation with the default configuration:
 
-```python3 plafosim.py```
+```plafosim```
 
 ### Advanced Simulation Control
 
 You can use a variety of different parameters to customize the scenario and the simulation itself.
 E.g., use the parameter `vehicles` to configure the number of vehicles in the simulation:
 
-```python3 plafosim.py --vehicles 1000```
+```plafosim --vehicles 1000```
 
 The available parameters are grouped into different categories:
 
@@ -66,35 +63,35 @@ The available parameters are grouped into different categories:
 
 You can see the complete list of available parameters in the help:
 
-```python3 plafosim.py -h, --help```
+```plafosim -h, --help```
 
 ### Examples
 
 ```
 # Configure a 100km freeway with ramps at every 10km
-python3 plafosim.py --road-length 100 --ramp-interval 10
+plafosim --road-length 100 --ramp-interval 10
 
 # Configure random (normally distributed) desired driving speed of 130km/h
-python3 plafosim.py --random-driving-speed true --desired-speed 36
+plafosim --random-driving-speed true --desired-speed 36
 
 # Configure random trips for 500 vehicles
-python3 plafosim.py --vehicles 500 --random-depart-position true --random-arrival-position true --depart-desired true
+plafosim --vehicles 500 --random-depart-position true --random-arrival-position true --depart-desired true
 
 # Pre fill the freeway with 1000 vehicles
-python3 plafosim.py --vehicles 1000 --pre-fill true
+plafosim --vehicles 1000 --pre-fill true
 
 # Configure 50% of the vehicles with Advanced Cruise Control (ACC) and a headway time of 1.5s
-python3 plafosim.py --penetration 0.5 --acc-headway-time 1.5
+plafosim --penetration 0.5 --acc-headway-time 1.5
 
 # Enable a simple, distributed platoon formation algorithm [1] in order to form platoons every 30s
-python3 plafosim.py --formation-algorithm speedposition --formation-strategy distributed --execution-interval 30
+plafosim --formation-algorithm speedposition --formation-strategy distributed --execution-interval 30
 ```
 
 ### Live GUI
 
 You can get a very simple live GUI based on SUMO by using the parameter `gui`:
 
-```python3 plafosim.py --gui```
+```plafosim --gui```
 
 ![](doc/gui.png)
 
@@ -102,31 +99,37 @@ More options for the live GUI can be found within the ``gui properties`` section
 
 ## Re-Playing a Simulation
 
-The simulation writes a trace for every simulated vehicle to a trace file (default `results_vehicle_traces.csv`).
-You can view it by using a corresponding script that is shipped within this repository:
+The simulation can write a trace file for every simulated vehicle (default `results_vehicle_traces.csv`).
+You can replay the simulation based on the trace file by using a corresponding binary:
 
-```python3 scripts/play-vehicle-trace.py results_vehicle_traces.csv```
+```plafosim-replay results_vehicle_traces.csv```
 
 To see all options of this script, run:
 
-```python3 scripts/play-vehicle-trace.py -h, --help```
+```plafosim-replay -h, --help```
 
 ## Extending
 
+- Clone the repository
+- Install poetry
+```pip install poetry```
+- Install PlaFoSim from source in editable mode
+```poetry install```
+- Run PlaFoSim in the virtual environment with
+```poetry run plafosim```
+
 In order to add a new formation algorithm, you need to follow these steps:
 - Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`)
-- Add the name of your algorithm to the list of available algorithms within `plafosim.py`
-- Add the argument parser group of your new algorithm to `plafosim.py`
+- Add the name of your algorithm to the list of available algorithms within `plafosim`
+- Add the argument parser group of your new algorithm to `plafosim`
 - Add parsing of the algorithm name to `__init__` within `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`)
 
 ## Contributing
 
 In order to contribute, please follow these steps:
-- Install also the optional requirements (for testing and CI):
-```
-pip3 install -r requirements.opt.txt
-```
-- Make your desired changes
+- Install PlaFoSim from source (see above)
+- Make desired changes
+- Run the tests located in `scripts` (see `.drone.yml`)
 - Submit a Pull Request (PR)
 
 ### Testing
