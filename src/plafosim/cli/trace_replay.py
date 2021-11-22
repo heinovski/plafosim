@@ -30,7 +30,6 @@ from plafosim.gui import (
     add_gui_vehicle,
     move_gui_vehicle,
     prune_vehicles,
-    remove_gui_vehicle,
 )
 from plafosim.simulator import DEFAULTS
 from plafosim.util import find_resource
