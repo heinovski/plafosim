@@ -305,7 +305,7 @@ plafosim_traces = (
         diff_desired=lambda x: x.speed - plafosim_trips.desiredSpeed,
         diff_sumo_speed=lambda x: x.speed - sumo_traces.speed,
         diff_sumo_position=lambda x: x.position - sumo_traces.position,
-        diff_sumo_lane=lambda x: abs(x.lane - sumo_traces.lane)
+        diff_sumo_lane=lambda x: x.lane - sumo_traces.lane,
     )
     .reset_index(drop=True)
 )
