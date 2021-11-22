@@ -29,6 +29,7 @@ from plafosim import __version__
 from plafosim.gui import (
     add_gui_vehicle,
     move_gui_vehicle,
+    prune_vehicles,
     remove_gui_vehicle,
 )
 from plafosim.simulator import DEFAULTS
@@ -181,10 +182,8 @@ def main():
 
         traci.simulationStep(step)
 
-        # remove vehicles not in trace file
-        for vid in traci.vehicle.getIDList():
-            if int(vid) not in list(traces.loc[traces.step == step]['id']):
-                remove_gui_vehicle(vid)
+        # remove vehicles not in trace file (keep vehicles in trace file)
+        prune_vehicles(keep_vids=list(traces.loc[traces.step == step]['id']))
 
         # sleep for visualization
         time.sleep(args.gui_delay / 1000)
@@ -193,8 +192,7 @@ def main():
     LOG.info("Reached end of trace file")
 
     # remove all vehicles
-    for vid in traci.vehicle.getIDList():
-        remove_gui_vehicle(vid)
+    prune_vehicles(keep_vids=[])
 
     traci.close(False)
 
