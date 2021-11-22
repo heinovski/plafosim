@@ -46,37 +46,40 @@ def start_gui(config: str, play: bool = True):
     traci.start(command)
 
 
-def add_gui_vehicle(vehicle: Vehicle, track: bool = False):
+def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: tuple = (0, 255, 0), track: bool = False):
     """
     Adds a vehicle to the GUI.
 
     Parameters
     ----------
-    vehicle : Vehicle
-        The vehicle to add to the GUI
-    track_vehicle : int
-        The id of a vehicle to track within the GUI
+    vid : int
+        The vehicle's id
+    position : float
+        The vehicle's current position
+    lane : int
+        The vehicle's current lane
+    speed : float
+        The vehicle's current speed
+    color : tuple
+        The vehicle's current color
+    track : bool
+        Whether to track this vehicle within the GUI
     """
 
-    assert isinstance(vehicle, Vehicle)
-    vid = str(vehicle.vid)
+    LOG.debug(f"Adding vehicle {vid} at {position},{lane} with {speed},{color}")
     import traci
     if vid not in traci.vehicle.getIDList():
         traci.vehicle.add(
-            vehID=vid,
+            vehID=str(vid),
             routeID='route',
-            departPos=str(vehicle.position),
-            departSpeed=str(vehicle.speed),
-            departLane=str(vehicle.lane),
-            typeID='vehicle'
+            typeID='vehicle',
+            departLane=lane,
+            departPos=position,
+            departSpeed=speed,
         )
-        from .platooning_vehicle import PlatooningVehicle
-        if isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon:
-            traci.vehicle.setColor(vid, vehicle.platoon.leader._color)
-        else:
-            traci.vehicle.setColor(vid, vehicle._color)
-        traci.vehicle.setSpeedMode(vid, 0)
-        traci.vehicle.setLaneChangeMode(vid, 0)
+        traci.vehicle.setColor(str(vid), color)
+        traci.vehicle.setSpeedMode(str(vid), 0)
+        traci.vehicle.setLaneChangeMode(str(vid), 0)
         # track vehicle
         if track:
             traci.gui.trackVehicle("View #0", vid)

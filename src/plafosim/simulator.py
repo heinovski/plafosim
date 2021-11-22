@@ -955,7 +955,18 @@ class Simulator:
                 depart_time=row.depart_time,
             )
             if self._gui and self._step >= self._gui_start:
-                add_gui_vehicle(vehicle, track=vehicle.vid == self._gui_track_vehicle)
+                add_gui_vehicle(
+                    vehicle.vid,
+                    vehicle.position,
+                    vehicle.lane,
+                    vehicle.speed,
+                    color=(
+                        vehicle.platoon.leader._color
+                        if (isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon)
+                        else vehicle._color
+                    ),
+                    track=vehicle.vid == self._gui_track_vehicle,
+                )
             LOG.trace(f"Spawned vehicle {vehicle.vid} ({vehicle.depart_position}-{vehicle.rear_position},{vehicle.depart_lane}).")
 
         # 5) enque remaining
