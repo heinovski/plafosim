@@ -19,7 +19,6 @@
 import argparse
 import logging
 import os
-import random
 import sys
 import time
 
@@ -27,7 +26,10 @@ import pandas
 from tqdm import tqdm
 
 from plafosim import __version__
-from plafosim.gui import remove_gui_vehicle
+from plafosim.gui import (
+    add_gui_vehicle,
+    remove_gui_vehicle,
+)
 from plafosim.simulator import DEFAULTS
 from plafosim.util import find_resource
 
@@ -142,18 +144,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def add_vehicle(vid: str, position: str, speed: str, lane: str, track_vid: int):
-    LOG.debug(f"Adding vehicle {vid} at {position},{lane} with {speed}")
-    traci.vehicle.add(vid, 'route', departPos=float(position), departSpeed=speed, departLane=lane, typeID='vehicle')
-    traci.vehicle.setColor(vid, (random.randrange(0, 255, 1), random.randrange(0, 255, 1), random.randrange(0, 255, 1)))
-    traci.vehicle.setSpeedMode(vid, 0)
-    traci.vehicle.setLaneChangeMode(vid, 0)
-    # track vehicle
-    if vid == str(track_vid):
-        traci.gui.trackVehicle("View #0", vid)
-        traci.gui.setZoom("View #0", 1000000)
-
-
 def move_vehicle(vid: str, position: str, speed: str, lane: str):
     LOG.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
     traci.vehicle.setSpeed(vid, float(speed))
@@ -185,7 +175,14 @@ def main():
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
             if str(vehicle.id) not in traci.vehicle.getIDList():
-                add_vehicle(str(vehicle.id), str(vehicle.position), str(vehicle.speed), str(vehicle.lane), args.track_vehicle)
+                add_gui_vehicle(
+                    vehicle.id,
+                    vehicle.position,
+                    vehicle.lane,
+                    vehicle.speed,
+                    # color=vehicle.color,  # TODO add vehicle color to trace file
+                    track=vehicle.id == args.track_vehicle,
+                )
             move_vehicle(str(vehicle.id), str(vehicle.position), str(vehicle.speed), str(vehicle.lane))
 
         traci.simulationStep(step)
