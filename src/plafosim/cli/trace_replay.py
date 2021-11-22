@@ -30,6 +30,7 @@ from plafosim.gui import (
     add_gui_vehicle,
     move_gui_vehicle,
     prune_vehicles,
+    start_gui,
 )
 from plafosim.simulator import DEFAULTS
 from plafosim.util import find_resource
@@ -151,10 +152,7 @@ def main():
     # TODO add custom filter that prepends the log entry with the step time
     logging.basicConfig(level=getattr(LOG, args.log_level.upper(), None), format="%(levelname)s: %(message)s")
 
-    sumoBinary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
-    sumoCmd = [sumoBinary, '-Q', '-c', args.sumo_config, '--collision.mingap-factor', '0', '--collision.action', 'none']
-
-    traci.start(sumoCmd)
+    start_gui(config=args.sumo_config)
 
     LOG.info("Replaying vehicle trace")
 
