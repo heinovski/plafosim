@@ -2,6 +2,7 @@
 
 [![Version](https://img.shields.io/badge/version-v0.13.2-blue)](CHANGELOG.md)
 [![PyPI](https://img.shields.io/pypi/v/plafosim)](https://pypi.org/project/plafosim/)
+![Python Version](https://img.shields.io/badge/python-3.7-blue)
 
 [PlaFoSim](https://www.plafosim.de) - A simple and scalable simulator for platoon formation.
 
