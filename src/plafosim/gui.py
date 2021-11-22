@@ -15,9 +15,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import logging
 import os
 
 from .vehicle import Vehicle
+
+LOG = logging.getLogger(__name__)
 
 
 def start_gui(config: str, play: bool = True):
