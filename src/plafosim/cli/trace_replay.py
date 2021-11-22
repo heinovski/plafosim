@@ -29,6 +29,7 @@ from plafosim import __version__
 from plafosim.gui import (
     add_gui_vehicle,
     close_gui,
+    gui_step,
     move_gui_vehicle,
     prune_vehicles,
     start_gui,
@@ -43,8 +44,6 @@ if 'SUMO_HOME' not in os.environ:
 
 tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
 sys.path.append(tools)
-
-import traci  # noqa 402
 
 
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
@@ -162,8 +161,10 @@ def main():
 
     min_step = max(traces.step.min(), args.start)
     max_step = min(traces.step.max(), args.end) if args.end != -1 else traces.step.max()
-    traci.simulationStep(min_step)
 
+    gui_step(min_step)
+
+    import traci
     for step in tqdm(range(min_step, max_step), desc="Trace progress", unit='step'):
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
@@ -178,7 +179,7 @@ def main():
                 )
             move_gui_vehicle(vehicle.id, vehicle.position, vehicle.lane, vehicle.speed)
 
-        traci.simulationStep(step)
+        gui_step(step)
 
         # remove vehicles not in trace file (keep vehicles in trace file)
         prune_vehicles(keep_vids=list(traces.loc[traces.step == step]['id']))
