@@ -28,6 +28,7 @@ from tqdm import tqdm
 from plafosim import __version__
 from plafosim.gui import (
     add_gui_vehicle,
+    move_gui_vehicle,
     remove_gui_vehicle,
 )
 from plafosim.simulator import DEFAULTS
@@ -144,13 +145,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def move_vehicle(vid: str, position: str, speed: str, lane: str):
-    LOG.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
-    traci.vehicle.setSpeed(vid, float(speed))
-    traci.vehicle.moveTo(vid, pos=float(position), laneID=f'edge_0_0_{lane}')
-    # traci.vehicle.moveToXY(vehID=str(vid), x=position, y=traci.vehicle.getPosition3D(str(vid))[1], lane=lane, edgeID='')
-
-
 def main():
     args = parse_args()
 
@@ -183,7 +177,7 @@ def main():
                     # color=vehicle.color,  # TODO add vehicle color to trace file
                     track=vehicle.id == args.track_vehicle,
                 )
-            move_vehicle(str(vehicle.id), str(vehicle.position), str(vehicle.speed), str(vehicle.lane))
+            move_gui_vehicle(vehicle.id, vehicle.position, vehicle.lane, vehicle.speed)
 
         traci.simulationStep(step)
 
