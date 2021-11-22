@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.0](https://github.com/heinovski/plafosim/releases/tag/v0.14.0) - 2021-11-22
+* Added packaging with poetry
+* Added dry-run flag
+* Fixed bug in comparison script
+* Updated GUI module
+* Updated README
+* Updated trace replay script
+
 ## [0.13.2](https://github.com/heinovski/plafosim/releases/tag/v0.13.2) - 2021-11-17
 * Fixed typo in README
 * Updated citation information
