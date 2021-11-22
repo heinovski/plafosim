@@ -18,8 +18,6 @@
 import logging
 import os
 
-from .vehicle import Vehicle
-
 LOG = logging.getLogger(__name__)
 
 
