@@ -1234,7 +1234,7 @@ class Simulator:
 
         for vehicle in self._vehicles.values():
             # update vehicles
-            move_gui_vehicle(vehicle)
+            move_gui_vehicle(vehicle.vid, vehicle.position, vehicle.lane, vehicle.speed)
 
         # remove vehicles not in simulator
         prune_vehicles(keep_vids=self._vehicles.keys())

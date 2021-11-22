@@ -86,24 +86,26 @@ def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: t
             traci.gui.setZoom("View #0", 1000000)
 
 
-def move_gui_vehicle(vehicle: Vehicle):
+def move_gui_vehicle(vid: int, position: float, lane: int, speed: float):
     """
     Moves a vehicle in the GUI.
 
     Parameters
     ----------
-    vehicle : Vehicle
-        The vehicle to move
+    vid : int
+        The id of the vehicle to change
+    position : float
+        The vehicle's new position
+    lane : int
+        The vehicle's new lane
+    speed : float
+        The vehicle's new speed
     """
 
-    assert isinstance(vehicle, Vehicle)
-    vid = str(vehicle.vid)
-    speed = float(vehicle.speed)
-    position = float(vehicle.position)
-
     import traci
-    traci.vehicle.setSpeed(vehID=vid, speed=speed)
-    traci.vehicle.moveTo(vehID=vid, pos=position, laneID=f'edge_0_0_{vehicle.lane}')
+    LOG.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
+    traci.vehicle.setSpeed(vehID=str(vid), speed=speed)
+    traci.vehicle.moveTo(vehID=str(vid), laneID=f'edge_0_0_{lane}', pos=position)
 
 
 def gui_step(target_step: int):
