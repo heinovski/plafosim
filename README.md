@@ -13,7 +13,7 @@ While the main focus of the simulator is on the assignment process, simulation o
 
 | Scenario | Advertisement | Assignment | Maneuver |
 | -------- | ------------- | ---------- | -------- |
-![Scenario](doc/scenario.png) | ![Advertisement](doc/advertisement.png) | ![Assignment](doc/assignment.png) | ![Maneuver](doc/maneuver.png) |
+![Scenario](docs/scenario.png) | ![Advertisement](docs/advertisement.png) | ![Assignment](docs/assignment.png) | ![Maneuver](docs/maneuver.png) |
 
 PlaFoSim is published here:
 
@@ -97,7 +97,7 @@ You can get a very simple live GUI based on SUMO by using the parameter `gui` (r
 
 ```plafosim --gui```
 
-![](doc/gui.png)
+![](docs/gui.png)
 
 More options for the live GUI can be found within the ``gui properties`` section of the help.
 
