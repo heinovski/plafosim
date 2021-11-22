@@ -40,8 +40,7 @@ from plafosim.util import find_resource
 LOG = logging.getLogger(__name__)
 
 if 'SUMO_HOME' not in os.environ:
-    sys.exit("please declare environment variable 'SUMO_HOME'")
-
+    sys.exit("ERROR: Environment variable 'SUMO_HOME' was not declared!")
 tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
 sys.path.append(tools)
 
