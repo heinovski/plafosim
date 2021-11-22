@@ -28,6 +28,7 @@ from tqdm import tqdm
 from plafosim import __version__
 from plafosim.gui import (
     add_gui_vehicle,
+    close_gui,
     move_gui_vehicle,
     prune_vehicles,
     start_gui,
@@ -191,7 +192,7 @@ def main():
     # remove all vehicles
     prune_vehicles(keep_vids=[])
 
-    traci.close(False)
+    close_gui()
 
 
 if __name__ == "__main__":
