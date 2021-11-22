@@ -161,7 +161,8 @@ def main():
     min_step = max(traces.step.min(), args.start)
     max_step = min(traces.step.max(), args.end) if args.end != -1 else traces.step.max()
 
-    gui_step(min_step)
+    if min_step > 0:
+        gui_step(min_step - 1)  # TODO consider various step lengths
 
     import traci
     for step in tqdm(range(min_step, max_step), desc="Trace progress", unit='step'):
@@ -178,13 +179,13 @@ def main():
                 )
             move_gui_vehicle(vehicle.id, vehicle.position, vehicle.lane, vehicle.speed)
 
-        gui_step(step)
-
         # remove vehicles not in trace file (keep vehicles in trace file)
         prune_vehicles(keep_vids=list(traces.loc[traces.step == step]['id']))
 
         # sleep for visualization
         time.sleep(args.gui_delay / 1000)
+
+        gui_step(step + 1)  # TODO consider various step lengths
 
     # end of file
     LOG.info("Reached end of trace file")
