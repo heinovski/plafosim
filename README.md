@@ -1,6 +1,6 @@
 # Platoon Formation Simulator (PlaFoSim)
 
-[![Version](https://img.shields.io/badge/version-v0.13.2-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.14.0-blue)](CHANGELOG.md)
 [![PyPI](https://img.shields.io/pypi/v/plafosim)](https://pypi.org/project/plafosim/)
 ![Python Version](https://img.shields.io/badge/python-3.7-blue)
 ![License](https://img.shields.io/github/license/heinovski/plafosim?color=green)
