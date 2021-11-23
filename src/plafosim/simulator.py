@@ -1227,7 +1227,18 @@ class Simulator:
 
         # draw pre-filled vehicles
         for vehicle in self._vehicles.values():
-            add_gui_vehicle(vehicle, track=vehicle.vid == self._gui_track_vehicle)
+            add_gui_vehicle(
+                vehicle.vid,
+                vehicle.position,
+                vehicle.lane,
+                vehicle.speed,
+                color=(
+                    vehicle.platoon.leader._color
+                    if (isinstance(vehicle, PlatooningVehicle) and vehicle.is_in_platoon)
+                    else vehicle._color
+                ),
+                track=vehicle.vid == self._gui_track_vehicle,
+            )
 
     def _update_gui(self):
         """Updates the GUI."""
