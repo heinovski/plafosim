@@ -65,6 +65,7 @@ class Vehicle:
             depart_speed: float,
             depart_time: int,
             communication_range: int,
+            pre_filled: bool = False,
     ):
         """
         Initializes a vehicle instance.
@@ -105,6 +106,7 @@ class Vehicle:
         self._depart_lane = depart_lane  # the departure lane of the vehicle
         self._depart_speed = depart_speed  # the departure speed of the vehicle
         self._depart_time = depart_time  # the departure time of the vehicle
+        self._pre_filled = pre_filled  # whether this vehicle was pre-filled
         # vehicle details
         self._position = self._depart_position  # the current position of the vehicle
         self._lane = self._depart_lane  # the current lane of the vehicle

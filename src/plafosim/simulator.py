@@ -829,6 +829,7 @@ class Simulator:
                 depart_lane=depart_lane,
                 depart_speed=depart_speed,
                 depart_time=depart_time,
+                pre_filled=True,
             )
 
             LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
@@ -1011,6 +1012,7 @@ class Simulator:
         depart_speed: float,
         depart_time: int,
         communication_range: int = DEFAULTS['communication_range'],
+        pre_filled: bool = False,
     ):
         """
         Adds a vehicle to the simulation based on the given parameters.
@@ -1056,6 +1058,7 @@ class Simulator:
                 cacc_spacing=self._cacc_spacing,
                 formation_algorithm=self._formation_algorithm if self._formation_strategy == "distributed" else None,
                 execution_interval=self._execution_interval,
+                pre_filled=pre_filled,
                 **self._kwargs,
             )
         else:
@@ -1070,6 +1073,7 @@ class Simulator:
                 depart_speed=depart_speed,
                 depart_time=depart_time,
                 communication_range=self._communication_range,
+                pre_filled=pre_filled,
             )
 
         # add instance

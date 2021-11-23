@@ -61,6 +61,7 @@ class PlatooningVehicle(Vehicle):
             cacc_spacing: float = 5.0,
             formation_algorithm: str = None,
             execution_interval: int = 1,
+            pre_filled: bool = False,
             **kw_args,
     ):
         # TODO use global default values
@@ -110,6 +111,7 @@ class PlatooningVehicle(Vehicle):
             depart_speed,
             depart_time,
             communication_range,
+            pre_filled,
         )
 
         self._cf_model = CF_Model.ACC
