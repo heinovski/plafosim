@@ -42,6 +42,12 @@ steps:
   commands:
     - . .venv/bin/activate
     - pytest -v tests/integration
+  when:
+    ref:
+      - refs/heads/master
+      - refs/heads/develop
+      - refs/pull/**
+      - refs/tags/*
 - name: coverage
   image: python:3.8-buster
   environment:
