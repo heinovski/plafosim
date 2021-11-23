@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/heinovski/plafosim/releases/tag/v0.14.1) - 2021-11-23
+* Added pre-filled status to vehicles
+* Added random offset for pre-filled vehicles' execution interval
+* Fixed bug in GUI
+* Updated CHANGELOG
+* Updated README
+
 ## [0.14.0](https://github.com/heinovski/plafosim/releases/tag/v0.14.0) - 2021-11-22
 * Added packaging with poetry
 * Added dry-run flag
