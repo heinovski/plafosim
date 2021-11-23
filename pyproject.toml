@@ -19,7 +19,7 @@ include = [
 ]
 
 [tool.poetry.urls]
-Changelog = "https://github.com/heinovski/plafosim/CHANGELOG.md"
+Changelog = "https://github.com/heinovski/plafosim/blob/master/CHANGELOG.md"
 
 [tool.poetry.dependencies]
 python = "^3.7"
