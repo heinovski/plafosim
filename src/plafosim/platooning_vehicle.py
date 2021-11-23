@@ -139,7 +139,10 @@ class PlatooningVehicle(Vehicle):
             self._execution_interval = execution_interval
 
             # initialize timers
-            self._last_formation_step = self._depart_time  # initialize with vehicle start
+            if pre_filled:
+                self._last_formation_step = simulator._rng.randint(0, self._execution_interval - 1)
+            else:
+                self._last_formation_step = self._depart_time  # initialize with vehicle start
             self._last_advertisement_step = None
 
         else:
