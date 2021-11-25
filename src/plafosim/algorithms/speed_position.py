@@ -225,7 +225,7 @@ class SpeedPosition(FormationAlgorithm):
         # write statistics
         if not self._owner._simulator._record_platoon_formation:
             return
-        if self._owner._formation_kind != 'optimal':
+        if self._formation_centralized_kind != 'optimal':
             return
 
         from ..infrastructure import Infrastructure
