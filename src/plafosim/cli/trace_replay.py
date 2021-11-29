@@ -153,10 +153,7 @@ def main():
     args = parse_args()
 
     # TODO add custom filter that prepends the log entry with the step time
-    logging.basicConfig(
-        level=getattr(LOG, args.log_level.upper(), 5),
-        format="%(levelname)s: %(message)s",
-    )
+    logging.basicConfig(level=args.log_level.upper(), format="%(levelname)s [%(name)s]: %(message)s")
 
     start_gui(config=args.sumo_config)
 
