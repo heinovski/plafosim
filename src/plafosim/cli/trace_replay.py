@@ -157,13 +157,14 @@ def main():
 
     start_gui(config=args.sumo_config)
 
-    LOG.info("Replaying vehicle trace")
+    LOG.info("Replaying vehicle trace...")
 
     traces = pandas.read_csv(args.trace_file).astype({'step': int})
     assert not traces.empty
 
     min_step = max(traces.step.min(), args.start)
     max_step = min(traces.step.max(), args.end) if args.end != -1 else traces.step.max()
+    LOG.debug(f"Running from {min_step}s to {max_step}s...")
 
     if min_step > 0:
         gui_step(min_step - 1)  # TODO consider various step lengths
