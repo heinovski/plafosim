@@ -19,6 +19,7 @@ import time
 from typing import TYPE_CHECKING
 
 from .formation_algorithm import FormationAlgorithm
+from .util import rgb2hex
 
 if TYPE_CHECKING:
     from .platooning_vehicle import PlatooningVehicle  # noqa 401
@@ -355,7 +356,8 @@ def initialize_vehicle_traces(basename: str):
             "routeLength,"
             "desiredSpeed,"
             "cfTargetSpeed,"
-            "cfModel"
+            "cfModel,"
+            "color"
             "\n"
         )
 
@@ -376,7 +378,8 @@ def record_vehicle_trace(basename: str, step: int, vehicle: 'Vehicle'):
             f"{vehicle.travel_distance},"
             f"{vehicle.desired_speed},"  # use potential other desired driving speed
             f"{vehicle._cf_target_speed},"
-            f"{vehicle._cf_model.name}"
+            f"{vehicle._cf_model.name},"
+            f"{rgb2hex(vehicle._color)}"
             "\n"
         )
 

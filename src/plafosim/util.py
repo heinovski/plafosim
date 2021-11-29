@@ -17,6 +17,7 @@
 
 import logging
 import os
+import textwrap
 
 
 def find_resource(path: str) -> str:
@@ -34,6 +35,21 @@ def find_resource(path: str) -> str:
             f"Path is not a local file or packaged resource: {path}."
         )
     return str(resource_path)
+
+
+def rgb2hex(rgb: tuple) -> str:
+    assert len(rgb) == 3
+    for c in rgb:
+        assert (type(c) == int and 0 <= c <= 255)
+
+    return '#' + ''.join(f'{i:02X}' for i in rgb)
+
+
+def hex2rgb(hex: str) -> tuple:
+    assert hex[0] == '#'
+    assert len(hex[1:]) == 6
+
+    return tuple(int(i, 16) for i in textwrap.wrap(hex[1:], 2))
 
 
 def assert_index_equal(a, b):

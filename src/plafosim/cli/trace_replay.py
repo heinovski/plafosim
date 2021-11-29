@@ -28,6 +28,7 @@ from tqdm import tqdm
 from plafosim import __version__
 from plafosim.gui import (
     add_gui_vehicle,
+    change_gui_vehicle_color,
     close_gui,
     gui_step,
     move_gui_vehicle,
@@ -35,7 +36,7 @@ from plafosim.gui import (
     start_gui,
 )
 from plafosim.simulator import DEFAULTS
-from plafosim.util import find_resource
+from plafosim.util import find_resource, hex2rgb
 
 LOG = logging.getLogger(__name__)
 
@@ -173,16 +174,18 @@ def main():
     for step in tqdm(range(min_step, max_step), desc="Trace progress", unit='step'):
         # simulate vehicles from trace file
         for vehicle in traces.loc[traces.step == step].itertuples():
+            color = hex2rgb(vehicle.color) if 'color' in traces else (0, 255, 0)  # allow traces without color
             if str(vehicle.id) not in traci.vehicle.getIDList():
                 add_gui_vehicle(
                     vehicle.id,
                     vehicle.position,
                     vehicle.lane,
                     vehicle.speed,
-                    # color=vehicle.color,  # TODO add vehicle color to trace file
+                    color=color,
                     track=vehicle.id == args.track_vehicle,
                 )
             move_gui_vehicle(vehicle.id, vehicle.position, vehicle.lane, vehicle.speed)
+            change_gui_vehicle_color(vehicle.id, color)
 
         # remove vehicles not in trace file (keep vehicles in trace file)
         prune_vehicles(keep_vids=list(traces.loc[traces.step == step]['id']))
