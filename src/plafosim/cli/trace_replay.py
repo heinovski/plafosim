@@ -52,6 +52,7 @@ class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
     pass
 
 
+# TODO duplicated code with main script
 def parse_args() -> argparse.Namespace:
     # parse some parameters
     parser = argparse.ArgumentParser(

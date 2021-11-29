@@ -39,6 +39,7 @@ class CustomFormatter(
     pass
 
 
+# TODO duplicated code with trace replay
 def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # parse some parameters
