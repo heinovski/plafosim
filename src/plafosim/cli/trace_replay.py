@@ -45,10 +45,13 @@ tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
 sys.path.append(tools)
 
 
-class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
-                      argparse.RawDescriptionHelpFormatter,
-                      argparse.MetavarTypeHelpFormatter):
+class CustomFormatter(
+    argparse.ArgumentDefaultsHelpFormatter,
+    argparse.RawDescriptionHelpFormatter,
+    argparse.MetavarTypeHelpFormatter,
+):
     """Metaclass combining multiple formatter classes for argparse"""
+
     pass
 
 
@@ -150,7 +153,10 @@ def main():
     args = parse_args()
 
     # TODO add custom filter that prepends the log entry with the step time
-    logging.basicConfig(level=getattr(LOG, args.log_level.upper(), 5), format="%(levelname)s: %(message)s")
+    logging.basicConfig(
+        level=getattr(LOG, args.log_level.upper(), 5),
+        format="%(levelname)s: %(message)s",
+    )
 
     start_gui(config=args.sumo_config)
 
