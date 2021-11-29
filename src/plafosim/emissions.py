@@ -48,5 +48,5 @@ class EmissionClass(Enum):
         """Returns whether an emission class is for a diesel engine."""
 
         split = self.name.split('_')
-        assert(len(split) == 3)
+        assert len(split) == 3
         return split[1] == 'D'

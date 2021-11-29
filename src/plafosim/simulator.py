@@ -456,7 +456,7 @@ class Simulator:
 
         # simulation properties
         self._step = 0  # the current simulation step in s
-        assert(step_length > 0)
+        assert step_length > 0
         if step_length != 1:
             LOG.warning("Values for step length other than 1s are not yet properly implemented and tested!")
         if step_length < 1.0:
@@ -717,8 +717,8 @@ class Simulator:
         vehicle1 : TV(position, rear_position, lane)
         vehicle2 : TV(position, rear_position, lane)
         """
-        assert(vehicle1 is not vehicle2)
-        assert(vehicle1.lane == vehicle2.lane)
+        assert vehicle1 is not vehicle2
+        assert vehicle1.lane == vehicle2.lane
         return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
 
     def _generate_vehicles(self):
@@ -1368,7 +1368,7 @@ class Simulator:
                 self._remove_arrived_vehicles(arrived_vehicles)
 
                 # make sure that everything is correct
-                assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
+                assert list(vdf.index).sort() == list(self._vehicles.keys()).sort()
 
                 del vdf
                 # END VECTORIZATION PART
@@ -1534,7 +1534,7 @@ class Simulator:
         """
 
         # make sure that everything is correct
-        assert(list(vdf.index).sort() == list(self._vehicles.keys()).sort())
+        assert list(vdf.index).sort() == list(self._vehicles.keys()).sort()
 
         for row in vdf.itertuples():
             # update all fields within the data that we updated with pandas

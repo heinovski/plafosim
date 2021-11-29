@@ -335,7 +335,7 @@ class PlatooningVehicle(Vehicle):
         air_drag_change = 0.0
         if self._platoon_role == PlatoonRole.LEADER:
             # savings by followers
-            assert(self._platoon.size > 1)
+            assert self._platoon.size > 1
             air_drag_change = 0.12
         elif self._platoon_role == PlatoonRole.FOLLOWER:
             # savings by leader/front vehicles
@@ -374,11 +374,11 @@ class PlatooningVehicle(Vehicle):
         if self.is_in_platoon():
             self._leave()
 
-        assert(self.travel_time > 0)
-        assert(self._time_in_platoon >= 0)
+        assert self.travel_time > 0
+        assert self._time_in_platoon >= 0
         platoon_time_ratio = self._time_in_platoon / self.travel_time
-        assert(self.travel_distance > 0)
-        assert(self._distance_in_platoon >= 0)
+        assert self.travel_distance > 0
+        assert self._distance_in_platoon >= 0
         platoon_distance_ratio = self._distance_in_platoon / self.travel_distance
 
         LOG.info(f"{self._vid} drove {self._time_in_platoon}s ({self._distance_in_platoon}m) in a platoon, {platoon_time_ratio * 100}% ({platoon_distance_ratio * 100}%) of the trip")
@@ -400,22 +400,22 @@ class PlatooningVehicle(Vehicle):
             else 0
         )
 
-        assert(platoon_time_ratio >= 0)
-        assert(platoon_distance_ratio >= 0)
+        assert platoon_time_ratio >= 0
+        assert platoon_distance_ratio >= 0
 
         if self._first_platoon_join_time == -1:
             # was not set yet (no platoon)
-            assert(self._first_platoon_join_position == -1)
+            assert self._first_platoon_join_position == -1
             time_until_first_platoon = None
             distance_until_first_platoon = None
         else:
             # NOTE: this produces wrong values when pre-filled
             time_until_first_platoon = self._first_platoon_join_time - self._depart_time
-            assert(time_until_first_platoon >= 0)
-            assert(self._first_platoon_join_position != -1)
+            assert time_until_first_platoon >= 0
+            assert self._first_platoon_join_position != -1
             # NOTE: this produces wrong values when pre-filled
             distance_until_first_platoon = self._first_platoon_join_position - self._depart_position
-            assert(distance_until_first_platoon >= 0)
+            assert distance_until_first_platoon >= 0
 
         if self._simulator._record_platoon_trips:
             record_platoon_trip(
@@ -451,7 +451,7 @@ class PlatooningVehicle(Vehicle):
         super()._action(step)
 
         if self._join_approach_step:
-            assert(self._in_maneuver)
+            assert self._in_maneuver
             if step >= self._join_approach_step:
                 self._join_teleport(self._join_data_leader, self._join_data_last, self._join_data_new_position)
                 # cleaning up
@@ -555,22 +555,22 @@ class PlatooningVehicle(Vehicle):
             The id of the leader of the target platoon
         """
 
-        assert(not self.is_in_platoon())
+        assert not self.is_in_platoon()
 
         LOG.info(f"{self._vid} is trying to join platoon {platoon_id} (leader {leader_id})")
         self._joins_attempted += 1
 
-        assert(not self.in_maneuver)
+        assert not self.in_maneuver
         self.in_maneuver = True
         self._platoon_role = PlatoonRole.JOINER
 
         leader = self._simulator._vehicles[leader_id]
-        assert(isinstance(leader, PlatooningVehicle))
+        assert isinstance(leader, PlatooningVehicle)
 
         # correct platoon
-        assert(leader.platoon.platoon_id == platoon_id)
+        assert leader.platoon.platoon_id == platoon_id
         # correct leader of that platoon
-        assert(leader.vid == leader.platoon.leader.vid)
+        assert leader.vid == leader.platoon.leader.vid
 
         if leader.in_maneuver:
             LOG.warning(f"{self._vid}'s new leader {leader_id} was already in a maneuver! Aborting the join maneuver!")
@@ -671,13 +671,13 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted_teleport_threshold += 1
             return
 
-        assert(new_position >= self.length)
-        assert(new_position <= self._simulator.road_length)
+        assert new_position >= self.length
+        assert new_position <= self._simulator.road_length
 
         # consider the actual approaching duration
         total_approach_time = self.calculate_approaching_time(new_position, leader.platoon.speed)
 
-        assert(total_approach_time >= 0)
+        assert total_approach_time >= 0
         if total_approach_time > self._simulator._maximum_appraoch_time:
             # approaching the platoon would take too long
             LOG.warning(f"It would take too long ({total_approach_time}s) for {self._vid} to approach the platoon {leader.platoon.platoon_id} ({leader.vid})! Aborting the join maneuver!")
@@ -690,9 +690,9 @@ class PlatooningVehicle(Vehicle):
 
         # the join has been "allowed" by the leader
         # the actual join procedure starts here
-        assert(not leader.in_maneuver)
+        assert not leader.in_maneuver
         leader.in_maneuver = True
-        assert(leader.cf_model == CF_Model.ACC)
+        assert leader.cf_model == CF_Model.ACC
 
         # delay teleport by approach duration
         if self._simulator._delay_teleports and total_approach_time > 0:
@@ -756,19 +756,19 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted_trip_end += 1
             return
 
-        assert(self._in_maneuver)
-        assert(self._platoon_role is PlatoonRole.JOINER)
-        assert(leader.in_maneuver)
-        assert(leader.platoon_role is PlatoonRole.LEADER or leader.platoon_role is PlatoonRole.NONE)
+        assert self._in_maneuver
+        assert self._platoon_role is PlatoonRole.JOINER
+        assert leader.in_maneuver
+        assert (leader.platoon_role is PlatoonRole.LEADER or leader.platoon_role is PlatoonRole.NONE)
 
         # re-calculate new position
         new_position = last.rear_position - self._cacc_spacing
         LOG.debug(f"{self._vid}'s new position is ({new_position},{leader.platoon.lane}) (current {self._position},{self._lane})")
 
-        assert(new_position >= self.length)
-        assert(new_position >= self._depart_position)
-        assert(new_position <= self._simulator.road_length)
-        assert(new_position <= self._arrival_position)
+        assert new_position >= self.length
+        assert new_position >= self._depart_position
+        assert new_position <= self._simulator.road_length
+        assert new_position <= self._arrival_position
 
         platoon_successor = self._simulator._get_successor(last)
         if not platoon_successor or platoon_successor is self:
@@ -884,13 +884,13 @@ class PlatooningVehicle(Vehicle):
             if leader._first_platoon_join_time == -1:
                 # was not set before
                 leader._first_platoon_join_time = self._simulator.step
-                assert(leader._first_platoon_join_position == -1)
+                assert leader._first_platoon_join_position == -1
                 # was not set before
                 leader._first_platoon_join_position = leader.position
             leader._number_platoons += 1
             leader._platoon_role = PlatoonRole.LEADER
         else:
-            assert(leader.platoon_role is PlatoonRole.LEADER)
+            assert leader.platoon_role is PlatoonRole.LEADER
 
         # update self
         self._platoon_role = PlatoonRole.FOLLOWER
@@ -908,7 +908,7 @@ class PlatooningVehicle(Vehicle):
         if self._first_platoon_join_time == -1:
             # was not set before
             self._first_platoon_join_time = self._simulator.step
-            assert(self._first_platoon_join_position == -1)
+            assert self._first_platoon_join_position == -1
             # was not set before
             self._first_platoon_join_position = self._position
         self._joins_succesful += 1
@@ -981,7 +981,7 @@ class PlatooningVehicle(Vehicle):
                 total_approach_time = time_current_speed + time_deceleration
         else:
             # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing (e.g., 9m)
-            assert(abs(initial_distance) <= self.length + self._cacc_spacing)  # FIXME use length of last vehicle in platoon
+            assert abs(initial_distance) <= self.length + self._cacc_spacing  # FIXME use length of last vehicle in platoon
             total_approach_time = 0  # FIXME: we ignore that for now, since the time should be very small anyhow
 
         return total_approach_time
@@ -1027,7 +1027,7 @@ class PlatooningVehicle(Vehicle):
         if self._platoon.size == 1:
             LOG.warning(f"Can not leave when driving individually ({self._vid})!")
             return
-        assert(self.is_in_platoon())
+        assert self.is_in_platoon()
 
         leader = self._platoon.leader
 
@@ -1036,7 +1036,7 @@ class PlatooningVehicle(Vehicle):
 
         if leader.in_maneuver:
             # the platoon leader has already a (join) maneuver ongoing
-            assert(leader._joiner)
+            assert leader._joiner
             LOG.warning(f"{leader.vid} currently has a (join) maneuver by {leader._joiner.vid} ongoing. For now, we are going to abort this (join) maneuver as handling this situation is not yet implemented properly!")
             # TODO implement complex leave to not abort the ongoing (join) maneuver
             # abort ongoing (join) maneuver
@@ -1051,7 +1051,7 @@ class PlatooningVehicle(Vehicle):
             leader._joiner = None
             leader.in_maneuver = False
         # by checking the leader first, we should already cover cases where self == leader
-        assert(not self.in_maneuver)
+        assert not self.in_maneuver
 
         self.in_maneuver = True
         self._platoon_role = PlatoonRole.LEAVER
@@ -1064,7 +1064,7 @@ class PlatooningVehicle(Vehicle):
             if self._platoon.size == 2:
                 # tell the only follower to drive individually
                 follower = self._platoon.last
-                assert(not follower.in_maneuver)
+                assert not follower.in_maneuver
                 LOG.debug(f"Only {follower.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
@@ -1077,9 +1077,9 @@ class PlatooningVehicle(Vehicle):
 
                 # statistics
                 follower._leaves_attempted += 1
-                assert(follower._last_platoon_join_time >= 0)
+                assert follower._last_platoon_join_time >= 0
                 follower._time_in_platoon += follower._simulator.step - follower._last_platoon_join_time
-                assert(follower._last_platoon_join_position >= 0)
+                assert follower._last_platoon_join_position >= 0
                 follower._distance_in_platoon += follower.position - follower._last_platoon_join_position
                 follower._leaves_successful += 1
                 follower._leaves_back += 1
@@ -1107,9 +1107,9 @@ class PlatooningVehicle(Vehicle):
 
                 # statistics
                 leader._leaves_attempted += 1
-                assert(leader._last_platoon_join_time >= 0)
+                assert leader._last_platoon_join_time >= 0
                 leader._time_in_platoon += leader._simulator.step - leader._last_platoon_join_time
-                assert(leader._last_platoon_join_position >= 0)
+                assert leader._last_platoon_join_position >= 0
                 leader._distance_in_platoon += leader.position - leader._last_platoon_join_position
                 leader._leaves_successful += 1
                 leader._leaves_front += 1
@@ -1146,9 +1146,9 @@ class PlatooningVehicle(Vehicle):
                 LOG.trace(f"{vehicle.vid} is not at {vehicle.position}")
                 follower_gap = front.rear_position - vehicle.position
                 # avoid issues due to floating point precision
-                assert(math.isclose(follower_gap, vehicle._cacc_spacing))
+                assert math.isclose(follower_gap, vehicle._cacc_spacing)
                 front = vehicle
-                assert(self._simulator._get_predecessor(vehicle) in vehicle.platoon.formation)
+                assert self._simulator._get_predecessor(vehicle) in vehicle.platoon.formation
 
         # leave the platoon
         self._platoon.formation.remove(self)
@@ -1176,9 +1176,9 @@ class PlatooningVehicle(Vehicle):
         self.in_maneuver = False
         leader.in_maneuver = False
 
-        assert(self._last_platoon_join_time >= 0)
+        assert self._last_platoon_join_time >= 0
         self._time_in_platoon += self._simulator.step - self._last_platoon_join_time
-        assert(self._last_platoon_join_position >= 0)
+        assert self._last_platoon_join_position >= 0
         self._distance_in_platoon += self._position - self._last_platoon_join_position
         self._leaves_successful += 1
 

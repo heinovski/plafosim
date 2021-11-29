@@ -46,7 +46,7 @@ class FormationAlgorithm(ABC):
         self._name = name  # the name of the formation algorithm
         from .infrastructure import Infrastructure
         from .platooning_vehicle import PlatooningVehicle  # noqa 811
-        assert(isinstance(owner, PlatooningVehicle) or isinstance(owner, Infrastructure))
+        assert (isinstance(owner, PlatooningVehicle) or isinstance(owner, Infrastructure))
         self._owner = owner  # the owning vehicle or infrastructure
 
     @property

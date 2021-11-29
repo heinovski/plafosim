@@ -32,16 +32,16 @@ def test_creation():
 
     message = PlatoonAdvertisement(origin, destination, platoon_id, leader_id, platoon_speed, platoon_lane, platoon_formation, platoon_position_front, platoon_position_back)
 
-    assert(message is not None)
-    assert(message.data is None)
-    assert(message.origin == origin)
-    assert(message.destination == destination)
-    assert(message.platoon_id == platoon_id)
-    assert(message.leader_id == leader_id)
-    assert(message.platoon_speed == platoon_speed)
-    assert(message.platoon_lane == platoon_lane)
-    assert(message.platoon_formation == platoon_formation)
-    assert(message.platoon_position_front == platoon_position_front)
-    assert(message.platoon_position_back == platoon_position_back)
-    assert(str(message) == string)
-    assert(isinstance(message, Message))
+    assert message is not None
+    assert message.data is None
+    assert message.origin == origin
+    assert message.destination == destination
+    assert message.platoon_id == platoon_id
+    assert message.leader_id == leader_id
+    assert message.platoon_speed == platoon_speed
+    assert message.platoon_lane == platoon_lane
+    assert message.platoon_formation == platoon_formation
+    assert message.platoon_position_front == platoon_position_front
+    assert message.platoon_position_back == platoon_position_back
+    assert str(message) == string
+    assert isinstance(message, Message)

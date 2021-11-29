@@ -40,14 +40,14 @@ def test_creation():
         emission_class.name,
     )
 
-    assert(vtype is not None)
-    assert(vtype.name == name)
-    assert(vtype.length == length)
-    assert(vtype.max_speed == max_speed)
-    assert(vtype.max_acceleration == max_acceleration)
-    assert(vtype.max_deceleration == max_deceleration)
-    assert(vtype.min_gap == min_gap)
-    assert(vtype.headway_time == headway_time)
-    assert(vtype.emission_class == emission_class)
-    assert(vtype.emission_factors == EMISSION_FACTORS[emission_class.name])
-    assert(str(vtype) == str(vtype.__dict__))
+    assert vtype is not None
+    assert vtype.name == name
+    assert vtype.length == length
+    assert vtype.max_speed == max_speed
+    assert vtype.max_acceleration == max_acceleration
+    assert vtype.max_deceleration == max_deceleration
+    assert vtype.min_gap == min_gap
+    assert vtype.headway_time == headway_time
+    assert vtype.emission_class == emission_class
+    assert vtype.emission_factors == EMISSION_FACTORS[emission_class.name]
+    assert str(vtype) == str(vtype.__dict__)

@@ -28,12 +28,12 @@ def test_creation():
 
     message = ManeuverMessage(origin, destination, maneuver_type, platoon_id, leader_id)
 
-    assert(message is not None)
-    assert(message.origin == origin)
-    assert(message.destination == destination)
-    assert(message.maneuver_type == maneuver_type)
-    assert(message.data is None)
-    assert(message.platoon_id == platoon_id)
-    assert(message.leader_id == leader_id)
-    assert(str(message) == string)
-    assert(isinstance(message, Message))
+    assert message is not None
+    assert message.origin == origin
+    assert message.destination == destination
+    assert message.maneuver_type == maneuver_type
+    assert message.data is None
+    assert message.platoon_id == platoon_id
+    assert message.leader_id == leader_id
+    assert str(message) == string
+    assert isinstance(message, Message)

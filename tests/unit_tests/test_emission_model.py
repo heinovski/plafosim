@@ -21,9 +21,9 @@ from plafosim.emissions import EMISSION_FACTORS, EmissionClass
 def test_emission_factors():
 
     cl = EmissionClass.PC_G_EU4
-    assert(cl.emission_factors == EMISSION_FACTORS[cl.name])
+    assert cl.emission_factors == EMISSION_FACTORS[cl.name]
 
 
 def test_is_diesel():
     cl = EmissionClass.PC_G_EU4
-    assert(not cl.is_diesel)
+    assert not cl.is_diesel

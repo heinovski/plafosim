@@ -46,7 +46,7 @@ def assert_index_equal(a, b):
     b : pandas.Sequence / pandas.DataFrame
     """
 
-    assert(list(a.index) == list(b.index))
+    assert list(a.index) == list(b.index)
 
 
 def speed2distance(speed: float, time_interval: float = 1.0) -> float:

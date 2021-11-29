@@ -33,15 +33,15 @@ def test_creation():
 
     nd = NeighborData(vid, originator_id, platoon_id, leader_id, platoon_speed, platoon_lane, platoon_formation, platoon_position_front, platoon_position_back, timestamp)
 
-    assert(nd is not None)
-    assert(nd.is_valid())
-    assert(nd.vid == vid)
-    assert(nd.originator_id == originator_id)
-    assert(nd.platoon_id == platoon_id)
-    assert(nd.leader_id == leader_id)
-    assert(nd.platoon_speed == platoon_speed)
-    assert(nd.platoon_lane == platoon_lane)
-    assert(nd.platoon_formation == platoon_formation)
-    assert(nd.platoon_position_front == platoon_position_front)
-    assert(nd.platoon_position_back == platoon_position_back)
-    assert(nd.timestamp == timestamp)
+    assert nd is not None
+    assert nd.is_valid()
+    assert nd.vid == vid
+    assert nd.originator_id == originator_id
+    assert nd.platoon_id == platoon_id
+    assert nd.leader_id == leader_id
+    assert nd.platoon_speed == platoon_speed
+    assert nd.platoon_lane == platoon_lane
+    assert nd.platoon_formation == platoon_formation
+    assert nd.platoon_position_front == platoon_position_front
+    assert nd.platoon_position_back == platoon_position_back
+    assert nd.timestamp == timestamp

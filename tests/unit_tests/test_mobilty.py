@@ -55,7 +55,7 @@ def test_get_crashed_vehicles():
         }
     ]
     vehicles_no = pd.DataFrame(raw_no, columns=vehicle_dtypes.keys()).astype(vehicle_dtypes).set_index('vid')
-    assert(not get_crashed_vehicles(vehicles_no))
+    assert not get_crashed_vehicles(vehicles_no)
 
     raw_yes = [
         {
@@ -84,4 +84,4 @@ def test_get_crashed_vehicles():
         }
     ]
     vehicles_yes = pd.DataFrame(raw_yes, columns=vehicle_dtypes.keys()).astype(vehicle_dtypes).set_index('vid')
-    assert(get_crashed_vehicles(vehicles_yes) == [0, 1, 2, 3])
+    assert get_crashed_vehicles(vehicles_yes) == [0, 1, 2, 3]

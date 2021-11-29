@@ -103,23 +103,23 @@ def get_arrival_position(
         max_arrival = min(depart_position + max_trip_length, road_length)
     min_arrival_ramp = min_arrival + (ramp_interval - min_arrival) % ramp_interval
     max_arrival_ramp = max_arrival + (ramp_interval - max_arrival) % ramp_interval
-    assert(min_arrival_ramp >= 0)
-    assert(min_arrival_ramp <= road_length)
-    assert(min_arrival_ramp <= max_arrival_ramp)
-    assert(max_arrival_ramp <= road_length)
+    assert min_arrival_ramp >= 0
+    assert min_arrival_ramp <= road_length
+    assert min_arrival_ramp <= max_arrival_ramp
+    assert max_arrival_ramp <= road_length
     if min_arrival % ramp_interval == 0:
-        assert(min_arrival == min_arrival_ramp)
+        assert min_arrival == min_arrival_ramp
 
     if random_arrival_position and max_arrival_ramp < road_length:
         # make sure to also include the end of the road itself
         arrival_position = rng.randrange(min_arrival_ramp, max_arrival_ramp + 1, ramp_interval)
-        assert(arrival_position >= min_arrival_ramp)
+        assert arrival_position >= min_arrival_ramp
     else:
         # simply drive until the end of the trip or the road
         arrival_position = min(max_arrival_ramp, road_length)
 
-    assert(arrival_position <= road_length)
-    assert(arrival_position > depart_position)
-    assert(arrival_position - depart_position <= max_trip_length)
+    assert arrival_position <= road_length
+    assert arrival_position > depart_position
+    assert arrival_position - depart_position <= max_trip_length
 
     return arrival_position

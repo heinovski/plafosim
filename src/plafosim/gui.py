@@ -118,7 +118,7 @@ def gui_step(target_step: int):
 
     import traci
     traci.simulationStep(target_step)
-    assert(traci.simulation.getTime() == float(target_step))
+    assert traci.simulation.getTime() == float(target_step)
 
 
 def change_gui_vehicle_color(vid: int, color: tuple):

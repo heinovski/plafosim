@@ -38,21 +38,21 @@ def test_creation():
     formation = [v1, v2, v3]
     platoon = Platoon(platoon_id, formation, v1.desired_speed)
 
-    assert(platoon is not None)
-    assert(platoon.platoon_id == platoon_id)
-    assert(platoon.leader is v1)
-    assert(platoon.last is v3)
-    assert(platoon.formation is formation)
-    assert(platoon.desired_speed == v1.desired_speed)
-    assert(platoon.speed == 0)
-    assert(platoon.lane == 0)
+    assert platoon is not None
+    assert platoon.platoon_id == platoon_id
+    assert platoon.leader is v1
+    assert platoon.last is v3
+    assert platoon.formation is formation
+    assert platoon.desired_speed == v1.desired_speed
+    assert platoon.speed == 0
+    assert platoon.lane == 0
     assert platoon.max_speed == v3.max_speed
     assert platoon.max_acceleration == v3.max_acceleration
     assert platoon.max_deceleration == v3.max_deceleration
-    assert(platoon.size == 3)
-    assert(platoon.position == v1.position)
+    assert platoon.size == 3
+    assert platoon.position == v1.position
     assert platoon.rear_position == v3.rear_position
     assert platoon.length == v1.position - v3.rear_position
-    assert(platoon.member_ids == [1, 2, 3])
-    assert(platoon.get_member_index(v2) == 1)
-    assert(platoon.get_front(v3) == v2)
+    assert platoon.member_ids == [1, 2, 3]
+    assert platoon.get_member_index(v2) == 1
+    assert platoon.get_front(v3) == v2

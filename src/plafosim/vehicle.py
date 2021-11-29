@@ -274,7 +274,7 @@ class Vehicle:
         """Returns the current rear position of the vehicle."""
 
         position = self._position - self._vehicle_type._length
-        assert(position >= 0)
+        assert position >= 0
         return position
 
     @property
@@ -459,9 +459,9 @@ class Vehicle:
             return
 
         expected_travel_time = (self._arrival_position - self._depart_position) / self._desired_speed  # use explicit individual desired speed
-        assert(self.travel_time != 0)
+        assert self.travel_time != 0
         time_loss = self.travel_time - self._depart_time
-        assert(expected_travel_time != 0)
+        assert expected_travel_time != 0
         travel_time_ratio = self.travel_time / expected_travel_time
         # NOTE: this also contains teleports
         average_driving_speed = self.travel_distance / self.travel_time
@@ -485,8 +485,8 @@ class Vehicle:
             return
         # we could still have pre-filled vehicles that drove at least for the minimum trip length
 
-        assert(travel_time_ratio >= 0)
-        assert(average_driving_speed >= 0)
+        assert travel_time_ratio >= 0
+        assert average_driving_speed >= 0
 
         if self._simulator._record_end_trace:
             # call trace recording once again

@@ -28,11 +28,11 @@ def test_creation():
     message1 = Message(origin, destination)
     message2 = Message(origin, destination, data)
 
-    assert(message1 is not None)
-    assert(message1.data is None)
-    assert(message1.origin == origin)
-    assert(message1.destination == destination)
-    assert(str(message1) == string1)
+    assert message1 is not None
+    assert message1.data is None
+    assert message1.origin == origin
+    assert message1.destination == destination
+    assert str(message1) == string1
 
-    assert(message2.data is data)
-    assert(str(message2) == string2)
+    assert message2.data is data
+    assert str(message2) == string2

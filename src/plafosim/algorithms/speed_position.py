@@ -229,7 +229,7 @@ class SpeedPosition(FormationAlgorithm):
             return
 
         from ..infrastructure import Infrastructure
-        assert(isinstance(self._owner, Infrastructure))
+        assert isinstance(self._owner, Infrastructure)
 
         if self._owner._simulator._record_infrastructure_assignments:
             record_infrastructure_assignments(
@@ -652,22 +652,22 @@ class SpeedPosition(FormationAlgorithm):
                     continue
                 if target_platoon.platoon_id != mapping['pid']:
                     # meanwhile, the leader became a platoon member
-                    assert(leader.is_in_platoon() and leader.platoon_role == PlatoonRole.FOLLOWER)
+                    assert (leader.is_in_platoon() and leader.platoon_role == PlatoonRole.FOLLOWER)
                     LOG.warning(f"{vehicle.vid}'s assigned platoon {mapping['pid']} (leader {leader.vid}) meanwhile joined another platoon {target_platoon.platoon_id}!")
                     self._assignments_candidate_joined_already += 1
                     continue
                 else:
-                    assert(not leader.in_maneuver)
-                    assert(not leader.is_in_platoon() or leader.platoon_role == PlatoonRole.LEADER)
+                    assert not leader.in_maneuver
+                    assert (not leader.is_in_platoon() or leader.platoon_role == PlatoonRole.LEADER)
                 # let vehicle join platoon
                 if vehicle.is_in_platoon():
                     # meanwhile, we became a platoon leader
-                    assert(vehicle.platoon_role == PlatoonRole.LEADER)
+                    assert vehicle.platoon_role == PlatoonRole.LEADER
                     LOG.warning(f"{vehicle.vid} meanwhile became the leader of platoon {vehicle.platoon.platoon_id}. Hence, no assignment is possible/necessary anymore")
                     self._assingments_vehicle_became_leader += 1
                     continue
-                assert(not vehicle.in_maneuver)
-                assert(not leader.in_maneuver)
+                assert not vehicle.in_maneuver
+                assert not leader.in_maneuver
 
                 # actual join
                 vehicle._join(target_platoon.platoon_id, target_platoon.leader.vid)

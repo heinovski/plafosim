@@ -629,13 +629,13 @@ def load_snapshot(snapshot_filename: str) -> Simulator:
     with open(snapshot_filename, "rb") as f:
         # load saved state
         simulator = pickle.load(f)
-        assert(isinstance(simulator, Simulator))
+        assert isinstance(simulator, Simulator)
 
     return simulator
 
 
 def save_snapshot(simulator: Simulator, snapshot_filename: str):
-    assert(isinstance(simulator, Simulator))
+    assert isinstance(simulator, Simulator)
     assert snapshot_filename
 
     with open(snapshot_filename, "wb") as f:
