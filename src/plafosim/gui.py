@@ -134,6 +134,7 @@ def change_gui_vehicle_color(vid: int, color: tuple):
     """
 
     import traci
+    LOG.trace(f"Changing color of vehicle {vid} to {color}")
     traci.vehicle.setColor(str(vid), color)
 
 
