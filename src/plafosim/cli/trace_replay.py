@@ -125,9 +125,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         '--log-level',
         type=str,
-        default="warn",
-        choices=["warn", "info", "debug"],
-        help="Whether to enable debug output"
+        default=logging.getLevelName(DEFAULTS['log_level']).lower(),
+        choices=["error", "warn", "info", "debug", "trace"],
+        help="The minimum level of logs to be printed",
     )
     parser.add_argument(
         '--start',
@@ -149,7 +149,7 @@ def main():
     args = parse_args()
 
     # TODO add custom filter that prepends the log entry with the step time
-    logging.basicConfig(level=getattr(LOG, args.log_level.upper(), None), format="%(levelname)s: %(message)s")
+    logging.basicConfig(level=getattr(LOG, args.log_level.upper(), 5), format="%(levelname)s: %(message)s")
 
     start_gui(config=args.sumo_config)
 
