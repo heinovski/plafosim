@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.2](https://github.com/heinovski/plafosim/releases/tag/v0.14.2) - 2021-11-29
+* Added vehicle color to trace file
+* Fixed changelog URL in packaging configuration
+* Fixed formation kind check
+* Fixed usage of asserts
+* Updated log levels in GUI
+* Updated log statements in trace replay script
+
 ## [0.14.1](https://github.com/heinovski/plafosim/releases/tag/v0.14.1) - 2021-11-23
 * Added pre-filled status to vehicles
 * Added random offset for pre-filled vehicles' execution interval
