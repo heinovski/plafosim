@@ -64,7 +64,7 @@ def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: t
         Whether to track this vehicle within the GUI
     """
 
-    LOG.debug(f"Adding vehicle {vid} at {position},{lane} with {speed},{color}")
+    LOG.trace(f"Adding vehicle {vid} at {position},{lane} with {speed},{color}")
     import traci
     if vid not in traci.vehicle.getIDList():
         traci.vehicle.add(
@@ -101,7 +101,7 @@ def move_gui_vehicle(vid: int, position: float, lane: int, speed: float):
     """
 
     import traci
-    LOG.debug(f"Moving vehicle {vid} to {position},{lane} with {speed}")
+    LOG.trace(f"Moving vehicle {vid} to {position},{lane} with {speed}")
     traci.vehicle.setSpeed(vehID=str(vid), speed=speed)
     traci.vehicle.moveTo(vehID=str(vid), laneID=f'edge_0_0_{lane}', pos=position)
 
@@ -148,7 +148,7 @@ def remove_gui_vehicle(vid: int):
     """
 
     import traci
-    LOG.debug(f"Removing vehicle {vid}")
+    LOG.trace(f"Removing vehicle {vid}")
     traci.vehicle.remove(str(vid), 2)
 
 
