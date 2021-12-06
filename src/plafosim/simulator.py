@@ -379,11 +379,11 @@ class Simulator:
             sys.exit("ERROR: Unknown depart method!")
         if self._effective_depart_rate is not None:
             if 0.5 <= self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
-                LOG.warning("The current effective depart rate will lead to depature delays for vehicles!")
+                LOG.warning(f"The current effective depart rate {self._effective_depart_rate} vehicles/step will lead to depature delays for vehicles!")
             if self._effective_depart_rate > 1 and not self._random_depart_position:
-                sys.exit("ERROR: an effective depart rate > 1 is incompatible with just spawning at the origin (random depart position == false)")
+                sys.exit("ERROR: an effective depart rate > 1 vehicles/step is incompatible with just spawning at the origin (random depart position == false)")
             if self._effective_depart_rate < 0:
-                sys.exit("ERROR: effective spawn rate < 0 vehicles per step.")
+                sys.exit("ERROR: effective spawn rate < 0 vehicles/step.")
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
