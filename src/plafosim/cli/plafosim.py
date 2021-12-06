@@ -20,6 +20,7 @@ import argparse
 import logging
 import pickle
 import sys
+import textwrap
 from distutils.util import strtobool
 from timeit import default_timer as timer
 
@@ -46,20 +47,20 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     parser = argparse.ArgumentParser(
         formatter_class=CustomFormatter,
         allow_abbrev=False,
-        description="""
-    Platoon Formation Simulator (PlaFoSim) -- A simple and scalable simulator for platoon formation.
+        description=textwrap.dedent("""
+            Platoon Formation Simulator (PlaFoSim) -- A simple and scalable simulator for platoon formation.
 
-    Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
-    This program comes with ABSOLUTELY NO WARRANTY.
-    This is free software, and you are welcome to redistribute it under certain conditions.
+            Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
+            This program comes with ABSOLUTELY NO WARRANTY.
+            This is free software, and you are welcome to redistribute it under certain conditions.
 
-    If you are working with PlaFoSim, please cite the following paper:
+            If you are working with PlaFoSim, please cite the following paper:
 
-    Julian Heinovski, Dominik S. Buse and Falko Dressler,
-    "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
-    Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
-    Poster Session, Virtual Conference, November 2021.
-    """,
+            Julian Heinovski, Dominik S. Buse and Falko Dressler,
+            "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
+            Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
+            Poster Session, Virtual Conference, November 2021.
+        """),
     )
 
     # miscellaneous
