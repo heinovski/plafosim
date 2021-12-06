@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.3](https://github.com/heinovski/plafosim/releases/tag/v0.14.3) - 2021-12-06
+* Fixed vehicle tracking
+* Formatted citation & description
+* Made effective depart rate check less conservative
+* Removed duplicated warning
+* Updated some log statements
+
 ## [0.14.2](https://github.com/heinovski/plafosim/releases/tag/v0.14.2) - 2021-11-29
 * Added vehicle color to trace file
 * Fixed changelog URL in packaging configuration
