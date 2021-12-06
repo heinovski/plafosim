@@ -378,7 +378,7 @@ class Simulator:
         elif self._depart_method != "probability":
             sys.exit("ERROR: Unknown depart method!")
         if self._effective_depart_rate is not None:
-            if 0.5 <= self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
+            if 0.5 < self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
                 LOG.warning(f"The current effective depart rate {self._effective_depart_rate} vehicles/step will lead to depature delays for vehicles!")
             if self._effective_depart_rate > 1 and not self._random_depart_position:
                 sys.exit("ERROR: an effective depart rate > 1 vehicles/step is incompatible with just spawning at the origin (random depart position == false)")
