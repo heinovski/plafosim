@@ -80,7 +80,7 @@ def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: t
         traci.vehicle.setLaneChangeMode(str(vid), 0)
         # track vehicle
         if track:
-            traci.gui.trackVehicle("View #0", vid)
+            traci.gui.trackVehicle("View #0", str(vid))
             traci.gui.setZoom("View #0", 1000000)
 
 
