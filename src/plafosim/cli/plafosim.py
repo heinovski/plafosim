@@ -614,6 +614,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to record results for pre-filled vehicles",
     )
 
+    # print usage without any arguments
+    if len(sys.argv) < 2:
+        # no argument has been passed
+        print(parser.format_usage(), parser.description, end='')
+        sys.exit(0)
+
     args = parser.parse_args()
 
     # transform argument values into correct units
