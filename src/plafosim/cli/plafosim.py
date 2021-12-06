@@ -68,19 +68,19 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "-C", "--citation",
         action="version",
         help="show the citation information and exit",
-        version="""
-@inproceedings{heinovski2021scalable,
-    author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
-    title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
-    publisher = {IEEE},
-    issn = {2157-9865},
-    isbn = {978-1-66544-450-7},
-    address = {Virtual Conference},
-    booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
-    month = {11},
-    year = {2021},
-}
-        """,
+        version=textwrap.dedent("""
+            @inproceedings{heinovski2021scalable,
+                author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
+                title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
+                publisher = {IEEE},
+                issn = {2157-9865},
+                isbn = {978-1-66544-450-7},
+                address = {Virtual Conference},
+                booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
+                month = {11},
+                year = {2021},
+            }
+        """),
     )
     parser.add_argument(
         "-V", "--version",
