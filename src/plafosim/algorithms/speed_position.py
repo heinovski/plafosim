@@ -94,6 +94,8 @@ class SpeedPosition(FormationAlgorithm):
             LOG.warning("The time limit for the solver should be at least 2s! Otherwise it may not be possible for the solver to produce a solution (especially with many vehicles)!")
         self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
         self._solver_time_limit = solver_time_limit  # the time limit for the optimal solver per assignment problem
+        if formation_centralized_kind == "optimal":
+            LOG.warning("NOTE: The optimal solver is still experimental!")
 
         # statistics
         self._assignments_solved = 0
@@ -208,11 +210,13 @@ class SpeedPosition(FormationAlgorithm):
         if isinstance(self._owner, Infrastructure):
             LOG.info(f"{self._owner.iid} is running formation algorithm {self._name} ({self._formation_centralized_kind}) at {self._owner._simulator.step}")
             if self._formation_centralized_kind == 'optimal':
-                self._do_formation_optimal()
+                # optimal
+                self._do_formation_optimal()  # still experimental
             else:
                 # greedy
                 self._do_formation_centralized()
         else:
+            # greedy
             self._do_formation_distributed()
 
     def finish(self):
@@ -454,6 +458,8 @@ class SpeedPosition(FormationAlgorithm):
         Run centralized optimal formation approach.
 
         This selects candidates and triggers join maneuvers.
+
+        NOTE: This functionality is still experimental!
         """
 
         from ortools.linear_solver import pywraplp
