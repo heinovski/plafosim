@@ -169,7 +169,7 @@ DEFAULTS = {
     'gui_play': True,
     'gui_start': 0,
     'draw_ramps': True,
-    'draw_ramp_labels': True,
+    'draw_ramp_labels': False,
     'draw_road_end': True,
     'draw_road_end_label': True,
     'draw_infrastructures': True,
