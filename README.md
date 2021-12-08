@@ -118,6 +118,10 @@ To see all options of this script, run:
 ```poetry install```
 - Run PlaFoSim in the virtual environment with
 ```poetry run plafosim```
+or activate the virtual enviroment with
+```poetry shell```
+and run the commands as usual (see above)
+
 
 In order to add a new formation algorithm, you need to follow these steps:
 - Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`)
