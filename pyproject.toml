@@ -42,7 +42,7 @@ ipython = "^7.29.0"
 [tool.poetry.scripts]
 plafosim = "plafosim.cli.plafosim:main"
 plafosim-replay = "plafosim.cli.trace_replay:main"
-# with poetry 1.2, we can be more flexible
+# with poetry 1.2, we can be more flexible, since it will introduce the exec plugin
 # see https://github.com/python-poetry/poetry/issues/241
 
 [build-system]
