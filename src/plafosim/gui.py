@@ -44,6 +44,27 @@ def start_gui(config: str, play: bool = True):
     traci.start(command)
 
 
+def set_gui_window(road_length: int):
+    """
+    Set the window of the GUI according to the road length.
+
+    Parameters
+    ----------
+    road_length : int
+        The length of the road in m
+    """
+    import traci
+    traci.gui.setBoundary(
+        traci.gui.DEFAULT_VIEW,
+        xmin=0,
+        ymin=-25000,
+        xmax=road_length,
+        ymax=25000,
+    )
+    # TODO set zoom?
+    # traci.gui.setZoom(traci.gui.DEFAULT_VIEW, 1000)
+
+
 def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: tuple = (0, 255, 0), track: bool = False):
     """
     Adds a vehicle to the GUI.

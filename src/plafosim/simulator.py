@@ -38,6 +38,7 @@ from .gui import (
     move_gui_vehicle,
     prune_vehicles,
     remove_gui_vehicle,
+    set_gui_window,
     start_gui,
 )
 from .infrastructure import Infrastructure
@@ -1206,6 +1207,9 @@ class Simulator:
 
         # start gui
         start_gui(self._sumo_config, self._gui_play)
+
+        # set correct boundary and zoom
+        set_gui_window(road_length=self._road_length)
 
         # draw ramps
         if self._draw_ramps:
