@@ -1402,7 +1402,7 @@ class Simulator:
     def _statistics(self, runtime: float):
         """Record some period statistics."""
 
-        self._avg_number_vehicles = (
+        self._avg_number_vehicles = int(
             (self._values_in_avg_number_vehicles * self._avg_number_vehicles + len(self._vehicles)) /
             (self._values_in_avg_number_vehicles + 1)
         )
