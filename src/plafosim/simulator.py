@@ -477,6 +477,8 @@ class Simulator:
                 sys.exit("ERROR: Environment variable 'SUMO_HOME' was not declared!")
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
             sys.path.append(tools)
+            if road_length > 1000 * 1000:
+                sys.exit("ERROR: The current maximum road length supported in the GUI is 1000km!")
             if number_of_lanes > 4:
                 sys.exit("ERROR: The current maximum number of lanes supported in the GUI is 4!")
 
