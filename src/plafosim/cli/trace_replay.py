@@ -169,7 +169,7 @@ def main():
     LOG.debug(f"Running from {min_step}s to {max_step}s...")
 
     if min_step > 0:
-        gui_step(min_step - 1)  # TODO consider various step lengths
+        gui_step(min_step)  # TODO consider various step lengths
 
     import traci
     for step in tqdm(range(min_step, max_step), desc="Trace progress", unit='step'):
