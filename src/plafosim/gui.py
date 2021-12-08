@@ -214,13 +214,13 @@ def draw_ramps(road_length: int, interval: int, labels: bool):
             )
 
 
-def draw_road_end(length: int, label: bool):
+def draw_road_end(road_length: int, label: bool):
     """
     Draws the end of the road in the GUI.
 
     Parameters
     ----------
-    length : int
+    road_length : int
         The length of the road in m
     label : bool
         Whether to draw a label
@@ -233,15 +233,15 @@ def draw_road_end(length: int, label: bool):
 
     import traci
     traci.polygon.add("road-end", [
-        (length - width / 2, y_bottom),  # bottom left
-        (length + width / 2, y_bottom),  # bottom right
-        (length + width / 2, y_top),  # top right
-        (length - width / 2, y_top)  # top left
+        (road_length - width / 2, y_bottom),  # bottom left
+        (road_length + width / 2, y_bottom),  # bottom right
+        (road_length + width / 2, y_top),  # top right
+        (road_length - width / 2, y_top)  # top left
     ], color, fill=True, layer=3)
     if label:
         traci.poi.add(
             "Road End",
-            x=length + 50,
+            x=road_length + 50,
             y=300,
             color=(51, 128, 51),
         )

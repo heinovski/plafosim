@@ -1216,7 +1216,7 @@ class Simulator:
         # draw road end
         if self._draw_road_end:
             draw_road_end(
-                length=self._road_length,
+                road_length=self._road_length,
                 label=self._draw_road_end_label
             )
 
