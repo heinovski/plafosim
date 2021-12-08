@@ -453,6 +453,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--gui-play",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['gui_play'],
+        choices=(True, False),
         help="Whether to start the simulation immediately",
     )
     gui.add_argument(
