@@ -1,13 +1,13 @@
 # Changelog
 
-## [0.14.3](https://github.com/heinovski/plafosim/releases/tag/v0.14.3) - 2021-12-06
+## [v0.14.3](https://github.com/heinovski/plafosim/releases/tag/v0.14.3) - 2021-12-06
 * Fixed vehicle tracking
 * Formatted citation & description
 * Made effective depart rate check less conservative
 * Removed duplicated warning
 * Updated some log statements
 
-## [0.14.2](https://github.com/heinovski/plafosim/releases/tag/v0.14.2) - 2021-11-29
+## [v0.14.2](https://github.com/heinovski/plafosim/releases/tag/v0.14.2) - 2021-11-29
 * Added vehicle color to trace file
 * Fixed changelog URL in packaging configuration
 * Fixed formation kind check
@@ -15,14 +15,14 @@
 * Updated log levels in GUI
 * Updated log statements in trace replay script
 
-## [0.14.1](https://github.com/heinovski/plafosim/releases/tag/v0.14.1) - 2021-11-23
+## [v0.14.1](https://github.com/heinovski/plafosim/releases/tag/v0.14.1) - 2021-11-23
 * Added pre-filled status to vehicles
 * Added random offset for pre-filled vehicles' execution interval
 * Fixed bug in GUI
 * Updated CHANGELOG
 * Updated README
 
-## [0.14.0](https://github.com/heinovski/plafosim/releases/tag/v0.14.0) - 2021-11-22
+## [v0.14.0](https://github.com/heinovski/plafosim/releases/tag/v0.14.0) - 2021-11-22
 * Added packaging with poetry
 * Added dry-run flag
 * Fixed bug in comparison script
@@ -30,11 +30,11 @@
 * Updated README
 * Updated trace replay script
 
-## [0.13.2](https://github.com/heinovski/plafosim/releases/tag/v0.13.2) - 2021-11-17
+## [v0.13.2](https://github.com/heinovski/plafosim/releases/tag/v0.13.2) - 2021-11-17
 * Fixed typo in README
 * Updated citation information
 
-## [0.13.1](https://github.com/heinovski/plafosim/releases/tag/v0.13.1) - 2021-11-12
+## [v0.13.1](https://github.com/heinovski/plafosim/releases/tag/v0.13.1) - 2021-11-12
 * Added dedicated directory for algorithms
 * Added dedicated directory for algorithms
 * Fixed ignoring failed CI steps
@@ -42,7 +42,7 @@
 * Removed obsolete argument
 * Updated README
 
-## [0.13.0](https://github.com/heinovski/plafosim/releases/tag/v0.13.0) - 2021-10-20
+## [v0.13.0](https://github.com/heinovski/plafosim/releases/tag/v0.13.0) - 2021-10-20
 * Added citation information of accepted poster publication
 * Added flag to start GUI in paused mode
 * Added integration tests for spawning
@@ -54,7 +54,7 @@
 * Updated generation of pre-filled platoon
 * Updated Platoon Data
 
-## [0.12.0](https://github.com/heinovski/plafosim/releases/tag/v0.12.0) - 2021-09-08
+## [v0.12.0](https://github.com/heinovski/plafosim/releases/tag/v0.12.0) - 2021-09-08
 * Added argument for connecting to the GUI later
 * Added argument for showing the progress bar
 * Added arguments for drawing labels within the GUI
