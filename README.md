@@ -29,6 +29,8 @@ Please note that PlaFoSim is still under heavy development.
 - Install via pypi:
 ```pip install plafosim```
 
+NOTE: The project is currently only tested under Linux.
+
 ## Running a Simulation
 
 You can use the simulator as module as well as from the command-line.
@@ -121,6 +123,8 @@ To see all options of this script, run:
 or activate the virtual enviroment with
 ```poetry shell```
 and run the commands as usual (see above)
+
+NOTE: The project is currently only tested under Linux.
 
 In order to add a new formation algorithm, you need to follow these steps:
 - Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`)
