@@ -100,6 +100,14 @@ You can get a very simple live GUI based on SUMO by using the parameter `gui`:
 
 More options for the live GUI can be found within the ``gui properties`` section of the help.
 
+### Faster Simulation
+
+You can speed up the simulation performance by enabling Python's optimization ```PYTHONOPTIMIZE```, e.g., in order to disable assertion:
+
+```PYTHONOPTIMIZE=1 plafosim```
+
+See the Python [documention](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONOPTIMIZE) for more details.
+
 ## Re-Playing a Simulation
 
 The simulation can write a trace file for every simulated vehicle (default `results_vehicle_traces.csv`).
