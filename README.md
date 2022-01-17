@@ -120,7 +120,7 @@ To see all options of this script, run:
 ```poetry install```
 - Run PlaFoSim in the virtual environment with
 ```poetry run plafosim```
-or activate the virtual enviroment with
+or activate the virtual enviroment first with
 ```poetry shell```
 and run the commands as usual (see above)
 
