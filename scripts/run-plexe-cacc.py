@@ -19,8 +19,8 @@
 
 import argparse
 import os
-import sys
 import random
+import sys
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -30,7 +30,7 @@ else:
 
 import sumolib  # noqa 402
 import traci  # noqa 402
-from plexe import Plexe, ACC, CACC  # noqa 402
+from plexe import ACC, CACC, Plexe  # noqa 402
 
 # vehicle length
 LENGTH = 4

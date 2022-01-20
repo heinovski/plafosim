@@ -19,12 +19,11 @@
 import argparse
 import re
 import sys
-from scipy.stats import ks_2samp
 
 import matplotlib.pyplot as pl
 import pandas as pd
 import seaborn as sns
-
+from scipy.stats import ks_2samp
 
 # Read parameters
 
