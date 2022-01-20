@@ -19,6 +19,9 @@ import logging
 import os
 
 LOG = logging.getLogger(__name__)
+TRACI_SUPPORTED_VERSIONS = {
+    "1.6.0": 20,
+}
 
 
 def start_gui(config: str, play: bool = True):
@@ -42,6 +45,25 @@ def start_gui(config: str, play: bool = True):
     ]
     import traci
     traci.start(command)
+
+    # TODO perform this check before the actual GUI has been opened
+    traci_api = sumo = None
+    try:
+        traci_api, sumo = traci.getVersion()
+    except AttributeError:
+        pass
+    try:
+        traci_api, sumo = traci.main.getVersion()
+    except AttributeError:
+        pass
+    sumo = sumo.split(' ')[1]
+    assert traci_api
+    assert sumo
+    assert traci_api in TRACI_SUPPORTED_VERSIONS.values(), f"You are using an unsupported TraCI version ({traci_api})!"
+    # NOTE: we allow other SUMO vesions with the correct TraCI API version (e.g., development versions).
+    # However, these versions are untested and thus might lead lead to unexpected behaior.
+    if sumo not in TRACI_SUPPORTED_VERSIONS.keys():
+        LOG.warning(f"You are using an untested SUMO version ({sumo})!")
 
 
 def set_gui_window(road_length: int):
