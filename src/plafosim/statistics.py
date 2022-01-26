@@ -91,7 +91,7 @@ def record_vehicle_trip(
         f.write(
             f"{vehicle._vid},"
             f"{vehicle._vehicle_type.name},"
-            "HBEFA3/PC_G_EU4,"  # TODO make parameter
+            f"{vehicle._vehicle_type.emission_class.name},"
             f"{vehicle.__class__.__name__},"
             f"{vehicle._depart_time},"
             f"{vehicle._depart_lane},"
