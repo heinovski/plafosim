@@ -1044,6 +1044,8 @@ class Simulator:
             The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle
+        pre_filled : bool
+            Whether this vehicle was pre-filled
         """
 
         # choose vehicle "type" depending on the penetration rate

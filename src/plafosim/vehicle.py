@@ -95,6 +95,8 @@ class Vehicle:
             The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle
+        pre_filled : bool
+            Whether this vehicle was pre-filled
         """
 
         self._simulator = simulator  # the simulator

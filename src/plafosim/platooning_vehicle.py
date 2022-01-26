@@ -101,6 +101,8 @@ class PlatooningVehicle(Vehicle):
             The platoon formation algorithm to use
         execution_interval: int
             The interval for executing the formation algorithm
+        pre_filled : bool
+            Whether this vehicle was pre-filled
         """
 
         super().__init__(
