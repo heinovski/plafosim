@@ -64,6 +64,7 @@ class Vehicle:
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
+            depart_delay: int,
             communication_range: int,
             pre_filled: bool = False,
     ):
@@ -90,6 +91,8 @@ class Vehicle:
             The depart speed of the vehicle
         depart_time : int
             The depart time of the vehicle
+        depart_delay : int
+            The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle
         """
@@ -106,6 +109,7 @@ class Vehicle:
         self._depart_lane = depart_lane  # the departure lane of the vehicle
         self._depart_speed = depart_speed  # the departure speed of the vehicle
         self._depart_time = depart_time  # the departure time of the vehicle
+        self._depart_delay = depart_delay  # the depart delay of the vehicle
         self._pre_filled = pre_filled  # whether this vehicle was pre-filled
         # vehicle details
         self._position = self._depart_position  # the current position of the vehicle
@@ -466,7 +470,6 @@ class Vehicle:
 
         expected_travel_time = (self._arrival_position - self._depart_position) / self._desired_speed  # use explicit individual desired speed
         assert self.travel_time != 0
-        time_loss = self.travel_time - self._depart_time  # FIXME this is depart delay!
         assert expected_travel_time != 0
         travel_time_ratio = self.travel_time / expected_travel_time
         # NOTE: this also contains teleports
@@ -503,6 +506,7 @@ class Vehicle:
                 basename=self._simulator._result_base_filename,
                 vehicle=self,
                 time_loss=self._time_loss,
+                depart_delay=self._depart_delay,
                 expected_travel_time=expected_travel_time,
                 travel_time_ratio=travel_time_ratio,
                 average_driving_speed=average_driving_speed,

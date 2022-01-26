@@ -57,6 +57,7 @@ def initialize_vehicle_trips(basename: str):
             "departLane,"
             "departPos,"
             "departSpeed,"
+            "departDelay,"
             "arrival,"
             "arrivalLane,"
             "arrivalPos,"
@@ -76,6 +77,7 @@ def initialize_vehicle_trips(basename: str):
 def record_vehicle_trip(
     basename: str,
     vehicle: 'Vehicle',
+    depart_delay: int,
     time_loss: int,
     expected_travel_time: float,
     travel_time_ratio: float,
@@ -95,6 +97,7 @@ def record_vehicle_trip(
             f"{vehicle._depart_lane},"
             f"{vehicle._depart_position},"
             f"{vehicle._depart_speed},"
+            f"{vehicle._depart_delay},"
             f"{vehicle._simulator.step},"
             f"{vehicle._lane},"
             f"{vehicle._position},"

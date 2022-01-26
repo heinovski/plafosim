@@ -955,6 +955,7 @@ class Simulator:
                 depart_lane=row.depart_lane,
                 depart_speed=row.depart_speed,
                 depart_time=row.depart_time,
+                depart_delay=row.depart_delay,
             )
             if self._gui and self._step >= self._gui_start:
                 add_gui_vehicle(
@@ -1012,6 +1013,7 @@ class Simulator:
         depart_lane: int,
         depart_speed: float,
         depart_time: int,
+        depart_delay: int = 0,
         communication_range: int = DEFAULTS['communication_range'],
         pre_filled: bool = False,
     ):
@@ -1038,6 +1040,8 @@ class Simulator:
             The depart speed of the vehicle
         depart_time : int
             The depart time of the vehicle
+        depart_delay : int
+            The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle
         """
@@ -1054,6 +1058,7 @@ class Simulator:
                 depart_lane=depart_lane,
                 depart_speed=depart_speed,
                 depart_time=depart_time,
+                depart_delay=depart_delay,
                 communication_range=self._communication_range,
                 acc_headway_time=self._acc_headway_time,
                 cacc_spacing=self._cacc_spacing,
@@ -1073,6 +1078,7 @@ class Simulator:
                 depart_lane=depart_lane,
                 depart_speed=depart_speed,
                 depart_time=depart_time,
+                depart_delay=depart_delay,
                 communication_range=self._communication_range,
                 pre_filled=pre_filled,
             )

@@ -56,6 +56,7 @@ class PlatooningVehicle(Vehicle):
             depart_lane: int,
             depart_speed: float,
             depart_time: int,
+            depart_delay: int = 0,
             communication_range: int = 1000,
             acc_headway_time: float = 1.0,
             cacc_spacing: float = 5.0,
@@ -88,6 +89,8 @@ class PlatooningVehicle(Vehicle):
             The depart speed of the vehicle
         depart_time : int
             The depart time of the vehicle
+        depart_delay : int
+            The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle
         acc_headway_time: float
@@ -110,6 +113,7 @@ class PlatooningVehicle(Vehicle):
             depart_lane,
             depart_speed,
             depart_time,
+            depart_delay,
             communication_range,
             pre_filled,
         )
