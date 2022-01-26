@@ -57,11 +57,11 @@ class PlatooningVehicle(Vehicle):
             depart_speed: float,
             depart_time: int,
             depart_delay: int = 0,
-            communication_range: int = 1000,
-            acc_headway_time: float = 1.0,
-            cacc_spacing: float = 5.0,
+            communication_range: int = 1000,  # TODO use defaults
+            acc_headway_time: float = 1.0,  # TODO use defaults
+            cacc_spacing: float = 5.0,  # TODO use defaults
             formation_algorithm: str = None,
-            execution_interval: int = 1,
+            execution_interval: int = 1,  # TODO use defaults
             pre_filled: bool = False,
             **kw_args,
     ):
