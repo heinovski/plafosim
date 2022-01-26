@@ -121,6 +121,7 @@ class Vehicle:
         self._communication_range = communication_range  # the maximum communication range between two vehicles
 
         # statistics
+        self._time_loss = 0
         self._emissions = {
             'CO': 0,  # the total CO (Kohlenmonoxid) emission in mg
             'CO2': 0,  # the total CO2 (Kohlendioxid) emission in mg
@@ -375,6 +376,11 @@ class Vehicle:
             # we do not record statistics for pre-filled vehicles
             return
 
+        # calculate time loss
+        # SUMO: "The time lost due to driving below the ideal speed."
+        if self._speed < self._desired_speed:
+            self._time_loss += self._simulator.step_length
+
         if self._simulator._record_vehicle_traces:
             # mobility/trip statistics
             record_vehicle_trace(basename=self._simulator._result_base_filename, step=self._simulator.step, vehicle=self)
@@ -460,14 +466,14 @@ class Vehicle:
 
         expected_travel_time = (self._arrival_position - self._depart_position) / self._desired_speed  # use explicit individual desired speed
         assert self.travel_time != 0
-        time_loss = self.travel_time - self._depart_time
+        time_loss = self.travel_time - self._depart_time  # FIXME this is depart delay!
         assert expected_travel_time != 0
         travel_time_ratio = self.travel_time / expected_travel_time
         # NOTE: this also contains teleports
         average_driving_speed = self.travel_distance / self.travel_time
         average_deviation_desired_speed = average_driving_speed - self._desired_speed  # use explicit individual desired speed
 
-        LOG.info(f"{self._vid} arrived at {self._position}m,{self._lane} with {self._speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {time_loss}s, {travel_time_ratio * 100}% of expected duration")
+        LOG.info(f"{self._vid} arrived at {self._position}m,{self._lane} with {self._speed}m/s, took {self.travel_time}s, {self.travel_distance}m, loss: {self._time_loss}s, {travel_time_ratio * 100}% of expected duration")
 
         # statistic recording
 
@@ -496,7 +502,7 @@ class Vehicle:
             record_vehicle_trip(
                 basename=self._simulator._result_base_filename,
                 vehicle=self,
-                time_loss=time_loss,
+                time_loss=self._time_loss,
                 expected_travel_time=expected_travel_time,
                 travel_time_ratio=travel_time_ratio,
                 average_driving_speed=average_driving_speed,

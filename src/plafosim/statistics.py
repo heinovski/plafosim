@@ -76,7 +76,7 @@ def initialize_vehicle_trips(basename: str):
 def record_vehicle_trip(
     basename: str,
     vehicle: 'Vehicle',
-    time_loss: float,
+    time_loss: int,
     expected_travel_time: float,
     travel_time_ratio: float,
     average_driving_speed: float,
