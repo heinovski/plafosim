@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.14.4](https://github.com/heinovski/plafosim/releases/tag/v0.14.4) - 2021-02-03
+* Added check for supported SUMO version
+* Added recording of depart delay to vehicle
+* Cleaned up code
+* Fixed bug in trace player
+* Fixed missing choices in CLI script
+* Updated changelog
+* Updated documentation
+* Updated GUI
+* Updated README
+* Updated statistics recording
+
 ## [v0.14.3](https://github.com/heinovski/plafosim/releases/tag/v0.14.3) - 2021-12-06
 * Fixed vehicle tracking
 * Formatted citation & description
