@@ -36,7 +36,6 @@
 
 ## [v0.13.1](https://github.com/heinovski/plafosim/releases/tag/v0.13.1) - 2021-11-12
 * Added dedicated directory for algorithms
-* Added dedicated directory for algorithms
 * Fixed ignoring failed CI steps
 * Moved CF_Model to mobility module
 * Removed obsolete argument
