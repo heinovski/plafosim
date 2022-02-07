@@ -974,7 +974,7 @@ class Simulator:
 
         # 5) enque remaining
         if not_spawned_vehicles:
-            LOG.warning(f"Could not spawn {len(not_spawned_vehicles)} vehicles, putting them back into the queue!")
+            LOG.warning(f"Could not spawn a total of {len(not_spawned_vehicles)} vehicles within this step, putting them back into the queue!")
         self._vehicle_spawn_queue = not_spawned_vehicles
         assert len({v['vid'] for v in self._vehicle_spawn_queue}) == len(self._vehicle_spawn_queue)
 
