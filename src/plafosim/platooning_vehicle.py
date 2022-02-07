@@ -1063,7 +1063,7 @@ class PlatooningVehicle(Vehicle):
         self._platoon_role = PlatoonRole.LEAVER
         leader.in_maneuver = True
 
-        if self is self._platoon.leader:
+        if self is leader:
             # leave at front
             self._leaves_front += 1
 
