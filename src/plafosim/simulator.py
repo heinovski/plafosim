@@ -1509,8 +1509,8 @@ class Simulator:
         return (
             pd.DataFrame([
                 dict(
-                    **{key: vehicle.__dict__[f"_{key}"] for key in fields},
-                    **{key: vehicle._vehicle_type.__dict__[f"_{key}"] for key in vtype_fields},
+                    **{key: vars(vehicle)[f"_{key}"] for key in fields},
+                    **{key: vars(vehicle._vehicle_type)[f"_{key}"] for key in vtype_fields},
                     **get_platoon_data(vehicle),
                     desired_headway_time=vehicle.desired_headway_time,
                     acc_lambda=getattr(vehicle, "_acc_lambda", np.nan),
@@ -1574,7 +1574,7 @@ class Simulator:
     def __str__(self) -> str:
         """Returns a str representation of a simulator instance."""
 
-        sim_dict = self.__dict__.copy()
+        sim_dict = vars(self).copy()
         sim_dict.pop('_vehicles')
         sim_dict.pop('_infrastructures')
         sim_dict.update({'current_number_of_vehicles': len(self._vehicles)})
