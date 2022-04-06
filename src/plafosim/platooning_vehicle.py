@@ -301,10 +301,7 @@ class PlatooningVehicle(Vehicle):
             The maneuver status
         """
 
-        if self._in_maneuver and var:
-            # we can only start a new maneuver if we are not already in one
-            LOG.warning(f"{self.vid} is already in a maneuver")
-            return
+        assert var != self._in_maneuver, f"Maneuver request {var} does not match maneuver status {self._in_maneuver} of {self._vid}!"
         self._in_maneuver = var
 
     @property
@@ -1063,7 +1060,6 @@ class PlatooningVehicle(Vehicle):
 
         self.in_maneuver = True
         self._platoon_role = PlatoonRole.LEAVER
-        leader.in_maneuver = True
 
         if self is leader:
             # leave at front
@@ -1099,6 +1095,7 @@ class PlatooningVehicle(Vehicle):
                 LOG.debug(f"{new_leader.vid} became leader of platoon {new_leader.platoon.platoon_id}")
         elif self is self._platoon.last:
             # leave at back
+            leader.in_maneuver = True
             self._leaves_back += 1
 
             if self._platoon.size == 2:
@@ -1123,6 +1120,7 @@ class PlatooningVehicle(Vehicle):
                 leader._leaves_front += 1
         else:
             # leave in the middle
+            leader.in_maneuver = True
             self._leaves_arbitrary += 1
 
             # we do not need to switch lanes if we arrived
@@ -1182,7 +1180,8 @@ class PlatooningVehicle(Vehicle):
             change_gui_vehicle_color(self._vid, self._color)
 
         self.in_maneuver = False
-        leader.in_maneuver = False
+        if self is not leader:
+            leader.in_maneuver = False
 
         assert self._last_platoon_join_time >= 0
         self._time_in_platoon += self._simulator.step - self._last_platoon_join_time
