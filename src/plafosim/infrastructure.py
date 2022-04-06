@@ -106,7 +106,7 @@ class Infrastructure:
             The current simulation step
         """
 
-        LOG.debug(f"{self.iid} was triggered at {step}")
+        LOG.trace(f"{self.iid} was triggered at {step}")
 
         if self._formation_algorithm:
             if step >= self._last_formation_step + self._execution_interval:

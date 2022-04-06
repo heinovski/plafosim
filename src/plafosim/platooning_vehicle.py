@@ -563,7 +563,7 @@ class PlatooningVehicle(Vehicle):
 
         assert not self.is_in_platoon()
 
-        LOG.info(f"{self._vid} is trying to join platoon {platoon_id} (leader {leader_id})")
+        LOG.trace(f"{self._vid} is trying to join platoon {platoon_id} (leader {leader_id})")
         self._joins_attempted += 1
 
         assert not self.in_maneuver
@@ -616,7 +616,7 @@ class PlatooningVehicle(Vehicle):
 
         last = leader.platoon.last
         new_position = last.rear_position - self._cacc_spacing
-        LOG.debug(f"{self._vid}'s new position is ({new_position},{leader.platoon.lane}) (current {self._position},{self._lane})")
+        LOG.trace(f"{self._vid}'s new position is ({new_position},{leader.platoon.lane}) (current {self._position},{self._lane})")
 
         if new_position < self.length:
             # we cannot join since we would be outside of the road
@@ -730,10 +730,10 @@ class PlatooningVehicle(Vehicle):
             self._join_data_last = last
             self._join_data_new_position = new_position
             leader._joiner = self
-            LOG.debug(f"Scheduled the teleport for vehicle {self._vid} to {self._join_approach_step} ({new_position})")
+            LOG.trace(f"Scheduled the teleport of vehicle {self._vid} to step {self._join_approach_step} (new position: {new_position})")
         else:
             # perform the teleport now
-            LOG.debug(f"The teleport for vehicle {self._vid} will be performed instantaneous.")
+            LOG.trace(f"The teleport for vehicle {self._vid} will be performed instantaneous.")
             self._join_teleport(leader, last, new_position)
 
     def _join_teleport(self, leader: 'PlatooningVehicle', last: 'PlatooningVehicle', new_position: float):
@@ -748,7 +748,7 @@ class PlatooningVehicle(Vehicle):
             The new position for joining the target platoon
         """
 
-        LOG.debug(f"Continuing the join maneuver for vehicle {self._vid} -> {leader.platoon.platoon_id} ({leader.vid})")
+        LOG.trace(f"Continuing the join maneuver for vehicle {self._vid} -> {leader.platoon.platoon_id} ({leader.vid})")
 
         if leader.position >= leader.arrival_position:
             # the leader is gone (or will be gone soon)
@@ -769,7 +769,7 @@ class PlatooningVehicle(Vehicle):
 
         # re-calculate new position
         new_position = last.rear_position - self._cacc_spacing
-        LOG.debug(f"{self._vid}'s new position is ({new_position},{leader.platoon.lane}) (current {self._position},{self._lane})")
+        LOG.trace(f"{self._vid}'s new position is ({new_position},{leader.platoon.lane}) (current {self._position},{self._lane})")
 
         assert new_position >= self.length
         assert new_position >= self._depart_position
@@ -934,7 +934,7 @@ class PlatooningVehicle(Vehicle):
             vehicle._platoon = leader.platoon
             vehicle._cf_target_speed = vehicle._platoon.desired_speed
 
-        LOG.info(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
+        LOG.debug(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
 
         self.in_maneuver = False
         leader.in_maneuver = False
@@ -1009,18 +1009,18 @@ class PlatooningVehicle(Vehicle):
         current_position = self._position
         if current_position != new_position:
             self._position = new_position
-            LOG.debug(f"{self._vid} teleported to {self._position} (from {current_position}, {self._position - current_position}m)")
+            LOG.trace(f"{self._vid} teleported to {self._position} (from {current_position}, {self._position - current_position}m)")
             self._joins_teleport_position += 1
         current_lane = self._lane
         if current_lane != new_lane:
             self._lane = new_lane
-            LOG.debug(f"{self._vid} switched to lane {self._lane} (from {current_lane})")
+            LOG.trace(f"{self._vid} switched to lane {self._lane} (from {current_lane})")
             self._joins_teleport_lane += 1
         current_speed = self._speed
         self._cf_target_speed = new_speed
         if current_speed != new_speed:
             self._speed = new_speed
-            LOG.debug(f"{self._vid} changed speed to {self._speed}m/s (from {current_speed}m/s)")
+            LOG.trace(f"{self._vid} changed speed to {self._speed}m/s (from {current_speed}m/s)")
             self._joins_teleport_speed += 1
 
     def _leave(self):
@@ -1037,7 +1037,7 @@ class PlatooningVehicle(Vehicle):
 
         leader = self._platoon.leader
 
-        LOG.info(f"{self._vid} is trying to leave platoon {self._platoon.platoon_id} (leader {leader.vid})")
+        LOG.trace(f"{self._vid} is trying to leave platoon {self._platoon.platoon_id} (leader {leader.vid})")
         self._leaves_attempted += 1
 
         if leader.in_maneuver:
@@ -1071,7 +1071,7 @@ class PlatooningVehicle(Vehicle):
                 # tell the only follower to drive individually
                 follower = self._platoon.last
                 assert not follower.in_maneuver
-                LOG.debug(f"Only {follower.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
+                LOG.trace(f"Only {follower.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 follower._platoon_role = PlatoonRole.NONE
                 follower._cf_model = CF_Model.ACC
                 follower._cf_target_speed = follower._desired_speed
@@ -1101,7 +1101,7 @@ class PlatooningVehicle(Vehicle):
 
             if self._platoon.size == 2:
                 # tell the current leader to drive individually
-                LOG.debug(f"Only the current leader {leader.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
+                LOG.trace(f"Only the current leader {leader.vid} is left in the platoon {self._platoon.platoon_id}. Thus, we are going to destroy the entire platoon.")
                 leader._platoon_role = PlatoonRole.NONE
                 leader._cf_model = CF_Model.ACC  # TODO superfluous?
                 leader._cf_target_speed = leader._desired_speed  # TODO superfluous?
@@ -1170,7 +1170,7 @@ class PlatooningVehicle(Vehicle):
                 vehicle._platoon = self._platoon
 
         # leave
-        LOG.info(f"{self._vid} left platoon {self._platoon.platoon_id} (leader {self._platoon.leader.vid})")
+        LOG.debug(f"{self._vid} left platoon {self._platoon.platoon_id} (leader {self._platoon.leader.vid})")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self._vid, [self], self._desired_speed)  # use explicit individual desired speed
         self._cf_model = CF_Model.ACC  # not necessary, but we still do it explicitly
@@ -1263,4 +1263,4 @@ class PlatooningVehicle(Vehicle):
         """
 
         # TODO add contents to the neighbor table
-        LOG.info(f"{self._vid} received an advertisement from {advertisement.origin}")
+        LOG.debug(f"{self._vid} received an advertisement from {advertisement.origin}")

@@ -467,7 +467,7 @@ class Simulator:
         self._collisions = collisions  # whether to check for collisions
         if random_seed < 0:
             random_seed = random.randint(0, 10000)
-        LOG.info(f"Using random seed {random_seed}")
+        LOG.debug(f"Using random seed {random_seed}")
         self._rng = random.Random(random_seed)
         self._progress = progress  # whether to enable the (simulation) progress bar
 
@@ -725,7 +725,7 @@ class Simulator:
     def _generate_vehicles(self):
         """Adds pre-filled vehicles to the simulation."""
 
-        LOG.info(f"Pre-filling the road network with {self._number_of_vehicles} vehicles")
+        LOG.debug(f"Pre-filling the road network with {self._number_of_vehicles} vehicles")
 
         assert not self._vehicles
         assert self._last_vehicle_id == -1
@@ -779,7 +779,7 @@ class Simulator:
                     # always use random lane for pre-filled vehicle
                     depart_lane = self._rng.randrange(0, self._number_of_lanes, 1)
 
-                    LOG.debug(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
+                    LOG.trace(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
 
                     if not self._vehicles:
                         continue
@@ -833,7 +833,7 @@ class Simulator:
                 pre_filled=True,
             )
 
-            LOG.debug(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
+            LOG.trace(f"Generated vehicle {vid} at {depart_position}-{depart_position - vtype._length},{depart_lane} with {depart_speed}")
 
         if self._start_as_platoon:
             self._initialize_prefilled_platoon()
@@ -1118,7 +1118,7 @@ class Simulator:
             )
             self._infrastructures[iid] = infrastructure
 
-            LOG.info(f"Generated infrastructure {infrastructure} at {position}")
+            LOG.info(f"Generated infrastructure {infrastructure.iid} at {position}")
 
     def _initialize_result_recording(self):
         """Creates output files for all (enabled) statistics and writes the headers."""
