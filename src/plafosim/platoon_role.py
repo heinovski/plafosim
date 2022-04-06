@@ -23,6 +23,6 @@ class PlatoonRole(Enum):
 
     NONE = 0  # corresponds to driving individually
     LEADER = 1  # corresponds to being the leader of a platoon
-    FOLLOWER = 2  # corresponds to being a follow of a platoon
-    JOINER = 3  # corresponds to be in the process of joining a platoon
-    LEAVER = 4  # corresponds to be in the process of leaving a platoon
+    FOLLOWER = 2  # corresponds to being a follower in a platoon
+    JOINER = 3  # corresponds to being in the process of joining a platoon
+    LEAVER = 4  # corresponds to being in the process of leaving a platoon
