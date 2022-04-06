@@ -618,19 +618,25 @@ def initialize_simulation_trace(basename: str):
         f.write(
             "step,"
             "numberOfVehicles,"
+            "vehiclesInSpawnQueue,"
             "executionTime"
             "\n"
         )
 
 
-def record_simulation_trace(basename: str, simulator: 'Simulator', runtime: float):
+def record_simulation_trace(
+        basename: str,
+        step: int,
+        vehicles_in_simulator: int,
+        vehicles_in_queue: int,
+        runtime: float
+):
     assert basename
-    from .simulator import Simulator
-    assert isinstance(simulator, Simulator)
     with open(f'{basename}_simulation_trace.csv', 'a') as f:
         f.write(
-            f"{simulator.step},"
-            f"{len(simulator._vehicles)},"
+            f"{step},"
+            f"{vehicles_in_simulator},"
+            f"{vehicles_in_queue},"
             f"{runtime}"
             "\n"
         )

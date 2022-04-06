@@ -1303,6 +1303,9 @@ class Simulator:
             # spawn vehicle based on given parameters
             self._spawn_vehicles(self._get_vehicles_df())
 
+            vehicles_in_simulator = len(self._vehicles)
+            vehicles_in_queue = len(self._vehicle_spawn_queue)
+
             if self._vehicles:
                 # update the GUI
                 if self._gui and self._step >= self._gui_start:
@@ -1392,7 +1395,7 @@ class Simulator:
 
             # record some periodic statistics
             run_time = end_time - start_time
-            self._statistics(run_time)
+            self._statistics(vehicles_in_simulator, vehicles_in_queue, run_time)
 
             # a new step begins
             self._step += self._step_length
@@ -1407,17 +1410,23 @@ class Simulator:
 
         return self._step
 
-    def _statistics(self, runtime: float):
+    def _statistics(self, vehicles_in_simulator, vehicles_in_queue, runtime: float):
         """Record some period statistics."""
 
         self._avg_number_vehicles = int(
-            (self._values_in_avg_number_vehicles * self._avg_number_vehicles + len(self._vehicles)) /
+            (self._values_in_avg_number_vehicles * self._avg_number_vehicles + vehicles_in_simulator) /
             (self._values_in_avg_number_vehicles + 1)
         )
 
         if self._record_simulation_trace:
             # write continuous simulation traces
-            record_simulation_trace(basename=self._result_base_filename, simulator=self, runtime=runtime)
+            record_simulation_trace(
+                basename=self._result_base_filename,
+                step=self._step,
+                vehicles_in_simulator=vehicles_in_simulator,
+                vehicles_in_queue=vehicles_in_queue,
+                runtime=runtime,
+            )
 
     def _record_lane_changes(self, vdf: pd.DataFrame):
         for row in vdf.query('lane != old_lane').itertuples():
