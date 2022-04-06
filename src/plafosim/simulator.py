@@ -1589,7 +1589,7 @@ class Simulator:
         sim_dict.pop('_infrastructures')
         sim_dict.update({'current_number_of_vehicles': len(self._vehicles)})
         sim_dict.update({'current_number_of_infrastructures': len(self._infrastructures)})
-        return str(sim_dict)
+        return str(dict(sorted(sim_dict.items())))
 
     def _finish(self):
         """Cleans up the simulation."""
