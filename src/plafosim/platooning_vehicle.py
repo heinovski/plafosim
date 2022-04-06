@@ -219,6 +219,8 @@ class PlatooningVehicle(Vehicle):
 
         if self._cf_model == CF_Model.ACC:
             return self._acc_headway_time
+        elif self._cf_model == CF_Model.CACC:
+            return -1
         return super().desired_headway_time
 
     @property
