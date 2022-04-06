@@ -526,7 +526,7 @@ class Simulator:
         # TODO log generation parameters
         if pre_fill:
             self._generate_vehicles()
-            self._last_vehicle_id = list(self._vehicles.keys())[-1] + 1
+            self._last_vehicle_id = list(self._vehicles.keys())[-1]
             self._number_of_prefilled_vehicles = len(self._vehicles)
         else:
             self._number_of_prefilled_vehicles = 0
