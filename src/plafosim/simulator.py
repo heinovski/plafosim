@@ -920,9 +920,9 @@ class Simulator:
 
         # 4) spawn
         LOG.trace(f"Trying to spawn {len(self._vehicle_spawn_queue)} new vehicles")
-        # TODO sort by waiting time
+        # sort by waiting/schedule time (and vid) for fairness
         spawned_vehicles_df, not_spawned_vehicles = compute_vehicle_spawns(
-            vehicles=self._vehicle_spawn_queue,
+            vehicles=sorted(self._vehicle_spawn_queue, key=lambda d: (d['schedule_time'], d['vid'])),
             vdf=vdf,
             ramp_positions=self._ramp_positions,
             current_step=self._step,
