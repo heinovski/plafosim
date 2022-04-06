@@ -16,6 +16,7 @@
 #
 
 import logging
+import math
 import os
 import textwrap
 
@@ -35,6 +36,10 @@ def find_resource(path: str) -> str:
             f"Path is not a local file or packaged resource: {path}."
         )
     return str(resource_path)
+
+
+def round_to_next_base(x: float, base: float) -> float:
+    return base * math.ceil(x / base)
 
 
 def rgb2hex(rgb: tuple) -> str:

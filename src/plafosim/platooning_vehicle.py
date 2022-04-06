@@ -33,6 +33,7 @@ from .statistics import (
     record_vehicle_platoon_maneuvers,
     record_vehicle_platoon_trace,
 )
+from .util import round_to_next_base
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
@@ -701,8 +702,10 @@ class PlatooningVehicle(Vehicle):
 
         # delay teleport by approach duration
         if self._simulator._delay_teleports and total_approach_time > 0:
+            # round approach time to next simulation step
+            total_approach_time = round_to_next_base(total_approach_time, self._simulator.step_length)
             # the platoon will be driving while we are waiting
-            new_position = new_position + total_approach_time * leader.platoon.speed
+            new_position += total_approach_time * leader.platoon.speed
             if new_position >= self._simulator.road_length:
                 LOG.warning(f"{self._vid}'s new position would be outside of the road! Aborting the join maneuver")
                 self.in_maneuver = False
@@ -713,7 +716,8 @@ class PlatooningVehicle(Vehicle):
                 self._joins_aborted_road_end += 1
                 return
 
-            # check if the new position (+ the distance in one time step) would be outside of the trip
+            # check if the new position would be outside of the trip
+            # NOTE: we need to add the distance the vehicle drives within one step as well in order to avoid that the vehicles finishes within the next step after the maneuver
             if new_position + self._simulator.step_length * self.speed >= self._arrival_position:
                 LOG.warning(f"{self._vid}'s new position would be outside of its trip! Aborting the join maneuver")
                 self.in_maneuver = False
@@ -940,7 +944,7 @@ class PlatooningVehicle(Vehicle):
 
     def calculate_approaching_time(self, target_position: float, target_speed: float) -> float:
         """
-        Calculate approximate time to approacht the target position at target speed
+        Calculate approximate time to approach the target position at target speed
 
         Parameters
         ----------
