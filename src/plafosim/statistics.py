@@ -33,7 +33,7 @@ def record_general_data_begin(basename: str, simulator: 'Simulator'):
     assert isinstance(simulator, Simulator)
     with open(f'{basename}_general.out', 'w') as f:
         f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
-        f.write(f"parameters {dict(sorted(vars(simulator).items()))}\n")
+        f.write(f"parameters {str(simulator)}\n")
 
 
 def record_general_data_end(basename: str, simulator: 'Simulator'):
