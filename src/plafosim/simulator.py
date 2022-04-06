@@ -1681,6 +1681,8 @@ def compute_vehicle_spawns(
         max_remanining_trip_length = ramp_positions[-1] - position
 
         vehicle_to_spawn_now = None
+        # TODO use vectorized approach
+        # assume sorted by waiting time for fairness
         for v in vehicles:
             if (
                 max_remanining_trip_length >= v['min_trip_length']
@@ -1692,6 +1694,7 @@ def compute_vehicle_spawns(
 
         # vehicles are sorted, so we always pick the longest waiting vehicle first :-)
         if not vehicle_to_spawn_now:
+            # no vehicle from the queue fits to the current spawn position
             continue
 
         vehicles_to_spawn[vehicle_to_spawn_now['vid']] = {
