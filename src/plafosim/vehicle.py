@@ -484,19 +484,23 @@ class Vehicle:
 
         # statistic recording
 
+        # TODO use pre_filled flag
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
+            LOG.debug(f"Not recording statistics for pre-filled vehicle {self._vid}")
             return
 
         # by this check, we should also already avoid logging if the minimum trip length has not been fulfilled
         # HACK: adding length here to cope for departPos="base"
         # TODO we might need to travel 'length' more than arrival position
-        if self.travel_distance < (self._simulator._minimum_trip_length - self.length) and not self._simulator._start_as_platoon:
+        if self.travel_distance < (self._simulator._minimum_trip_length - self.length):
             # we are only interested in vehicles that did complete the minimum trip length
-            # this should only be the case for pre-filled vehicles
-            assert self._depart_time == -1
-            return
-        # we could still have pre-filled vehicles that drove at least for the minimum trip length
+            # this should only be the case for pre-filled vehicles or if started as platoon
+            # TODO use pre_filled flag
+            assert (
+                (self._simulator._record_prefilled and self._depart_time == -1)
+                or self._simulator._start_as_platoon
+            )
 
         assert travel_time_ratio >= 0
         assert average_driving_speed >= 0

@@ -391,8 +391,10 @@ class PlatooningVehicle(Vehicle):
 
         # statistic recording
 
+        # TODO use pre_filled flag
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
+            LOG.debug(f"Not recording statistics for pre-filled vehicle {self._vid}")
             return
 
         candidates_found_avg = (
