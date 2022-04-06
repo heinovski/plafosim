@@ -102,7 +102,7 @@ More options for the live GUI can be found within the ``gui properties`` section
 
 ### Faster Simulation
 
-You can speed up the simulation performance by enabling Python's optimization ```PYTHONOPTIMIZE```, e.g., in order to disable assertion:
+You can speed up the simulation performance by enabling Python's optimization ```PYTHONOPTIMIZE```, e.g., in order to disable assertions:
 
 ```PYTHONOPTIMIZE=1 plafosim```
 
