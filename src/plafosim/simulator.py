@@ -775,7 +775,8 @@ class Simulator:
                     # we do not consider depart interval here since this is supposed to be a snapshot from an earlier point of simulation
                     # make sure to also include the end of the road itself
                     # consider length, equal to departPos="base" in SUMO
-                    depart_position = self._rng.uniform(vtype._length, self._road_length)
+                    # we assume that a vehicle has to drive at least 1m
+                    depart_position = self._rng.uniform(vtype._length, self._road_length - 1)
                     # always use random lane for pre-filled vehicle
                     depart_lane = self._rng.randrange(0, self._number_of_lanes, 1)
 

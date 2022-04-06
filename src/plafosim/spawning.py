@@ -94,6 +94,7 @@ def get_arrival_position(
         # We cannot use the minimum trip time here,
         # since the pre-generation is supposed to produce a snapshot of a realistic simulation.
         # But we can assume that a vehicle has to drive at least 1m
+        assert depart_position <= (road_length - 1)
         min_arrival = depart_position + 1
         max_arrival = min(depart_position + max_trip_length - ramp_interval, road_length)
     else:
