@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (c) 2018 Michele Segata <segata@ccs-labs.org>
-# Copyright (c) 2020-2021 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
