@@ -87,7 +87,7 @@ plafosim --vehicles 1000 --pre-fill true
 plafosim --penetration 0.5 --acc-headway-time 1.5
 
 # Enable a simple, distributed platoon formation algorithm [1] in order to form platoons every 30s
-plafosim --formation-algorithm speedposition --formation-strategy distributed --execution-interval 30
+plafosim --formation-algorithm SpeedPosition --formation-strategy distributed --execution-interval 30
 ```
 
 ### Live GUI

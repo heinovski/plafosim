@@ -139,7 +139,7 @@ class PlatooningVehicle(Vehicle):
         if formation_algorithm:
             # initialize formation algorithm
             # TODO make enum
-            if formation_algorithm == "speedposition":
+            if formation_algorithm == SpeedPosition.__name__:
                 self._formation_algorithm = SpeedPosition(self, **kw_args)
             else:
                 sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}!")

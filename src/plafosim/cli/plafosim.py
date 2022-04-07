@@ -342,8 +342,8 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--formation-algorithm",
         type=str,
         default=DEFAULTS['formation_algorithm'],
-        choices=["speedposition"],
         # TODO use enum
+        choices=[SpeedPosition.__name__],
         help="The formation algorithm to use",
     )
     formation.add_argument(
@@ -360,7 +360,8 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="The interval between two iterations of a formation algorithm in s",
     )
 
-    # formation algorithm speed position properties
+    # formation algorithm specific properties
+    ## speed position
     SpeedPosition.add_parser_argument_group(parser)
 
     # infrastructure properties
