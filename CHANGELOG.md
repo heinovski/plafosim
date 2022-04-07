@@ -1,5 +1,20 @@
 # Changelog
 
+## [v0.14.5](https://github.com/heinovski/plafosim/releases/tag/v0.14.5) - 2022-04-07
+* Added dummy headway time for CACC
+* Fixed calculation of approach time
+* Fixed calculation of timeLoss
+* Fixed maneuver state
+* Fixed maximal depart position
+* Fixed off-by-one error in vehicle id calculation
+* Fixed statistic recording for pre-filled vehicles
+* Fixed typo in README
+* Fixed typos in comments
+* Improved log statements
+* Improved parameter recording
+* Improved recording of simulation trace
+* Improved vehicle spawning
+
 ## [v0.14.4](https://github.com/heinovski/plafosim/releases/tag/v0.14.4) - 2022-02-03
 * Added check for supported SUMO version
 * Added recording of depart delay to vehicle
