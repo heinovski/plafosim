@@ -75,7 +75,7 @@ class SpeedPosition(FormationAlgorithm):
             The threshold for position deviation
         """
 
-        super().__init__(self.__class__.__name__, owner)
+        super().__init__(owner)
 
         if alpha < 0 or alpha > 1:
             sys.exit("ERROR: The weighting factor alpha needs to be in [0,1]!")
@@ -110,7 +110,7 @@ class SpeedPosition(FormationAlgorithm):
 
     @classmethod
     def add_parser_argument_group(cls, parser: argparse.ArgumentParser):
-        group = parser.add_argument_group("Formation Algorithm -- Speed Position")
+        group = parser.add_argument_group(f"Formation Algorithm -- {cls.__name__}")
         group.add_argument(
             "--alpha",
             type=float,
@@ -208,7 +208,7 @@ class SpeedPosition(FormationAlgorithm):
 
         from ..infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
-            LOG.info(f"{self._owner.iid} is running formation algorithm {self._name} ({self._formation_centralized_kind}) at {self._owner._simulator.step}")
+            LOG.info(f"{self._owner.iid} is running formation algorithm {self.name} ({self._formation_centralized_kind}) at {self._owner._simulator.step}")
             if self._formation_centralized_kind == 'optimal':
                 # optimal
                 self._do_formation_optimal()  # still experimental
@@ -260,7 +260,7 @@ class SpeedPosition(FormationAlgorithm):
             LOG.trace(f"{self._owner.vid} is already in a maneuver")
             return
 
-        LOG.debug(f"{self._owner.vid} is running formation algorithm {self._name} (distributed)")
+        LOG.debug(f"{self._owner.vid} is running formation algorithm {self.name} (distributed)")
 
         self._owner._formation_iterations += 1
 
@@ -463,7 +463,7 @@ class SpeedPosition(FormationAlgorithm):
         """
 
         from ortools.linear_solver import pywraplp
-        solver = pywraplp.Solver(f"{self._name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
+        solver = pywraplp.Solver(f"{self.name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
         solver.SetNumThreads(1)
         # influences the quality of the solution
         solver.set_time_limit(self._solver_time_limit)

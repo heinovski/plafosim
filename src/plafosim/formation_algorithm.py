@@ -30,20 +30,17 @@ class FormationAlgorithm(ABC):
     Implementing sub-classes need to override the do_formation() method.
     """
 
-    def __init__(self, name: str, owner: object):
+    def __init__(self, owner: object):
         """
         Initializes an instance of a formation algorithm.
 
         Parameters
         ----------
-        name : str
-            The name of the formation algorithm
         owner : object
             The owning object that is execution this algorithm.
             This can be either a PlatooningVehicle or an Infrastructure.
         """
 
-        self._name = name  # the name of the formation algorithm
         from .infrastructure import Infrastructure
         from .platooning_vehicle import PlatooningVehicle  # noqa 811
         assert (isinstance(owner, PlatooningVehicle) or isinstance(owner, Infrastructure))
@@ -53,7 +50,7 @@ class FormationAlgorithm(ABC):
     def name(self):
         """Prints the name of the formation algorithm."""
 
-        return self._name
+        return self.__class__.__name__
 
     @abstractmethod
     def add_parser_argument_group(cls, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
