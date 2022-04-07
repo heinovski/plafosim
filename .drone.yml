@@ -106,7 +106,7 @@ steps:
     - . .venv/bin/activate
       # we are testing both vehicle types
     - plafosim --vehicles 100 --penetration 0.5 --formation-algorithm speedposition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
-- name: centralized formation (optimal)
+- name: centralized formation (optimal)  # still experimental
   image: python:3.8-buster
   environment:
     SEED: ${DRONE_BUILD_NUMBER}
