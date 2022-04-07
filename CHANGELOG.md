@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.14.4](https://github.com/heinovski/plafosim/releases/tag/v0.14.4) - 2021-02-03
+## [v0.14.4](https://github.com/heinovski/plafosim/releases/tag/v0.14.4) - 2022-02-03
 * Added check for supported SUMO version
 * Added recording of depart delay to vehicle
 * Cleaned up code
