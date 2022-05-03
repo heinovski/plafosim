@@ -23,14 +23,14 @@ steps:
 - name: build
   image: python:3.8-buster
   commands:
-    - pip install poetry
+    - pip install --upgrade pip poetry
     - poetry build
 - name: install (wheel)
   image: python:3.8-buster
   commands:
     - python3 -m venv .venv
     - . .venv/bin/activate
-    - pip install --upgrade wheel pip pytest pytest-cov
+    - pip install --upgrade wheel pytest pytest-cov
     - pip install dist/plafosim-*-py3-none-any.whl
 - name: unit
   image: python:3.8-buster
@@ -73,14 +73,14 @@ steps:
 - name: build
   image: python:3.8-buster
   commands:
-    - pip install poetry
+    - pip install --upgrade pip poetry
     - poetry build
 - name: install (wheel)
   image: python:3.8-buster
   commands:
     - python3 -m venv .venv
     - . .venv/bin/activate
-    - pip install --upgrade wheel pip
+    - pip install --upgrade wheel
     - pip install dist/plafosim-*-py3-none-any.whl
 - name: no formation
   image: python:3.8-buster
@@ -133,7 +133,7 @@ steps:
   environment:
     POETRY_VIRTUALENVS_IN_PROJECT: true
   commands:
-    - pip install poetry
+    - pip install --upgrade pip poetry
     - poetry install
     - poetry run pip install git+https://github.com/michele-segata/plexe-pyapi.git
 - name: Human
@@ -208,14 +208,14 @@ steps:
 - name: build
   image: python:3.8-buster
   commands:
-    - pip install poetry
+    - pip install --upgrade pip poetry
     - poetry build
 - name: install (wheel)
   image: python:3.8-buster
   commands:
     - python3 -m venv .venv
     - . .venv/bin/activate
-    - pip install --upgrade wheel pip
+    - pip install --upgrade wheel
     - pip install dist/plafosim-*-py3-none-any.whl
 - name: Human
   image: python:3.8-buster
