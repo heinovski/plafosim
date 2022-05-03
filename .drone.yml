@@ -165,6 +165,9 @@ steps:
     - apt update
     - apt install lftp
     - lftp -c "set ftp:ssl-allow no; open -u $USERNAME,$PASSWORD $HOST; put coverage.svg;"
+  when:
+    ref:
+      - refs/heads/master
 
 ---
 kind: pipeline
