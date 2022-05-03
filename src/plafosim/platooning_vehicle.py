@@ -458,6 +458,7 @@ class PlatooningVehicle(Vehicle):
 
         super()._action(step)
 
+        # continue jojn maneuver (approaching the target platoon)
         if self._join_approach_step:
             assert self._in_maneuver
             if step >= self._join_approach_step:
@@ -469,10 +470,12 @@ class PlatooningVehicle(Vehicle):
                 self._join_data_last = None
                 self._join_data_new_position = None
 
+        # do platoon formation
         if self._formation_algorithm:
             # transmit regular platoon advertisements
             self._advertise()
 
+            # execute formation algorithm at every execution interval
             if step >= self._last_formation_step + self._execution_interval:
                 # search for a platoon (depending on the algorithm)
                 self._formation_algorithm.do_formation()
@@ -528,11 +531,11 @@ class PlatooningVehicle(Vehicle):
         platoons = []
         for vehicle in self._simulator._vehicles.values():
 
-            # filter out self
+            # filter own vehicle
             if vehicle is self:
                 continue
 
-            # filter vehicles that are technically not able to do platooning
+            # filter non-available vehicles which are technically not able to do platooning
             if not isinstance(vehicle, PlatooningVehicle):
                 continue
 
@@ -540,7 +543,7 @@ class PlatooningVehicle(Vehicle):
             if vehicle.platoon_role != PlatoonRole.LEADER and vehicle.platoon_role != PlatoonRole.NONE:
                 continue
 
-            # filter based on communication range
+            # filter non-available vehicles based on communication range
             if abs(vehicle.position - self._position) > self._communication_range:
                 LOG.trace(f"{self._vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range}m)")
                 continue
