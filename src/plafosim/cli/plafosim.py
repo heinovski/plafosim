@@ -47,8 +47,9 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     parser = argparse.ArgumentParser(
         formatter_class=CustomFormatter,
         allow_abbrev=False,
-        description=textwrap.dedent("""
-            Platoon Formation Simulator (PlaFoSim) -- A simple and scalable simulator for platoon formation.
+        description=textwrap.dedent(f"""
+            Platoon Formation Simulator (PlaFoSim) -- Version {__version__}.
+            A simple and scalable simulator for platoon formation.
 
             Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
             This program comes with ABSOLUTELY NO WARRANTY.
