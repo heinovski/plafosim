@@ -128,7 +128,7 @@ type: docker
 name: correctness
 
 steps:
-- name: setup
+- name: install (poetry)
   image: python:3.8-buster
   environment:
     POETRY_VIRTUALENVS_IN_PROJECT: true
