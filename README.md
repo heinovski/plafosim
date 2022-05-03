@@ -139,6 +139,10 @@ In order to add a new formation algorithm, you need to follow these steps:
 - Add the name of your algorithm to the list of available algorithms within `cli/plafosim.py`
 - Add the argument parser group of your new algorithm to `cli/plafosim.py`
 - Add parsing of the algorithm name to `__init__` within `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`)
+You should now be able to use your new algorithm with
+```
+plafosim --formation-algorithm dummy_algorithm_name
+```
 
 ## Contributing
 
