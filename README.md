@@ -40,7 +40,7 @@ Currently, only command-line is thoroughly tested and thus completely available 
 
 Use PlaFoSim's binary to run a simulation with the default configuration:
 
-```plafosim```
+```plafosim -d```
 
 ### Advanced Simulation Control
 
