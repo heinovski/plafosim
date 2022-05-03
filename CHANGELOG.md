@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.15.0](https://github.com/heinovski/plafosim/releases/tag/v0.15.0) - 2022-05-03
+* BREAKING CHANGES
+  * CLI entry point now prints usage without any arguments
+  * Name of formation algorithm now depends on class name
+  * CI now uses Python 3.7 for all tests
+* NEW FEATURES
+  * Added argument for default configuration
+  * Added dedicated build pipelines for other python versions in CI
+  * Added dummy formation algorithm
+* UPDATES
+  * Updated CI pipelines
+  * Updated README
+  * Updated year in copyright
+
 ## [v0.14.5](https://github.com/heinovski/plafosim/releases/tag/v0.14.5) - 2022-04-07
 * Added dummy headway time for CACC
 * Fixed calculation of approach time
