@@ -17,6 +17,108 @@ steps:
 ---
 kind: pipeline
 type: docker
+name: build-python3.7
+
+steps:
+  - name: build
+    image: python:3.7-buster
+    commands:
+      - pip install --upgrade pip poetry
+      - poetry build
+  - name: install (sdist)
+    image: python:3.7-buster
+    commands:
+      - python3 -m venv .venv-sdist
+      - . .venv-sdist/bin/activate
+      - pip install dist/plafosim-*.tar.gz
+      - plafosim --version
+  - name: install (wheel)
+    image: python:3.7-buster
+    commands:
+      - python3 -m venv .venv-wheel
+      - . .venv-wheel/bin/activate
+      - pip install --upgrade wheel
+      - pip install dist/plafosim-*-py3-none-any.whl
+      - plafosim --version
+
+trigger:
+  ref:
+    - refs/heads/master
+    - refs/heads/develop
+    - refs/pull/**
+    - refs/tags/*
+
+---
+kind: pipeline
+type: docker
+name: build-python3.8
+
+steps:
+  - name: build
+    image: python:3.8-buster
+    commands:
+      - pip install --upgrade pip poetry
+      - poetry build
+  - name: install (sdist)
+    image: python:3.8-buster
+    commands:
+      - python3 -m venv .venv-sdist
+      - . .venv-sdist/bin/activate
+      - pip install dist/plafosim-*.tar.gz
+      - plafosim --version
+  - name: install (wheel)
+    image: python:3.8-buster
+    commands:
+      - python3 -m venv .venv-wheel
+      - . .venv-wheel/bin/activate
+      - pip install --upgrade wheel
+      - pip install dist/plafosim-*-py3-none-any.whl
+      - plafosim --version
+
+trigger:
+  ref:
+    - refs/heads/master
+    - refs/heads/develop
+    - refs/pull/**
+    - refs/tags/*
+
+---
+kind: pipeline
+type: docker
+name: build-python3.9
+
+steps:
+  - name: build
+    image: python:3.9-buster
+    commands:
+      - pip install --upgrade pip poetry
+      - poetry build
+  - name: install (sdist)
+    image: python:3.9-buster
+    commands:
+      - python3 -m venv .venv-sdist
+      - . .venv-sdist/bin/activate
+      - pip install dist/plafosim-*.tar.gz
+      - plafosim --version
+  - name: install (wheel)
+    image: python:3.9-buster
+    commands:
+      - python3 -m venv .venv-wheel
+      - . .venv-wheel/bin/activate
+      - pip install --upgrade wheel
+      - pip install dist/plafosim-*-py3-none-any.whl
+      - plafosim --version
+
+trigger:
+  ref:
+    - refs/heads/master
+    - refs/heads/develop
+    - refs/pull/**
+    - refs/tags/*
+
+---
+kind: pipeline
+type: docker
 name: tests
 
 steps:
