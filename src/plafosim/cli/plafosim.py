@@ -622,7 +622,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     # print usage without any arguments
     if len(sys.argv) < 2:
         # no argument has been passed
-        print(parser.format_usage(), parser.description, end='')
+        print(
+            parser.description,
+            '\n',
+            parser.format_usage(),
+            sep='',
+            end='',
+        )
         sys.exit(0)
 
     args = parser.parse_args()
