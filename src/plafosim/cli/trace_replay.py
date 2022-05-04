@@ -149,6 +149,18 @@ def parse_args() -> argparse.Namespace:
         help="The last step to re-play from the trace file. -1 is no limit"
     )
 
+    # print usage without any arguments
+    if len(sys.argv) < 2:
+        # no argument has been passed
+        print(
+            parser.description,
+            '\n',
+            parser.format_usage(),
+            sep='',
+            end='',
+        )
+        sys.exit(0)
+
     return parser.parse_args()
 
 
