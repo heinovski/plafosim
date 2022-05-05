@@ -35,13 +35,15 @@ __description__ = textwrap.dedent(f"""\
     Julian Heinovski, Dominik S. Buse and Falko Dressler,
     "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
     Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
-    Poster Session, Virtual Conference, November 2021.
+    Poster Session, Virtual Conference, November 2021, pp. 137–138.
 """)
 
-__citation__ = textwrap.dedent("""
+__citation__ = textwrap.dedent("""\
     @inproceedings{heinovski2021scalable,
         author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
+        doi = {10.1109/VNC52810.2021.9644678},
         title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
+        pages = {137--138},
         publisher = {IEEE},
         issn = {2157-9865},
         isbn = {978-1-66544-450-7},
