@@ -3,7 +3,7 @@
 [![Code Version](https://img.shields.io/badge/code-v0.15.2-blue)](CHANGELOG.md)
 [![PyPI Version](https://img.shields.io/pypi/v/plafosim)](https://pypi.org/project/plafosim/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/plafosim)](https://pypi.org/project/plafosim/)
-![License](https://img.shields.io/github/license/heinovski/plafosim?color=green)
+[![License](https://img.shields.io/github/license/heinovski/plafosim?color=green)](https://github.com/heinovski/plafosim)
 [![DOI](https://img.shields.io/badge/DOI-10.1109/VNC52810.2021.9644678-blue)](http://dx.doi.org/10.1109/VNC52810.2021.9644678)
 
 [PlaFoSim](https://www.plafosim.de) - A simple and scalable simulator for platoon formation.
