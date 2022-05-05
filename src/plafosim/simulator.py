@@ -118,6 +118,7 @@ CFModelDtype = pd.CategoricalDtype(list(CF_Model), ordered=True)
 PlatoonRoleDtype = pd.CategoricalDtype(list(PlatoonRole), ordered=True)
 
 # default values in SI units
+# TODO move to __init__?
 DEFAULTS = {
     'road_length': 100 * 1000,  # km -> m
     'lanes': 3,
