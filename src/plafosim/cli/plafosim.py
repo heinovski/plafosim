@@ -99,6 +99,18 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="show the current configuration and exit",
     )
     parser.add_argument(
+        "-q", "--quiet",
+        action="count",
+        default=0,
+        help=f"The amount of verbosity levels to be removed for printing the logs to the CLI. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
+    )
+    parser.add_argument(
+        "-v", "--verbosity",
+        action="count",
+        default=0,
+        help=f"The amount of verbosity levels to be added for printing the logs to the CLI. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
+    )
+    parser.add_argument(
         "--save-snapshot",
         type=str,
         default=None,
@@ -416,13 +428,6 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="The seed (>=0) for the random number generator instead of the current system time",
     )
     simulation.add_argument(
-        "--log-level",
-        type=str,
-        default=logging.getLevelName(DEFAULTS['log_level']).lower(),
-        choices=["error", "warn", "info", "debug", "trace"],
-        help="The minimum level of logs to be printed",
-    )
-    simulation.add_argument(
         "--progress",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['progress'],
@@ -670,7 +675,7 @@ def create_simulator(**kwargs: dict) -> Simulator:
     # prepare keyword arguments for simulator
     kwargs.pop('load_snapshot')
     kwargs.pop('save_snapshot')
-    kwargs['log_level'] = getattr(logging, kwargs['log_level'].upper(), 5)
+    kwargs['log_level'] = logging.getLevelName(max(DEFAULTS['log_level'] - ((kwargs['verbosity'] - kwargs['quiet']) * 10), 5))
     kwargs['max_step'] = int(kwargs['max_step'])
 
     # create new simulator

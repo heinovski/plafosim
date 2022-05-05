@@ -15,4 +15,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+from plafosim.util import addLoggingLevel
+
 __version__ = "0.15.4"
+
+# add additional custom log level
+addLoggingLevel('TRACE', 5)

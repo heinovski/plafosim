@@ -78,11 +78,9 @@ from .statistics import (
     record_vehicle_change,
     record_vehicle_platoon_change,
 )
-from .util import addLoggingLevel
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
-addLoggingLevel('TRACE', 5)
 LOG = logging.getLogger(__name__)
 
 # assumptions
