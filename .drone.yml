@@ -326,17 +326,17 @@ steps:
   image: python:3.7-buster
   commands:
     - . .venv/bin/activate
-    - plafosim --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 0
+    - plafosim --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --vehicles 2000 --penetration 0 --depart-flow true --random-depart-position true --depart-method number
 - name: ACC
   image: python:3.7-buster
   commands:
     - . .venv/bin/activate
-    - plafosim --pre-fill true --random-seed 0 --depart-flow true --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --random-depart-position true --lanes 4 --depart-method number --penetration 1
+    - plafosim --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --vehicles 2000 --penetration 1 --depart-flow true --random-depart-position true --depart-method number
 - name: CACC
   image: python:3.7-buster
   commands:
     - . .venv/bin/activate
-    - plafosim --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --vehicles 2000 --lanes 4 --penetration 1 --start-as-platoon true
+    - plafosim --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --vehicles 2000 --penetration 1 --start-as-platoon true
 
 trigger:
   ref:
