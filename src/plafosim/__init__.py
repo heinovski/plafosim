@@ -15,9 +15,52 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import argparse
+import textwrap
+
 from plafosim.util import addLoggingLevel
 
 __version__ = "0.15.4"
 
+__description__ = textwrap.dedent(f"""\
+    Platoon Formation Simulator (PlaFoSim) -- Version {__version__}.
+    A simple and scalable simulator for platoon formation.
+
+    Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
+    This program comes with ABSOLUTELY NO WARRANTY.
+    This is free software, and you are welcome to redistribute it under certain conditions.
+
+    If you are working with PlaFoSim, please cite the following paper:
+
+    Julian Heinovski, Dominik S. Buse and Falko Dressler,
+    "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
+    Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
+    Poster Session, Virtual Conference, November 2021.
+""")
+
+__citation__ = textwrap.dedent("""
+    @inproceedings{heinovski2021scalable,
+        author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
+        title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
+        publisher = {IEEE},
+        issn = {2157-9865},
+        isbn = {978-1-66544-450-7},
+        address = {Virtual Conference},
+        booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
+        month = {11},
+        year = {2021},
+    }
+""")
+
 # add additional custom log level
 addLoggingLevel('TRACE', 5)
+
+
+class CustomFormatter(
+    argparse.ArgumentDefaultsHelpFormatter,
+    argparse.RawDescriptionHelpFormatter,
+    argparse.MetavarTypeHelpFormatter,
+):
+    """Metaclass combining multiple formatter classes for argparse"""
+
+    pass

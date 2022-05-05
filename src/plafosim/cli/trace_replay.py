@@ -18,13 +18,12 @@
 import argparse
 import logging
 import sys
-import textwrap
 import time
 
 import pandas
 from tqdm import tqdm
 
-from plafosim import __version__
+from plafosim import CustomFormatter, __citation__, __description__, __version__
 from plafosim.gui import (
     add_gui_vehicle,
     change_gui_vehicle_color,
@@ -41,37 +40,13 @@ from plafosim.util import find_resource, hex2rgb
 LOG = logging.getLogger(__name__)
 
 
-class CustomFormatter(
-    argparse.ArgumentDefaultsHelpFormatter,
-    argparse.RawDescriptionHelpFormatter,
-    argparse.MetavarTypeHelpFormatter,
-):
-    """Metaclass combining multiple formatter classes for argparse"""
-
-    pass
-
-
 # TODO duplicated code with main script
 def parse_args() -> argparse.Namespace:
     # parse some parameters
     parser = argparse.ArgumentParser(
         formatter_class=CustomFormatter,
         allow_abbrev=False,
-        description=textwrap.dedent(f"""\
-            Platoon Formation Simulator (PlaFoSim) -- Version {__version__}.
-            A simple and scalable simulator for platoon formation.
-
-            Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
-            This program comes with ABSOLUTELY NO WARRANTY.
-            This is free software, and you are welcome to redistribute it under certain conditions.
-
-            If you are working with PlaFoSim, please cite the following paper:
-
-            Julian Heinovski, Dominik S. Buse and Falko Dressler,
-            "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
-            Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
-            Poster Session, Virtual Conference, November 2021.
-        """),
+        description=__description__,
     )
 
     # miscellaneous
@@ -79,19 +54,7 @@ def parse_args() -> argparse.Namespace:
         "-C", "--citation",
         action="version",
         help="show the citation information and exit",
-        version=textwrap.dedent("""
-            @inproceedings{heinovski2021scalable,
-                author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
-                title = {{Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim}},
-                publisher = {IEEE},
-                issn = {2157-9865},
-                isbn = {978-1-66544-450-7},
-                address = {Virtual Conference},
-                booktitle = {13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session},
-                month = {11},
-                year = {2021},
-            }
-        """),
+        version=__citation__,
     )
     parser.add_argument(
         "-V", "--version",
