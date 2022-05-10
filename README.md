@@ -75,7 +75,7 @@ You can see the complete list of available parameters in the help:
 plafosim --road-length 100 --ramp-interval 10
 
 # Configure random (normally distributed) desired driving speed of 130km/h
-plafosim --random-driving-speed true --desired-speed 36
+plafosim --random-desired-speed true --desired-speed 36
 
 # Configure random trips for 500 vehicles
 plafosim --vehicles 500 --random-depart-position true --random-arrival-position true --depart-desired true
