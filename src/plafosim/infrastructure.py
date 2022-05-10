@@ -18,7 +18,7 @@
 import logging
 import sys
 
-from .algorithms.speed_position import SpeedPosition
+from .algorithms.speed_position import SpeedPosition  # noqa 401
 from .platooning_vehicle import PlatooningVehicle
 
 #from .simulator import Simulator  # TODO fix circular import
@@ -58,11 +58,10 @@ class Infrastructure:
 
         if formation_algorithm is not None:
             # initialize formation algorithm
-            # TODO make enum
-            if formation_algorithm == SpeedPosition.__name__:
-                self._formation_algorithm = SpeedPosition(self, **kw_args)
-            else:
-                sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}!")
+            try:
+                self._formation_algorithm = globals()[formation_algorithm](self, **kw_args)
+            except KeyError:
+                sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}! Did you import it?")
             self._execution_interval = execution_interval
 
             # initialize timer
