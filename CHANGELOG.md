@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.15.1](https://github.com/heinovski/plafosim/releases/tag/v0.15.1) - 2022-05-10
+* Improved description and extending instructions README
+* Improved usage print in CLI
+* Improved CI pipeline
+
 ## [v0.15.0](https://github.com/heinovski/plafosim/releases/tag/v0.15.0) - 2022-05-03
 * BREAKING CHANGES
   * CLI entry point now prints usage without any arguments
