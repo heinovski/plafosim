@@ -136,9 +136,9 @@ NOTE: The project is currently only tested under Linux.
 
 In order to add a new formation algorithm, you need to follow these steps:
 - Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`). You can use the `Dummy` algorithm (see `algorithms/dummy.py`) as an example.
-- Add the name of your algorithm to the list of available algorithms within `cli/plafosim.py`
-- Add the argument parser group of your new algorithm to `cli/plafosim.py`
-- Add parsing of the algorithm name to `__init__` within `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`)
+- Import your algorithm and add its `__name__` to the list of available algorithms (see `--formation-algorithm`) within `cli/plafosim.py`.
+- Add specific properties of your algorithm via an argument parser group to `cli/plafosim.py` if necessary.
+- Import your algorithm and add parsing of its `__name__` to `__init__` within `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`).
 
 You should now be able to use your new algorithm with
 ```
