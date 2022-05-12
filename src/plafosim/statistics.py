@@ -18,6 +18,8 @@
 import time
 from typing import TYPE_CHECKING
 
+from plafosim import __version__
+
 from .formation_algorithm import FormationAlgorithm
 from .util import rgb2hex
 
@@ -33,6 +35,7 @@ def record_general_data_begin(basename: str, simulator: 'Simulator'):
     assert isinstance(simulator, Simulator)
     with open(f'{basename}_general.out', 'w') as f:
         f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
+        f.write(f"version: {__version__}\n")
         f.write(f"parameters {str(simulator)}\n")
 
 
