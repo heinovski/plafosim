@@ -12,7 +12,7 @@ steps:
 - name: isort
   image: xcgd/isort
   commands:
-    - isort --profile black --check-only --diff src tests
+    - isort --check-only --diff src tests scripts
 
 ---
 kind: pipeline
