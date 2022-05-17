@@ -20,9 +20,11 @@ import os
 import sys
 
 LOG = logging.getLogger(__name__)
-TRACI_SUPPORTED_VERSIONS = {
-    "1.6.0": 20,
-}
+
+TRACI_SUPPORTED_VERSION = 20
+SUMO_SUPPORTED_VERSIONS = [
+    "1.6.0",
+]
 
 
 def check_and_prepare_gui():
@@ -34,6 +36,14 @@ def check_and_prepare_gui():
         sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
     sys.path.append(tools)
+
+    # check TraCI API version
+    import traci
+    api_version = traci.constants.TRACI_VERSION
+    assert api_version
+
+    if api_version != TRACI_SUPPORTED_VERSION:
+        sys.exit(f"ERROR: You are using an unsupported TraCI version ({api_version})! Make sure to install a SUMO version with TraCI API version {TRACI_SUPPORTED_VERSION}.")
 
 
 def start_gui(config: str, play: bool = True):
@@ -58,24 +68,25 @@ def start_gui(config: str, play: bool = True):
     import traci
     traci.start(command)
 
+    # check TraCI API and SUMO version
     # TODO perform this check before the actual GUI has been opened
-    traci_api = sumo = None
     try:
-        traci_api, sumo = traci.getVersion()
+        api_version, sumo_version = traci.getVersion()
     except AttributeError:
         pass
-    try:
-        traci_api, sumo = traci.main.getVersion()
-    except AttributeError:
-        pass
-    sumo = sumo.split(' ')[1]
-    assert traci_api
-    assert sumo
-    assert traci_api in TRACI_SUPPORTED_VERSIONS.values(), f"You are using an unsupported TraCI version ({traci_api})!"
-    # NOTE: we allow other SUMO vesions with the correct TraCI API version (e.g., development versions).
+    assert api_version and sumo_version
+
+    # check TraCI API version again for safety
+    assert api_version == traci.constants.TRACI_VERSION
+
+    # remove "SUMO" prefix
+    sumo_version = sumo_version.split(' ')[1]
+    assert sumo_version
+
+    # NOTE: we allow other SUMO vesions with the correct TraCI api_version version (e.g., development versions).
     # However, these versions are untested and thus might lead lead to unexpected behaior.
-    if sumo not in TRACI_SUPPORTED_VERSIONS.keys():
-        LOG.warning(f"You are using an untested SUMO version ({sumo})!")
+    if sumo_version not in SUMO_SUPPORTED_VERSIONS:
+        LOG.warning(f"You are using an untested SUMO version ({sumo_version})! We recommend one of {SUMO_SUPPORTED_VERSIONS}.")
 
 
 def set_gui_window(road_length: int):
