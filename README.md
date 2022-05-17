@@ -25,8 +25,8 @@ Please note that PlaFoSim is still under heavy development.
 ## Installation
 
 - Install Python (>=3.7.0,<3.10)
-- Optionally install SUMO (>=1.6.0)
-- Install via pypi:
+- Optionally, install [SUMO](https://github.com/eclipse/sumo/) (>=1.6.0)
+- Install PlaFoSim via pypi:
 ```pip install plafosim```
 
 NOTE: The project is currently only tested under Linux.
@@ -92,7 +92,7 @@ plafosim --formation-algorithm SpeedPosition --formation-strategy distributed --
 
 ### Live GUI
 
-You can get a very simple live GUI based on SUMO by using the parameter `gui`:
+You can get a very simple live GUI based on SUMO by using the parameter `gui` (requires installation of SUMO and decleration of `SUMO_HOME` variable):
 
 ```plafosim --gui```
 
