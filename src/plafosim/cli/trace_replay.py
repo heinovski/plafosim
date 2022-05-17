@@ -18,7 +18,6 @@
 
 import argparse
 import logging
-import os
 import sys
 import textwrap
 import time
@@ -30,6 +29,7 @@ from plafosim import __version__
 from plafosim.gui import (
     add_gui_vehicle,
     change_gui_vehicle_color,
+    check_and_prepare_gui,
     close_gui,
     gui_step,
     move_gui_vehicle,
@@ -40,11 +40,6 @@ from plafosim.simulator import DEFAULTS
 from plafosim.util import find_resource, hex2rgb
 
 LOG = logging.getLogger(__name__)
-
-if 'SUMO_HOME' not in os.environ:
-    sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
-tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-sys.path.append(tools)
 
 
 class CustomFormatter(
@@ -170,6 +165,7 @@ def main():
     # TODO add custom filter that prepends the log entry with the step time
     logging.basicConfig(level=args.log_level.upper(), format="%(levelname)s [%(name)s]: %(message)s")
 
+    check_and_prepare_gui()
     start_gui(config=args.sumo_config)
 
     LOG.info("Replaying vehicle trace...")

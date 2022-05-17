@@ -17,11 +17,23 @@
 
 import logging
 import os
+import sys
 
 LOG = logging.getLogger(__name__)
 TRACI_SUPPORTED_VERSIONS = {
     "1.6.0": 20,
 }
+
+
+def check_and_prepare_gui():
+    """
+    Check and prepare GUI environment.
+    """
+
+    if 'SUMO_HOME' not in os.environ:
+        sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
+    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    sys.path.append(tools)
 
 
 def start_gui(config: str, play: bool = True):

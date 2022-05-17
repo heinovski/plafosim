@@ -16,7 +16,6 @@
 #
 
 import logging
-import os
 import random
 import sys
 import time
@@ -30,6 +29,7 @@ from tqdm import tqdm
 from .emissions import EmissionClass
 from .gui import (
     add_gui_vehicle,
+    check_and_prepare_gui,
     close_gui,
     draw_infrastructures,
     draw_ramps,
@@ -475,10 +475,8 @@ class Simulator:
         # gui properties
         self._gui = gui  # whether to show a live sumo-gui
         if gui:
-            if 'SUMO_HOME' not in os.environ:
-                sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
-            tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-            sys.path.append(tools)
+            check_and_prepare_gui()
+
             if road_length > 1000 * 1000:
                 sys.exit("ERROR: The current maximum road length supported in the GUI is 1000km!")
             if number_of_lanes > 4:
