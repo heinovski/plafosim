@@ -476,7 +476,7 @@ class Simulator:
         self._gui = gui  # whether to show a live sumo-gui
         if gui:
             if 'SUMO_HOME' not in os.environ:
-                sys.exit("ERROR: Environment variable 'SUMO_HOME' was not declared!")
+                sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
             tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
             sys.path.append(tools)
             if road_length > 1000 * 1000:

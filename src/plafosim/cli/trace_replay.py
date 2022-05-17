@@ -42,7 +42,7 @@ from plafosim.util import find_resource, hex2rgb
 LOG = logging.getLogger(__name__)
 
 if 'SUMO_HOME' not in os.environ:
-    sys.exit("ERROR: Environment variable 'SUMO_HOME' was not declared!")
+    sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
 tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
 sys.path.append(tools)
 
