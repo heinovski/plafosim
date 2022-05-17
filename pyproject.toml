@@ -7,14 +7,24 @@ authors = [
     "Julian Heinovski <heinovski@ccs-labs.org>",
     "Dominik S. Buse <buse@ccs-labs.org",
 ]
+maintainers = [
+    "Julian Heinovski <heinovski@ccs-labs.org>",
+]
 readme = "README.md"
 homepage = "https://www.plafosim.de"
 repository = "https://github.com/heinovski/plafosim"
 documentation = "https://plafosim.readthedocs.io/"
+classifiers = [
+    "Development Status :: 4 - Beta",  # TODO set to stable with release 1.0.0
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+]
 packages = [
     { include = "plafosim", from="src" },
 ]
 include = [
+    "CHANGELOG",
     "LICENSE",
 ]
 
@@ -24,6 +34,7 @@ Changelog = "https://github.com/heinovski/plafosim/blob/master/CHANGELOG.md"
 [tool.poetry.dependencies]
 python = "^3.7, <3.10"  # 3.10 is not yet possible due to incompatible dependencies
 
+# These packages are mandatory and form the core of this package’s distribution.
 numpy = "^1.19"
 ortools = "~9.0"
 pandas = "^1.1"
