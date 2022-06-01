@@ -31,7 +31,9 @@ from scipy.stats import ks_2samp
 class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
                       argparse.RawDescriptionHelpFormatter,
                       argparse.MetavarTypeHelpFormatter):
-    """Metaclass combining multiple formatter classes for argparse"""
+    """
+    Metaclass combining multiple formatter classes for argparse.
+    """
     pass
 
 

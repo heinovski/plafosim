@@ -44,7 +44,9 @@ LOG = logging.getLogger(__name__)
 
 
 class PlatooningVehicle(Vehicle):
-    """A vehicle that has platooning functionality."""
+    """
+    A vehicle that has platooning functionality.
+    """
 
     def __init__(
             self,
@@ -68,7 +70,7 @@ class PlatooningVehicle(Vehicle):
     ):
         # TODO use global default values
         """
-        Initializes a platooning vehicle instance.
+        Initialize a platooning vehicle instance.
 
         Parameters
         ----------
@@ -205,14 +207,16 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def acc_headway_time(self) -> float:
-        """Returns the ACC headway time of the vehicle."""
+        """
+        Return the ACC headway time of the vehicle.
+        """
 
         return self._acc_headway_time
 
     @property
     def desired_headway_time(self) -> float:
         """
-        Returns the desired headway time of the vehicle.
+        Return the desired headway time of the vehicle.
 
         This is based on the currently active car following model.
         """
@@ -226,7 +230,7 @@ class PlatooningVehicle(Vehicle):
     @property
     def desired_speed(self) -> float:
         """
-        Returns the desired driving speed of the vehicle.
+        Return the desired driving speed of the vehicle.
 
         If the vehicle is in a platoon, it returns the desired driving speed of the entire platoon.
         """
@@ -236,7 +240,7 @@ class PlatooningVehicle(Vehicle):
     @property
     def desired_gap(self) -> float:
         """
-        Returns the desired gap of the vehicle.
+        Return the desired gap of the vehicle.
 
         This is based on the currently active car following model.
         """
@@ -246,19 +250,23 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def platoon_role(self) -> PlatoonRole:
-        """Returns the current platoon role of the vehicle."""
+        """
+        Return the current platoon role of the vehicle.
+        """
 
         return self._platoon_role
 
     @property
     def platoon(self) -> Platoon:
-        """Returns the platoon of the vehicle."""
+        """
+        Return the platoon of the vehicle.
+        """
 
         return self._platoon
 
     def is_in_platoon(self) -> bool:
         """
-        Returns whether the vehicle currently is in a platoon.
+        Return whether the vehicle currently is in a platoon.
 
         This is based on the current PlatoonRole.
         A joining or leaving vehicle is either not yet or still part of a platoon, thus the returned value should be true.
@@ -268,7 +276,7 @@ class PlatooningVehicle(Vehicle):
 
     def get_front_gap(self) -> float:
         """
-        Returns the gap to the vehicle in the front.
+        Return the gap to the vehicle in the front.
 
         This imitates a measurement of the front radar sensor.
         """
@@ -277,7 +285,7 @@ class PlatooningVehicle(Vehicle):
 
     def get_front_speed(self) -> float:
         """
-        Returns the speed to the vehicle in the front.
+        Return the speed to the vehicle in the front.
 
         This imitates a measurement of the front radar sensor.
         """
@@ -286,14 +294,16 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def in_maneuver(self) -> bool:
-        """Returns whether the vehicle is currently in a maneuver."""
+        """
+        Return whether the vehicle is currently in a maneuver.
+        """
 
         return self._in_maneuver
 
     @in_maneuver.setter
     def in_maneuver(self, var: bool):
         """
-        Sets the maneuver status of the vehicle.
+        Set the maneuver status of the vehicle.
 
         Parameters
         ----------
@@ -306,13 +316,17 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def time_in_platoon(self) -> int:
-        """Returns the travelled time within platoons."""
+        """
+        Return the travelled time within platoons.
+        """
 
         return self._time_in_platoon
 
     @property
     def distance_in_platoon(self) -> float:
-        """Returns the travelled distance within platoons."""
+        """
+        Return the travelled distance within platoons.
+        """
 
         return self._distance_in_platoon
 
@@ -324,7 +338,7 @@ class PlatooningVehicle(Vehicle):
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
         """
-        Calculates the emitted pollutant amount using the given speed and acceleration.
+        Calculate the emitted pollutant amount using the given speed and acceleration.
 
         Parameters
         ----------
@@ -370,7 +384,7 @@ class PlatooningVehicle(Vehicle):
 
     def finish(self):
         """
-        Cleans up the instance of the PlatooningVehicle.
+        Clean up the instance of the PlatooningVehicle.
 
         This includes leaving the platoon and mostly statistics recording.
         """
@@ -487,12 +501,16 @@ class PlatooningVehicle(Vehicle):
                 self._last_formation_step = step
 
     def info(self) -> str:
-        """Returns information about the PlatooningVehicle."""
+        """
+        Return information about the PlatooningVehicle.
+        """
 
         return f"{super().info()}, platoon {self._platoon}"
 
     def __str__(self) -> str:
-        """Returns the str representation of the platooning vehicle."""
+        """
+        Return the str representation of the platooning vehicle.
+        """
 
         self_dict = self.__dict__.copy()
         self_dict.update({'_vehicle_type': str(self._vehicle_type)})  # use str representation of vehicle type
@@ -500,7 +518,9 @@ class PlatooningVehicle(Vehicle):
         return str(self_dict)
 
     def _statistics(self):
-        """Writes continuous statistics."""
+        """
+        Write continuous statistics.
+        """
 
         super()._statistics()
 
@@ -527,7 +547,7 @@ class PlatooningVehicle(Vehicle):
     # TODO rework to only include "neighbors" and move platoon extraction to formation algorithm
     def _get_available_platoons(self):
         """
-        Returns the available platoon candidates of the vehicle.
+        Return the available platoon candidates of the vehicle.
 
         This imitates neighbor maintenance by using a neighbor table.
         """
@@ -955,7 +975,7 @@ class PlatooningVehicle(Vehicle):
 
     def calculate_approaching_time(self, target_position: float, target_speed: float) -> float:
         """
-        Calculate approximate time to approach the target position at target speed
+        Calculate approximate time to approach the target position at target speed.
 
         Parameters
         ----------
@@ -1250,7 +1270,7 @@ class PlatooningVehicle(Vehicle):
 
     def _handle_message(self, message: Message):
         """
-        Handles a message of arbitrary type Message.
+        Handle a message of arbitrary type Message.
 
         Messages are in general not used at the moment.
 
@@ -1269,7 +1289,7 @@ class PlatooningVehicle(Vehicle):
 
     def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
         """
-        Handles a message of the specific type PlatoonAdvertisement.
+        Handle a message of the specific type PlatoonAdvertisement.
 
         Messages are in general not used at the moment.
 

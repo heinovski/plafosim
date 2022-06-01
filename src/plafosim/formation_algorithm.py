@@ -32,7 +32,7 @@ class FormationAlgorithm(ABC):
 
     def __init__(self, owner: object):
         """
-        Initializes an instance of a formation algorithm.
+        Initialize an instance of a formation algorithm.
 
         Parameters
         ----------
@@ -48,7 +48,9 @@ class FormationAlgorithm(ABC):
 
     @property
     def name(self):
-        """Prints the name of the formation algorithm."""
+        """
+        Print the name of the formation algorithm.
+        """
 
         return self.__class__.__name__
 
@@ -73,6 +75,8 @@ class FormationAlgorithm(ABC):
         sys.exit("ERROR: There shouldn't be an instance of this abstract base class!")
 
     def finish(self):
-        """Reserved for future use."""
+        """
+        Reserved for future use.
+        """
 
         pass

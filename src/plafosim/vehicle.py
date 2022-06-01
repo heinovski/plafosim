@@ -69,7 +69,7 @@ class Vehicle:
             pre_filled: bool = False,
     ):
         """
-        Initializes a vehicle instance.
+        Initialize a vehicle instance.
 
         Parameters
         ----------
@@ -146,20 +146,24 @@ class Vehicle:
 
     @property
     def vid(self) -> int:
-        """Return the id of the vehicle."""
+        """
+        Return the id of the vehicle.
+        """
 
         return self._vid
 
     @property
     def vehicle_type(self) -> VehicleType:
-        """Returns the VehicleType of the vehicle."""
+        """
+        Return the VehicleType of the vehicle.
+        """
 
         return self._vehicle_type
 
     @property
     def length(self) -> int:
         """
-        Returns the length of the vehicle.
+        Return the length of the vehicle.
 
         This is based on the vehicle type.
         """
@@ -169,7 +173,7 @@ class Vehicle:
     @property
     def max_speed(self) -> float:
         """
-        Returns the maximum speed of the vehicle.
+        Return the maximum speed of the vehicle.
 
         This is based on the vehicle type.
         """
@@ -179,7 +183,7 @@ class Vehicle:
     @property
     def max_acceleration(self) -> float:
         """
-        Returns the maximum acceleration of the vehicle.
+        Return the maximum acceleration of the vehicle.
 
         This is based on the vehicle type.
         """
@@ -189,7 +193,7 @@ class Vehicle:
     @property
     def max_deceleration(self) -> float:
         """
-        Returns the maximum deceleration of the vehicle.
+        Return the maximum deceleration of the vehicle.
 
         This is based on the vehicle type.
         """
@@ -199,7 +203,7 @@ class Vehicle:
     @property
     def min_gap(self) -> float:
         """
-        Returns the minimum safety gap to the vehicle in front of the vehicle.
+        Return the minimum safety gap to the vehicle in front of the vehicle.
 
         This is based on the vehicle type.
         """
@@ -209,7 +213,7 @@ class Vehicle:
     @property
     def headway_time(self) -> float:
         """
-        Returns the human headway time of the vehicle.
+        Return the human headway time of the vehicle.
 
         This is based on the vehicle type.
         """
@@ -218,32 +222,40 @@ class Vehicle:
 
     @property
     def desired_headway_time(self) -> float:
-        """Returns the desired headway time of the vehicle."""
+        """
+        Return the desired headway time of the vehicle.
+        """
 
         return self._vehicle_type._headway_time
 
     @property
     def depart_position(self) -> int:
-        """Returns the depart position of the vehicle."""
+        """
+        Return the depart position of the vehicle.
+        """
 
         return self._depart_position
 
     @property
     def arrival_position(self) -> int:
-        """Returns the arrival position of the vehicle."""
+        """
+        Return the arrival position of the vehicle.
+        """
 
         return self._arrival_position
 
     @property
     def desired_speed(self) -> float:
-        """Returns the desired driving speed of the vehicle."""
+        """
+        Return the desired driving speed of the vehicle.
+        """
 
         return self._desired_speed
 
     @property
     def desired_gap(self) -> float:
         """
-        Returns the desired gap to the vehicle in front of the vehicle.
+        Return the desired gap to the vehicle in front of the vehicle.
 
         This is based on the desired headway time and the current driving speed.
         """
@@ -254,31 +266,41 @@ class Vehicle:
 
     @property
     def depart_lane(self) -> int:
-        """Returns the depart lane of the vehicle."""
+        """
+        Return the depart lane of the vehicle.
+        """
 
         return self._depart_lane
 
     @property
     def depart_speed(self) -> float:
-        """Returns the depart speed of the vehicle."""
+        """
+        Return the depart speed of the vehicle.
+        """
 
         return self._depart_speed
 
     @property
     def depart_time(self) -> int:
-        """Returns the depart time of the vehicle."""
+        """
+        Return the depart time of the vehicle.
+        """
 
         return self._depart_time
 
     @property
     def position(self) -> float:
-        """Returns the current position of the vehicle."""
+        """
+        Return the current position of the vehicle.
+        """
 
         return self._position
 
     @property
     def rear_position(self) -> int:
-        """Returns the current rear position of the vehicle."""
+        """
+        Return the current rear position of the vehicle.
+        """
 
         position = self._position - self._vehicle_type._length
         assert position >= 0
@@ -286,37 +308,49 @@ class Vehicle:
 
     @property
     def lane(self) -> int:
-        """Returns the current lane of the vehicle."""
+        """
+        Return the current lane of the vehicle.
+        """
 
         return self._lane
 
     @property
     def speed(self) -> float:
-        """Returns the current driving speed of the vehicle."""
+        """
+        Return the current driving speed of the vehicle.
+        """
 
         return self._speed
 
     @property
     def cf_model(self) -> CF_Model:
-        """Returns the currently activated car following model of the vehicle."""
+        """
+        Return the currently activated car following model of the vehicle.
+        """
 
         return self._cf_model
 
     @property
     def travel_distance(self) -> float:
-        """Returns the current traveled distance of the vehicle."""
+        """
+        Return the current traveled distance of the vehicle.
+        """
 
         return self._position - self._depart_position
 
     @property
     def travel_time(self) -> float:
-        """Returns the current traveled time of the vehicle."""
+        """
+        Return the current traveled time of the vehicle.
+        """
 
         return self._simulator.step - self._depart_time
 
     @property
     def blocked_front(self) -> bool:
-        """Returns whether the vehicle is currently blocked by a slow vehicle in the front."""
+        """
+        Return whether the vehicle is currently blocked by a slow vehicle in the front.
+        """
 
         return self._blocked_front
 
@@ -363,7 +397,9 @@ class Vehicle:
 
     # TODO: obsolete?
     def _start(self):
-        """Starts this Vehicle"""
+        """
+        Start this Vehicle.
+        """
 
         if self._started:
             return
@@ -371,7 +407,9 @@ class Vehicle:
         self._started = True
 
     def info(self) -> str:
-        """Returns information about the vehicle."""
+        """
+        Return information about the vehicle.
+        """
 
         estimated_remaining_travel_time = (
             (self._arrival_position - self._position) / self._speed
@@ -381,7 +419,9 @@ class Vehicle:
         return f"{self._vid} at {self._position}-{self.rear_position}, {self._lane} with {self._speed}, takes {estimated_remaining_travel_time}s to reach {self._arrival_position}"
 
     def _statistics(self):
-        """Writes continuous statistics for the vehicle."""
+        """
+        Write continuous statistics for the vehicle.
+        """
 
         if not self._simulator._record_prefilled and self._depart_time == -1:
             # we do not record statistics for pre-filled vehicles
@@ -404,7 +444,7 @@ class Vehicle:
 
     def _calculate_emissions(self):
         """
-        Calculates the emitted pollutant amount using the given speed and acceleration based on the HBEFA3 model.
+        Calculate the emitted pollutant amount using the given speed and acceleration based on the HBEFA3 model.
 
         As the functions are defining emissions in g/hour, the function's result is normed
         by 3.6 (seconds in an hour/1000) yielding mg/s. For fuel ml/s is returned.
@@ -448,7 +488,7 @@ class Vehicle:
 
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
         """
-        Calculates the actual emission of the vehicle.
+        Calculate the actual emission of the vehicle.
 
         Parameters
         ----------
@@ -468,7 +508,7 @@ class Vehicle:
 
     def finish(self):
         """
-        Cleans up the instance of the vehicle.
+        Clean up the instance of the vehicle.
 
         This includes mostly statistic recording.
         """
@@ -530,7 +570,9 @@ class Vehicle:
             record_vehicle_emission(basename=self._simulator._result_base_filename, vehicle=self)
 
     def __str__(self) -> str:
-        """Returns the str representation of the vehicle."""
+        """
+        Return the str representation of the vehicle.
+        """
 
         self_dict = self.__dict__.copy()
         self_dict.update({'_vehicle_type': str(self._vehicle_type)})  # use str representation of vehicle type
@@ -538,7 +580,7 @@ class Vehicle:
 
     def _transmit(self, destination_vid: int, message: Message) -> bool:
         """
-        Transmits a message of type Message.
+        Transmit a message of type Message.
 
         Messages are in general not used at the moment.
 
@@ -595,7 +637,7 @@ class Vehicle:
 
     def _handle_message(self, message: Message):
         """
-        Handles a message of arbitrary type Message.
+        Handle a message of arbitrary type Message.
 
         Messages are in general not used at the moment.
 
@@ -613,7 +655,7 @@ class Vehicle:
 
     def _receive_Message(self, message: Message):
         """
-        Handles a message of the specific type Message.
+        Handle a message of the specific type Message.
 
         Messages are in general not used at the moment.
 

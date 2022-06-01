@@ -35,7 +35,9 @@ class NeighborData:
                  platoon_position_back: float,
                  timestamp: int,
                  valid: bool = True):
-        """Initialize a neighbor data instance"""
+        """
+        Initialize a neighbor data instance.
+        """
 
         self._vid = vid  # the id of the neighbor
         self._originator_id = originator_id  # the id the originator of this information
@@ -104,37 +106,53 @@ class NeighborTable:
     """
 
     def __init__(self, validity_time: int):
-        """Initialize a neighbor table instance"""
+        """
+        Initialize a neighbor table instance.
+        """
 
         self.neighbors = []  # the list of neighbors in the table
         self._validity_time = validity_time  # the time an entry in the table is valid
 
     def add_neighbor(self, neighbor: NeighborData):
-        """Add a neighbor to the neighbor table"""
+        """
+        Add a neighbor to the neighbor table.
+        """
         self._neighbors.append({neighbor.vid: neighbor})
 
     def remove_neighbor(self, neighbor_id: int) -> bool:
-        """Remove a neighbor from the neighbor table"""
+        """
+        Remove a neighbor from the neighbor table.
+        """
         self._vehicles.remove()
 
     def update_neighbor(self, neighbor: NeighborData):
-        """Update a neighbor in the neighbor table"""
+        """
+        Update a neighbor in the neighbor table.
+        """
         return self.add_neighbor(neighbor)  # TODO fix dict
 
     def get_neighbor(self, neighbor_id: int) -> NeighborData:
-        """Return a neighbor entry with the given id from the table"""
+        """
+        Return a neighbor entry with the given id from the table.
+        """
         pass
 
     def is_in_table(self, neighbor_id: int) -> bool:
-        """Return whether a neighbor with the given id is in the neighbor table"""
+        """
+        Return whether a neighbor with the given id is in the neighbor table.
+        """
         pass
 
     def size(self) -> int:
-        """Return the size of the neighbor table"""
+        """
+        Return the size of the neighbor table.
+        """
         return len(self._neighbors)
 
     def invalidate_entries(self, current_step: int):
-        """Invalidate entries in the neighbor table that exceeded the validity time"""
+        """
+        Invalidate entries in the neighbor table that exceeded the validity time.
+        """
         pass
 
     def number_of_valid_entries(self) -> int:

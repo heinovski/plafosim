@@ -59,7 +59,7 @@ def hex2rgb(hex: str) -> tuple:
 
 def assert_index_equal(a, b):
     """
-    Ensures the indeces of two Sequences/DataFrames are equal.
+    Ensure the indeces of two Sequences/DataFrames are equal.
 
     Parameters
     ----------
@@ -72,7 +72,7 @@ def assert_index_equal(a, b):
 
 def speed2distance(speed: float, time_interval: float = 1.0) -> float:
     """
-    Converts a driving speed to a distance driven within a given time interval.
+    Convert a driving speed to a distance driven within a given time interval.
 
     Parameters
     ----------
@@ -87,7 +87,7 @@ def speed2distance(speed: float, time_interval: float = 1.0) -> float:
 
 def distance2speed(distance: float, time_interval: float = 1.0) -> float:
     """
-    Converts a driven distance to a driving speed for a given time interval.
+    Convert a driven distance to a driving speed for a given time interval.
 
     Parameters
     ----------
@@ -102,7 +102,7 @@ def distance2speed(distance: float, time_interval: float = 1.0) -> float:
 
 def acceleration2speed(acceleration: float, time_interval: float = 1.0) -> float:
     """
-    Converts an acceleration to a driving speed for a given time interval.
+    Convert an acceleration to a driving speed for a given time interval.
 
     Parameters
     ----------
@@ -117,7 +117,7 @@ def acceleration2speed(acceleration: float, time_interval: float = 1.0) -> float
 
 def speed2acceleration(speed_from: float, speed_to: float, time_interval: float = 1.0) -> float:
     """
-    Converts a speed range to an acceleration within a given time interval.
+    Convert a speed range to an acceleration within a given time interval.
 
     Parameters
     ----------
@@ -134,7 +134,7 @@ def speed2acceleration(speed_from: float, speed_to: float, time_interval: float 
 
 def addLoggingLevel(levelName, levelNum, methodName=None):
     """
-    https://stackoverflow.com/a/35804945
+    https://stackoverflow.com/a/35804945.
 
     Comprehensively adds a new logging level to the `logging` module and the currently configured logging class.
 
@@ -170,7 +170,9 @@ def addLoggingLevel(levelName, levelNum, methodName=None):
 
 
 class FakeLog:
-    """A fake logger, hide LOG behind this and be happy."""
+    """
+    A fake logger, hide LOG behind this and be happy.
+    """
     def trace(self, *arg, **kwd):
         pass
 

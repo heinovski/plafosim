@@ -522,7 +522,7 @@ def safe_speed(
 
 def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
     """
-    Returns the clipped positions (i.e., by arrival position) of vehicles within a pandas DataFrame.
+    Return the clipped positions (i.e., by arrival position) of vehicles within a pandas DataFrame.
 
     Parameters
     ----------
@@ -553,7 +553,7 @@ def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
 
 def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
     """
-    Updates the position of vehicles within a pandas DataFrame.
+    Update the position of vehicles within a pandas DataFrame.
 
     This is based on Krauss' single lane traffic:
     adjust position (move)
@@ -576,7 +576,7 @@ def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
 
 def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
     """
-    Returns the list of crashed vehicles' ids
+    Return the list of crashed vehicles' ids.
 
     Parameters
     ----------

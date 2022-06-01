@@ -48,7 +48,7 @@ def check_and_prepare_gui():
 
 def start_gui(config: str, play: bool = True):
     """
-    Starts the GUI.
+    Start the GUI.
 
     Parameters
     ----------
@@ -112,7 +112,7 @@ def set_gui_window(road_length: int):
 
 def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: tuple = (0, 255, 0), track: bool = False):
     """
-    Adds a vehicle to the GUI.
+    Add a vehicle to the GUI.
 
     Parameters
     ----------
@@ -152,7 +152,7 @@ def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: t
 
 def move_gui_vehicle(vid: int, position: float, lane: int, speed: float):
     """
-    Moves a vehicle in the GUI.
+    Move a vehicle in the GUI.
 
     Parameters
     ----------
@@ -189,7 +189,7 @@ def gui_step(target_step: int):
 
 def change_gui_vehicle_color(vid: int, color: tuple):
     """
-    Changes the color of a vehicle in the GUI.
+    Change the color of a vehicle in the GUI.
 
     Parameters
     ----------
@@ -206,7 +206,7 @@ def change_gui_vehicle_color(vid: int, color: tuple):
 
 def remove_gui_vehicle(vid: int):
     """
-    Removes a vehicle from the GUI.
+    Remove a vehicle from the GUI.
 
     Parameters
     ----------
@@ -236,8 +236,7 @@ def prune_vehicles(keep_vids: list):
 
 def close_gui():
     """
-    Closes the GUI.
-
+    Close the GUI.
     """
 
     import traci

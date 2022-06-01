@@ -19,8 +19,8 @@ from enum import Enum
 
 
 class Message:
-    """"
-    A collection of general data for an arbitrary message.
+    """
+    " A collection of general data for an arbitrary message.
 
     Messages are in general not used at the moment.
     """
@@ -32,26 +32,36 @@ class Message:
 
     @property
     def origin(self) -> int:
-        """Get the originator of the message"""
+        """
+        Get the originator of the message.
+        """
         return self._origin
 
     @property
     def destination(self) -> int:
-        """Get the destination of the message"""
+        """
+        Get the destination of the message.
+        """
         return self._destination
 
     @property
     def data(self):
-        """Get the data of the message"""
+        """
+        Get the data of the message.
+        """
         return self._data
 
     def __str__(self) -> str:
-        """Get a string representation of the message"""
+        """
+        Get a string representation of the message.
+        """
         return f"{self._origin} -> {self._destination} ({self.__class__.__name__}): {self._data}"
 
 
 class ManeuverType(Enum):
-    """A collection of available maneuver (message) types"""
+    """
+    A collection of available maneuver (message) types.
+    """
 
     JOIN = 1  # corresponds to a join maneuver
     LEAVE = 2  # corresponds to a leave maneuver
@@ -61,10 +71,14 @@ class ManeuverType(Enum):
 
 
 class ManeuverMessage(Message):
-    """A collection of general data for an arbitrary maneuver maessage"""
+    """
+    A collection of general data for an arbitrary maneuver maessage.
+    """
 
     def __init__(self, origin: int, destination: int, maneuver_type: ManeuverType, platoon_id: int, leader_id: int):
-        """Initialize a maneuver message instance"""
+        """
+        Initialize a maneuver message instance.
+        """
 
         super().__init__(origin, destination)
         self._maneuver_type = maneuver_type  # ManeuverType of this message
@@ -73,12 +87,16 @@ class ManeuverMessage(Message):
 
     @property
     def platoon_id(self) -> int:
-        """Get the platoon id the message corresponds to"""
+        """
+        Get the platoon id the message corresponds to.
+        """
         return self._platoon_id
 
     @property
     def leader_id(self) -> int:
-        """Get the leader id of the platoon the message corresponds to"""
+        """
+        Get the leader id of the platoon the message corresponds to.
+        """
         return self._leader_id
 
     @property
@@ -161,7 +179,9 @@ class AbortManeuver(ManeuverMessage):
 
 
 class PlatoonAdvertisement(Message):
-    """A collection of general data for a platoon advertisement message"""
+    """
+    A collection of general data for a platoon advertisement message.
+    """
 
     def __init__(
             self,
@@ -174,7 +194,9 @@ class PlatoonAdvertisement(Message):
             platoon_formation: list,
             platoon_position_front: float,
             platoon_position_back: float):
-        """Initialize a platoon advertisement instance"""
+        """
+        Initialize a platoon advertisement instance.
+        """
 
         super().__init__(origin, destination)
         self._platoon_id = platoon_id  # id of the platoon the message corresponds to
@@ -189,12 +211,16 @@ class PlatoonAdvertisement(Message):
 
     @property
     def platoon_id(self) -> int:
-        """Get the platoon id the message corresponds to"""
+        """
+        Get the platoon id the message corresponds to.
+        """
         return self._platoon_id
 
     @property
     def leader_id(self) -> int:
-        """Get the leader id of the platoon the message corresponds to"""
+        """
+        Get the leader id of the platoon the message corresponds to.
+        """
         return self._leader_id
 
     @property

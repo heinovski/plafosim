@@ -25,7 +25,7 @@ LOG = logging.getLogger(__name__)
 
 class Dummy(FormationAlgorithm):
     """
-    Dummy Formation Algorithm
+    Dummy Formation Algorithm.
     """
 
     def __init__(
@@ -35,7 +35,7 @@ class Dummy(FormationAlgorithm):
     ):
 
         """
-        Initializes an instance of this formation algorithm to be used in a vehicle or an infrastructure.
+        Initialize an instance of this formation algorithm to be used in a vehicle or an infrastructure.
 
         Parameters
         ----------
@@ -58,7 +58,7 @@ class Dummy(FormationAlgorithm):
 
     def do_formation(self):
         """
-        Runs platoon formation algorithm to search for a platooning opportunity
+        Run platoon formation algorithm to search for a platooning opportunity
         and performs the corresponding maneuvers.
         """
 
@@ -70,7 +70,7 @@ class Dummy(FormationAlgorithm):
 
     def finish(self):
         """
-        Cleans up the instance of the formation algorithm.
+        Clean up the instance of the formation algorithm.
 
         This includes mostly statistic recording.
         """

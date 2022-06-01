@@ -26,7 +26,9 @@ def get_desired_speed(
     max_desired_speed: float,
     random_desired_speed: bool = False,
 ) -> float:
-    """Returns a (random) depart speed."""
+    """
+    Return a (random) depart speed.
+    """
 
     if random_desired_speed:
         # normal distribution
@@ -46,7 +48,7 @@ def get_depart_speed(
     random_depart_speed: bool = False,
 ) -> float:
     """
-    Returns a (random) depart speed.
+    Return a (random) depart speed.
 
     Parameters
     ----------
@@ -77,7 +79,7 @@ def get_arrival_position(
     pre_fill: bool = False,
 ) -> int:
     """
-    Returns a (random) arrival position for a given depart position.
+    Return a (random) arrival position for a given depart position.
 
     This considers the ramp interval, road length, and minimum trip length.
 

@@ -20,7 +20,9 @@ from .emissions import EmissionClass
 
 
 class VehicleType:
-    """A collection of parameters for a concrete vehicle type"""
+    """
+    A collection of parameters for a concrete vehicle type.
+    """
 
     def __init__(
             self, name: str,
@@ -33,7 +35,7 @@ class VehicleType:
             emission_class: str,
     ):
         """
-        Initializes a specific vehicle type.
+        Initialize a specific vehicle type.
 
         Parameters
         ----------
@@ -66,59 +68,79 @@ class VehicleType:
 
     @property
     def name(self) -> str:
-        """Returns the name of a vehicle type."""
+        """
+        Return the name of a vehicle type.
+        """
 
         return self._name
 
     @property
     def length(self) -> int:
-        """Returns the length of a vehicle type."""
+        """
+        Return the length of a vehicle type.
+        """
 
         return self._length
 
     @property
     def max_speed(self) -> float:
-        """Returns the maximum speed of a vehicle type."""
+        """
+        Return the maximum speed of a vehicle type.
+        """
 
         return self._max_speed
 
     @property
     def max_acceleration(self) -> float:
-        """Returns the maximum acceleration of a vehicle type."""
+        """
+        Return the maximum acceleration of a vehicle type.
+        """
 
         return self._max_acceleration
 
     @property
     def max_deceleration(self) -> float:
-        """Returns the maximum deceleration of a vehicle type."""
+        """
+        Return the maximum deceleration of a vehicle type.
+        """
 
         return self._max_deceleration
 
     @property
     def min_gap(self) -> float:
-        """Returns the minimum gap of a vehicle type."""
+        """
+        Return the minimum gap of a vehicle type.
+        """
 
         return self._min_gap
 
     @property
     def headway_time(self) -> float:
-        """Returns the desired human headway time of a vehicle type."""
+        """
+        Return the desired human headway time of a vehicle type.
+        """
 
         return self._headway_time
 
     @property
     def emission_class(self) -> EmissionClass:
-        """Returns the emission class of a vehicle type."""
+        """
+        Return the emission class of a vehicle type.
+        """
 
         return self._emission_class
 
     @property
     def emission_factors(self) -> dict:
-        """Returns the emission factors of a vehicle type."""
+        """
+        Return the emission factors of a vehicle type.
+        """
 
         return self._emission_class.emission_factors
 
     def __str__(self) -> str:
-        """Returns the str representation of a vehicle type."""
+        """
+        Return the str representation of a vehicle type.
+        """
 
         return str(self.__dict__)

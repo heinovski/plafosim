@@ -60,7 +60,7 @@ class SpeedPosition(FormationAlgorithm):
     ):
 
         """
-        Initializes an instance of this formation algorithm to be used in a vehicle or an infrastructure.
+        Initialize an instance of this formation algorithm to be used in a vehicle or an infrastructure.
 
         Parameters
         ----------
@@ -145,7 +145,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """
-        Returns the deviation in speed from a given platoon.
+        Return the deviation in speed from a given platoon.
 
         NOTE: In the original version of the paper, the deviation calculated here was not normalized.
 
@@ -164,7 +164,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def dp(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """
-        Returns the deviation in position from a given platoon.
+        Return the deviation in position from a given platoon.
 
         NOTE: In the original version of the paper, the deviation calculated here was not normalized.
 
@@ -188,7 +188,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def cost_speed_position(self, ds: float, dp: int):
         """
-        Returns the overall cost (i.e., the weighted deviation) for a candidate.
+        Return the overall cost (i.e., the weighted deviation) for a candidate.
 
         Parameters
         ----------
@@ -202,7 +202,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def do_formation(self):
         """
-        Runs platoon formation algorithms to search for a platooning opportunity
+        Run platoon formation algorithms to search for a platooning opportunity
         and performs the corresponding join maneuver.
         """
 
@@ -221,7 +221,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def finish(self):
         """
-        Cleans up the instance of the formation algorithm.
+        Clean up the instance of the formation algorithm.
 
         This includes mostly statistic recording.
         """
@@ -244,7 +244,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def _do_formation_distributed(self):
         """
-        Runs distributed greedy formation approach.
+        Run distributed greedy formation approach.
 
         This selects a candidate and triggers a join maneuver.
         """
@@ -314,7 +314,7 @@ class SpeedPosition(FormationAlgorithm):
 
     def _do_formation_centralized(self):
         """
-        Runs centralized greedy formation approach.
+        Run centralized greedy formation approach.
 
         This selects candidates and triggers join maneuvers.
         """
@@ -436,7 +436,7 @@ class SpeedPosition(FormationAlgorithm):
             # remove all matches from the list of possible matches that would include the selected vehicle
             def is_available(x: dict) -> bool:
                 """
-                Returns whether an entry from the list of possible matches is (still) available.
+                Return whether an entry from the list of possible matches is (still) available.
 
                 Parameters
                 ----------

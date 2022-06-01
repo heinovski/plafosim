@@ -581,7 +581,7 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
 @pytest.mark.parametrize("cacc_spacing", CACC_SPACING)
 def test_lc_model_CACC_with_interferer_leader(size: int, cacc_spacing: float):
     """
-    The platoon cannot change lane since there is an interferer at the leader
+    The platoon cannot change lane since there is an interferer at the leader.
     """
 
     # create simulation environment
@@ -877,7 +877,7 @@ def test_lc_model_CACC_with_interferer_members(size: int, cacc_spacing: float):
 @pytest.mark.parametrize("cacc_spacing", CACC_SPACING)
 def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
     """
-    A vehicle wants to change left, the platoon wants to change right --> conflict
+    A vehicle wants to change left, the platoon wants to change right --> conflict.
     """
 
     # create simulation environment
@@ -1028,7 +1028,7 @@ def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
 @pytest.mark.parametrize("cacc_spacing", CACC_SPACING)
 def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
     """
-    A vehicle wants to change left, the platoon wants to change right --> conflict
+    A vehicle wants to change left, the platoon wants to change right --> conflict.
     """
 
     # create simulation environment

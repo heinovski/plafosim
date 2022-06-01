@@ -39,13 +39,17 @@ class EmissionClass(Enum):
 
     @property
     def emission_factors(self) -> dict:
-        """Returns the emission factors of an emission class."""
+        """
+        Return the emission factors of an emission class.
+        """
 
         return EMISSION_FACTORS[self.name]
 
     @property
     def is_diesel(self) -> bool:
-        """Returns whether an emission class is for a diesel engine."""
+        """
+        Return whether an emission class is for a diesel engine.
+        """
 
         split = self.name.split('_')
         assert len(split) == 3

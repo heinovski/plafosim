@@ -221,7 +221,9 @@ def report_rough_braking(
 
 
 class Simulator:
-    """A collection of parameters and information of the simulator."""
+    """
+    A collection of parameters and information of the simulator.
+    """
 
     def __init__(
             self,
@@ -299,7 +301,9 @@ class Simulator:
             record_prefilled: bool = DEFAULTS['record_prefilled'],
             **kwargs: dict,
     ):
-        """Initializes a simulator instance."""
+        """
+        Initialize a simulator instance.
+        """
 
         # TODO add custom filter that prepends the log entry with the step time
         logging.basicConfig(level=log_level, stream=sys.stdout, format="%(levelname)s [%(name)s]: %(message)s")
@@ -532,43 +536,55 @@ class Simulator:
 
     @property
     def road_length(self) -> int:
-        """Returns the road length."""
+        """
+        Return the road length.
+        """
 
         return self._road_length
 
     @property
     def number_of_lanes(self) -> int:
-        """Returns the number of lanes."""
+        """
+        Return the number of lanes.
+        """
 
         return self._number_of_lanes
 
     @property
     def step_length(self) -> int:
-        """Returns the length of a simulation step."""
+        """
+        Return the length of a simulation step.
+        """
 
         return self._step_length
 
     @property
     def step(self) -> int:
-        """Returns the current simulation step."""
+        """
+        Return the current simulation step.
+        """
 
         return self._step
 
     def _call_vehicle_actions(self):
-        """Triggers actions on all vehicles in the simulation."""
+        """
+        Triggers actions on all vehicles in the simulation.
+        """
 
         for vehicle in self._vehicles.values():
             vehicle.action(self._step)
 
     def _call_infrastructure_actions(self):
-        """Triggers actions on all infrastructures in the simulation."""
+        """
+        Triggers actions on all infrastructures in the simulation.
+        """
 
         for infrastructure in self._infrastructures.values():
             infrastructure.action(self._step)
 
     def _get_predecessor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         """
-        Returns the preceding (i.e., front) vehicle for a given vehicle on a given lane.
+        Return the preceding (i.e., front) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -598,7 +614,7 @@ class Simulator:
 
     def _get_successor(self, vehicle: Vehicle, lane: int = -1) -> Vehicle:
         """
-        Returns the succeeding (i.e., back) vehicle for a given vehicle on a given lane.
+        Return the succeeding (i.e., back) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -628,7 +644,7 @@ class Simulator:
 
     def _get_predecessor_rear_position(self, vehicle: Vehicle, lane: int = -1) -> float:
         """
-        Returns the rear position of the preceding (i.e., front) vehicle for a given vehicle on a given lane.
+        Return the rear position of the preceding (i.e., front) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -647,7 +663,7 @@ class Simulator:
 
     def _get_predecessor_speed(self, vehicle: Vehicle, lane: int = -1) -> float:
         """
-        Returns the speed of the preceding (i.e., front) vehicle for a given vehicle on a given lane.
+        Return the speed of the preceding (i.e., front) vehicle for a given vehicle on a given lane.
 
         Parameters
         ----------
@@ -666,7 +682,7 @@ class Simulator:
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
         """
-        Removes arrived vehicles from the simulation.
+        Remove arrived vehicles from the simulation.
 
         Parameters
         ----------
@@ -686,7 +702,7 @@ class Simulator:
     @staticmethod
     def _check_collisions(vdf: pd.DataFrame):
         """
-        Does collision checks for all vehicles in the simulation.
+        Do collision checks for all vehicles in the simulation.
 
         Parameters
         ----------
@@ -708,7 +724,7 @@ class Simulator:
     @staticmethod
     def has_collision(vehicle1: TV, vehicle2: TV) -> bool:
         """
-        Checks for a collision between two vehicles.
+        Check for a collision between two vehicles.
 
         Parameters
         ----------
@@ -720,7 +736,9 @@ class Simulator:
         return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
 
     def _generate_vehicles(self):
-        """Adds pre-filled vehicles to the simulation."""
+        """
+        Add pre-filled vehicles to the simulation.
+        """
 
         LOG.debug(f"Pre-filling the road network with {self._number_of_vehicles} vehicles")
 
@@ -838,7 +856,7 @@ class Simulator:
 
     def _vehicles_to_be_scheduled(self):
         """
-        1) Calculate how many vehicles should be spawned according to the depart method
+        1) Calculate how many vehicles should be spawned according to the depart method.
         """
 
         vehicles_to_be_scheduled = -1
@@ -1018,7 +1036,7 @@ class Simulator:
         pre_filled: bool = False,
     ):
         """
-        Adds a vehicle to the simulation based on the given parameters.
+        Add a vehicle to the simulation based on the given parameters.
 
         NOTE: Make sure that you set last_vehicle_id correctly.
 
@@ -1092,7 +1110,7 @@ class Simulator:
 
     def _generate_infrastructures(self, number_of_infrastructures: int):
         """
-        Generates infrastructures for the simulation.
+        Generate infrastructures for the simulation.
 
         Parameters
         ----------
@@ -1121,7 +1139,9 @@ class Simulator:
             LOG.info(f"Generated infrastructure {infrastructure.iid} at {position}")
 
     def _initialize_result_recording(self):
-        """Creates output files for all (enabled) statistics and writes the headers."""
+        """
+        Create output files for all (enabled) statistics and writes the headers.
+        """
 
         # write some general information about the simulation
         record_general_data_begin(basename=self._result_base_filename, simulator=self)
@@ -1184,7 +1204,7 @@ class Simulator:
 
     def _initialize_prefilled_platoon(self):
         """
-        Initializes all pre-filled vehicles as one platoon.
+        Initialize all pre-filled vehicles as one platoon.
         """
 
         # we avoid the complicated join procedure and simply set all parameters
@@ -1211,7 +1231,9 @@ class Simulator:
             vehicle._last_platoon_join_position = vehicle._position
 
     def _initialize_gui(self):
-        """Initializes the GUI."""
+        """
+        Initialize the GUI.
+        """
 
         # start gui
         start_gui(self._sumo_config, self._gui_play)
@@ -1257,7 +1279,9 @@ class Simulator:
             )
 
     def _update_gui(self):
-        """Updates the GUI."""
+        """
+        Update the GUI.
+        """
 
         for vehicle in self._vehicles.values():
             # update vehicles
@@ -1271,8 +1295,8 @@ class Simulator:
 
     def run(self):
         """
+        Run the simulation with the specified parameters until it is stopped.
         Main simulation method.
-        Runs the simulation with the specified parameters until it is stopped.
 
         This is based on Krauss' multi lane traffic:
         laneChange();
@@ -1424,7 +1448,9 @@ class Simulator:
             vehicles_arrived: int,
             runtime: float
     ):
-        """Record some period statistics."""
+        """
+        Record some period statistics.
+        """
 
         self._avg_number_vehicles = int(
             (self._values_in_avg_number_vehicles * self._avg_number_vehicles + vehicles_in_simulator) /
@@ -1478,7 +1504,9 @@ class Simulator:
                     )
 
     def _get_vehicles_df(self) -> pd.DataFrame:
-        """Returns a pandas dataframe from the internal data structure."""
+        """
+        Return a pandas dataframe from the internal data structure.
+        """
         platoon_fields = [
             "leader_id",
             "platoon_id",
@@ -1559,7 +1587,7 @@ class Simulator:
 
     def _write_back_vehicles_df(self, vdf: pd.DataFrame):
         """
-        Writes back the vehicle updates from a given pandas dataframe to the internal data structure.
+        Write back the vehicle updates from a given pandas dataframe to the internal data structure.
 
         Parameters
         ----------
@@ -1583,7 +1611,7 @@ class Simulator:
 
     def stop(self, msg: str):
         """
-        Stops the simulation with the given message.
+        Stop the simulation with the given message.
 
         Parameters
         ----------
@@ -1596,7 +1624,9 @@ class Simulator:
             print(f"\n{msg}")
 
     def __str__(self) -> str:
-        """Returns a str representation of a simulator instance."""
+        """
+        Return a str representation of a simulator instance.
+        """
 
         sim_dict = vars(self).copy()
         sim_dict.pop('_vehicles')
@@ -1606,7 +1636,9 @@ class Simulator:
         return str(dict(sorted(sim_dict.items())))
 
     def _finish(self):
-        """Cleans up the simulation."""
+        """
+        Clean up the simulation.
+        """
 
         if self._running:
             LOG.warning("Finish called during simulation!")
@@ -1648,7 +1680,7 @@ def compute_vehicle_spawns(
     random_arrival_position: bool,
 ):
     """
-    Schritt 4, siehe oben
+    Schritt 4, siehe oben.
 
     Assumption: list of vehicles is already sorted ascending by depart priority (e.g., waiting time)
     Assumption: ramp positions is sorted in ascending manner

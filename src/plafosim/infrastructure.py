@@ -71,19 +71,23 @@ class Infrastructure:
 
     @property
     def iid(self) -> int:
-        """Returns the id of an infrastructure."""
+        """
+        Return the id of an infrastructure.
+        """
 
         return self._iid
 
     @property
     def position(self) -> int:
-        """Returns the position of an infrastructure."""
+        """
+        Return the position of an infrastructure.
+        """
 
         return self._position
 
     def action(self, step: int):
         """
-        Triggers actions of an infrastructure
+        Triggers actions of an infrastructure.
 
         Parameters
         ----------
@@ -132,7 +136,9 @@ class Infrastructure:
         return neighbors
 
     def finish(self):
-        """Cleans up the instance of the infrastructure"""
+        """
+        Clean up the instance of the infrastructure.
+        """
 
         if self._formation_algorithm is not None:
             self._formation_algorithm.finish()

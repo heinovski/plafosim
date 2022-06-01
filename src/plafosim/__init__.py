@@ -63,6 +63,8 @@ class CustomFormatter(
     argparse.RawDescriptionHelpFormatter,
     argparse.MetavarTypeHelpFormatter,
 ):
-    """Metaclass combining multiple formatter classes for argparse"""
+    """
+    Metaclass combining multiple formatter classes for argparse.
+    """
 
     pass
