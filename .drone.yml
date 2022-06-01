@@ -175,50 +175,50 @@ type: docker
 name: execution
 
 steps:
-- name: build
-  image: python:3.7-buster
-  commands:
-    - pip install --upgrade pip poetry
-    - poetry build
-- name: install (wheel)
-  image: python:3.7-buster
-  commands:
-    - python3 -m venv .venv
-    - . .venv/bin/activate
-    - pip install --upgrade wheel
-    - pip install dist/plafosim-*-py3-none-any.whl
-- name: no formation
-  image: python:3.7-buster
-  environment:
-    SEED: ${DRONE_BUILD_NUMBER}
-  commands:
-    - . .venv/bin/activate
-      # we are testing both vehicle types
-    - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --random-seed $SEED
-- name: distributed formation
-  image: python:3.7-buster
-  environment:
-    SEED: ${DRONE_BUILD_NUMBER}
-  commands:
-    - . .venv/bin/activate
-      # we are testing both vehicle types
-    - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy distributed --random-seed $SEED
-- name: centralized formation (greedy)
-  image: python:3.7-buster
-  environment:
-    SEED: ${DRONE_BUILD_NUMBER}
-  commands:
-    - . .venv/bin/activate
-      # we are testing both vehicle types
-    - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
-- name: centralized formation (optimal)  # still experimental
-  image: python:3.7-buster
-  environment:
-    SEED: ${DRONE_BUILD_NUMBER}
-  commands:
-    - . .venv/bin/activate
-      # we are testing both vehicle types
-    - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
+  - name: build
+    image: python:3.7-buster
+    commands:
+      - pip install --upgrade pip poetry
+      - poetry build
+  - name: install (wheel)
+    image: python:3.7-buster
+    commands:
+      - python3 -m venv .venv
+      - . .venv/bin/activate
+      - pip install --upgrade wheel
+      - pip install dist/plafosim-*-py3-none-any.whl
+  - name: no formation
+    image: python:3.7-buster
+    environment:
+      SEED: ${DRONE_BUILD_NUMBER}
+    commands:
+      - . .venv/bin/activate
+        # we are testing both vehicle types
+      - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --random-seed $SEED
+  - name: distributed formation
+    image: python:3.7-buster
+    environment:
+      SEED: ${DRONE_BUILD_NUMBER}
+    commands:
+      - . .venv/bin/activate
+        # we are testing both vehicle types
+      - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy distributed --random-seed $SEED
+  - name: centralized formation (greedy)
+    image: python:3.7-buster
+    environment:
+      SEED: ${DRONE_BUILD_NUMBER}
+    commands:
+      - . .venv/bin/activate
+        # we are testing both vehicle types
+      - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
+  - name: centralized formation (optimal)  # still experimental
+    image: python:3.7-buster
+    environment:
+      SEED: ${DRONE_BUILD_NUMBER}
+    commands:
+      - . .venv/bin/activate
+        # we are testing both vehicle types
+      - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 
 trigger:
   ref:
