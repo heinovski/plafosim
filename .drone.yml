@@ -1,37 +1,22 @@
 ---
 kind: pipeline
 type: docker
-name: syntax
+name: python3.7
 
 steps:
-- name: flake8
-  image: alpine/flake8
-  commands:
-      # comments, import order, line-length, line-break binary operator*2
-    - flake8 --ignore=E265,E266,E402,E501,W503,W504 src tests
-- name: isort
-  image: xcgd/isort
-  commands:
-    - isort --check-only --diff src tests scripts
-
----
-kind: pipeline
-type: docker
-name: build-python3.7
-
-steps:
-  - name: build
+  - name: test (tox) and build
     image: python:3.7-buster
     commands:
-      - pip install --upgrade pip poetry
+      - pip install --upgrade pip poetry tox tox-poetry-installer
+      - tox -e py37
       - poetry build
   - name: install (sdist)
     image: python:3.7-buster
     commands:
-      - python3 -m venv .venv-sdist
+      - python -m venv .venv-sdist
       - . .venv-sdist/bin/activate
       - pip install dist/plafosim-*.tar.gz
-      - plafosim --version
+      - plafosim
   - name: install (wheel)
     image: python:3.7-buster
     commands:
@@ -39,33 +24,27 @@ steps:
       - . .venv-wheel/bin/activate
       - pip install --upgrade wheel
       - pip install dist/plafosim-*-py3-none-any.whl
-      - plafosim --version
-
-trigger:
-  ref:
-    - refs/heads/master
-    - refs/heads/develop
-    - refs/pull/**
-    - refs/tags/*
+      - plafosim
 
 ---
 kind: pipeline
 type: docker
-name: build-python3.8
+name: python3.8
 
 steps:
-  - name: build
+  - name: test (tox) and build
     image: python:3.8-buster
     commands:
-      - pip install --upgrade pip poetry
+      - pip install --upgrade pip poetry tox tox-poetry-installer
+      - tox -e py38
       - poetry build
   - name: install (sdist)
     image: python:3.8-buster
     commands:
-      - python3 -m venv .venv-sdist
+      - python -m venv .venv-sdist
       - . .venv-sdist/bin/activate
       - pip install dist/plafosim-*.tar.gz
-      - plafosim --version
+      - plafosim
   - name: install (wheel)
     image: python:3.8-buster
     commands:
@@ -73,33 +52,27 @@ steps:
       - . .venv-wheel/bin/activate
       - pip install --upgrade wheel
       - pip install dist/plafosim-*-py3-none-any.whl
-      - plafosim --version
-
-trigger:
-  ref:
-    - refs/heads/master
-    - refs/heads/develop
-    - refs/pull/**
-    - refs/tags/*
+      - plafosim
 
 ---
 kind: pipeline
 type: docker
-name: build-python3.9
+name: python3.9
 
 steps:
-  - name: build
+  - name: test (tox) and build
     image: python:3.9-buster
     commands:
-      - pip install --upgrade pip poetry
+      - pip install --upgrade pip poetry tox tox-poetry-installer
+      - tox -e py39
       - poetry build
   - name: install (sdist)
     image: python:3.9-buster
     commands:
-      - python3 -m venv .venv-sdist
+      - python -m venv .venv-sdist
       - . .venv-sdist/bin/activate
       - pip install dist/plafosim-*.tar.gz
-      - plafosim --version
+      - plafosim
   - name: install (wheel)
     image: python:3.9-buster
     commands:
@@ -107,7 +80,19 @@ steps:
       - . .venv-wheel/bin/activate
       - pip install --upgrade wheel
       - pip install dist/plafosim-*-py3-none-any.whl
-      - plafosim --version
+      - plafosim
+
+---
+kind: pipeline
+type: docker
+name: integration
+
+steps:
+  - name: integration (tox)
+    image: python:3.7-buster
+    commands:
+      - pip install --upgrade pip poetry tox tox-poetry-installer
+      - tox -e integration
 
 trigger:
   ref:
@@ -115,41 +100,6 @@ trigger:
     - refs/heads/develop
     - refs/pull/**
     - refs/tags/*
-
----
-kind: pipeline
-type: docker
-name: tests
-
-steps:
-- name: build
-  image: python:3.7-buster
-  commands:
-    - pip install --upgrade pip poetry
-    - poetry build
-- name: install (wheel)
-  image: python:3.7-buster
-  commands:
-    - python3 -m venv .venv
-    - . .venv/bin/activate
-    - pip install --upgrade wheel pytest pytest-cov
-    - pip install dist/plafosim-*-py3-none-any.whl
-- name: unit
-  image: python:3.7-buster
-  commands:
-    - . .venv/bin/activate
-    - pytest -v tests/unit_tests
-- name: integration
-  image: python:3.7-buster
-  commands:
-    - . .venv/bin/activate
-    - pytest -v tests/integration
-  when:
-    ref:
-      - refs/heads/master
-      - refs/heads/develop
-      - refs/pull/**
-      - refs/tags/*
 
 ---
 kind: pipeline
