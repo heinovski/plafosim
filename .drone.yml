@@ -138,7 +138,7 @@ steps:
   image: python:3.7-buster
   commands:
     - . .venv/bin/activate
-    - pytest -v --cov=plafosim tests/unit_tests
+    - pytest -v tests/unit_tests
 - name: integration
   image: python:3.7-buster
   commands:
@@ -150,24 +150,6 @@ steps:
       - refs/heads/develop
       - refs/pull/**
       - refs/tags/*
-- name: coverage
-  image: python:3.7-buster
-  environment:
-    HOST:
-      from_secret: WWW_FTP_HOST
-    USERNAME:
-      from_secret: WWW_FTP_USER
-    PASSWORD:
-      from_secret: WWW_FTP_PASSWORD
-  commands:
-    - pip install coverage-badge
-    - coverage-badge -o coverage.svg
-    - apt update
-    - apt install lftp
-    - lftp -c "set ftp:ssl-allow no; open -u $USERNAME,$PASSWORD $HOST; put coverage.svg;"
-  when:
-    ref:
-      - refs/heads/master
 
 ---
 kind: pipeline
