@@ -98,6 +98,7 @@ You can get a very simple live GUI based on SUMO by using the parameter `gui` (r
 ```plafosim --gui```
 
 ![](docs/gui.png)
+Copyright © 2021 IEEE
 
 More options for the live GUI can be found within the ``gui properties`` section of the help.
 
