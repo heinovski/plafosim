@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.15.2](https://github.com/heinovski/plafosim/releases/tag/v0.15.2) - 2022-06-10
+* Added upper limit for python version
+* Changed replay script print usage without arguments
+* Fixed example command in README
+* Removed ipython dependency
+* Updated CI configuration
+* Updated general.out file recording
+* Updated README
+* Updated SUMO related parts in code and README
+
 ## [v0.15.1](https://github.com/heinovski/plafosim/releases/tag/v0.15.1) - 2022-05-10
 * Improved description and extending instructions README
 * Improved usage print in CLI
