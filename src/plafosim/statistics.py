@@ -382,10 +382,10 @@ def record_vehicle_trace(basename: str, step: int, vehicle: 'Vehicle'):
             f"{vehicle._blocked_front},"
             f"{vehicle.travel_time},"
             f"{vehicle.travel_distance},"
-            f"{vehicle.desired_speed},"  # use potential other desired driving speed
+            f"{vehicle.desired_speed},"  # use potential platoon desired driving speed
             f"{vehicle._cf_target_speed},"
             f"{vehicle._cf_model.name},"
-            f"{rgb2hex(vehicle._color)}"
+            f"{rgb2hex(vehicle.color)}"  # use potential platoon color
             "\n"
         )
 

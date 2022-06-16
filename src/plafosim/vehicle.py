@@ -320,6 +320,11 @@ class Vehicle:
 
         return self._blocked_front
 
+    @property
+    def color(self) -> tuple:
+        """Return the current color of the vehicle."""
+        return self._color
+
     def action(self, step: int):
         """
         Triggers actions of a vehicle.

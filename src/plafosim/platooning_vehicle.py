@@ -317,6 +317,12 @@ class PlatooningVehicle(Vehicle):
 
         return self._distance_in_platoon
 
+    @property
+    def color(self) -> tuple:
+        """Return the current color of the vehicle."""
+
+        return self._platoon.leader._color if self.is_in_platoon() else self._color
+
     def _calculate_emission(self, a: float, v: float, f: list, scale: float) -> float:
         """
         Calculates the emitted pollutant amount using the given speed and acceleration.
@@ -913,6 +919,7 @@ class PlatooningVehicle(Vehicle):
         self._blocked_front = False
         # set color of vehicle
         if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
+            assert self._color == self.platoon.leader._color == self.color
             change_gui_vehicle_color(self._vid, leader._color)
 
         # collect statistics
@@ -1086,6 +1093,7 @@ class PlatooningVehicle(Vehicle):
 
                 # reset color of vehicle
                 if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
+                    assert follower._color == follower.platoon.leader._color == follower.color
                     change_gui_vehicle_color(follower.vid, follower._color)
 
                 # statistics
@@ -1117,6 +1125,7 @@ class PlatooningVehicle(Vehicle):
 
                 # reset color of vehicle
                 if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
+                    assert leader._color == leader.platoon.leader._color == leader.color
                     change_gui_vehicle_color(leader.vid, leader._color)
 
                 # statistics
@@ -1186,6 +1195,7 @@ class PlatooningVehicle(Vehicle):
 
         # reset color of vehicle
         if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
+            assert self._color == self.platoon.leader._color == self.color
             change_gui_vehicle_color(self._vid, self._color)
 
         self.in_maneuver = False
