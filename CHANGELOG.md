@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.15.3](https://github.com/heinovski/plafosim/releases/tag/v0.15.3) - 2022-07-07
+* Extend pyproject.toml
+* Extend simulation trace with spawn/arrive numbers
+* Fixed bug in vehicle spawning
+* Fixed wrong vehicle color recording in trace file
+* Updated internal GUI API
+* Updated README
+
 ## [v0.15.2](https://github.com/heinovski/plafosim/releases/tag/v0.15.2) - 2022-06-10
 * Added upper limit for python version
 * Changed replay script print usage without arguments
