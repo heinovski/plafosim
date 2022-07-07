@@ -978,6 +978,8 @@ class Simulator:
         self._vehicle_spawn_queue = not_spawned_vehicles
         assert len({v['vid'] for v in self._vehicle_spawn_queue}) == len(self._vehicle_spawn_queue)
 
+        return len(spawned_vehicles_df)
+
     def _is_insert_unsafe(self, depart_position, depart_speed, vtype, other_vehicle):
         # would it be unsafe to insert the vehicle?
         if other_vehicle._position <= depart_position:
@@ -1301,7 +1303,7 @@ class Simulator:
                 self._initialize_gui()
 
             # spawn vehicle based on given parameters
-            self._spawn_vehicles(self._get_vehicles_df())
+            vehicles_spawned = self._spawn_vehicles(self._get_vehicles_df())
 
             vehicles_in_simulator = len(self._vehicles)
             vehicles_in_queue = len(self._vehicle_spawn_queue)
@@ -1395,7 +1397,13 @@ class Simulator:
 
             # record some periodic statistics
             run_time = end_time - start_time
-            self._statistics(vehicles_in_simulator, vehicles_in_queue, run_time)
+            self._statistics(
+                vehicles_in_simulator=vehicles_in_simulator,
+                vehicles_in_queue=vehicles_in_queue,
+                vehicles_spawned=vehicles_spawned,
+                vehicles_arrived=len(arrived_vehicles),
+                runtime=run_time,
+            )
 
             # a new step begins
             self._step += self._step_length
@@ -1410,7 +1418,14 @@ class Simulator:
 
         return self._step
 
-    def _statistics(self, vehicles_in_simulator, vehicles_in_queue, runtime: float):
+    def _statistics(
+            self,
+            vehicles_in_simulator: int,
+            vehicles_in_queue: int,
+            vehicles_spawned: int,
+            vehicles_arrived: int,
+            runtime: float
+    ):
         """Record some period statistics."""
 
         self._avg_number_vehicles = int(
@@ -1425,6 +1440,8 @@ class Simulator:
                 step=self._step,
                 vehicles_in_simulator=vehicles_in_simulator,
                 vehicles_in_queue=vehicles_in_queue,
+                vehicles_spawned=vehicles_spawned,
+                vehicles_arrived=vehicles_arrived,
                 runtime=runtime,
             )
 

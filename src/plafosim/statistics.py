@@ -622,6 +622,8 @@ def initialize_simulation_trace(basename: str):
             "step,"
             "numberOfVehicles,"
             "vehiclesInSpawnQueue,"
+            "vehiclesSpawned,"
+            "vehiclesArrived,"
             "executionTime"
             "\n"
         )
@@ -632,6 +634,8 @@ def record_simulation_trace(
         step: int,
         vehicles_in_simulator: int,
         vehicles_in_queue: int,
+        vehicles_spawned: int,
+        vehicles_arrived: int,
         runtime: float
 ):
     assert basename
@@ -640,6 +644,8 @@ def record_simulation_trace(
             f"{step},"
             f"{vehicles_in_simulator},"
             f"{vehicles_in_queue},"
+            f"{vehicles_spawned},"
+            f"{vehicles_arrived},"
             f"{runtime}"
             "\n"
         )
