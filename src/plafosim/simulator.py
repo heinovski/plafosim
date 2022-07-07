@@ -1679,6 +1679,7 @@ def compute_vehicle_spawns(
         vehicle_after_spawn_position = (
             vdf
             .loc[vdf.position >= spawn_position]
+            .query('lane == 0')
             .sort_values("position", ascending=True)
             .iloc[0]
         )
@@ -1689,6 +1690,7 @@ def compute_vehicle_spawns(
         vehicle_before_spawn_position = (
             vdf
             .loc[vdf.position < spawn_position]
+            .query('lane == 0')
             .sort_values("position", ascending=True)
             .iloc[-1]
         )
