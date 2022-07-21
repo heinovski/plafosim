@@ -1472,7 +1472,7 @@ class Simulator:
             )
 
     def _record_lane_changes(self, vdf: pd.DataFrame):
-        for row in vdf.query('lane != old_lane').itertuples():
+        for row in vdf[vdf.lane != vdf.old_lane].itertuples():
             if row.cf_model != CF_Model.CACC:
                 if self._record_vehicle_changes:
                     record_vehicle_change(
@@ -1710,8 +1710,7 @@ def compute_vehicle_spawns(
         # since we have the dummy, we can assume there is always at least one vehicle
         vehicle_after_spawn_position = (
             vdf
-            .loc[vdf.position >= spawn_position]
-            .query('lane == 0')
+            [(vdf.position >= spawn_position) & (vdf.lane == 0)]
             .sort_values("position", ascending=True)
             .iloc[0]
         )
@@ -1721,8 +1720,7 @@ def compute_vehicle_spawns(
         # since we have the dummy, we can assume there is always at least one vehicle
         vehicle_before_spawn_position = (
             vdf
-            .loc[vdf.position < spawn_position]
-            .query('lane == 0')
+            [(vdf.position < spawn_position) & (vdf.lane == 0)]
             .sort_values("position", ascending=True)
             .iloc[-1]
         )
