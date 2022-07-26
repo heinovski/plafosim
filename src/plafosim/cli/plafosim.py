@@ -22,6 +22,7 @@ import pickle
 import sys
 import textwrap
 from distutils.util import strtobool
+from signal import SIGINT, signal
 from timeit import default_timer as timer
 
 from plafosim import __version__
@@ -714,6 +715,11 @@ def main():
         save_snapshot(simulator, snapshot_filename=args.save_snapshot)
         print(f"Saved a snapshot of the simulation to {args.save_snapshot}. Exiting...")
         return
+
+    def handler(signal, frame):
+        simulator.stop("SIGINT or CTRL-C detected!")
+
+    signal(SIGINT, handler)
 
     # execute simulation
     start_time = timer()
