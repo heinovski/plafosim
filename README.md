@@ -167,9 +167,12 @@ To validate the behavior of PlaFoSim, it is compared to SUMO 1.6.0 by means of s
 The corresponding scripts are located under `scripts` and executed withn CI/CD pipelines.
 You can have a look at `.drone.yml` for details regarding the execution.
 
-## Citing
+## Contributors & Citing
 
-If you are working with `PlaFoSim`, please cite the following paper:
+PlaFoSim was designed built by [Julian Heinovski](https://github.com/heinovski/) with the help of [Dominik S. Buse](https://github.com/dbuse/).
+It is currently maintained by [Julian Heinovski](https://github.com/heinovski/).
+
+If you are working with `PlaFoSim`, please cite the [following paper](https://www2.tkn.tu-berlin.de/bib/heinovski2021scalable/):
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021.
 
