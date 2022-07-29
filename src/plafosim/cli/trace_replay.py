@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
 #
