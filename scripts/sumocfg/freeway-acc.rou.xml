@@ -1,3 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <routes>
     <vType id="acc" accel="2.5" decel="15.0" apparentDecel="15.0" emergencyDecel="15.0" sigma="0" tau="1.0" length="4.0" minGap="2.5" maxSpeed="55" speedFactor="1.0" color="0,1,0" carFollowModel="CC" laneChangeModel="LC2013" emissionClass="HBEFA3/PC_G_EU4" tauEngine="0.0" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="2.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5" ccDecel="15.0" />
 
