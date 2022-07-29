@@ -17,7 +17,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 class NeighborData:
     """
     Collection of information from a single neighbor to be used within a NeighborTable.
