@@ -191,6 +191,9 @@ If you are working with `PlaFoSim`, please cite the [following paper](https://ww
 ```
 
 ## License
+
+PlaFoSim is licensed under the terms of the GNU General Public License 3.0 or later.
+
 ```
 # Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
 #
