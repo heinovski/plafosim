@@ -11,9 +11,10 @@
 PlaFoSim aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
 While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is implemented in a more abstract way.
 
+Conceptual view on the process of Platoon Formation:
 | Scenario | Advertisement | Assignment | Maneuver |
 | -------- | ------------- | ---------- | -------- |
-![Scenario](docs/scenario.png) | ![Advertisement](docs/advertisement.png) | ![Assignment](docs/assignment.png) | ![Maneuver](docs/maneuver.png) |
+| ![Scenario](docs/scenario.png)*A new vehicle enters the highway.* | ![Advertisement](docs/advertisement.png)*The vehicle advertises itself as interested in Platooning.* | ![Assignment](docs/assignment.png)*A Vehicle-to-Platoon assignment is calculated.* | ![Maneuver](docs/maneuver.png)*The new vehicle performs a join maneuver.* |
 
 PlaFoSim is published here:
 
