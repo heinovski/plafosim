@@ -187,10 +187,6 @@ If you are working with `PlaFoSim`, please cite the following paper:
 }
 ```
 
-## References
-
-[1] Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
-
 ## License
 ```
 # Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
@@ -208,3 +204,7 @@ If you are working with `PlaFoSim`, please cite the following paper:
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
+
+## List of References
+
+[1] Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
