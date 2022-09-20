@@ -130,7 +130,8 @@ def get_arrival_position(
     if random_arrival_position:
         # make sure to also include the end of the road itself
         arrival_position = rng.randrange(min_arrival_ramp, max_arrival_ramp + 1, ramp_interval)
-        assert arrival_position >= min_arrival_ramp
+        assert min_arrival_ramp <= arrival_position <= max_arrival_ramp
+        assert arrival_position <= road_length
     else:
         # simply drive until the end of the trip or the road
         arrival_position = min(max_arrival_ramp, road_length)
