@@ -127,8 +127,7 @@ def get_arrival_position(
     if min_arrival % ramp_interval == 0:
         assert min_arrival == min_arrival_ramp
 
-    # TODO check again the impact of random_arrival_position on static trip lengths (min = max)
-    if random_arrival_position and max_arrival_ramp < road_length:
+    if random_arrival_position:
         # make sure to also include the end of the road itself
         arrival_position = rng.randrange(min_arrival_ramp, max_arrival_ramp + 1, ramp_interval)
         assert arrival_position >= min_arrival_ramp
