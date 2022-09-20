@@ -85,6 +85,18 @@ def get_arrival_position(
     ----------
     depart_position : int
         The depart position to consider
+    road_length : int
+        The length of the entire road
+    ramp_interval : int
+        The distance between two on-/off-ramps
+    min_trip_length : int
+        The minimum trip length
+    max_trip_length : int
+        The maximum trip length
+    rng : random.Random
+        The RNG to be used
+    random_arrival_position : bool
+        Whether to use random arrival positions
     prefill : bool, optional
         Whether the trip is for a pre-filled vehicle
     """
