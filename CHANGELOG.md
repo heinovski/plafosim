@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.15.4](https://github.com/heinovski/plafosim/releases/tag/v0.15.4) - 2022-10-20
+* Added author list
+* Added simple signal handler
+* Added tox for testing
+* Changed logging stream to stdout
+* Updated dependencies and pyproject.toml
+* Updated README
+
 ## [v0.15.3](https://github.com/heinovski/plafosim/releases/tag/v0.15.3) - 2022-07-07
 * Extend pyproject.toml
 * Extend simulation trace with spawn/arrive numbers
