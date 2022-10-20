@@ -170,7 +170,7 @@ You can have a look at `.drone.yml` for details regarding the execution.
 
 ## Contributors & Citing
 
-PlaFoSim was designed built by [Julian Heinovski](https://github.com/heinovski/) with the help of [Dominik S. Buse](https://github.com/dbuse/).
+PlaFoSim was designed and built by [Julian Heinovski](https://github.com/heinovski/) with the help of [Dominik S. Buse](https://github.com/dbuse/).
 It is currently maintained by [Julian Heinovski](https://github.com/heinovski/).
 The list of all authors can be found [here](AUTHORS.md).
 
