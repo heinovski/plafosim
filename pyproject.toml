@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "plafosim"
-version = "0.15.3"
+version = "0.15.4"
 description = "A simple and scalable simulator for platoon formation."
 license = "GPL-3.0-or-later"
 authors = [
