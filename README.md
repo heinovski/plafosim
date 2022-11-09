@@ -28,7 +28,7 @@ Please note that PlaFoSim is still under heavy development.
 
 - Install Python (>=3.7.0,<3.10)
 - Optionally, install [SUMO](https://github.com/eclipse/sumo/) (>=1.6.0)
-- Install PlaFoSim via pypi:
+- Install PlaFoSim from [pypi](https://pypi.org/project/plafosim/):
 ```pip install plafosim```
 
 NOTE: The project is currently only tested under Linux.
@@ -125,7 +125,7 @@ To see all options of this script, run:
 ## Extending
 
 - Clone the repository
-- Install poetry
+- Install [poetry](https://python-poetry.org/):
 ```pip install poetry```
 - Install PlaFoSim from source in editable mode
 ```poetry install```
@@ -170,11 +170,11 @@ You can have a look at `.drone.yml` for details regarding the execution.
 
 ### Profiling
 
-You can profile the runtime of PlaFoSim's code by using `cProfile`:
+You can profile the runtime of PlaFoSim's code by using [cProfile](https://docs.python.org/3/library/profile.html#module-cProfile):
 
 ```poetry run python -m cProfile -o profile.out -m plafosim.cli.plafosim```
 
-You can visualize the results of the profiling run by using `SnakeViz`:
+You can visualize the results of the profiling run by using [SnakeViz](https://docs.python.org/3/library/profile.html#module-cProfile):
 
 ```snakeviz profile.out```
 
