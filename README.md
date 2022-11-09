@@ -16,7 +16,7 @@ Conceptual view on the process of Platoon Formation [1-2]:
 | -------- | ------------- | ---------- | -------- |
 | ![Scenario](docs/scenario.png)*A new vehicle enters the highway.* | ![Advertisement](docs/advertisement.png)*The vehicle advertises itself as interested in Platooning.* | ![Assignment](docs/assignment.png)*A Vehicle-to-Platoon assignment is calculated.* | ![Maneuver](docs/maneuver.png)*The new vehicle performs a join maneuver.* |
 
-PlaFoSim is published [here](https://www2.tkn.tu-berlin.de/bib/heinovski2021scalable/):
+PlaFoSim is published [here](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/):
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
 
@@ -184,7 +184,7 @@ PlaFoSim was designed and built by [Julian Heinovski](https://github.com/heinovs
 It is currently maintained by [Julian Heinovski](https://github.com/heinovski/).
 The list of all authors can be found [here](AUTHORS.md).
 
-If you are working with `PlaFoSim`, please cite the [following paper](https://www2.tkn.tu-berlin.de/bib/heinovski2021scalable/):
+If you are working with `PlaFoSim`, please cite the [following paper](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/):
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
 
