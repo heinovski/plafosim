@@ -168,6 +168,16 @@ To validate the behavior of PlaFoSim, it is compared to SUMO 1.6.0 by means of s
 The corresponding scripts are located under `scripts` and executed withn CI/CD pipelines.
 You can have a look at `.drone.yml` for details regarding the execution.
 
+### Profiling
+
+You can profile the runtime of PlaFoSim's code by using `cProfile`:
+
+```poetry run python -m cProfile -o profile.out -m plafosim.cli.plafosim```
+
+You can visualize the results of the profiling run by using `SnakeViz`:
+
+```snakeviz profile.out```
+
 ## Contributors & Citing
 
 PlaFoSim was designed and built by [Julian Heinovski](https://github.com/heinovski/) with the help of [Dominik S. Buse](https://github.com/dbuse/).
