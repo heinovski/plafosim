@@ -127,7 +127,7 @@ To see all options of this script, run:
 - Clone the repository
 - Install [poetry](https://python-poetry.org/):
 ```pip install poetry```
-- Install PlaFoSim from source in editable mode
+- Install PlaFoSim from source in editable mode:
 ```poetry install```
 - Run PlaFoSim in the virtual environment with
 ```poetry run plafosim```
