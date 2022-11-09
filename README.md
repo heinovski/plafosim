@@ -16,7 +16,7 @@ Conceptual view on the process of Platoon Formation [1-2]:
 | -------- | ------------- | ---------- | -------- |
 | ![Scenario](docs/scenario.png)*A new vehicle enters the highway.* | ![Advertisement](docs/advertisement.png)*The vehicle advertises itself as interested in Platooning.* | ![Assignment](docs/assignment.png)*A Vehicle-to-Platoon assignment is calculated.* | ![Maneuver](docs/maneuver.png)*The new vehicle performs a join maneuver.* |
 
-PlaFoSim is published here:
+PlaFoSim is published [here](https://www2.tkn.tu-berlin.de/bib/heinovski2021scalable/):
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
 
