@@ -229,6 +229,6 @@ PlaFoSim is licensed under the terms of the GNU General Public License 3.0 or la
 
 ## List of References
 
-[1] Julian Heinovski and Falko Dressler, "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols," Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
+[1] Julian Heinovski and Falko Dressler, ["Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols,"](https://www.tkn.tu-berlin.de/bib/heinovski2018platoon/) Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
 
-[2] Julian Heinovski, "Platoon Formation: Car-to-Platoon Assignments for Individual Cars," Proceedings of International Conference on Networked Systems (NetSys 2019), PhD Forum, Munich, Germany, March 2019.
+[2] Julian Heinovski, ["Platoon Formation: Car-to-Platoon Assignments for Individual Cars,"](https://www.tkn.tu-berlin.de/bib/heinovski2019platoon/) Proceedings of International Conference on Networked Systems (NetSys 2019), PhD Forum, Munich, Germany, March 2019.
