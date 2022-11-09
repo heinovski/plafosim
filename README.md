@@ -62,7 +62,7 @@ The available parameters are grouped into different categories:
 - formation properties
 - infrastructure properties
 - simulation properties
-- gui properties
+- GUI properties
 - result recording properties
 ```
 
