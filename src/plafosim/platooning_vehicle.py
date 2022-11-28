@@ -1168,6 +1168,8 @@ class PlatooningVehicle(Vehicle):
                 # TODO this looks strange in the GUI, since we do this before actually leaving the formation
                 self._platoon_role = PlatoonRole.LEAVER
                 self._cf_model = CF_Model.ACC
+                # FIXME Missing method. TODO Implement with new function!
+                sys.exit(f"ERROR: This is not implemented (anymore)! {__file__}:{sys._getframe().f_lineno}")
                 if not self._simulator._change_lane(self, self._lane + 1, "maneuver"):
                     # could not leave the platoon
                     # TODO this could be just a return in future to let the leaver try again
