@@ -225,7 +225,7 @@ steps:
     DIR: ${DRONE_REPO}/${DRONE_BUILD_NUMBER}/${DRONE_STAGE_NAME}
   commands:
     - lftp -c "open -u $USERNAME,$PASSWORD $HOST; cd $BASE_DIR; mkdir -pf $DIR; mput -O $DIR *.csv"
-- name: plots
+- name: upload
   image: alpine/git
   commands:
     - echo "Username '$DRONE_ASKPASS_USERNAME'"
