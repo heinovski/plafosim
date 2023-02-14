@@ -254,17 +254,32 @@ steps:
     - . .venv/bin/activate
     - pip install --upgrade wheel
     - pip install dist/plafosim-*-py3-none-any.whl
-- name: Human
+- name: Human-5
+  image: python:3.7-buster
+  commands:
+    - . .venv/bin/activate
+    - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 5 --penetration 0 --depart-flow true --random-depart-position true --depart-method number
+- name: Human-10
   image: python:3.7-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 10 --penetration 0 --depart-flow true --random-depart-position true --depart-method number
-- name: ACC
+- name: ACC-5
+  image: python:3.7-buster
+  commands:
+    - . .venv/bin/activate
+    - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 5 --penetration 1 --depart-flow true --random-depart-position true --depart-method number
+- name: ACC-10
   image: python:3.7-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 10 --penetration 1 --depart-flow true --random-depart-position true --depart-method number
-- name: CACC
+- name: CACC-5
+  image: python:3.7-buster
+  commands:
+    - . .venv/bin/activate
+    - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 5 --penetration 1 --start-as-platoon true
+- name: CACC-10
   image: python:3.7-buster
   commands:
     - . .venv/bin/activate
