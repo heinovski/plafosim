@@ -88,11 +88,26 @@ type: docker
 name: integration
 
 steps:
-  - name: integration (tox)
+  - name: cf models (tox)
     image: python:3.7-buster
     commands:
       - pip install --upgrade pip poetry tox tox-poetry-installer
-      - tox -e integration
+      - tox -e test_cf_models
+  - name: lc models (tox)
+    image: python:3.7-buster
+    commands:
+      - pip install --upgrade pip poetry tox tox-poetry-installer
+      - tox -e test_lc_models
+  - name: departure (tox)
+    image: python:3.7-buster
+    commands:
+      - pip install --upgrade pip poetry tox tox-poetry-installer
+      - tox -e test_departure
+  - name: simulation (tox)
+    image: python:3.7-buster
+    commands:
+      - pip install --upgrade pip poetry tox tox-poetry-installer
+      - tox -e test_simulation
 
 trigger:
   ref:
