@@ -34,7 +34,7 @@ echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
 
 echo "Running PlaFoSim..."
 
-/usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
+/usr/bin/time -f "plafosim,%e,%U,%S" -o ${experiment}_runtimes.csv -a \
     plafosim \
     --collisions true \
     --depart-desired false \
@@ -66,7 +66,7 @@ echo "Running PlaFoSim..."
 
 echo "Running SUMO..."
 
-/usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
+/usr/bin/time -f "sumo,%e,%U,%S" -o ${experiment}_runtimes.csv -a \
     $SUMO_HOME/bin/sumo \
     --begin 0 \
     --collision.action warn \

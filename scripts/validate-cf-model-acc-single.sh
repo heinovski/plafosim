@@ -34,7 +34,7 @@ echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
 
 echo "Running PlaFoSim..."
 
-/usr/bin/time --format="plafosim,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
+/usr/bin/time -f "plafosim,%e,%U,%S" -o ${experiment}_runtimes.csv -a \
     plafosim \
     --acc-headway-time 1.0 \
     --collisions true \
@@ -67,7 +67,7 @@ echo "Running PlaFoSim..."
 
 echo "Running SUMO..."
 
-/usr/bin/time --format="sumo,%e,%U,%S" --output=${experiment}_runtimes.csv --append \
+/usr/bin/time -f "sumo,%e,%U,%S" -o ${experiment}_runtimes.csv -a \
     $ROOT/scripts/run-plexe-acc.py \
     --experiment $experiment \
     --sumo-config ${ROOT}/scripts/sumocfg/freeway-acc.sumo.cfg \
