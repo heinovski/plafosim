@@ -28,7 +28,7 @@ ROOT=$(pwd)/$(dirname $0)/..
 experiment=acc
 
 # check correct sumo version
-sumo --version | grep Version | head -n 1 | sed -E "s/.*([0-9]+\.[0-9]+\.[0-9]+)/\1/g" | xargs -i test "1.6.0" = "{}" || (echo "Incorrect SUMO version (expecting 1.6.0)!" && exit 1)
+sumo --version | grep Version | head -n 1 | sed -E "s/.*([0-9]+\.[0-9]+\.[0-9]+)/\1/g" | xargs -I "{}" test "1.6.0" = "{}" || (echo "Incorrect SUMO version (expecting 1.6.0)!" && exit 1)
 
 echo "simulator,real,user,sys" > ${experiment}_runtimes.csv
 
