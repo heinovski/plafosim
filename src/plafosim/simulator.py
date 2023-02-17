@@ -356,7 +356,7 @@ class Simulator:
             sys.exit("ERROR: random-depart-position is only possible in conjunction with depart-desired!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         if not depart_flow and depart_method == "number":
-            sys.exit("ERROR: The depart method number can only be used in conjuction with a depart flow!")
+            sys.exit("ERROR: The depart method number can only be used in conjunction with a depart flow!")
         self._depart_method = depart_method  # the departure method to use
         if depart_interval <= 0:
             sys.exit("ERROR: The depart interval has to be bigger than 0!")
@@ -385,7 +385,7 @@ class Simulator:
             sys.exit("ERROR: Unknown depart method!")
         if self._effective_depart_rate is not None:
             if 0.5 < self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
-                LOG.warning(f"The current effective depart rate {self._effective_depart_rate} vehicles/step will lead to depature delays for vehicles!")
+                LOG.warning(f"The current effective depart rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
             if self._effective_depart_rate > 1 and not self._random_depart_position:
                 sys.exit("ERROR: an effective depart rate > 1 vehicles/step is incompatible with just spawning at the origin (random depart position == false)")
             if self._effective_depart_rate < 0:
@@ -994,7 +994,7 @@ class Simulator:
                 )
             LOG.trace(f"Spawned vehicle {vehicle.vid} ({vehicle.depart_position}-{vehicle.rear_position},{vehicle.depart_lane}).")
 
-        # 5) enque remaining
+        # 5) enqueue remaining
         if not_spawned_vehicles:
             LOG.warning(f"Could not spawn a total of {len(not_spawned_vehicles)} vehicles within this step, putting them back into the queue!")
         self._vehicle_spawn_queue = not_spawned_vehicles

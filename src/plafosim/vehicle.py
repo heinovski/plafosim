@@ -431,7 +431,7 @@ class Vehicle:
         # calculate time loss
         # SUMO: "The time lost due to driving below the ideal speed."
         # can also use higher layer desired speed
-        # FIXME: should this the cf target speed?
+        # FIXME: should this be the cf target speed?
         if self._speed < self.desired_speed:
             self._time_loss += self._simulator.step_length
 

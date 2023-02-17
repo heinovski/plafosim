@@ -65,7 +65,7 @@ def is_gap_safe(
     Safe means:
     - the front vehicle can decelerate as hard as possible for one step
     - the back vehicle can accelerate as hard as possible for one step
-    - the will not crash
+    - the vehicle will not crash
 
     Assumes euclidian/non-ballistic position updates.
     """
@@ -266,7 +266,7 @@ def compute_new_speeds(
         # TODO: move desired_gap out of this function to avoid re-computation
         [
             vdf["min_gap"],
-            # using own speed instead of predecessor speed (like krauss) here
+            # using own speed instead of predecessor speed (like Krauss) here
             vdf["desired_headway_time"] * vdf["speed"],
         ],
         axis=0,
@@ -277,9 +277,9 @@ def compute_new_speeds(
     # we assume vehicles already have their max acceleration/deceleration
     # set/updated for individual driving or platooning.
     # I.e., platoons share max acceleration/deceleration.
-    # We also assume that evary vehicle has speed and postion values of its
+    # We also assume that every vehicle has speed and position values of its
     # predecessor. If there is none, the values should just be large defaults.
-    # The CF functions shouls be able to deal with this inherently.
+    # The CF functions should be able to deal with this inherently.
 
     m_human = vdf.cf_model == CF_Model.Human
     m_acc = vdf.cf_model == CF_Model.ACC
@@ -331,7 +331,7 @@ def compute_lane_changes(vdf, max_lane, step_length=1.0):
 
     ## SPEED GAIN
 
-    # derive map of predecessrs and successors
+    # derive map of predecessors and successors
     predecessor_map = lane_predecessors(vdf_tmp, max_lane)
     successor_map = lane_successors(vdf_tmp, max_lane)
 
@@ -395,7 +395,7 @@ def compute_lane_changes(vdf, max_lane, step_length=1.0):
 
     ## KEEP RIGHT
 
-    # derive map of predecessrs and successors
+    # derive map of predecessors and successors
     predecessor_map = lane_predecessors(vdf_tmp, max_lane)
     successor_map = lane_successors(vdf_tmp, max_lane)
 
@@ -453,7 +453,7 @@ def compute_lane_changes(vdf, max_lane, step_length=1.0):
     vdf_tmp.loc[m_cacc, 'lane'] = vdf_tmp.loc[vdf_tmp.loc[m_cacc, 'leader_id'], 'lane'].values
     vdf_tmp.loc[m_cacc, 'reason'] = vdf_tmp.loc[vdf_tmp.loc[m_cacc, 'leader_id'], 'reason'].values
 
-    # vehicls are only allowed to perform one lane change
+    # vehicles are only allowed to perform one lane change
     assert not (speed_gain & keep_right).any()
 
     return vdf_tmp[['lane', 'reason']]
@@ -462,7 +462,7 @@ def compute_lane_changes(vdf, max_lane, step_length=1.0):
 # Stuff to remove
 #
 # Just temporary helpers for migration to fully vectorized code.
-# Remove once no longer needd
+# Remove once no longer needed
 
 SAFE_SPEED_DF = namedtuple(
     "SAFE_SPEED_DF",
@@ -601,7 +601,7 @@ def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
         return []
     vdf = vdf[vdf.lane.isin(list(lanes_to_keep))]
 
-    # TODO should we just use the precessor / successor
+    # TODO should we just use the predecessor / successor
 
     # calculate vehicles with a crash in their back
     groupby = vdf.groupby("lane")
