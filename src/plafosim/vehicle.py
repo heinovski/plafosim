@@ -20,7 +20,6 @@
 import logging
 from typing import TYPE_CHECKING
 
-from .message import Message
 from .mobility import CF_Model
 from .statistics import (
     record_emission_trace_prefix,
@@ -579,94 +578,3 @@ class Vehicle:
         self_dict = self.__dict__.copy()
         self_dict.update({'_vehicle_type': str(self._vehicle_type)})  # use str representation of vehicle type
         return str(self_dict)
-
-    def _transmit(self, destination_vid: int, message: Message) -> bool:
-        """
-        Transmit a message of type Message.
-
-        Messages are in general not used at the moment.
-
-        Parameters
-        ----------
-        destination_vid : int
-            The id of the destination vehicle
-        message : Message
-            The message to transmit
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        if isinstance(message, Message):
-            if destination_vid == -1:
-                # TODO do we really want access the private field of the vehicles here (i.e., within this class)?
-                for vehicle in self._simulator._vehicles.values():
-                    vehicle.receive(message)
-            else:
-                # TODO do we really want access the private field of the vehicles here (i.e., within this class)?
-                self._simulator._vehicles[destination_vid].receive(message)
-
-            return True  # this should always be true, at least currently
-        raise RuntimeError("Message is not an instance of type Message")
-
-    def receive(self, message) -> bool:
-        """
-        Receives a message of arbitrary type.
-
-        Messages are in general not used at the moment.
-
-        Parameters
-        ----------
-        message :
-            The message to be received
-
-        Raises
-        ------
-        RuntimeError
-            If the message to be received is not an instance of the Message type.
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        if self._simulator.step < self._depart_time:
-            # we cannot receive anything since we did not start yet
-            return False
-        if isinstance(message, Message):
-            if message.destination == self._vid or message.destination == -1:
-                self._handle_message(message)
-            # we cannot receive this message since it was not for us
-            return False
-        raise RuntimeError("Message is not an instance of type Message")
-
-    def _handle_message(self, message: Message):
-        """
-        Handle a message of arbitrary type Message.
-
-        Messages are in general not used at the moment.
-
-        Parameters
-        ----------
-        message : Message
-            The message to be handled
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        func = self.__class__.__dict__.get('_receive_' + message.__class__.__name__,
-                                           lambda v, m: print("cannot handle message", m))
-        return func(self, message)
-
-    def _receive_Message(self, message: Message):
-        """
-        Handle a message of the specific type Message.
-
-        Messages are in general not used at the moment.
-
-        Parameters
-        ----------
-        message : Message
-            The message to be received
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        LOG.warning(f"{self._vid} received non-sense message {message}")

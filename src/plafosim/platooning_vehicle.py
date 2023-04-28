@@ -24,7 +24,6 @@ from typing import TYPE_CHECKING
 
 from .algorithms.speed_position import SpeedPosition  # noqa 401
 from .gui import change_gui_vehicle_color
-from .message import Message, PlatoonAdvertisement
 from .mobility import CF_Model
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
@@ -493,9 +492,6 @@ class PlatooningVehicle(Vehicle):
 
         # do platoon formation
         if self._formation_algorithm:
-            # transmit regular platoon advertisements
-            self._advertise()
-
             # execute formation algorithm at every execution interval
             if step >= self._last_formation_step + self._execution_interval:
                 # search for a platoon (depending on the algorithm)
@@ -1230,80 +1226,3 @@ class PlatooningVehicle(Vehicle):
         assert self._last_platoon_join_position >= 0
         self._distance_in_platoon += self._position - self._last_platoon_join_position
         self._leaves_successful += 1
-
-    def _advertise(self):
-        """
-        Maintains regular sending of platoon advertisements.
-
-        Advertisement are in general not used at the moment.
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        return  # TODO this is not necessary as a perfect communication guarantees information
-
-        advertisement_interval = 600  # in s # TODO make parameter
-        if (
-            not self._last_advertisement_step
-            or self._last_advertisement_step + advertisement_interval <= self._simulator.step
-        ):
-            self._send_advertisements()
-            self._last_advertisement_step = self._simulator.step
-
-    def _send_advertisements(self):
-        """
-        Transmit a broadcast to advertise as platoon.
-
-        Advertisement are in general not used at the moment.
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        for vehicle in self._simulator._vehicles.values():
-            self._transmit(-1, PlatoonAdvertisement(
-                self._vid,
-                vehicle.vid,
-                self._vid,
-                self._vid,
-                self._speed,
-                self._lane,
-                self._vid,
-                self._position,
-                self.rear_position,
-            ))
-
-    def _handle_message(self, message: Message):
-        """
-        Handle a message of arbitrary type Message.
-
-        Messages are in general not used at the moment.
-
-        Parameters
-        ----------
-        message : Message
-            The message to be handled
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        func = self.__class__.__dict__.get(
-            '_receive_' + message.__class__.__name__,
-            super().__dict__.get('_handle_message'))
-        return func(self, message)
-
-    def _receive_PlatoonAdvertisement(self, advertisement: PlatoonAdvertisement):
-        """
-        Handle a message of the specific type PlatoonAdvertisement.
-
-        Messages are in general not used at the moment.
-
-        Parameters
-        ----------
-        advertisement : PlatoonAdvertisement
-            The advertisement to be received
-
-        THIS IS DEPRECATED AT THE MOMENT!!!
-        """
-
-        # TODO add contents to the neighbor table
-        LOG.debug(f"{self._vid} received an advertisement from {advertisement.origin}")
