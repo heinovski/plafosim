@@ -153,7 +153,7 @@ plafosim --formation-algorithm dummy_algorithm_name
 In order to contribute, please follow these steps:
 - Install PlaFoSim from source (see above)
 - Make desired changes
-- Run the tests located in `scripts` (see `.drone.yml`)
+- Run the tests located in `tests` as well as the validation scripts located in `scripts` (see `.drone.yml` for details)
 - Submit a Pull Request (PR)
 
 ### Testing
