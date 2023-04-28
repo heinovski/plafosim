@@ -1,5 +1,28 @@
 # Changelog
 
+## [v0.16.0](https://github.com/heinovski/plafosim/releases/tag/v0.16.0) - 2023-04-28
+* BREAKING CHANGES
+  * Replace log-level with verbosity & quiet arguments
+* FIXES
+  * Fix calculation of random arrival position
+  * Fix deprecated argument
+  * Fix missing function (hotfix)
+  * Fix script compatibility with macOS
+* NEW FEATURES
+ * Add parsing of algorithm class from global identifiers
+ * Add SPDX-License-Identifier
+ * Add more performance tests
+* UPDATES
+  * Improve performance
+  * Remove duplicated code in CLI scripts
+  * Split integration tests into multiple steps
+  * Update asserts
+  * Update CI runs
+  * Update citation information in README
+  * Update copyright
+  * Update docstrings
+  * Update documentation in README
+
 ## [v0.15.4](https://github.com/heinovski/plafosim/releases/tag/v0.15.4) - 2022-10-20
 * Added author list
 * Added simple signal handler
