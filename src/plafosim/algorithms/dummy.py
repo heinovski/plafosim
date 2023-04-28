@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2020-2022 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (c) 2020-2023 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
