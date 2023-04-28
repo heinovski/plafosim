@@ -26,7 +26,7 @@ Please note that PlaFoSim is still under heavy development.
 
 ## Installation
 
-- Install Python (>=3.7.0,<3.10)
+- Install Python (>=3.7,<=3.9)
 - Optionally, install [SUMO](https://github.com/eclipse/sumo/) (>=1.6.0)
 - Install PlaFoSim from [pypi](https://pypi.org/project/plafosim/):
 ```pip install plafosim```
