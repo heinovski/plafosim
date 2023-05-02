@@ -687,6 +687,7 @@ def main():
 
     def handler(signal, frame):
         simulator.stop("SIGINT or CTRL-C detected! Stopping simulation...")
+        exit(1)
 
     signal(SIGINT, handler)
 
