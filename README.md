@@ -27,20 +27,20 @@ Please note that PlaFoSim is still under heavy development.
 ## Installation
 
 - Install Python (>=3.7,<=3.9)
-- Optionally, install [SUMO](https://github.com/eclipse/sumo/) (>=1.6.0)
 - Install PlaFoSim from [pypi](https://pypi.org/project/plafosim/):
 ```pip install plafosim```
+- Optionally, install [SUMO](https://github.com/eclipse/sumo/) (>=1.6.0)
 
-NOTE: The project is currently only tested under Linux.
+NOTE: The project is developed and currently only tested on Linux.
 
 ## Running a Simulation
 
-You can use the simulator as module as well as from the command-line.
+You can use the PlaFoSim as Python module as well as from the command-line.
 Currently, only command-line is thoroughly tested and thus completely available though.
 
 ### Quickstart
 
-Use PlaFoSim's binary to run a simulation with the default configuration:
+Use PlaFoSim's binary to run a simulation with the default configuration (`-d`):
 
 ```plafosim -d```
 
@@ -113,8 +113,8 @@ See the Python [documention](https://docs.python.org/3/using/cmdline.html#envvar
 
 ## Re-Playing a Simulation
 
-The simulation can write a trace file for every simulated vehicle (default `results_vehicle_traces.csv`).
-You can replay the simulation based on the trace file by using a corresponding binary:
+The simulation can write a trace file including the mobility details of every simulated vehicle (default `results_vehicle_traces.csv`).
+You can replay the simulation in the GUI (see above) based on the trace file by using the corresponding binary:
 
 ```plafosim-replay results_vehicle_traces.csv```
 
@@ -122,11 +122,11 @@ To see all options of this script, run:
 
 ```plafosim-replay -h, --help```
 
-## Extending
+## Extending the Simulator
 
-- Clone the repository
 - Install [poetry](https://python-poetry.org/):
 ```pip install poetry```
+- Clone the repository
 - Install PlaFoSim from source in editable mode:
 ```poetry install```
 - Run PlaFoSim in the virtual environment with
@@ -148,7 +148,7 @@ You should now be able to use your new algorithm with
 plafosim --formation-algorithm dummy_algorithm_name
 ```
 
-## Contributing
+## Contributing to the Project
 
 In order to contribute, please follow these steps:
 - Install PlaFoSim from source (see above)
