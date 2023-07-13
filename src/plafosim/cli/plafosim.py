@@ -600,7 +600,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
             sep='',
             end='',
         )
-        sys.exit(0)
+        parser.exit()
 
     args = parser.parse_args()
 

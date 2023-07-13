@@ -118,7 +118,7 @@ def parse_args() -> argparse.Namespace:
             sep='',
             end='',
         )
-        sys.exit(0)
+        parser.exit()
 
     return parser.parse_args()
 
