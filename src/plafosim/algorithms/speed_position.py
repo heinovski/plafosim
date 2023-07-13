@@ -144,6 +144,7 @@ class SpeedPosition(FormationAlgorithm):
             default=int(DEFAULTS['solver_time_limit'] / 1000),  # ms -> s
             help="The time limit for the optimal solver per assignment problem in s. Influences the quality of the solution.",
         )
+        return group
 
     def ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
         """

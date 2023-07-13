@@ -57,6 +57,7 @@ class Dummy(FormationAlgorithm):
             default=-1,
             help="A dummy parameter",
         )
+        return group
 
     def do_formation(self):
         """

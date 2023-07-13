@@ -32,6 +32,39 @@ from plafosim.simulator import DEFAULTS, Simulator
 from plafosim.util import find_resource
 
 
+def format_help(parser: argparse.ArgumentParser, groups=None) -> str:
+    """
+    Format help message for argument groups
+
+    Taken from https://stackoverflow.com/a/40730878.
+    """
+
+    formatter = parser._get_formatter()
+
+    # usage
+    formatter.add_usage(
+        parser.usage,
+        parser._actions,
+        parser._mutually_exclusive_groups,
+    )
+
+    # description
+    formatter.add_text(parser.description)
+
+    if groups is None:
+        groups = parser._action_groups
+
+    # positionals, optionals and user-defined groups
+    for action_group in groups:
+        formatter.start_section(action_group.title)
+        formatter.add_text(action_group.description)
+        formatter.add_arguments(action_group._group_actions)
+        formatter.end_section()
+
+    # determine help from format above
+    return formatter.format_help()
+
+
 # TODO duplicated code with trace replay
 def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
@@ -40,9 +73,16 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         formatter_class=CustomFormatter,
         allow_abbrev=False,
         description=__description__,
+        add_help=False,
     )
 
     # miscellaneous
+    parser.add_argument(
+        '-h', '--help',
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help='show this help message and exit',
+    )
     parser.add_argument(
         "-C", "--citation",
         action="version",
@@ -91,8 +131,23 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Load a snapshot of the scenario from FILE and run the simulation",
     )
 
+    # custom help messages
+    g_help = parser.add_argument_group("help messages")
+    g_help.add_argument(
+        "--help-all",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show complete help message and exit",
+    )
+
     # road network properties
     g_road = parser.add_argument_group("road network properties")
+    g_help.add_argument(
+        "--help-road",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for road network properties and exit",
+    )
     g_road.add_argument(
         "--road-length",
         type=int,
@@ -122,6 +177,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # vehicle properties
     g_vehicles = parser.add_argument_group("vehicle properties")
+    g_help.add_argument(
+        "--help-vehicles",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for vehicle properties and exit",
+    )
     g_vehicles.add_argument(
         "--vehicles",
         type=int,
@@ -164,6 +225,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # trip properties
     g_trips = parser.add_argument_group("trip properties")
+    g_help.add_argument(
+        "--help-trips",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for trip properties and exit",
+    )
     g_trips.add_argument(
         "--random-depart-position",
         type=lambda x: bool(strtobool(x)),
@@ -270,6 +337,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # communication properties
     g_communication = parser.add_argument_group("communication properties")
+    g_help.add_argument(
+        "--help-communication",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for communication properties and exit",
+    )
     g_communication.add_argument(
         "--communication-range",
         type=int,
@@ -279,6 +352,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # platoon properties
     g_platoon = parser.add_argument_group("platoon properties")
+    g_help.add_argument(
+        "--help-platoon",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for platoon properties and exit",
+    )
     g_platoon.add_argument(
         "--start-as-platoon",
         type=lambda x: bool(strtobool(x)),
@@ -322,6 +401,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # formation properties
     g_formation = parser.add_argument_group("formation properties")
+    g_help.add_argument(
+        "--help-formation",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for formation properties and exit",
+    )
     g_formation.add_argument(
         "--formation-algorithm",
         type=str,
@@ -344,12 +429,14 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="The interval between two iterations of a formation algorithm in s",
     )
 
-    # formation algorithm specific properties
-    ## speed position
-    SpeedPosition.add_parser_argument_group(parser)
-
     # infrastructure properties
     g_infrastructure = parser.add_argument_group("infrastructure properties")
+    g_help.add_argument(
+        "--help-infrastructure",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for infrastructure properties and exit",
+    )
     g_infrastructure.add_argument(
         "--infrastructures",
         type=int,
@@ -360,6 +447,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # simulation properties
     g_simulation = parser.add_argument_group("simulation properties")
+    g_help.add_argument(
+        "--help-simulation",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for simulation properties and exit",
+    )
     g_simulation.add_argument(
         "--step-length",
         type=int,
@@ -403,6 +496,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # gui properties
     g_gui = parser.add_argument_group("gui properties")
+    g_help.add_argument(
+        "--help-gui",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for gui properties and exit",
+    )
     g_gui.add_argument(
         "--gui",
         action="store_true",
@@ -485,6 +584,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
     # result recording properties
     g_results = parser.add_argument_group("result recording properties")
+    g_help.add_argument(
+        "--help-results",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help="show help message for result recording properties and exit",
+    )
     g_results.add_argument(
         "--result-base-filename",
         type=str,
@@ -590,6 +695,16 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to record results for pre-filled vehicles",
     )
 
+    # formation algorithm specific properties
+    ## speed position
+    g_sp = SpeedPosition.add_parser_argument_group(parser)
+    g_help.add_argument(
+        f"--help-{SpeedPosition.__name__}",
+        action='store_true',
+        default=argparse.SUPPRESS,
+        help=f"show help message for {SpeedPosition.__name__} formation algorithm and exit",
+    )
+
     # print usage without any arguments
     if len(sys.argv) < 2:
         # no argument has been passed
@@ -602,6 +717,59 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         parser.exit()
 
     args = parser.parse_args()
+
+    # simple help
+    misc_groups = parser._action_groups[:2]
+    if 'help' in args and args.help:
+        print(format_help(parser, misc_groups + [g_help]), end='')
+        parser.exit()
+    # complete help
+    elif 'help_all' in args and args.help_all:
+        print(format_help(parser), end='')
+        parser.exit()
+    # road network properties
+    elif 'help_road' in args and args.help_road:
+        print(format_help(parser, misc_groups + [g_road]), end='')
+        parser.exit()
+    # vehicle properties
+    elif 'help_vehicles' in args and args.help_vehicles:
+        print(format_help(parser, misc_groups + [g_vehicles]), end='')
+        parser.exit()
+    # trip properties
+    elif 'help_trips' in args and args.help_trips:
+        print(format_help(parser, misc_groups + [g_trips]), end='')
+        parser.exit()
+    # communication properties
+    elif 'help_communication' in args and args.help_communication:
+        print(format_help(parser, misc_groups + [g_communication]), end='')
+        parser.exit()
+    # platoon properties
+    elif 'help_platoon' in args and args.help_platoon:
+        print(format_help(parser, misc_groups + [g_platoon]), end='')
+        parser.exit()
+    # formation properties
+    elif 'help_formation' in args and args.help_formation:
+        print(format_help(parser, misc_groups + [g_formation]), end='')
+        parser.exit()
+    # infrastructure properties
+    elif 'help_infrastructure' in args and args.help_infrastructure:
+        print(format_help(parser, misc_groups + [g_infrastructure]), end='')
+        parser.exit()
+    # simulation properties
+    elif 'help_simulation' in args and args.help_simulation:
+        print(format_help(parser, misc_groups + [g_simulation]), end='')
+        parser.exit()
+    # GUI properties
+    elif 'help_gui' in args and args.help_gui:
+        print(format_help(parser, misc_groups + [g_gui]), end='')
+        parser.exit()
+    # result recording properties
+    elif 'help_results' in args and args.help_results:
+        print(format_help(parser, misc_groups + [g_results]), end='')
+        parser.exit()
+    elif f'help_{SpeedPosition.__name__}' in args and getattr(args, f'help_{SpeedPosition.__name__}'):
+        print(format_help(parser, misc_groups + [g_sp]), end='')
+        parser.exit()
 
     # transform argument values into correct units
     args.road_length *= 1000  # km -> m
