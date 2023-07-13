@@ -112,8 +112,8 @@ def parse_args() -> argparse.Namespace:
     if len(sys.argv) < 2:
         # no argument has been passed
         print(
-            parser.description,
             parser.format_usage(),
+            parser.description,
             sep='\n',
             end='',
         )
