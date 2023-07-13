@@ -136,13 +136,13 @@ def speed2acceleration(speed_from: float, speed_to: float, time_interval: float 
 
 def addLoggingLevel(levelName, levelNum, methodName=None):
     """
-    https://stackoverflow.com/a/35804945.
-
     Comprehensively adds a new logging level to the `logging` module and the currently configured logging class.
 
     `levelName` becomes an attribute of the `logging` module with the value `levelNum`. `methodName` becomes a convenience method for both `logging` itself and the class returned by `logging.getLoggerClass()` (usually just `logging.Logger`). If `methodName` is not specified, `levelName.lower()` is used.
 
-    To avoid accidental clobberings of existing attributes, this method will raise an `AttributeError` if the level name is already an attribute of the `logging` module or if the method name is already present
+    To avoid accidental clobberings of existing attributes, this method will raise an `AttributeError` if the level name is already an attribute of the `logging` module or if the method name is already present.
+
+    Taken from https://stackoverflow.com/a/35804945.
     """
 
     if not methodName:
