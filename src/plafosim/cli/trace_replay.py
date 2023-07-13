@@ -113,9 +113,8 @@ def parse_args() -> argparse.Namespace:
         # no argument has been passed
         print(
             parser.description,
-            '\n',
             parser.format_usage(),
-            sep='',
+            sep='\n',
             end='',
         )
         parser.exit()
