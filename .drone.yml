@@ -7,7 +7,8 @@ steps:
   - name: test (tox) and build
     image: python:3.7-buster
     commands:
-      - pip install --upgrade pip poetry tox tox-poetry-installer
+      # dev depedency with tox is currently broken
+      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e py37
       - poetry build
   - name: install (sdist)
@@ -35,7 +36,8 @@ steps:
   - name: test (tox) and build
     image: python:3.8-buster
     commands:
-      - pip install --upgrade pip poetry tox tox-poetry-installer
+      # dev depedency with tox is currently broken
+      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e py38
       - poetry build
   - name: install (sdist)
@@ -63,7 +65,8 @@ steps:
   - name: test (tox) and build
     image: python:3.9-buster
     commands:
-      - pip install --upgrade pip poetry tox tox-poetry-installer
+      # dev depedency with tox is currently broken
+      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e py39
       - poetry build
   - name: install (sdist)
@@ -91,22 +94,26 @@ steps:
   - name: cf models (tox)
     image: python:3.7-buster
     commands:
-      - pip install --upgrade pip poetry tox tox-poetry-installer
+      # dev depedency with tox is currently broken
+      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e test_cf_models
   - name: lc models (tox)
     image: python:3.7-buster
     commands:
-      - pip install --upgrade pip poetry tox tox-poetry-installer
+      # dev depedency with tox is currently broken
+      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e test_lc_models
   - name: departure (tox)
     image: python:3.7-buster
     commands:
-      - pip install --upgrade pip poetry tox tox-poetry-installer
+      # dev depedency with tox is currently broken
+      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e test_departure
   - name: simulation (tox)
     image: python:3.7-buster
     commands:
-      - pip install --upgrade pip poetry tox tox-poetry-installer
+      # dev depedency with tox is currently broken
+      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e test_simulation
 
 trigger:
