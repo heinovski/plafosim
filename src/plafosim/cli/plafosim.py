@@ -18,6 +18,7 @@
 #
 
 import argparse
+import json
 import logging
 import pickle
 import sys
@@ -656,7 +657,7 @@ def main():
         print("Running with default configuration...")
 
     if args.dry_run:
-        print(f"Current configuration:\n{dict(sorted(vars(args).items()))}")
+        print(f"Current configuration:\n{json.dumps(dict(sorted(vars(args).items())),indent=2)}")
         return
 
     simulator = None
