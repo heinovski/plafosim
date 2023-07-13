@@ -31,6 +31,27 @@ from plafosim.algorithms.speed_position import SpeedPosition
 from plafosim.simulator import DEFAULTS, Simulator
 from plafosim.util import find_resource
 
+__epilog__ = """\
+Examples:
+  # Configure a 100km freeway with ramps at every 10km
+  plafosim --road-length 100 --ramp-interval 10
+
+  # Configure random (normally distributed) desired driving speed of 130km/h
+  plafosim --random-desired-speed true --desired-speed 36
+
+  # Configure random trips for 500 vehicles
+  plafosim --vehicles 500 --random-depart-position true --random-arrival-position true --depart-desired true
+
+  # Pre fill the freeway with 1000 vehicles
+  plafosim --vehicles 1000 --pre-fill true
+
+  # Configure 50% of the vehicles with Advanced Cruise Control (ACC) and a headway time of 1.5s
+  plafosim --penetration 0.5 --acc-headway-time 1.5
+
+  # Enable a simple, distributed platoon formation algorithm [1] in order to form platoons every 30s
+  plafosim --formation-algorithm SpeedPosition --formation-strategy distributed --execution-interval 30
+"""
+
 
 def format_help(parser: argparse.ArgumentParser, groups=None) -> str:
     """
@@ -74,6 +95,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         allow_abbrev=False,
         description=__description__,
         add_help=False,
+        epilog=__epilog__,
     )
 
     # miscellaneous
@@ -711,6 +733,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         print(
             parser.format_usage(),
             parser.description,
+            parser.epilog,
             sep='\n',
             end='',
         )
