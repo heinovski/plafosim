@@ -1,5 +1,20 @@
 # Changelog
 
+## [v0.16.1](https://github.com/heinovski/plafosim/releases/tag/v0.16.1) - 2023-07-13
+* BREAKING CHANGES
+  * Remove deprecated message-related code
+  * Remove deprecated neighbortable-related code
+* FIXES
+  * Hotfix for installation of dev dependencies
+* NEW FEATURES
+  * Add dedicated help messages for argument groups
+  * Add epilog with example commands
+  * Add exit to signal handler
+* UPDATES
+  * Extend README
+  * Update year in copyright headers
+
+
 ## [v0.16.0](https://github.com/heinovski/plafosim/releases/tag/v0.16.0) - 2023-04-28
 * BREAKING CHANGES
   * Replace log-level with verbosity & quiet arguments
