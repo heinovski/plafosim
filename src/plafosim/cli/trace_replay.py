@@ -113,6 +113,12 @@ def parse_args() -> argparse.Namespace:
         default=-1,
         help="The last step to re-play from the trace file. -1 is no limit"
     )
+    parser.add_argument(
+        '--screenshot-file',
+        type=str,
+        default=None,
+        help="The name of the screenshot file",
+    )
 
     # print usage without any arguments
     if len(sys.argv) < 2:
@@ -185,7 +191,7 @@ def main():
         # sleep for visualization
         time.sleep(args.gui_delay / 1000)
 
-        gui_step(step + step_length)
+        gui_step(step + step_length, screenshot_filename=args.screenshot_file)
 
     # end of file
     LOG.info("Reached end of trace file")

@@ -609,6 +609,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         choices=(True, False),
         help="Whether to draw labels for infrastructures",
     )
+    g_gui.add_argument(
+        '--screenshot-file',
+        type=str,
+        default=None,
+        dest='screenshot_filename',
+        help="The name of the screenshot file",
+    )
 
     # result recording properties
     g_results = parser.add_argument_group("result recording properties")

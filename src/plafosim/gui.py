@@ -175,7 +175,7 @@ def move_gui_vehicle(vid: int, position: float, lane: int, speed: float):
     traci.vehicle.moveTo(vehID=str(vid), laneID=f'edge_0_0_{lane}', pos=position)
 
 
-def gui_step(target_step: int):
+def gui_step(target_step: int, screenshot_filename: str = None):
     """
     Increases the simulation step in the GUI.
 
@@ -183,9 +183,19 @@ def gui_step(target_step: int):
     ----------
     target_step : int
         The target simulation step
+    screenshot_filename : str
+        The name of the screenshot file
     """
 
     import traci
+    if screenshot_filename:
+        file_name, file_extension = os.path.splitext(screenshot_filename)
+        traci.gui.screenshot(
+            traci.gui.DEFAULT_VIEW,
+            f"{file_name}_{traci.simulation.getTime():06.1f}.{file_extension if file_extension else 'png'}",
+            1920,
+            1080,
+        )
     traci.simulationStep(target_step)
     assert traci.simulation.getTime() == float(target_step)
 

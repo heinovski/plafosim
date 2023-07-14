@@ -405,6 +405,7 @@ class Simulator:
             draw_road_end_label: bool = DEFAULTS['draw_road_end_label'],
             draw_infrastructures: bool = DEFAULTS['draw_infrastructures'],
             draw_infrastructure_labels: bool = DEFAULTS['draw_infrastructure_labels'],
+            screenshot_filename: str = None,
             result_base_filename: str = DEFAULTS['result_base_filename'],
             record_simulation_trace: bool = DEFAULTS['record_simulation_trace'],
             record_end_trace: bool = DEFAULTS['record_end_trace'],
@@ -633,6 +634,9 @@ class Simulator:
         self._draw_road_end_label = draw_road_end_label  # whether to draw a label for the end of the road
         self._draw_infrastructures = draw_infrastructures  # whether to draw infrastructures
         self._draw_infrastructure_labels = draw_infrastructure_labels  # whether to draw labels for infrastructures
+        if screenshot_filename and not gui:
+            sys.exit("ERROR: Saving screenshots is only possible with the GUI enabled!")
+        self._screenshot_file = screenshot_filename  # the name of the screenshot file
 
         # result recording properties
         self._result_base_filename = result_base_filename  # the base filename of the result files
@@ -1580,7 +1584,7 @@ class Simulator:
             self._step += self._step_length
             progress_bar.update(self._step_length)
             if self._gui and self._step > self._gui_start:
-                gui_step(target_step=self._step)
+                gui_step(target_step=self._step, screenshot_filename=self._screenshot_file)
 
         # We reach this point only by setting self._running to False
         # which is only done by calling self.stop()
