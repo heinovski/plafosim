@@ -22,7 +22,8 @@ import logging
 import sys
 import time
 
-import pandas
+import numpy as np
+import pandas as pd
 from tqdm import tqdm
 
 from plafosim import CustomFormatter, __citation__, __description__, __version__
@@ -102,13 +103,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         '--start',
-        type=int,
+        type=float,
         default=0,
         help="The first step to re-play from the trace file"
     )
     parser.add_argument(
         '--end',
-        type=int,
+        type=float,
         default=-1,
         help="The last step to re-play from the trace file. -1 is no limit"
     )
@@ -135,22 +136,25 @@ def main():
     logging.basicConfig(level=log_level.upper(), format="%(levelname)s [%(name)s]: %(message)s")
 
     check_and_prepare_gui()
-    start_gui(config=args.sumo_config)
 
     LOG.info("Replaying vehicle trace...")
 
-    traces = pandas.read_csv(args.trace_file).astype({'step': int})
+    traces = pd.read_csv(args.trace_file)
+
+    step_length = np.diff(traces.step.unique()[:2])[0]
+
+    start_gui(config=args.sumo_config, step_length=step_length)
     assert not traces.empty
 
     min_step = max(traces.step.min(), args.start)
     max_step = min(traces.step.max(), args.end) if args.end != -1 else traces.step.max()
-    LOG.debug(f"Running from {min_step}s to {max_step}s...")
+    LOG.debug(f"Running from {min_step}s to {max_step}s with step length {step_length}s...")
 
     if min_step > 0:
-        gui_step(min_step)  # TODO consider various step lengths
+        gui_step(min_step)
 
     import traci
-    for step in tqdm(range(min_step, max_step), desc="Trace progress", unit='step'):
+    for step in tqdm(np.arange(min_step, max_step, step_length), desc="Trace progress", unit='step'):
         # simulate vehicles from trace file
         for vehicle in traces[traces.step == step].itertuples():
             color = hex2rgb(vehicle.color) if 'color' in traces else (0, 255, 0)  # allow traces without color
@@ -172,7 +176,7 @@ def main():
         # sleep for visualization
         time.sleep(args.gui_delay / 1000)
 
-        gui_step(step + 1)  # TODO consider various step lengths
+        gui_step(step + step_length)
 
     # end of file
     LOG.info("Reached end of trace file")

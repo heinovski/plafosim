@@ -413,7 +413,7 @@ def initialize_vehicle_changes(basename: str):
 
 def record_vehicle_change(
     basename: str,
-    step: int,
+    step: float,
     vid: int,
     position: float,
     speed: float,
@@ -450,7 +450,7 @@ def initialize_emission_traces(basename: str):
         )
 
 
-def record_emission_trace_prefix(basename: str, step: int, vid: int):
+def record_emission_trace_prefix(basename: str, step: float, vid: int):
     assert basename
     with open(f'{basename}_emission_traces.csv', 'a') as f:
         f.write(
@@ -488,7 +488,7 @@ def initialize_vehicle_platoon_traces(basename: str):
         )
 
 
-def record_vehicle_platoon_trace(basename: str, step: int, vehicle: 'PlatooningVehicle'):
+def record_vehicle_platoon_trace(basename: str, step: float, vehicle: 'PlatooningVehicle'):
     assert basename
     from .platooning_vehicle import PlatooningVehicle
     assert isinstance(vehicle, PlatooningVehicle)
@@ -523,7 +523,7 @@ def initialize_platoon_traces(basename: str):
         )
 
 
-def record_platoon_trace(basename: str, step: int, vehicle: 'PlatooningVehicle'):
+def record_platoon_trace(basename: str, step: float, vehicle: 'PlatooningVehicle'):
     assert basename
     from .platooning_vehicle import PlatooningVehicle
     assert isinstance(vehicle, PlatooningVehicle)
@@ -560,7 +560,7 @@ def initialize_platoon_changes(basename: str):
 
 def record_platoon_change(
     basename: str,
-    step: int,
+    step: float,
     leader: 'PlatooningVehicle',
     source_lane: int,
     target_lane: int,
@@ -602,7 +602,7 @@ def initialize_vehicle_platoon_changes(basename: str):
 
 def record_vehicle_platoon_change(
     basename: str,
-    step: int,
+    step: float,
     member: 'PlatooningVehicle',
     source_lane: int,
     target_lane: int,
@@ -641,7 +641,7 @@ def initialize_simulation_trace(basename: str):
 
 def record_simulation_trace(
         basename: str,
-        step: int,
+        step: float,
         vehicles_in_simulator: int,
         vehicles_in_queue: int,
         vehicles_spawned: int,

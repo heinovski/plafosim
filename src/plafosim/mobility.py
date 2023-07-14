@@ -110,7 +110,7 @@ def speed_human_df(vdf: pd.DataFrame) -> pd.Series:
     return speed_safe
 
 
-def speed_acc_df(vdf: pd.DataFrame, step_length: float = 1.0) -> pd.Series:
+def speed_acc_df(vdf: pd.DataFrame, step_length: float) -> pd.Series:
     """
     Compute new speed for ACC vehicles, DataFrame variant.
 
@@ -248,7 +248,7 @@ def get_predecessors(vdf, predecessor_map, target_lane) -> pd.DataFrame:
 
 def compute_new_speeds(
     vdf: pd.DataFrame,
-    step_length: float = 1.0,
+    step_length: float,
 ) -> pd.Series:
     """
     Compute the new speed for all vehicles in the simulation.
@@ -257,6 +257,8 @@ def compute_new_speeds(
     Assume vdf already contains predecessor and successor data.
     Just pass the right predecessor/successor data for different lanes.
     """
+
+    assert step_length > 0
 
     # ensure no changes to vdf propagate out of this function
     vdf = vdf.copy()
@@ -291,7 +293,7 @@ def compute_new_speeds(
     # and should avoid re-sorting the result -- but maybe benchmark this later
     new_speed = vdf.speed.copy()
     new_speed.loc[m_human] = speed_human_df(vdf.loc[m_human])
-    new_speed.loc[m_acc] = speed_acc_df(vdf.loc[m_acc])
+    new_speed.loc[m_acc] = speed_acc_df(vdf.loc[m_acc], step_length)
     # TODO: apply clamping only to human and acc vehicles (not cacc)
     new_speed.loc[m_cacc] = new_speed[vdf.loc[m_cacc].leader_id].values
 
@@ -305,7 +307,11 @@ def compute_new_speeds(
     return pd.Series(new_speed, index=vdf.index)
 
 
-def compute_lane_changes(vdf, max_lane, step_length=1.0):
+def compute_lane_changes(
+    vdf: pd.DataFrame,
+    max_lane: int,
+    step_length: float,
+) -> pd.DataFrame:
     """
     Find desired and safe lane changes.
 
@@ -323,6 +329,9 @@ def compute_lane_changes(vdf, max_lane, step_length=1.0):
     for vehicles on the right lane:
     if (v > v^0_safe) and (not congested) then v <- v^0_safe
     """
+
+    assert step_length > 0
+
     # TODO: check order of computation for performance
     # TODO: skip computations for CACC vehicles
 
@@ -553,7 +562,7 @@ def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
     return clipped_position
 
 
-def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
+def update_position(vdf: pd.DataFrame, step_length: float) -> pd.DataFrame:
     """
     Update the position of vehicles within a pandas DataFrame.
 
@@ -567,9 +576,11 @@ def update_position(vdf: pd.DataFrame, step_length: int) -> pd.DataFrame:
         The dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
-    step_length : int
+    step_length : float
         The length of the simulated step
     """
+
+    assert step_length > 0
 
     position = vdf.position + (vdf.speed * step_length)
     vdf["position"] = clip_position(position, vdf)

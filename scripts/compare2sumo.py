@@ -23,6 +23,7 @@ import re
 import sys
 
 import matplotlib.pyplot as pl
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy.stats import ks_2samp
@@ -331,6 +332,7 @@ merged_traces = pd.concat(
     keys=['sumo', 'plafosim'],
     names=['simulator']
 ).reset_index()
+step_length = np.diff(merged_traces.step.unique()[:2])[0]
 
 # Evaluate emission traces
 
@@ -472,12 +474,12 @@ for label in lifetime_labels:
         ax.hlines(args.desired_speed, 0, merged_traces.lifetime.max(), color='black', label='desired')
     elif label == 'position':
         sns.lineplot(
-            x=range(0, merged_traces.lifetime.max()),
+            x=np.arange(0, merged_traces.lifetime.max(), step_length),
             y=[
                 step * args.desired_speed
                 if step <= args.arrival_position / args.desired_speed
                 else None
-                for step in range(0, merged_traces.lifetime.max())
+                for step in np.arange(0, merged_traces.lifetime.max(), step_length)
             ],
             color='black',
             ax=ax,

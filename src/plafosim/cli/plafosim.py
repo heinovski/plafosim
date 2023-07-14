@@ -477,7 +477,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     )
     g_simulation.add_argument(
         "--step-length",
-        type=int,
+        type=float,
         default=DEFAULTS['step_length'],
         help="The step length in s",
     )

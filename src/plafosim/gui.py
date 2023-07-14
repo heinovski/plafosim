@@ -48,7 +48,7 @@ def check_and_prepare_gui():
         sys.exit(f"ERROR: You are using an unsupported TraCI version ({api_version})! Make sure to install a SUMO version with TraCI API version {TRACI_SUPPORTED_VERSION}.")
 
 
-def start_gui(config: str, play: bool = True):
+def start_gui(config: str, step_length: float, play: bool = True):
     """
     Start the GUI.
 
@@ -63,6 +63,7 @@ def start_gui(config: str, play: bool = True):
         binary,
         '-Q',
         '-c', config,
+        '--step-length', str(step_length),
         '--collision.mingap-factor', '0',
         '--collision.action', 'none',
         '--start', str(play),

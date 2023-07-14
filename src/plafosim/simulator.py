@@ -160,7 +160,7 @@ DEFAULTS = {
     'formation_strategy': 'distributed',  # TODO rename
     'execution_interval': 1,
     'infrastructures': 0,
-    'step_length': 1,
+    'step_length': 1.0,
     'max_step': 1 * 3600,  # h -> s
     'actions': True,
     'collisions': True,
@@ -201,6 +201,7 @@ DEFAULTS = {
 def report_rough_braking(
     vdf: pd.DataFrame,
     new_speed: pd.Series,
+    step_length: float,
     rough_factor: float = 0.5
 ) -> None:
     """
@@ -208,8 +209,9 @@ def report_rough_braking(
 
     Rough braking meaning more than rough_factor times max_deceleration.
     """
+    assert step_length > 0
     brakers = (
-        (vdf['speed'] - new_speed) > (vdf.max_deceleration * rough_factor)
+        (vdf['speed'] - new_speed) > (vdf.max_deceleration * rough_factor * step_length)
     )
     if not brakers.any():
         return
@@ -271,7 +273,7 @@ class Simulator:
             formation_strategy: str = DEFAULTS['formation_strategy'],
             execution_interval: int = DEFAULTS['execution_interval'],
             number_of_infrastructures: int = DEFAULTS['infrastructures'],
-            step_length: int = DEFAULTS['step_length'],
+            step_length: float = DEFAULTS['step_length'],
             max_step: int = DEFAULTS['max_step'],
             actions: bool = DEFAULTS['actions'],
             collisions: bool = DEFAULTS['collisions'],
@@ -376,7 +378,7 @@ class Simulator:
         self._depart_rate = depart_rate  # the departure rate
         self._effective_depart_rate = None
         if self._depart_method == "interval":
-            self._effective_depart_rate = int(step_length) / self._depart_interval
+            self._effective_depart_rate = step_length / self._depart_interval
         elif self._depart_method == "rate":
             # spawn #vehicles per hour, similar to SUMO's flow param vehsPerHour
             self._effective_depart_rate = self._depart_rate / 3600
@@ -472,11 +474,15 @@ class Simulator:
         # simulation properties
         self._step = 0  # the current simulation step in s
         assert step_length > 0
-        if step_length != 1:
-            LOG.warning("Values for step length other than 1s are not yet properly implemented and tested!")
+        if step_length != 1.0:
+            LOG.warning("Step lengths other than 1s are not yet properly implemented and tested. Use at your own risk!")
+        if step_length % 1 != 0:
+            LOG.warning("Non-integer step lengths are not yet properly implemented and tested. Use at your own risk!")
         if step_length < 1.0:
-            LOG.warning("Values for step length small than 1s are not recommended in order to avoid crashes!")
-        self._step_length = int(step_length)  # the length of a simulation step
+            LOG.warning("Step lengths smaller than 1s are not recommended in order to avoid collisions and long runtimes!")
+        if step_length >= vtype.headway_time:
+            LOG.warning("Step lengths bigger than or equal to the headway time are not recommended in order to avoid rough braking and collisions!")
+        self._step_length = step_length  # the length of a simulation step
         self._max_step = int(max_step)
         self._running = False  # whether the simulation is running
         self._actions = actions  # whether to enable actions
@@ -568,7 +574,7 @@ class Simulator:
         return self._number_of_lanes
 
     @property
-    def step_length(self) -> int:
+    def step_length(self) -> float:
         """
         Return the length of a simulation step.
         """
@@ -962,6 +968,7 @@ class Simulator:
             rng=self._rng,
             random_arrival_position=self._random_arrival_position,
             random_depart_position=self._random_depart_position,
+            step_length=self._step_length,
         )
         LOG.debug(f"Spawned {len(spawned_vehicles_df)} new vehicles")
         for row in spawned_vehicles_df.itertuples():
@@ -1254,7 +1261,7 @@ class Simulator:
         """
 
         # start gui
-        start_gui(self._sumo_config, self._gui_play)
+        start_gui(self._sumo_config, self._step_length, self._gui_play)
 
         # set correct boundary and zoom
         set_gui_window(road_length=self._road_length)
@@ -1395,7 +1402,7 @@ class Simulator:
                     vdf.merge(predecessor, left_index=True, right_index=True),
                     step_length=self._step_length,
                 )
-                report_rough_braking(vdf, new_speed)
+                report_rough_braking(vdf, new_speed, step_length=self._step_length)
                 vdf['old_speed'] = vdf['speed']
                 vdf['speed'] = new_speed
                 vdf['blocked_front'] = (
@@ -1704,6 +1711,7 @@ def compute_vehicle_spawns(
     rng: random.Random,
     random_depart_position: bool,
     random_arrival_position: bool,
+    step_length: float = 1.0,
 ):
     """
     Schritt 4, siehe oben.
