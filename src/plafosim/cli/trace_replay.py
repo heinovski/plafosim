@@ -63,6 +63,18 @@ def parse_args() -> argparse.Namespace:
         action="version",
         version=f"%(prog)s {__version__}",
     )
+    parser.add_argument(
+        "-q", "--quiet",
+        action="count",
+        default=0,
+        help=f"The amount of verbosity levels to be removed for printing the logs to the CLI. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
+    )
+    parser.add_argument(
+        "-v", "--verbosity",
+        action="count",
+        default=0,
+        help=f"The amount of verbosity levels to be added for printing the logs to the CLI. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
+    )
 
     # functionality
     parser.add_argument(
@@ -87,13 +99,6 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=-1,
         help="The id of a vehicle to track in the gui"
-    )
-    parser.add_argument(
-        '--log-level',
-        type=str,
-        default=logging.getLevelName(DEFAULTS['log_level']).lower(),
-        choices=["error", "warn", "info", "debug", "trace"],
-        help="The minimum level of logs to be printed",
     )
     parser.add_argument(
         '--start',
@@ -125,8 +130,9 @@ def parse_args() -> argparse.Namespace:
 def main():
     args = parse_args()
 
+    log_level = logging.getLevelName(max(DEFAULTS['log_level'] - ((args.verbosity - args.quiet) * 10), 5))
     # TODO add custom filter that prepends the log entry with the step time
-    logging.basicConfig(level=args.log_level.upper(), format="%(levelname)s [%(name)s]: %(message)s")
+    logging.basicConfig(level=log_level.upper(), format="%(levelname)s [%(name)s]: %(message)s")
 
     check_and_prepare_gui()
     start_gui(config=args.sumo_config)
