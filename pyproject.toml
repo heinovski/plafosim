@@ -33,6 +33,19 @@ readme = "README.md"
 homepage = "https://www.plafosim.de"
 repository = "https://github.com/heinovski/plafosim"
 documentation = "https://plafosim.readthedocs.io/"
+keywords = [
+    "Algorithm",
+    "Engineering",
+    "Experiment",
+    "Platoon",
+    "Platoon Formation",
+    "Platooning",
+    "Platoon Maneuver",
+    "Research",
+    "Science",
+    "Simulation",
+    "Simulator",
+]
 classifiers = [
     "Development Status :: 4 - Beta",  # TODO set to stable with release 1.0.0
     "Intended Audience :: Developers",
