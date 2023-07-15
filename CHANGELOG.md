@@ -24,9 +24,9 @@
   * Fix missing function (hotfix)
   * Fix script compatibility with macOS
 * NEW FEATURES
- * Add parsing of algorithm class from global identifiers
- * Add SPDX-License-Identifier
- * Add more performance tests
+  * Add parsing of algorithm class from global identifiers
+  * Add SPDX-License-Identifier
+  * Add more performance tests
 * UPDATES
   * Improve performance
   * Remove duplicated code in CLI scripts
