@@ -1,26 +1,23 @@
-# Platoon Formation Simulator (PlaFoSim)
-
+# PlaFoSim - A simple and scalable simulator for platoon formation
 [![Code Version](https://img.shields.io/badge/code-v0.16.1-blue)](CHANGELOG.md)
 [![PyPI Version](https://img.shields.io/pypi/v/plafosim)](https://pypi.org/project/plafosim/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/plafosim)](https://pypi.org/project/plafosim/)
 [![License](https://img.shields.io/github/license/heinovski/plafosim?color=green)](https://github.com/heinovski/plafosim)
 [![DOI](https://img.shields.io/badge/DOI-10.1109/VNC52810.2021.9644678-blue)](http://dx.doi.org/10.1109/VNC52810.2021.9644678)
 
-[PlaFoSim](https://www.plafosim.de) - A simple and scalable simulator for platoon formation.
-
-PlaFoSim aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
+[PlaFoSim](https://www.plafosim.de) aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
 While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is implemented in a more abstract way.
 
-Conceptual view on the process of Platoon Formation [1-2]:
+A conceptional overview of the process of Platoon Formation that is employed in PlaFoSim [1-2]:
 | Scenario | Advertisement | Assignment | Maneuver |
 | -------- | ------------- | ---------- | -------- |
-| ![Scenario](docs/scenario.png)*A new vehicle enters the highway.* | ![Advertisement](docs/advertisement.png)*The vehicle advertises itself as interested in Platooning.* | ![Assignment](docs/assignment.png)*A Vehicle-to-Platoon assignment is calculated.* | ![Maneuver](docs/maneuver.png)*The new vehicle performs a join maneuver.* |
+| ![Scenario](docs/scenario.png)*A new vehicle enters the highway.* | ![Advertisement](docs/advertisement.png)*The vehicle advertises itself as interested in Platooning.* | ![Assignment](docs/assignment.png)*A Vehicle-to-Platoon assignment is computed.* | ![Maneuver](docs/maneuver.png)*The new vehicle performs a join maneuver.* |
 
-PlaFoSim is published [here](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/):
+PlaFoSim has been published at [IEEE VNC 2021](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/):
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
 
-Please note that PlaFoSim is still under heavy development.
+**NOTE**: PlaFoSim is (still) under heavy development.
 
 ---
 
@@ -29,20 +26,33 @@ Please note that PlaFoSim is still under heavy development.
 - Install Python (>=3.7,<=3.9)
 - Install PlaFoSim from [pypi](https://pypi.org/project/plafosim/):
 ```pip install plafosim```
-- Optionally, install [SUMO](https://github.com/eclipse/sumo/) (>=1.6.0)
 
-NOTE: The project is developed and currently only tested on Linux.
+**NOTE**: The project is developed and currently only tested on Linux.
 
 ## Running a Simulation
 
-You can use the PlaFoSim as Python module as well as from the command-line.
-Currently, only command-line is thoroughly tested and thus completely available though.
+**NOTE**: Since PlaFoSim is a command-line interface (CLI) application, running PlaFoSim requires using a shell.
 
 ### Quickstart
 
-Use PlaFoSim's binary to run a simulation with the default configuration (`-d`):
+Use PlaFoSim's help to get a list of available parameters:
+
+```plafosim -h, --help```
+
+Or, run a simulation with the default configuration (`-d`):
 
 ```plafosim -d```
+
+### Live GUI
+
+You can visualize the simulation via a simple live GUI based on [SUMO](https://github.com/eclipse/sumo/), using the `gui` parameter:
+
+```plafosim --gui```
+
+![](docs/gui.png)
+*A screenshot of PlaFoSim's live GUI showing 2 platoons and various individual vehicles. Copyright © 2021 IEEE.*
+
+**NOTE**: This requires installation of SUMO (>=1.6.0) and decleration of the `SUMO_HOME` variable.
 
 ### Advanced Simulation Control
 
@@ -66,11 +76,11 @@ The available parameters are grouped into different categories:
 - result recording properties
 ```
 
-You can see the complete list of available parameters in the help:
+You can find a list of available parameters for each category in the help:
 
 ```plafosim -h, --help```
 
-### Examples
+#### Examples
 
 ```
 # Configure a 100km freeway with ramps at every 10km
@@ -92,17 +102,6 @@ plafosim --penetration 0.5 --acc-headway-time 1.5
 plafosim --formation-algorithm SpeedPosition --formation-strategy distributed --execution-interval 30
 ```
 
-### Live GUI
-
-You can get a very simple live GUI based on SUMO by using the parameter `gui` (requires installation of SUMO and decleration of `SUMO_HOME` variable):
-
-```plafosim --gui```
-
-![](docs/gui.png)
-*A screenshot of PlaFoSim's live GUI showing 2 platoons and various individual vehicles. Copyright © 2021 IEEE.*
-
-More options for the live GUI can be found within the ``gui properties`` section of the help.
-
 ### Faster Simulation
 
 You can speed up the simulation performance by enabling Python's optimization ```PYTHONOPTIMIZE```, e.g., in order to disable assertions:
@@ -122,20 +121,21 @@ To see all options of this script, run:
 
 ```plafosim-replay -h, --help```
 
-## Extending the Simulator
+## Extending PlaFoSim
+
+In order to extend PlaFoSim, you first need ot install it from source.
 
 - Install [poetry](https://python-poetry.org/):
 ```pip install poetry```
-- Clone the repository
-- Install PlaFoSim from source in editable mode:
+- Clone this repository:
+```git clone https://github.com/heinovski/plafosim.git```
+- Install PlaFoSim from source in editable mode (from within the newly created directory):
 ```poetry install```
-- Run PlaFoSim in the virtual environment with
+- Run PlaFoSim in the virtual environment:
 ```poetry run plafosim```
-or activate the virtual enviroment first with
-```poetry shell```
-and run the commands as usual (see above)
+You can also activate the virtual enviroment first with ```poetry shell``` and run the commands as usual (see above).
 
-NOTE: The project is currently only tested under Linux.
+### Adding a new Formation Algorithm
 
 In order to add a new formation algorithm, you need to follow these steps:
 - Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`). You can use the `Dummy` algorithm (see `algorithms/dummy.py`) as an example.
@@ -151,7 +151,7 @@ plafosim --formation-algorithm dummy_algorithm_name
 ## Contributing to the Project
 
 In order to contribute, please follow these steps:
-- Install PlaFoSim from source (see above)
+- Install PlaFoSim from source (see Extending)
 - Make desired changes
 - Run the tests located in `tests` as well as the validation scripts located in `scripts` (see `.drone.yml` for details)
 - Submit a Pull Request (PR)
@@ -180,11 +180,11 @@ You can visualize the results of the profiling run by using [SnakeViz](https://d
 
 ## Contributors & Citing
 
-PlaFoSim was designed and built by [Julian Heinovski](https://github.com/heinovski/) with the help of [Dominik S. Buse](https://github.com/dbuse/).
+PlaFoSim was originally designed and built by [Julian Heinovski](https://github.com/heinovski/) with the help of [Dominik S. Buse](https://github.com/dbuse/).
 It is currently maintained by [Julian Heinovski](https://github.com/heinovski/).
 The list of all authors can be found [here](AUTHORS.md).
 
-If you are working with `PlaFoSim`, please cite the [following paper](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/):
+If you are working with `PlaFoSim`, we would appreciate a citation of [our paper](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/):
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
 
