@@ -734,6 +734,8 @@ class PlatooningVehicle(Vehicle):
             total_approach_time = round_to_next_base(total_approach_time, self._simulator.step_length)
             # the platoon will be driving while we are waiting
             new_position += total_approach_time * leader.platoon.speed
+            # FIXME the extra distance from above increases the distance to approach, which should also increse the total approching time (by time to drive this extra distance with maximum speed)
+            # TODO use classical formulas from school physics: when do 2 cars meet and where?
             if new_position >= self._simulator.road_length:
                 LOG.warning(f"{self._vid}'s new position would be outside of the road! Aborting the join maneuver")
                 self.in_maneuver = False
