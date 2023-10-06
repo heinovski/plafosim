@@ -528,12 +528,6 @@ class PlatooningVehicle(Vehicle):
 
         if self._simulator._record_platoon_traces:
             # write statistics about the current platoon
-            record_vehicle_platoon_trace(
-                basename=self._simulator._result_base_filename,
-                step=self._simulator.step,
-                vehicle=self
-            )
-
             if self._platoon_role is PlatoonRole.LEADER:
                 # write statistics about the platoon
                 record_platoon_trace(
@@ -541,6 +535,14 @@ class PlatooningVehicle(Vehicle):
                     step=self._simulator.step,
                     vehicle=self
                 )
+
+        if self._simulator._record_vehicle_platoon_traces:
+            # write statistics about this vehicle within the current platoon
+            record_vehicle_platoon_trace(
+                basename=self._simulator._result_base_filename,
+                step=self._simulator.step,
+                vehicle=self
+            )
 
     # TODO rework to only include "neighbors" and move platoon extraction to formation algorithm
     def _get_available_platoons(self):

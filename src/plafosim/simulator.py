@@ -191,6 +191,7 @@ DEFAULTS = {
     'record_platoon_maneuvers': False,
     'record_platoon_formation': False,
     'record_platoon_traces': False,
+    'record_vehicle_platoon_traces': False,
     'record_platoon_changes': False,
     'record_infrastructure_assignments': False,
     'record_prefilled': False,
@@ -301,6 +302,7 @@ class Simulator:
             record_platoon_maneuvers: bool = DEFAULTS['record_platoon_maneuvers'],
             record_platoon_formation: bool = DEFAULTS['record_platoon_formation'],
             record_platoon_traces: bool = DEFAULTS['record_platoon_traces'],
+            record_vehicle_platoon_traces: bool = DEFAULTS['record_vehicle_platoon_traces'],
             record_platoon_changes: bool = DEFAULTS['record_platoon_changes'],
             record_infrastructure_assignments: bool = DEFAULTS['record_infrastructure_assignments'],
             record_prefilled: bool = DEFAULTS['record_prefilled'],
@@ -524,6 +526,7 @@ class Simulator:
         self._record_platoon_maneuvers = record_platoon_maneuvers  # whether to record platoon maneuvers
         self._record_platoon_formation = record_platoon_formation  # whether to record platoon formation
         self._record_platoon_traces = record_platoon_traces  # whether to record continuous platoon traces
+        self._record_vehicle_platoon_traces = record_vehicle_platoon_traces  # whether to record continuous vehicle platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
         self._record_infrastructure_assignments = record_infrastructure_assignments  # whether to record infrastructure assignments
         if record_prefilled and not start_as_platoon:
@@ -1199,11 +1202,12 @@ class Simulator:
             initialize_emission_traces(basename=self._result_base_filename)
 
         if self._record_platoon_traces:
-            # create output file for vehicle platoon traces
-            initialize_vehicle_platoon_traces(basename=self._result_base_filename)
-
             # create output file for platoon traces
             initialize_platoon_traces(basename=self._result_base_filename)
+
+        if self._record_vehicle_platoon_traces:
+            # create output file for vehicle platoon traces
+            initialize_vehicle_platoon_traces(basename=self._result_base_filename)
 
         if self._record_platoon_changes:
             # create output file for platoon lane changes

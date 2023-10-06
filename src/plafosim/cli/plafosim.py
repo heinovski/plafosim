@@ -696,6 +696,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to record continuous platoon traces",
     )
     g_results.add_argument(
+        "--record-vehicle-platoon-traces",
+        type=lambda x: bool(strtobool(x)),
+        default=DEFAULTS['record_vehicle_platoon_traces'],
+        choices=(True, False),
+        help="Whether to record continuous vehicle platoon traces",
+    )
+    g_results.add_argument(
         "--record-platoon-changes",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['record_platoon_changes'],
