@@ -17,6 +17,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import sys
 import time
 from typing import TYPE_CHECKING
 
@@ -38,6 +39,7 @@ def record_general_data_begin(basename: str, simulator: 'Simulator'):
     with open(f'{basename}_general.out', 'w') as f:
         f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
         f.write(f"version: {__version__}\n")
+        f.write(f"command:\n{' '.join(sys.argv)}\n")
         f.write(f"parameters:\n{str(simulator)}\n")
 
 
