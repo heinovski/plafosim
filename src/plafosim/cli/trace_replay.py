@@ -144,6 +144,15 @@ def main():
     step_length = np.diff(traces.step.unique()[:2])[0]
 
     start_gui(config=args.sumo_config, step_length=step_length)
+
+    if args.track_vehicle >= 0:
+        traces = traces.set_index('step')
+        # limit trace to steps where tracked vehicle is present
+        ego_vehicle_traces = traces[traces.id == args.track_vehicle]
+        traces = traces.loc[ego_vehicle_traces.index]
+        # limit trace to vehicles which are actually visible (200m radius around tracked vehicle)
+        traces = traces[abs(traces.position - ego_vehicle_traces.position) <= 200]
+        traces = traces.reset_index('step')
     assert not traces.empty
 
     min_step = max(traces.step.min(), args.start)
