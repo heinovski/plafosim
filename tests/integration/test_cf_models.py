@@ -95,6 +95,7 @@ def test_cf_models_blocked(
         back_position=s._vehicles[1].position,
         back_speed=s._vehicles[1].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s._step_length
     )
 
@@ -261,6 +262,7 @@ def test_cf_model_CACC_blocked(
         update_desired_speed=False,
         depart_desired=True,
         desired_speed=slow_speed + 10,
+        max_desired_speed=slow_speed + 20,
         cacc_spacing=cacc_spacing,
         acc_headway_time=headway_time,
     )

@@ -21,7 +21,6 @@ import logging
 import random
 import sys
 import time
-from collections import namedtuple
 from timeit import default_timer as timer
 
 import numpy as np
@@ -113,7 +112,6 @@ vtype = VehicleType(
     _desired_headway_time,
     _emission_class,
 )  # TODO support multiple vtypes
-TV = namedtuple('TV', ['position', 'rear_position', 'lane'])
 
 # vehicle data fram type collections
 # TODO: extract to module or class later
@@ -226,6 +224,104 @@ def report_rough_braking(
         "The following vehicles performed rough braking:\n%s",
         brake_df
     )
+
+
+def check_collisions(vdf: pd.DataFrame):
+    """
+    Do collision checks for all vehicles in the simulation.
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    """
+
+    if vdf.empty:
+        return False
+
+    crashed_vehicles = get_crashed_vehicles(vdf)
+    if crashed_vehicles:
+        for v in crashed_vehicles:
+            print(f"{v}: {vdf.at[v, 'position']}-{vdf.at[v, 'position']-vdf.at[v, 'length']},{vdf.at[v, 'lane']}")
+        return True
+    else:
+        return False
+
+
+def has_collision(
+    position1: float,
+    rear_position1: float,
+    lane1: int,
+    position2: float,
+    rear_position2: float,
+    lane2: int,
+) -> bool:
+    """
+    Check for a collision between two vehicles.
+
+    Parameters
+    ----------
+    position1 : The current position of vehicle1
+    rear_position1 : The current rear position of vehicle1
+    lane1 : The current lane of vehicle1
+    position2 : The current position of vehicle2
+    rear_position2 : The current rear position of vehicle2
+    lane2 : The current lane of vehicle2
+    """
+
+    if lane1 != lane2:
+        return False
+
+    return min(position1, position2) - max(rear_position1, rear_position2) >= 0
+
+
+def is_insert_safe(
+    depart_position: float,
+    depart_speed: float,
+    vtype,
+    other_vehicle: Vehicle,
+    step_length: float,
+) -> bool:
+    """
+    Checks if a vehicle can be inserted safely at a given position.
+    """
+
+    assert depart_position >= 0
+    assert depart_speed >= 0
+    assert isinstance(other_vehicle, Vehicle)
+    assert step_length > 0
+
+    # would it be unsafe to insert the vehicle?
+    if other_vehicle.position <= depart_position:
+        # the other vehicle is behind the current vehicle
+        # check if the other vehicle could crash into the current vehicle within the next timestep
+        return is_gap_safe(
+            front_position=depart_position,
+            front_speed=depart_speed,
+            front_max_deceleration=vtype.max_deceleration,
+            front_length=vtype.length,
+            back_position=other_vehicle.position,
+            back_speed=other_vehicle.speed,
+            back_max_acceleration=other_vehicle.max_acceleration,
+            back_min_gap=other_vehicle.min_gap,
+            step_length=step_length,
+        )
+    else:
+        # the current vehicle is behind the other vehicle
+        # check if the current vehicle could crash into the other vehicle within the next timestep
+        return is_gap_safe(
+            front_position=other_vehicle.position,
+            front_speed=other_vehicle.speed,
+            front_max_deceleration=other_vehicle.max_deceleration,
+            front_length=other_vehicle.length,
+            back_position=depart_position,
+            back_speed=depart_speed,
+            back_max_acceleration=vtype.max_acceleration,
+            back_min_gap=vtype.min_gap,
+            step_length=step_length,
+        )
 
 
 class Simulator:
@@ -722,42 +818,6 @@ class Simulator:
             # remove from vehicles
             del self._vehicles[vid]
 
-    @staticmethod
-    def _check_collisions(vdf: pd.DataFrame):
-        """
-        Do collision checks for all vehicles in the simulation.
-
-        Parameters
-        ----------
-        vdf : pandas.DataFrame
-            The dataframe containing the vehicles as rows
-            index: vid
-            columns: [position, length, lane, ..]
-        """
-
-        if vdf.empty:
-            return
-
-        crashed_vehicles = get_crashed_vehicles(vdf)
-        if crashed_vehicles:
-            for v in crashed_vehicles:
-                print(f"{v}: {vdf.at[v, 'position']}-{vdf.at[v, 'position']-vdf.at[v, 'length']},{vdf.at[v, 'lane']}")
-            sys.exit(f"ERROR: There were collisions with the following vehicles {crashed_vehicles}!")
-
-    @staticmethod
-    def has_collision(vehicle1: TV, vehicle2: TV) -> bool:
-        """
-        Check for a collision between two vehicles.
-
-        Parameters
-        ----------
-        vehicle1 : TV(position, rear_position, lane)
-        vehicle2 : TV(position, rear_position, lane)
-        """
-        assert vehicle1 is not vehicle2
-        assert vehicle1.lane == vehicle2.lane
-        return min(vehicle1.position, vehicle2.position) - max(vehicle1.rear_position, vehicle2.rear_position) >= 0
-
     def _generate_vehicles(self):
         """
         Add pre-filled vehicles to the simulation.
@@ -818,7 +878,7 @@ class Simulator:
                     # always use random lane for pre-filled vehicle
                     depart_lane = self._rng.randrange(0, self._number_of_lanes, 1)
 
-                    LOG.trace(f"Generated random depart position ({depart_position},{depart_lane}) for vehicle {vid}")
+                    LOG.trace(f"Generated random depart position for vehicle {vid}: {depart_position}-{vtype.length},{depart_lane}")
 
                     if not self._vehicles:
                         continue
@@ -828,26 +888,58 @@ class Simulator:
                         if other_vehicle._lane != depart_lane:
                             # we do not care about other lanes
                             continue
+                        if other_vehicle.position - other_vehicle.length > depart_position + 100 or other_vehicle.position < depart_position - vtype.length - 100:
+                            # we do not care about vehicles that are too far away
+                            continue
 
                         # do we have a collision?
                         # avoid being inserted in between two platoon members by also considering the min gap
-                        tv = TV(
-                            depart_position + vtype._min_gap,  # front collider
-                            depart_position - vtype._length,  # rear collider
-                            depart_lane
-                        )
-                        otv = TV(
-                            other_vehicle._position + other_vehicle.min_gap,  # front collider
-                            other_vehicle.rear_position,  # rear collider
-                            other_vehicle._lane
-                        )
 
-                        # do we have a "collision" (now or in the next step)?
-                        collision = (
-                            collision
-                            or self.has_collision(tv, otv)
-                            or self._is_insert_unsafe(depart_position, depart_speed, vtype, other_vehicle)
-                        )
+                        if has_collision(
+                            position1=depart_position + vtype._min_gap,  # front collider
+                            rear_position1=depart_position - vtype._length,  # rear collider
+                            lane1=depart_lane,
+                            position2=other_vehicle.position + other_vehicle.min_gap,  # front collider
+                            rear_position2=other_vehicle.rear_position,  # rear collider
+                            lane2=other_vehicle.lane,
+                        ):
+                            collision = True
+                            LOG.trace(f"Collision between {vid} and {other_vehicle.vid}")
+                            break
+
+                        # do we have a "collision" in the next step?
+                        # TODO use corresponding vtype
+                        if not is_insert_safe(
+                            depart_position=depart_position,
+                            depart_speed=depart_speed,
+                            vtype=vtype,
+                            other_vehicle=other_vehicle,
+                            step_length=self._step_length,
+                        ):
+                            collision = True
+                            LOG.trace(f"Unsafe insert between {vid} and {other_vehicle.vid}")
+                            break
+
+                        # use desired headway time and current speed to avoid harsh braking
+                        if other_vehicle._position <= depart_position:
+                            # the other vehicle is behind the current vehicle
+                            gap = depart_position - vtype.length - other_vehicle.position
+                            gap_desired = gap >= max(
+                                other_vehicle.desired_headway_time * other_vehicle.speed * self._step_length,
+                                other_vehicle.min_gap,
+                            )
+                        else:
+                            # the current vehicle is behind the other vehicle
+                            gap = other_vehicle.position - other_vehicle.length - depart_position
+                            gap_desired = gap >= max(
+                                vtype.headway_time * depart_speed * self._step_length,  # TODO use corresponding vtype
+                                vtype.min_gap,
+                            )
+                        if not gap_desired:
+                            collision = True
+                            LOG.trace(f"No desired gap between {vid} and {other_vehicle.vid} ({gap}m)")
+                            break
+                        assert gap >= vtype.min_gap, f"{vid}, {other_vehicle.vid}, {gap, vtype.min_gap}"
 
             arrival_position = get_arrival_position(
                 depart_position=depart_position,
@@ -1019,31 +1111,6 @@ class Simulator:
         assert len({v['vid'] for v in self._vehicle_spawn_queue}) == len(self._vehicle_spawn_queue)
 
         return len(spawned_vehicles_df)
-
-    def _is_insert_unsafe(self, depart_position, depart_speed, vtype, other_vehicle):
-        # would it be unsafe to insert the vehicle?
-        if other_vehicle._position <= depart_position:
-            return not is_gap_safe(
-                front_position=depart_position,
-                front_speed=depart_speed,
-                front_max_deceleration=vtype.max_deceleration,
-                front_length=vtype.length,
-                back_position=other_vehicle.position,
-                back_speed=other_vehicle.speed,
-                back_max_acceleration=other_vehicle.max_acceleration,
-                step_length=self._step_length
-            )
-        else:
-            return not is_gap_safe(
-                front_position=other_vehicle.position,
-                front_speed=other_vehicle.speed,
-                front_max_deceleration=other_vehicle.max_deceleration,
-                front_length=other_vehicle.length,
-                back_position=depart_position,
-                back_speed=depart_speed,
-                back_max_acceleration=vtype.max_acceleration,
-                step_length=self._step_length
-            )
 
     def _add_vehicle(
         self,
@@ -1428,7 +1495,8 @@ class Simulator:
                 # do collision check (for all vehicles)
                 # without arrived vehicles
                 if self._collisions:
-                    self._check_collisions(vdf)
+                    if check_collisions(vdf):
+                        sys.exit("ERROR: There were collisions between vehicles!")
 
                 # remove arrived vehicles from dict and do finish
                 self._remove_arrived_vehicles(arrived_vehicles)

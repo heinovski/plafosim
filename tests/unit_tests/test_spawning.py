@@ -113,6 +113,8 @@ def test_single_ramp_existing_vehicle():
             'speed': [36],
             'position': [50],
             'lane': [0],
+            'length': vtype.length,
+            'max_deceleration': vtype.max_deceleration,
         }
     )
     new_vehicles = [
@@ -176,6 +178,8 @@ def test_single_ramp_blocked():
             'speed': [36],
             'position': [10],
             'lane': [0],
+            'length': vtype.length,
+            'max_deceleration': vtype.max_deceleration,
         }
     )
     new_vehicles = [
@@ -229,6 +233,8 @@ def test_single_ramp_blocked_exact():
             'speed': [36],
             'position': [vtype.length],
             'lane': [0],
+            'length': vtype.length,
+            'max_deceleration': vtype.max_deceleration,
         }
     )
     new_vehicles = [
@@ -282,6 +288,11 @@ def test_first_ramp_blocked():
             'speed': [36],
             'position': [10],
             'lane': [0],
+            'length': vtype.length,
+            'max_acceleration': vtype.max_acceleration,
+            'max_deceleration': vtype.max_deceleration,
+            'min_gap': vtype.min_gap,
+            'desired_headway_time': vtype.headway_time,
         }
     )
     new_vehicles = [
@@ -292,6 +303,7 @@ def test_first_ramp_blocked():
             'schedule_time': schedule_time,
             'min_trip_length': trip_length,
             'max_trip_length': trip_length,
+            'max_acceleration': vtype.max_acceleration,
         }
     ]
 
@@ -420,6 +432,11 @@ def test_multiple_first_ramp_blocked():
             'speed': [36],
             'position': [10],
             'lane': [0],
+            'length': vtype.length,
+            'max_acceleration': vtype.max_acceleration,
+            'max_deceleration': vtype.max_deceleration,
+            'min_gap': vtype.min_gap,
+            'desired_headway_time': vtype.headway_time,
         }
     )
     new_vehicles = [
@@ -655,6 +672,11 @@ def test_rear_blocking_vehicle():
             'speed': [36, 36],
             'position': [10, 490],
             'lane': [0, 0],
+            'length': vtype.length,
+            'max_acceleration': vtype.max_acceleration,
+            'max_deceleration': vtype.max_deceleration,
+            'min_gap': vtype.min_gap,
+            'desired_headway_time': vtype.headway_time,
         }
     )
     new_vehicles = [

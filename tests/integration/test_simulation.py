@@ -43,7 +43,7 @@ def test_collision_detection():
         vtype=vtype,
         depart_position=15,
         arrival_position=s.road_length,
-        desired_speed=0,
+        desired_speed=1,
         depart_lane=0,
         depart_speed=vtype.max_deceleration,
         depart_time=0,
@@ -73,6 +73,6 @@ def test_collision_detection():
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         s.run()
     assert pytest_wrapped_e.type == SystemExit
-    assert pytest_wrapped_e.value.code == "ERROR: There were collisions with the following vehicles [0, 1]!"
+    assert pytest_wrapped_e.value.code == "ERROR: There were collisions between vehicles!"
 
     # TODO: check extreme collision cases in which one vehicle completely passes its successor. The check should still catch this.

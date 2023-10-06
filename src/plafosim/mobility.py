@@ -50,15 +50,16 @@ class CF_Model(Enum):
 
 
 def is_gap_safe(
-    front_position,
-    front_speed,
-    front_max_deceleration,
-    front_length,
-    back_position,
-    back_speed,
-    back_max_acceleration,
-    step_length,
-):
+    front_position: float,
+    front_speed: float,
+    front_max_deceleration: float,
+    front_length: float,
+    back_position: float,
+    back_speed: float,
+    back_max_acceleration: float,
+    back_min_gap: float,
+    step_length: float,
+) -> bool:
     """
     Return whether the gap between the front and back vehicle is safe.
 
@@ -69,16 +70,26 @@ def is_gap_safe(
 
     Assumes euclidian/non-ballistic position updates.
     """
+
+    assert front_position >= 0
+    assert front_speed >= 0
+    assert front_max_deceleration >= 0
+    assert front_length > 0
+    assert back_position >= 0 or back_position == -HIGHVAL, f"{back_position}"
+    assert back_speed >= 0
+    assert back_max_acceleration >= 0
+    assert back_min_gap >= 0
+    assert step_length > 0
+
     next_front_position = (
         front_position
-        - front_length
         + (front_speed - front_max_deceleration * step_length) * step_length
     )
     next_back_position = (
         back_position
         + (back_speed + back_max_acceleration * step_length) * step_length
     )
-    return next_front_position > next_back_position
+    return (next_front_position - front_length) > next_back_position + back_min_gap
 
 
 # speed update components
@@ -598,6 +609,9 @@ def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
         index: vid
         columns: [position, length, lane, ..]
     """
+
+    if vdf.empty:
+        return []
 
     # sort vehicles by their position
     vdf = vdf.sort_values("position", ascending=False)

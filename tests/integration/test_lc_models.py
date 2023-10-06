@@ -92,6 +92,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
         back_position=s._vehicles[1].position,
         back_speed=s._vehicles[1].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s._step_length
     )
 
@@ -157,6 +158,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
         back_position=s._vehicles[0].position,
         back_speed=s._vehicles[0].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s._step_length
     )
 
@@ -242,6 +244,7 @@ def test_lc_models_with_interferer(
         back_position=s._vehicles[1].position,
         back_speed=s._vehicles[1].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s._step_length
     )
 
@@ -302,6 +305,7 @@ def test_lc_models_with_interferer(
         back_position=traces_indexed.loc[change_left_step, 1].position,
         back_speed=traces_indexed.loc[change_left_step, 1].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
     # vehicle 1 only changes back to the right lane after vehicle 2 did that
@@ -428,6 +432,7 @@ def test_lc_model_CACC(size: int, cacc_spacing: float):
         back_position=predecessor.loc[change_right_step].position,
         back_speed=predecessor.loc[change_right_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
 
@@ -559,6 +564,7 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
         back_position=predecessor.loc[change_right_step].position,
         back_speed=predecessor.loc[change_right_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
 
@@ -572,6 +578,7 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
         back_position=leader.loc[change_left_step].position,
         back_speed=leader.loc[change_left_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
     # the platoon only changes back to the right lane after vehicle 2 did that
@@ -707,6 +714,7 @@ def test_lc_model_CACC_with_interferer_leader(size: int, cacc_spacing: float):
         back_position=predecessor.loc[change_right_step].position,
         back_speed=predecessor.loc[change_right_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
 
@@ -720,6 +728,7 @@ def test_lc_model_CACC_with_interferer_leader(size: int, cacc_spacing: float):
         back_position=leader.loc[change_left_step].position,
         back_speed=leader.loc[change_left_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
     # the platoon only changes back to the right lane after vehicle 2 did that
@@ -855,6 +864,7 @@ def test_lc_model_CACC_with_interferer_members(size: int, cacc_spacing: float):
         back_position=predecessor.loc[change_right_step].position,
         back_speed=predecessor.loc[change_right_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
 
@@ -868,6 +878,7 @@ def test_lc_model_CACC_with_interferer_members(size: int, cacc_spacing: float):
         back_position=leader.loc[change_left_step].position,
         back_speed=leader.loc[change_left_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
     # the platoon only changes back to the right lane after vehicle 2 did that
@@ -1003,24 +1014,34 @@ def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
         back_position=predecessor.loc[change_right_step].position,
         back_speed=predecessor.loc[change_right_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )
 
     # find all steps where platoon and interferer are on the same lane
     same_lane_steps = interferer.loc[(interferer.lane == leader.lane)].index
+    df_same_lane = leader.loc[same_lane_steps].merge(
+        interferer.loc[same_lane_steps],
+        left_index=True,
+        right_index=True,
+        suffixes=['_leader', '_interferer'],
+    )
 
     # the platoon only changes to the left lane once there is enough space
     # behind the interferer, like in the check above
-    assert is_gap_safe(
-        front_position=interferer.loc[same_lane_steps].position,
-        front_speed=interferer.loc[same_lane_steps].speed,
-        front_max_deceleration=vtype.max_deceleration,
-        front_length=vtype.length,
-        back_position=leader.loc[same_lane_steps].position,
-        back_speed=leader.loc[same_lane_steps].speed,
-        back_max_acceleration=vtype.max_acceleration,
-        step_length=s.step_length,
-    ).all()
+    def myfunc(row):
+        return is_gap_safe(
+            front_position=row.position_interferer,
+            front_speed=row.speed_interferer,
+            front_max_deceleration=vtype.max_deceleration,
+            front_length=vtype.length,
+            back_position=row.position_leader,
+            back_speed=row.speed_leader,
+            back_max_acceleration=vtype.max_acceleration,
+            back_min_gap=vtype.min_gap,
+            step_length=s.step_length,
+        )
+    assert df_same_lane.apply(myfunc, axis=1, raw=False, result_type='reduce').all()
     # the platoon changes back to the right lane before vehicle 2 did that
     assert change_right_step < interferer.lane.diff().idxmin()
     # platoon does not overtake the interferer
@@ -1154,24 +1175,34 @@ def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
         back_position=predecessor.loc[change_right_step].position,
         back_speed=predecessor.loc[change_right_step].speed,
         back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
         step_length=s.step_length,
     )  # or platoon_end.lane != predecessor.lane
 
     # find all steps where platoon and interferer are on the same lane
     same_lane_steps = interferer.loc[(interferer.lane == leader.lane)].index
+    df_same_lane = leader.loc[same_lane_steps].merge(
+        interferer.loc[same_lane_steps],
+        left_index=True,
+        right_index=True,
+        suffixes=['_leader', '_interferer'],
+    )
 
     # the platoon only changes to the left lane once there is enough space
     # behind the interferer, like in the check above
-    assert is_gap_safe(
-        front_position=interferer.loc[same_lane_steps].position,
-        front_speed=interferer.loc[same_lane_steps].speed,
-        front_max_deceleration=vtype.max_deceleration,
-        front_length=vtype.length,
-        back_position=leader.loc[same_lane_steps].position,
-        back_speed=leader.loc[same_lane_steps].speed,
-        back_max_acceleration=vtype.max_acceleration,
-        step_length=s.step_length,
-    ).all()
+    def myfunc(row):
+        return is_gap_safe(
+            front_position=row.position_interferer,
+            front_speed=row.speed_interferer,
+            front_max_deceleration=vtype.max_deceleration,
+            front_length=vtype.length,
+            back_position=row.position_leader,
+            back_speed=row.speed_leader,
+            back_max_acceleration=vtype.max_acceleration,
+            back_min_gap=vtype.min_gap,
+            step_length=s.step_length,
+        )
+    assert df_same_lane.apply(myfunc, axis=1, raw=False, result_type='reduce').all()
     # the platoon changes back to the right lane before vehicle 2 did that
     assert change_right_step < interferer.lane.diff().idxmin()
     # platoon does not overtake the interferer
