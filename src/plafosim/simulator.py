@@ -1486,6 +1486,7 @@ class Simulator:
         for row in vdf[vdf.lane != vdf.old_lane].itertuples():
             if row.cf_model != CF_Model.CACC:
                 if self._record_vehicle_changes:
+                    # record lane change for normal vehicles (not CACC)
                     record_vehicle_change(
                         basename=self._result_base_filename,
                         step=self._step,
@@ -1497,6 +1498,8 @@ class Simulator:
                         reason=row.lc_reason,
                     )
                 if self._record_platoon_changes and row.platoon_role == PlatoonRole.LEADER:
+                    assert row.cf_model == CF_Model.ACC
+                    # record lane change for platoon leaders (ACC)
                     record_platoon_change(
                         basename=self._result_base_filename,
                         step=self._step,
@@ -1506,7 +1509,9 @@ class Simulator:
                         reason=row.lc_reason,
                     )
             else:
+                assert row.platoon_role == PlatoonRole.FOLLOWER
                 if self._record_platoon_changes:
+                    # record lane change for platoon followers (CACC)
                     record_vehicle_platoon_change(
                         basename=self._result_base_filename,
                         step=self._step,
