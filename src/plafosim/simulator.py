@@ -81,6 +81,7 @@ from .statistics import (
     record_vehicle_platoon_change,
     record_vehicle_trace,
 )
+from .util import assert_index_equal
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
 
@@ -204,19 +205,28 @@ def report_rough_braking(
     vdf: pd.DataFrame,
     new_speed: pd.Series,
     step_length: float,
-    rough_factor: float = 0.5
-) -> None:
+    rough_factor: float = 0.5,
+) -> int:
     """
     Report about vehicle preforming rough braking maneuvers.
 
     Rough braking meaning more than rough_factor times max_deceleration.
+
+    Return number of rough braking vehicles
     """
+
+    assert_index_equal(vdf, new_speed)
     assert step_length > 0
+    assert rough_factor > 0
+
+    if vdf.empty:
+        return 0
+
     brakers = (
         (vdf['speed'] - new_speed) > (vdf.max_deceleration * rough_factor * step_length)
     )
     if not brakers.any():
-        return
+        return 0
 
     fields = ['lane', 'position', 'speed', 'new_speed', 'max_deceleration', 'deceleration']
     brake_df = (
@@ -228,6 +238,8 @@ def report_rough_braking(
         "The following vehicles performed rough braking:\n%s",
         brake_df
     )
+
+    return len(brake_df)
 
 
 def check_collisions(vdf: pd.DataFrame):
@@ -659,6 +671,12 @@ class Simulator:
         # average number of vehicles arrival (arrival flow)
         self._avg_number_vehicles_arrived = 0
         self._values_in_avg_number_vehicles_arrived = 0
+        # average vehicle speed (HACK)
+        self._avg_vehicle_speed = 0
+        self._values_in_avg_vehicle_speed = 0
+        # average number of vehicles braking rough
+        self._avg_number_vehicles_braking_rough = 0
+        self._values_in_avg_number_vehicles_braking_rough = 0
 
         # TODO log generation parameters
         if pre_fill:
@@ -1492,7 +1510,7 @@ class Simulator:
                     vdf.merge(predecessor, left_index=True, right_index=True),
                     step_length=self._step_length,
                 )
-                report_rough_braking(vdf, new_speed, step_length=self._step_length)
+                vehicles_braking_rough = report_rough_braking(vdf, new_speed, step_length=self._step_length)
                 vdf['old_speed'] = vdf['speed']
                 vdf['speed'] = new_speed
                 vdf['blocked_front'] = (
@@ -1500,6 +1518,7 @@ class Simulator:
                     & ((vdf.speed - vdf.old_speed) <= 0)
                     & (vdf.cf_model != CF_Model.CACC)
                 )
+                average_vehicle_speed = vdf.speed.mean()
 
                 # adjust positions (of all vehicles)
                 vdf = update_position(vdf, self._step_length)
@@ -1540,6 +1559,9 @@ class Simulator:
 
                 # statistics
                 arrived_vehicles = []
+                average_vehicle_speed = 0
+                vehicles_braking_rough = 0
+
             end_time = timer()
 
             # record some periodic statistics
@@ -1550,6 +1572,8 @@ class Simulator:
                 vehicles_spawned=vehicles_spawned,
                 vehicles_arrived=len(arrived_vehicles),
                 runtime=run_time,
+                average_vehicle_speed=average_vehicle_speed,
+                vehicles_braking_rough=vehicles_braking_rough,
             )
 
             # a new step begins
@@ -1571,7 +1595,9 @@ class Simulator:
             vehicles_in_queue: int,
             vehicles_spawned: int,
             vehicles_arrived: int,
-            runtime: float
+            runtime: float,
+            average_vehicle_speed: float,
+            vehicles_braking_rough: int,
     ):
         """
         Record some period statistics.
@@ -1597,6 +1623,16 @@ class Simulator:
             (self._values_in_avg_number_vehicles_arrived * self._avg_number_vehicles_arrived + vehicles_arrived) /
             (self._values_in_avg_number_vehicles_arrived + 1)
         )
+        # average vehicle speed (HACK)
+        self._avg_vehicle_speed = float(
+            (self._values_in_avg_vehicle_speed * self._avg_vehicle_speed + average_vehicle_speed) /
+            (self._values_in_avg_vehicle_speed + 1)
+        )
+        # average number of vehicles braking rough
+        self._avg_number_vehicles_braking_rough = float(
+            (self._values_in_avg_number_vehicles_braking_rough * self._avg_number_vehicles_braking_rough + vehicles_braking_rough) /
+            (self._values_in_avg_number_vehicles_braking_rough + 1)
+        )
 
         if self._record_simulation_trace:
             # write continuous simulation traces
@@ -1608,6 +1644,8 @@ class Simulator:
                 vehicles_spawned=vehicles_spawned,
                 vehicles_arrived=vehicles_arrived,
                 runtime=runtime,
+                average_vehicle_speed=average_vehicle_speed,
+                vehicles_braking_rough=vehicles_braking_rough,
             )
 
     def _record_lane_changes(self, vdf: pd.DataFrame):

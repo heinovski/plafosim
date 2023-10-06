@@ -53,6 +53,8 @@ def record_general_data_end(basename: str, simulator: 'Simulator'):
         f.write(f"average number of vehicles in spawn queue: {simulator._avg_number_vehicles_queue}\n")
         f.write(f"average number of vehicles spawned: {simulator._avg_number_vehicles_spawned}\n")
         f.write(f"average number of vehicles arrived: {simulator._avg_number_vehicles_arrived}\n")
+        f.write(f"average vehicle speed: {simulator._avg_vehicle_speed}\n")
+        f.write(f"average number of vehicles braking rough: {simulator._avg_number_vehicles_braking_rough}\n")
 
 
 def initialize_vehicle_trips(basename: str):
@@ -637,7 +639,9 @@ def initialize_simulation_trace(basename: str):
             "vehiclesInSpawnQueue,"
             "vehiclesSpawned,"
             "vehiclesArrived,"
-            "executionTime"
+            "executionTime,"
+            "averageVehicleSpeed,"
+            "vehiclesBrakingRough"
             "\n"
         )
 
@@ -649,7 +653,9 @@ def record_simulation_trace(
         vehicles_in_queue: int,
         vehicles_spawned: int,
         vehicles_arrived: int,
-        runtime: float
+        runtime: float,
+        average_vehicle_speed: float,
+        vehicles_braking_rough: int,
 ):
     assert basename
     with open(f'{basename}_simulation_trace.csv', 'a') as f:
@@ -659,7 +665,9 @@ def record_simulation_trace(
             f"{vehicles_in_queue},"
             f"{vehicles_spawned},"
             f"{vehicles_arrived},"
-            f"{runtime}"
+            f"{runtime},"
+            f"{average_vehicle_speed},"
+            f"{vehicles_braking_rough}"
             "\n"
         )
 
