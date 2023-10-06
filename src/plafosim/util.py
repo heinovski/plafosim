@@ -69,6 +69,7 @@ def assert_index_equal(a, b):
     b : pandas.Sequence / pandas.DataFrame
     """
 
+    # TODO use pandas.testing.assert_index_equal?
     assert list(a.index) == list(b.index)
 
 
