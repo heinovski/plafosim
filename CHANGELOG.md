@@ -14,7 +14,6 @@
   * Extend README
   * Update year in copyright headers
 
-
 ## [v0.16.0](https://github.com/heinovski/plafosim/releases/tag/v0.16.0) - 2023-04-28
 * BREAKING CHANGES
   * Replace log-level with verbosity & quiet arguments
