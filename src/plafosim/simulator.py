@@ -92,7 +92,8 @@ LOG = logging.getLogger(__name__)
 # crash detection does not work with step length greater than 1
 
 # vehicle properties
-_length = 4  # m # TODO make parameter
+# https://sumo.dlr.de/docs/Vehicle_Type_Parameter_Defaults.html
+_length = 5  # m # TODO make parameter
 _max_speed = 55  # m/s # TODO make parameter
 _max_acceleration = 2.5  # m/s # TODO make parameter
 _max_deceleration = 15  # m/s # TODO make parameter

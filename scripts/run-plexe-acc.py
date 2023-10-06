@@ -35,7 +35,7 @@ import traci  # noqa 402
 from plexe import ACC, Plexe  # noqa 402
 
 # vehicle length
-LENGTH = 4
+LENGTH = 5
 # cruising speed
 SPEED = 36
 
@@ -66,7 +66,7 @@ def add_vehicles(plexe, n):
     # add n vehicles
     for i in range(n):
         vid = "v.%d" % i
-        traci.vehicle.add(vid, "route", departPos="4", departLane="first", departSpeed=str(0), typeID="acc", arrivalPos=str(ARRIVAL), depart=i * INTERVAL)
+        traci.vehicle.add(vid, "route", departPos=LENGTH, departLane="first", departSpeed=str(0), typeID="acc", arrivalPos=str(ARRIVAL), depart=i * INTERVAL)
         if n == 1:
             desired_speed = SPEED
         else:

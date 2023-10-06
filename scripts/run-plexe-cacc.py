@@ -35,7 +35,7 @@ import traci  # noqa 402
 from plexe import ACC, CACC, Plexe  # noqa 402
 
 # vehicle length
-LENGTH = 4
+LENGTH = 5
 # inter-vehicle distance
 DISTANCE = 5
 # cruising speed

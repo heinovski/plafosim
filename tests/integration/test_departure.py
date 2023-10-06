@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from plafosim.simulator import Simulator
+from plafosim.simulator import Simulator, vtype
 
 MARKER_SYSTEM_EXIT = pytest.mark.xfail(raises=SystemExit, strict=True)
 VEHICLES = [
@@ -85,7 +85,7 @@ def test_depart_method_interval(vehicles: int, interval: int, step_length: int =
     # correct depart interval
     assert ((trips.depart - trips.shift(1).depart).dropna() == interval).all()
     # correct depart position (vehicle length)
-    assert (trips.departPos == 4).all()
+    assert (trips.departPos == vtype.length).all()
     # correct depart lane
     assert (trips.departLane == 0).all()
     # correct depart speed
@@ -139,7 +139,7 @@ def test_depart_method_interval_flow(interval: int, step_length: int = 1):
     # correct depart interval
     assert ((departure.step - departure.shift(1).step).dropna() == interval).all()
     # correct depart position (vehicle length)
-    assert (departure.position == 4).all()
+    assert (departure.position == vtype.length).all()
     # correct depart lane
     assert (departure.lane == 0).all()
     # correct depart speed
@@ -190,7 +190,7 @@ def test_depart_method_rate(vehicles: int, rate: int, step_length: int = 1):
     interval = 3600 / rate
     assert ((trips.depart - trips.shift(1).depart).dropna() >= int(interval)).all()
     # correct depart position (vehicle length)
-    assert (trips.departPos == 4).all()
+    assert (trips.departPos == vtype.length).all()
     # correct depart lane
     assert (trips.departLane == 0).all()
     # correct depart speed
@@ -244,7 +244,7 @@ def test_depart_method_rate_flow(rate: int, step_length: int = 1):
     interval = 3600 / rate
     assert ((departure.step - departure.shift(1).step).dropna() >= int(interval)).all()
     # correct depart position (vehicle length)
-    assert (departure.position == 4).all()
+    assert (departure.position == vtype.length).all()
     # correct depart lane
     assert (departure.lane == 0).all()
     # correct depart speed
@@ -292,7 +292,7 @@ def test_depart_method_probability(vehicles: int, probability: float, step_lengt
     assert trips.depart.is_monotonic
 
     # correct depart position (vehicle length)
-    assert (trips.departPos == 4).all()
+    assert (trips.departPos == vtype.length).all()
     # correct depart lane
     assert (trips.departLane == 0).all()
     # correct depart speed
@@ -343,7 +343,7 @@ def test_depart_method_probability(vehicles: int, probability: float, step_lengt
 #    assert departure.step.is_monotonic
 #
 #    # correct depart position (vehicle length)
-#    assert (departure.position == 4).all()
+#    assert (departure.position == vtype.length).all()
 #    # correct depart lane
 #    assert (departure.lane == 0).all()
 #    # correct depart speed
@@ -399,7 +399,7 @@ def test_depart_method_probability(vehicles: int, probability: float, step_lengt
 #    interval = s._max_step / vehicles
 #    assert ((trips.depart - trips.shift(1).depart).dropna() >= int(interval)).all()
 #    # correct depart position (vehicle length)
-#    assert (trips.departPos == 4).all()
+#    assert (trips.departPos == vtype.length).all()
 #    # correct depart lane
 #    assert (trips.departLane == 0).all()
 #    # correct depart speed

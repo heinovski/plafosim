@@ -357,7 +357,7 @@ class PlatooningVehicle(Vehicle):
         # Charles-Henri Bruneau, Khodor Khadra and Iraj Mortazavi,
         # "Flow analysis of square-back simplified vehicles in platoon,"
         # International Journal of Heat and Fluid Flow, vol. 66, pp. 43–59,
-        # August 2017. Table 5: d = L, vehicle length = 4m, distance = 5m
+        # August 2017. Table 5: d = L, vehicle length = 5m, distance = 5m
         air_drag_change = 0.0
         if self._platoon_role == PlatoonRole.LEADER:
             # savings by followers
