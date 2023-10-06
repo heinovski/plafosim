@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 
 <routes>
-    <vType id="acc" accel="2.5" decel="15.0" apparentDecel="15.0" emergencyDecel="15.0" sigma="0" tau="1.0" length="5.0" minGap="2.5" maxSpeed="55" speedFactor="1.0" color="0,1,0" carFollowModel="CC" laneChangeModel="LC2013" emissionClass="HBEFA3/PC_G_EU4" tauEngine="0.0" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="2.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5" ccDecel="15.0" />
+    <vType id="acc" accel="2.5" decel="10.0" apparentDecel="10.0" emergencyDecel="10.0" sigma="0" tau="1.0" length="5.0" minGap="2.5" maxSpeed="55" speedFactor="1.0" color="0,1,0" carFollowModel="CC" laneChangeModel="LC2013" emissionClass="HBEFA3/PC_G_EU4" tauEngine="0.0" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="2.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5" ccDecel="10.0" />
 
     <route id="route" edges="edge_0_0" />
 </routes>

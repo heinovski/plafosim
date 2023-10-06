@@ -95,8 +95,10 @@ LOG = logging.getLogger(__name__)
 # https://sumo.dlr.de/docs/Vehicle_Type_Parameter_Defaults.html
 _length = 5  # m # TODO make parameter
 _max_speed = 55  # m/s # TODO make parameter
-_max_acceleration = 2.5  # m/s # TODO make parameter
-_max_deceleration = 15  # m/s # TODO make parameter
+_max_acceleration = 2.5  # m/s^2 # TODO make parameter
+# https://copradar.com/chapts/references/acceleration.html
+# TODO distinguish between normal (e.g., 4.5) and emergency (e.g., 7-10m/s^2) deceleration
+_max_deceleration = 10  # m/s^2 # TODO make parameter
 _min_gap = 2.5  # m # TODO make parameter
 _desired_headway_time = 1.0  # s # TODO make parameter
 # HBEFA3/PC_G_EU4 (a gasoline powered Euro norm 4 passenger car modeled using the HBEFA3 based model), default of SUMO
