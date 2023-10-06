@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.16.2](https://github.com/heinovski/plafosim/releases/tag/v0.16.2) - 2023-10-06
+* BREAKING CHANGES
+  * Replace log-level with verbosity & quiet arguments
+  * Remove obsolete mobility test
+* NEW FEATURES
+  * Add warning for high effective depart rate
+* UPDATES
+  * Add keywords to pyproject.toml
+  * Update README
+  * Extend warning for lane number support in GUI
+  * Extend rough braking report with deceleration
+
 ## [v0.16.1](https://github.com/heinovski/plafosim/releases/tag/v0.16.1) - 2023-07-13
 * BREAKING CHANGES
   * Remove deprecated message-related code
