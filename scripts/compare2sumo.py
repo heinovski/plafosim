@@ -50,7 +50,7 @@ parser.add_argument('--arrival-position', type=int, default=100000,
 parser.add_argument(
     '--significance', type=float, default=0.05,
     help="""The significance level to use for the KS tests.
-    If the pvalue is below this level, the the distributions are different."""
+    If the pvalue is below this level, the distributions are different."""
 )
 args = parser.parse_args()
 
