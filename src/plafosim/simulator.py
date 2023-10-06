@@ -210,9 +210,9 @@ def report_rough_braking(
     if not brakers.any():
         return
 
-    fields = ['lane', 'position', 'speed', 'new_speed', 'max_deceleration']
+    fields = ['lane', 'position', 'speed', 'new_speed', 'max_deceleration', 'deceleration']
     brake_df = (
-        vdf.assign(new_speed=new_speed)
+        vdf.assign(new_speed=new_speed, deceleration=vdf['speed'] - new_speed)
         .loc[brakers, fields]
         .sort_values(["lane", "position"], ascending=False)
     )
