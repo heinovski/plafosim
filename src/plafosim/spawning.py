@@ -35,6 +35,7 @@ def get_desired_speed(
     if random_desired_speed:
         # normal distribution
         speed = desired_speed * rng.normalvariate(1.0, speed_variation)
+        # TODO new dice roll instead of cutting?
         speed = max(speed, min_desired_speed)
         speed = min(speed, max_desired_speed)
     else:
