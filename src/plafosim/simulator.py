@@ -527,6 +527,7 @@ class Simulator:
         self._kwargs = kwargs
 
         # statistics
+        # average number of vehicles in simulation
         self._avg_number_vehicles = 0
         self._values_in_avg_number_vehicles = 0
 
@@ -1458,7 +1459,8 @@ class Simulator:
         Record some period statistics.
         """
 
-        self._avg_number_vehicles = int(
+        # average number of vehicles in simulation
+        self._avg_number_vehicles = float(
             (self._values_in_avg_number_vehicles * self._avg_number_vehicles + vehicles_in_simulator) /
             (self._values_in_avg_number_vehicles + 1)
         )
