@@ -155,6 +155,9 @@ def speed_acc_df(vdf: pd.DataFrame, step_length: float) -> pd.Series:
     See Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
     """
 
+    if vdf.empty:
+        return pd.Series()
+
     assert (vdf.predecessor_speed >= 0).all()
     assert (vdf.speed >= 0).all()
     assert (vdf.desired_gap > 0).all()
