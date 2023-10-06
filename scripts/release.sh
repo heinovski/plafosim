@@ -29,6 +29,12 @@ then
     exit 1
 fi
 
+if [ -n "$(git status --untracked-files=no --porcelain)" ];
+then
+  echo "There are uncommitted changes in tracked files!"
+  exit 1
+fi
+
 # create virtualenv
 virtualenv $DIRNAME
 # activate virtualenv
