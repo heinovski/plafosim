@@ -50,6 +50,9 @@ def record_general_data_end(basename: str, simulator: 'Simulator'):
     with open(f'{basename}_general.out', 'a') as f:
         f.write(f"simulation end: {time.asctime(time.localtime(time.time()))}\n")
         f.write(f"average number of vehicles: {simulator._avg_number_vehicles}\n")
+        f.write(f"average number of vehicles in spawn queue: {simulator._avg_number_vehicles_queue}\n")
+        f.write(f"average number of vehicles spawned: {simulator._avg_number_vehicles_spawned}\n")
+        f.write(f"average number of vehicles arrived: {simulator._avg_number_vehicles_arrived}\n")
 
 
 def initialize_vehicle_trips(basename: str):

@@ -650,6 +650,15 @@ class Simulator:
         # average number of vehicles in simulation
         self._avg_number_vehicles = 0
         self._values_in_avg_number_vehicles = 0
+        # average number of vehicles in the spawn queue
+        self._avg_number_vehicles_queue = 0
+        self._values_in_avg_number_vehicles_queue = 0
+        # average number of vehicles spawned (depart flow)
+        self._avg_number_vehicles_spawned = 0
+        self._values_in_avg_number_vehicles_spawned = 0
+        # average number of vehicles arrival (arrival flow)
+        self._avg_number_vehicles_arrived = 0
+        self._values_in_avg_number_vehicles_arrived = 0
 
         # TODO log generation parameters
         if pre_fill:
@@ -1529,6 +1538,8 @@ class Simulator:
                 if not self._vehicle_spawn_queue:
                     self.stop("No more vehicles in the simulation")  # do we really want to exit here?
 
+                # statistics
+                arrived_vehicles = []
             end_time = timer()
 
             # record some periodic statistics
@@ -1570,6 +1581,21 @@ class Simulator:
         self._avg_number_vehicles = float(
             (self._values_in_avg_number_vehicles * self._avg_number_vehicles + vehicles_in_simulator) /
             (self._values_in_avg_number_vehicles + 1)
+        )
+        # average number of vehicles in the spawn queue
+        self._avg_number_vehicles_queue = float(
+            (self._values_in_avg_number_vehicles_queue * self._avg_number_vehicles_queue + vehicles_in_queue) /
+            (self._values_in_avg_number_vehicles_queue + 1)
+        )
+        # average number of vehicles spawned (depart flow)
+        self._avg_number_vehicles_spawned = float(
+            (self._values_in_avg_number_vehicles_spawned * self._avg_number_vehicles_spawned + vehicles_spawned) /
+            (self._values_in_avg_number_vehicles_spawned + 1)
+        )
+        # average number of vehicles arrival (arrival flow)
+        self._avg_number_vehicles_arrived = float(
+            (self._values_in_avg_number_vehicles_arrived * self._avg_number_vehicles_arrived + vehicles_arrived) /
+            (self._values_in_avg_number_vehicles_arrived + 1)
         )
 
         if self._record_simulation_trace:
