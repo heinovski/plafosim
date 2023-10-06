@@ -364,6 +364,7 @@ def initialize_vehicle_traces(basename: str):
             "blocked,"
             "duration,"
             "routeLength,"
+            "timeLoss,"
             "desiredSpeed,"
             "cfTargetSpeed,"
             "cfModel,"
@@ -386,6 +387,7 @@ def record_vehicle_trace(basename: str, step: int, vehicle: 'Vehicle'):
             f"{vehicle._blocked_front},"
             f"{vehicle.travel_time},"
             f"{vehicle.travel_distance},"
+            f"{vehicle._time_loss},"
             f"{vehicle.desired_speed},"  # use potential platoon desired driving speed
             f"{vehicle._cf_target_speed},"
             f"{vehicle._cf_model.name},"
