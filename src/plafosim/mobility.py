@@ -165,10 +165,10 @@ def speed_acc_df(vdf: pd.DataFrame, step_length: float) -> pd.Series:
 
 
 def clamp_speed(
-    new_speed,
-    vdf,
-    step_length,
-):
+    new_speed: pd.Series,
+    vdf: pd.DataFrame,
+    step_length: float,
+) -> pd.Series:
     """
     Clamp (two-way limit) a new speed value to vehicle's maximum.
     """
@@ -192,7 +192,7 @@ def clamp_speed(
     return pd.Series(new_speed, index=vdf.index)
 
 
-def lane_predecessors(vdf, max_lane):
+def lane_predecessors(vdf: pd.DataFrame, max_lane: int) -> pd.DataFrame:
     """
     Find the current (potential) predecessor for each lane and each vehicle.
 
@@ -216,7 +216,7 @@ def lane_predecessors(vdf, max_lane):
     ).set_index(vdf.vid)
 
 
-def lane_successors(vdf, max_lane):
+def lane_successors(vdf: pd.DataFrame, max_lane: int) -> pd.DataFrame:
     """
     Find the current (potential) successors for each lane and each vehicle.
 
@@ -240,7 +240,11 @@ def lane_successors(vdf, max_lane):
     ).set_index(vdf.vid)
 
 
-def get_successors(vdf, successor_map, target_lane) -> pd.DataFrame:
+def get_successors(
+    vdf: pd.DataFrame,
+    successor_map: pd.DataFrame,
+    target_lane: pd.Series,
+) -> pd.DataFrame:
     """
     Return DataFrame of successors to the vehicles on a target lane.
     """
@@ -261,7 +265,11 @@ def get_successors(vdf, successor_map, target_lane) -> pd.DataFrame:
     )
 
 
-def get_predecessors(vdf, predecessor_map, target_lane) -> pd.DataFrame:
+def get_predecessors(
+    vdf: pd.DataFrame,
+    predecessor_map: pd.DataFrame,
+    target_lane: pd.Series,
+) -> pd.DataFrame:
     """
     Return DataFrame of successors to the vehicles on a target lane.
     """
