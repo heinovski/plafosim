@@ -152,7 +152,7 @@ def main():
     import traci
     for step in tqdm(range(min_step, max_step), desc="Trace progress", unit='step'):
         # simulate vehicles from trace file
-        for vehicle in traces.loc[traces.step == step].itertuples():
+        for vehicle in traces[traces.step == step].itertuples():
             color = hex2rgb(vehicle.color) if 'color' in traces else (0, 255, 0)  # allow traces without color
             if str(vehicle.id) not in traci.vehicle.getIDList():
                 add_gui_vehicle(
