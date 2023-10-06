@@ -155,6 +155,14 @@ def speed_acc_df(vdf: pd.DataFrame, step_length: float) -> pd.Series:
     See Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
     """
 
+    assert (vdf.predecessor_speed >= 0).all()
+    assert (vdf.speed >= 0).all()
+    assert (vdf.desired_gap > 0).all()
+    # HIGHVAL
+    assert (vdf[vdf.predecessor_vid == -1].predecessor_gap > 0).all()
+    assert (vdf.desired_headway_time >= 0).all()
+    assert step_length > 0
+
     acceleration = (
         vdf.predecessor_speed
         - vdf.speed
@@ -172,6 +180,13 @@ def clamp_speed(
     """
     Clamp (two-way limit) a new speed value to vehicle's maximum.
     """
+
+    assert (vdf.max_speed > 0).all()
+    assert (vdf.speed >= 0).all()
+    assert (vdf.max_acceleration >= 0).all()
+    assert (vdf.max_deceleration >= 0).all()
+    assert step_length > 0
+
     new_speed = np.min(
         [
             new_speed,
@@ -188,7 +203,7 @@ def clamp_speed(
         ],
         axis=0,
     )
-    assert not any(new_speed < 0)
+    assert (new_speed >= 0).all()
     return pd.Series(new_speed, index=vdf.index)
 
 
@@ -203,6 +218,9 @@ def lane_predecessors(vdf: pd.DataFrame, max_lane: int) -> pd.DataFrame:
     Preconditions:
     - vdf.sorted_values(['position', 'lane'], ascending=False)
     """
+
+    assert max_lane >= 0
+
     vdf = vdf.reset_index()
     return pd.DataFrame(
         {
@@ -227,6 +245,9 @@ def lane_successors(vdf: pd.DataFrame, max_lane: int) -> pd.DataFrame:
     Preconditions:
     - vdf.sorted_values(['position', 'lane'], ascending=False)
     """
+
+    assert max_lane >= 0
+
     vdf = vdf.reset_index()
     return pd.DataFrame(
         {
@@ -248,6 +269,10 @@ def get_successors(
     """
     Return DataFrame of successors to the vehicles on a target lane.
     """
+
+    assert_index_equal(vdf, target_lane)
+    assert (target_lane >= 0).all()
+
     # get id of (the one) successor on the target lane
     successor_ids = pd.Series(
         # pick one value per vehicle using numpy, which is fast and stable
@@ -273,6 +298,10 @@ def get_predecessors(
     """
     Return DataFrame of successors to the vehicles on a target lane.
     """
+
+    assert_index_equal(vdf, target_lane)
+    assert (target_lane >= 0).all()
+
     # get id of (the one) successor on the target lane
     predecessor_ids = pd.Series(
         # pick one value per vehicle using numpy, which is fast and stable
@@ -318,6 +347,8 @@ def compute_new_speeds(
         axis=0,
     )
     vdf["predecessor_gap"] = vdf["predecessor_rear_position"] - vdf["position"]
+    # HIGHVAL
+    assert (vdf[vdf.predecessor_vid == -1].predecessor_gap > 0).all()
 
     # Note:
     # we assume vehicles already have their max acceleration/deceleration
@@ -374,6 +405,7 @@ def compute_lane_changes(
     if (v > v^0_safe) and (not congested) then v <- v^0_safe
     """
 
+    assert 0 <= max_lane
     assert step_length > 0
 
     # TODO: check order of computation for performance
@@ -402,6 +434,7 @@ def compute_lane_changes(
         predecessor_map=predecessor_map,
         target_lane=vdf_tmp.lane,
     ).rename(columns=lambda col: "predecessor_" + col)
+    assert predecessor_current[predecessor_current.predecessor_vid != -1].predecessor_vid.is_unique
 
     # predict speed for potential maneuvers
     speed_left = compute_new_speeds(
