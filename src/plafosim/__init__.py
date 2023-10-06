@@ -22,7 +22,7 @@ import textwrap
 
 from plafosim.util import addLoggingLevel
 
-__version__ = "0.16.1"
+__version__ = "0.16.2"
 
 __description__ = textwrap.dedent(f"""\
     Platoon Formation Simulator (PlaFoSim) -- Version {__version__}.
