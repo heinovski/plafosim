@@ -78,6 +78,7 @@ from .statistics import (
     record_simulation_trace,
     record_vehicle_change,
     record_vehicle_platoon_change,
+    record_vehicle_trace,
 )
 from .vehicle import Vehicle
 from .vehicle_type import VehicleType
@@ -1496,6 +1497,11 @@ class Simulator:
                 # without arrived vehicles
                 if self._collisions:
                     if check_collisions(vdf):
+                        # record final vehicle trace entries
+                        if self._record_vehicle_traces:
+                            for v in self._vehicles.values():
+                                record_vehicle_trace(basename=self._result_base_filename, step=self._step + self._step_length, vehicle=v)
+
                         sys.exit("ERROR: There were collisions between vehicles!")
 
                 # remove arrived vehicles from dict and do finish
