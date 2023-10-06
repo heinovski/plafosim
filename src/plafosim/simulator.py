@@ -1336,6 +1336,7 @@ class Simulator:
             # spawn vehicle based on given parameters
             vehicles_spawned = self._spawn_vehicles(self._get_vehicles_df())
 
+            # statistics
             vehicles_in_simulator = len(self._vehicles)
             vehicles_in_queue = len(self._vehicle_spawn_queue)
 
