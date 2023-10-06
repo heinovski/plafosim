@@ -261,6 +261,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to use a random depart position for every vehicle instead of 0 m",
     )
     g_trips.add_argument(
+        "--depart-all-lanes",
+        type=lambda x: bool(strtobool(x)),
+        default=DEFAULTS['depart_all_lanes'],
+        help="Whether vehicles are allowed to depart on all lanes"
+    )
+    g_trips.add_argument(
         "--desired-speed",
         type=float,
         default=DEFAULTS['desired_speed'],

@@ -66,10 +66,12 @@ def test_single_ramp_empty_road():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=False,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
     # TODO add same test without random depart position
 
@@ -132,10 +134,12 @@ def test_single_ramp_existing_vehicle():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=False,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
 
     # vehicle could be inserted
@@ -197,10 +201,12 @@ def test_single_ramp_blocked():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=False,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
 
     # vehicle could not be inserted
@@ -252,10 +258,12 @@ def test_single_ramp_blocked_exact():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=False,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
 
     # vehicle could not be inserted
@@ -311,10 +319,12 @@ def test_first_ramp_blocked():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=True,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
     # TODO add same test without random depart position
 
@@ -384,10 +394,12 @@ def test_multiple_single_ramp_empty_road():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=True,
-        random_arrival_position=False
+        random_arrival_position=False,
+        depart_all_lanes=False,
     )
 
     # 1 vehicle could be inserted, 1 vehicle could not be inserted
@@ -462,10 +474,12 @@ def test_multiple_first_ramp_blocked():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=True,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
     # TODO add same test without random depart position
 
@@ -537,10 +551,12 @@ def test_multiple_single_ramp_empty_road_priority():
         vehicles=sorted(new_vehicles, key=lambda d: d['schedule_time']),
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=False,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
 
     # 1 vehicle could be inserted, 1 vehicle could not be inserted
@@ -611,10 +627,12 @@ def test_multiple_vehicle_mutiple_ramps_empty_road():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=True,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
     # TODO add same test without random depart position
 
@@ -694,10 +712,12 @@ def test_rear_blocking_vehicle():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=True,
         random_arrival_position=False,
+        depart_all_lanes=False,
     )
     # TODO add same test without random depart position
 
@@ -749,10 +769,12 @@ def test_single_trip_lengths():
         vehicles=new_vehicles,
         vdf=vdf,
         ramp_positions=ramp_positions,
+        number_of_lanes=1,
         current_step=current_step,
         rng=random,
         random_depart_position=True,
         random_arrival_position=True,
+        depart_all_lanes=False,
     )
     # TODO add same test without random depart position
 

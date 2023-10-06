@@ -38,6 +38,7 @@ echo "Running PlaFoSim..."
     plafosim \
     --acc-headway-time 1.0 \
     --collisions true \
+    --depart-all-lanes false \
     --depart-desired false \
     --depart-flow false \
     --depart-interval 3 \

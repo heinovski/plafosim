@@ -133,6 +133,7 @@ DEFAULTS = {
     'cacc_spacing': 5.0,
     'penetration_rate': 1.0,
     'random_depart_position': False,
+    'depart_all_lanes': True,
     'desired_speed': 36.0,
     'random_desired_speed': True,
     'speed_variation': 0.1,
@@ -344,6 +345,7 @@ class Simulator:
             cacc_spacing: float = DEFAULTS['cacc_spacing'],
             penetration_rate: float = DEFAULTS['penetration_rate'],
             random_depart_position: bool = DEFAULTS['random_depart_position'],
+            depart_all_lanes: bool = DEFAULTS['depart_all_lanes'],
             desired_speed: float = DEFAULTS['desired_speed'],
             random_desired_speed: bool = DEFAULTS['random_desired_speed'],
             speed_variation: float = DEFAULTS['speed_variation'],
@@ -447,6 +449,7 @@ class Simulator:
 
         # trip properties
         self._random_depart_position = random_depart_position  # whether to use random depart positions
+        self._depart_all_lanes = depart_all_lanes  # whether to use all lanes for departure
         self._desired_speed = desired_speed  # the desired driving speed
         self._random_desired_speed = random_desired_speed  # whether to use random desired driving speeds
         self._speed_variation = speed_variation  # the deviation from the desired driving speed
@@ -1057,10 +1060,12 @@ class Simulator:
             vehicles=sorted(self._vehicle_spawn_queue, key=lambda d: (d['schedule_time'], d['vid'])),
             vdf=vdf,
             ramp_positions=self._ramp_positions,
+            number_of_lanes=self._number_of_lanes,
             current_step=self._step,
             rng=self._rng,
             random_arrival_position=self._random_arrival_position,
             random_depart_position=self._random_depart_position,
+            depart_all_lanes=self._depart_all_lanes,
             step_length=self._step_length,
         )
         LOG.debug(f"Spawned {len(spawned_vehicles_df)} new vehicles")
@@ -1802,10 +1807,12 @@ def compute_vehicle_spawns(
     vehicles: list,
     vdf: pd.DataFrame,
     ramp_positions: list,
+    number_of_lanes: int,
     current_step: int,
     rng: random.Random,
     random_depart_position: bool,
     random_arrival_position: bool,
+    depart_all_lanes: bool,
     step_length: float = 1.0,
 ):
     """
@@ -1819,14 +1826,21 @@ def compute_vehicle_spawns(
         return pd.DataFrame(), []
 
     # add dummy predecessor to use for all front gap calculations
-    vdf = vdf.append(DUMMY, ignore_index=True)
+    vdf = pd.concat(
+        [vdf] + [DUMMY.assign(lane=lane) for lane in range(number_of_lanes)],
+        ignore_index=True,
+    ).astype({'lane': int})
 
     spawn_positions = ramp_positions if random_depart_position else [ramp_positions[0]]
 
     vehicles_to_spawn = {}
 
-    # this is done for every vehicle we want to spawn
-    for position in rng.sample(spawn_positions, len(spawn_positions)):
+    # lane first, then ramp, possibly tuple
+
+    # this is done for every possible spawn coordinate (ramp + lane)
+    # try spawning in lane 0 first
+    spawn_coordinate_queue = [(position, 0) for position in rng.sample(spawn_positions, len(spawn_positions))]
+    for position, lane in spawn_coordinate_queue:
         if not vehicles:
             # no more vehicles to process
             break
@@ -1837,8 +1851,8 @@ def compute_vehicle_spawns(
         # since we have the dummy, we can assume there is always at least one vehicle
         vehicle_after_spawn_position = (
             vdf
-            [(vdf.position >= spawn_position) & (vdf.lane == 0)]
-            .sort_values("position", ascending=True)
+            [(vdf.position >= spawn_position) & (vdf.lane == lane)]
+            .sort_values('position', ascending=True)
             .iloc[0]
         )
         gap_to_next_vehicle = vehicle_after_spawn_position.position - vtype.length - spawn_position
@@ -1847,8 +1861,8 @@ def compute_vehicle_spawns(
         # since we have the dummy, we can assume there is always at least one vehicle
         vehicle_before_spawn_position = (
             vdf
-            [(vdf.position < spawn_position) & (vdf.lane == 0)]
-            .sort_values("position", ascending=True)
+            [(vdf.position < spawn_position) & (vdf.lane == lane)]
+            .sort_values('position', ascending=True)
             .iloc[-1]
         )
         gap_to_previous_vehicle = spawn_position - vtype.length - vehicle_before_spawn_position.position  # TODO use corresponding vtype
@@ -1920,6 +1934,13 @@ def compute_vehicle_spawns(
         # vehicles are sorted, so we always pick the longest waiting vehicle first :-)
         if not vehicle_to_spawn_now:
             # no vehicle from the queue fits to the current spawn position
+            # TODO do not spawn on fastest lane?
+            if lane < number_of_lanes - 1:
+                # there might be a spot on a faster lane at this ramp
+                # thus, try again to insert a vehicle at this ramp
+                # TODO check if lanes are ordered by speed (cf. keepRight)
+                if depart_all_lanes:
+                    spawn_coordinate_queue.append((position, lane + 1))
             continue
 
         vehicles_to_spawn[vehicle_to_spawn_now['vid']] = {
@@ -1929,8 +1950,8 @@ def compute_vehicle_spawns(
             'speed': vehicle_to_spawn_now['depart_speed'],
             'depart_position': spawn_position,
             'position': spawn_position,
-            'depart_lane': 0,
-            'lane': 0,
+            'depart_lane': lane,
+            'lane': lane,
             'depart_time': current_step,
             'depart_delay': current_step - vehicle_to_spawn_now['schedule_time'],
             'arrival_position': get_arrival_position(

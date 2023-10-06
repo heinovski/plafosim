@@ -37,6 +37,7 @@ echo "Running PlaFoSim..."
 /usr/bin/time -f "plafosim,%e,%U,%S" -o ${experiment}_runtimes.csv -a \
     plafosim \
     --collisions true \
+    --depart-all-lanes false \
     --depart-desired false \
     --depart-flow false \
     --depart-interval 3 \
