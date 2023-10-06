@@ -1381,6 +1381,7 @@ class Simulator:
                     predecessor_map=predecessor_map,
                     target_lane=vdf.lane,
                 ).rename(columns=lambda col: "predecessor_" + col)
+                assert predecessor[predecessor.predecessor_vid != -1].predecessor_vid.is_unique
 
                 # adjust speed (of all vehicles)
                 new_speed = compute_new_speeds(
