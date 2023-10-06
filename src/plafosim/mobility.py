@@ -97,15 +97,40 @@ def is_gap_safe(
 
 def safe_speed_df(vdf: pd.DataFrame) -> pd.Series:
     """
-    Compute the safe speed akkording to the Krauss model, DataFrame variant.
+    Compute the safe speed according to the Krauss model, DataFrame variant.
 
-    See S. Krauss, Microscopic Modeling of Traffic Flow: Investigation of Collision Free Vehicle Dynamics, 1998.
+    See S. Krauss, Microscopic Modeling of Traffic Flow: Investigation of Collision Free Vehicle Dynamics, 1998, Equation (4.21).
+    v_safe = v_leader + (gap - gap_desired) / tau_b + tau
+    gap_desired = tau * v_leader
+    tau_b = v_avg / b
+    b = typical deceleration of drivers
+    tau = reaction time of drivers
+
+    safety is guaranteed, if step length <= tau and gap_desired >= v_leader * step_length
+    <=> if the true reaction time (i.e., the length of one time step) is
+    smaller than or equal to the reaction time that each driver assumes
     """
 
-    tau_b = (vdf.predecessor_speed + vdf.speed) / (2 * vdf.max_deceleration)
+    if vdf.empty:
+        return pd.Series()
+
+    assert (vdf.predecessor_speed >= 0).all()
+    assert (vdf.speed >= 0).all()
+    assert (vdf.max_deceleration >= 0).all()
+    # HIGHVAL
+    assert (vdf[vdf.predecessor_vid == -1].predecessor_gap > 0).all()
+    assert (vdf.desired_gap > 0).all()
+    assert (vdf.desired_headway_time >= 0).all()
+
+    # average breaking time
+    b = vdf.max_deceleration  # TODO useful value? shouldn't this be the typical deceleration, e.g., max_deceleration / 2?
+    tau_b = ((vdf.predecessor_speed + vdf.speed) / 2) / b
+    # assumed reaction time
+    tau = vdf.desired_headway_time  # TODO useful value? shouldn't this be smaller than the headway time (e.g., 0.8s)?
+
     return vdf.predecessor_speed + (
         (vdf.predecessor_gap - vdf.desired_gap)
-        / (vdf.desired_headway_time + tau_b)
+        / (tau_b + tau)
     )
 
 
@@ -113,7 +138,7 @@ def speed_human_df(vdf: pd.DataFrame) -> pd.Series:
     """
     Compute new speed for human vehicles, DataFrame variant.
 
-    Basically just safe_speed, clamping is done outside this function.
+    Basically just safe speed, clamping is done outside this function.
     """
 
     # TODO: implement dawdling
@@ -134,7 +159,7 @@ def speed_acc_df(vdf: pd.DataFrame, step_length: float) -> pd.Series:
         vdf.predecessor_speed
         - vdf.speed
         - vdf.acc_lambda * (vdf.desired_gap - vdf.predecessor_gap)
-    ) / vdf.desired_headway_time
+    ) / vdf.desired_headway_time  # TODO make sure that this is the correct one for ACC
 
     return vdf.speed + acceleration * step_length
 
@@ -482,7 +507,7 @@ def compute_lane_changes(
 # Stuff to remove
 #
 # Just temporary helpers for migration to fully vectorized code.
-# Remove once no longer needed
+# Remove once no longer needed.
 
 SAFE_SPEED_DF = namedtuple(
     "SAFE_SPEED_DF",
