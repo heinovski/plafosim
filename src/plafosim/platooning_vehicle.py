@@ -33,6 +33,7 @@ from .statistics import (
     record_platoon_trip,
     record_vehicle_platoon_maneuvers,
     record_vehicle_platoon_trace,
+    record_vehicle_teleport,
 )
 from .util import round_to_next_base
 from .vehicle import Vehicle
@@ -1059,6 +1060,19 @@ class PlatooningVehicle(Vehicle):
             self._speed = new_speed
             LOG.trace(f"{self._vid} changed speed to {self._speed}m/s (from {current_speed}m/s)")
             self._joins_teleport_speed += 1
+
+        if self._simulator._record_vehicle_teleports:
+            record_vehicle_teleport(
+                basename=self._simulator._result_base_filename,
+                step=self._simulator.step,
+                vid=self._vid,
+                old_position=current_position,
+                old_lane=current_lane,
+                old_speed=current_speed,
+                new_position=new_position,
+                new_lane=new_lane,
+                new_speed=new_speed,
+            )
 
     def _leave(self):
         """

@@ -70,6 +70,7 @@ from .statistics import (
     initialize_vehicle_emissions,
     initialize_vehicle_platoon_changes,
     initialize_vehicle_platoon_traces,
+    initialize_vehicle_teleports,
     initialize_vehicle_traces,
     initialize_vehicle_trips,
     record_general_data_begin,
@@ -194,6 +195,7 @@ DEFAULTS = {
     'record_vehicle_platoon_traces': False,
     'record_platoon_changes': False,
     'record_infrastructure_assignments': False,
+    'record_vehicle_teleports': False,
     'record_prefilled': False,
 }
 
@@ -406,6 +408,7 @@ class Simulator:
             record_vehicle_platoon_traces: bool = DEFAULTS['record_vehicle_platoon_traces'],
             record_platoon_changes: bool = DEFAULTS['record_platoon_changes'],
             record_infrastructure_assignments: bool = DEFAULTS['record_infrastructure_assignments'],
+            record_vehicle_teleports: bool = DEFAULTS['record_vehicle_teleports'],
             record_prefilled: bool = DEFAULTS['record_prefilled'],
             **kwargs: dict,
     ):
@@ -635,6 +638,7 @@ class Simulator:
         self._record_vehicle_platoon_traces = record_vehicle_platoon_traces  # whether to record continuous vehicle platoon traces
         self._record_platoon_changes = record_platoon_changes  # whether to record platoon lane changes
         self._record_infrastructure_assignments = record_infrastructure_assignments  # whether to record infrastructure assignments
+        self._record_vehicle_teleports = record_vehicle_teleports  # whether to record vehicle teleports
         if record_prefilled and not start_as_platoon:
             LOG.warning("Recording results for pre-filled vehicles is not recommended to avoid distorted statistics!")
         self._record_prefilled = record_prefilled  # whether to record results for pre-filled vehicles
@@ -1299,6 +1303,10 @@ class Simulator:
         if self._record_simulation_trace:
             # create output file for continuous simulation trace
             initialize_simulation_trace(basename=self._result_base_filename)
+
+        if self._record_vehicle_teleports:
+            # create output file for vehicle teleports
+            initialize_vehicle_teleports(basename=self._result_base_filename)
 
     def _initialize_prefilled_platoon(self):
         """

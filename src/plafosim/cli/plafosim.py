@@ -723,6 +723,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to record infrastructure assignments",
     )
     g_results.add_argument(
+        "--record-vehicle-teleports",
+        type=lambda x: bool(strtobool(x)),
+        default=DEFAULTS['record_vehicle_teleports'],
+        choices=(True, False),
+        help="Whether to record vehicle teleports",
+    )
+    g_results.add_argument(
         "--record-prefilled",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['record_prefilled'],

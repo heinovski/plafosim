@@ -659,3 +659,45 @@ def record_simulation_trace(
             f"{runtime}"
             "\n"
         )
+
+
+def initialize_vehicle_teleports(basename: str):
+    assert basename
+    with open(f'{basename}_vehicle_teleports.csv', 'w') as f:
+        f.write(
+            "step,"
+            "id,"
+            "oldPosition,"
+            "oldLane,"
+            "oldSpeed,"
+            "newPosition,"
+            "newLane,"
+            "newSpeed"
+            "\n"
+        )
+
+
+def record_vehicle_teleport(
+    basename: str,
+    step: float,
+    vid: int,
+    old_position: float,
+    old_lane: int,
+    old_speed: float,
+    new_position: float,
+    new_lane: int,
+    new_speed: float,
+):
+    assert basename
+    with open(f'{basename}_vehicle_teleports.csv', 'a') as f:
+        f.write(
+            f"{step},"
+            f"{vid},"
+            f"{old_position},"
+            f"{old_lane},"
+            f"{old_speed},"
+            f"{new_position},"
+            f"{new_lane},"
+            f"{new_speed}"
+            "\n"
+        )
