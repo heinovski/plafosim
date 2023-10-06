@@ -126,8 +126,8 @@ DEFAULTS = {
     'pre_fill': False,
     'vehicles': 100,
     'vehicle_density': -1,
-    'max_speed': 55,  # FIXME not used currently
-    'acc_headway_time': 1.0,
+    'max_speed': vtype.max_speed,  # TODO not used currently
+    'acc_headway_time': vtype.headway_time,
     'cacc_spacing': 5.0,
     'penetration_rate': 1.0,
     'random_depart_position': False,
