@@ -528,8 +528,9 @@ class PlatooningVehicle(Vehicle):
 
         if self._simulator._record_platoon_traces:
             # write statistics about the current platoon
-            if self._platoon_role is PlatoonRole.LEADER:
-                # write statistics about the platoon
+            if self._platoon.leader is self:
+                # we do not want followers to record that
+                assert self._platoon_role != PlatoonRole.FOLLOWER
                 record_platoon_trace(
                     basename=self._simulator._result_base_filename,
                     step=self._simulator.step,
