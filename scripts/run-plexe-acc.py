@@ -63,7 +63,7 @@ def start_sumo(config_file, gui=False, experiment="acc"):
 
 
 def add_vehicles(plexe, n):
-    # add a platoon of n vehicles
+    # add n vehicles
     for i in range(n):
         vid = "v.%d" % i
         traci.vehicle.add(vid, "route", departPos="4", departLane="first", departSpeed=str(0), typeID="acc", arrivalPos=str(ARRIVAL), depart=i * INTERVAL)
