@@ -481,7 +481,9 @@ def initialize_vehicle_platoon_traces(basename: str):
             "id,"
             "platoon,"
             "platoonRole,"
-            "platoonPosition"
+            "platoonMemberPosition,"
+            "platoonDesiredSpeed,"
+            "platoonSpeed"
             "\n"
         )
 
@@ -496,7 +498,9 @@ def record_vehicle_platoon_trace(basename: str, step: int, vehicle: 'PlatooningV
             f"{vehicle._vid},"
             f"{vehicle._platoon.platoon_id},"
             f"{vehicle._platoon_role.name},"
-            f"{vehicle._platoon.get_member_index(vehicle)}"
+            f"{vehicle._platoon.get_member_index(vehicle)},"
+            f"{vehicle._platoon.desired_speed},"
+            f"{vehicle._platoon.speed}"
             "\n"
         )
 
