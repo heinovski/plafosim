@@ -1766,11 +1766,32 @@ class Simulator:
 
 
 DUMMY = pd.DataFrame([
-    {'vid': -1, 'position': HIGHVAL, 'speed': HIGHVAL, 'lane': 0},
-    {'vid': -1, 'position': -HIGHVAL, 'speed': 0, 'lane': 0},
+    {
+        'vid': -1,
+        'position': HIGHVAL,
+        'speed': HIGHVAL,
+        'lane': 0,
+        'length': 0.1,
+        'max_acceleration': 0,
+        'max_deceleration': 0,
+        'min_gap': 0,
+        'desired_headway_time': 0,
+    },
+    {
+        'vid': -1,
+        'position': -HIGHVAL,
+        'speed': 0,
+        'lane': 0,
+        'length': 0.1,
+        'max_acceleration': 0,
+        'max_deceleration': 0,
+        'min_gap': 0,
+        'desired_headway_time': 0,
+    },
 ])
 
 
+# TODO move to mobility
 def compute_vehicle_spawns(
     vehicles: list,
     vdf: pd.DataFrame,
@@ -1824,21 +1845,71 @@ def compute_vehicle_spawns(
             .sort_values("position", ascending=True)
             .iloc[-1]
         )
-        gap_to_previous_vehicle = spawn_position - vtype.length - vehicle_before_spawn_position.position
+        gap_to_previous_vehicle = spawn_position - vtype.length - vehicle_before_spawn_position.position  # TODO use corresponding vtype
 
         max_remanining_trip_length = ramp_positions[-1] - position
 
         vehicle_to_spawn_now = None
         # TODO use vectorized approach
         # assume sorted by waiting time for fairness
+        # search for vehicle to insert at current spawn position
+        # check whether it is safe to insert the vehicle
+        # we use the headway times and the current speed
+        # and assume that the resulting required gap is big enough to avoid a crash
+        # in case the corresponding vehicles apply their maximum acceleration/deceleration
+        # (see mobility.is_gap_safe)
+        # NOTE: departing with desired speed is not really realistic and unnecessary
+        # The vehicle could depart already with max(0, rear_vehicle.speed), which will decrease the required gap
         for v in vehicles:
-            if (
-                max_remanining_trip_length >= v['min_trip_length']
-                and gap_to_next_vehicle >= vtype.headway_time * v['depart_speed']
-                and gap_to_previous_vehicle >= vtype.headway_time * vehicle_before_spawn_position.speed
-            ):
+            # TODO use correct headway time (Human vs. ACC)
+            # enough space on the road to reach the minimum trip length
+            trip_possible = max_remanining_trip_length >= v['min_trip_length']
+            # enough space to the vehicle in front
+            ## avoid a crash
+            front_gap_safe = is_gap_safe(
+                front_position=vehicle_after_spawn_position.position,
+                front_speed=vehicle_after_spawn_position.speed,
+                front_max_deceleration=vehicle_after_spawn_position.max_deceleration,
+                front_length=vehicle_after_spawn_position.length,
+                back_position=spawn_position,
+                back_speed=v['depart_speed'],
+                back_max_acceleration=vtype.max_acceleration,  # TODO use corresponding vtype
+                back_min_gap=vtype.min_gap,  # TODO use corresponding vtype
+                step_length=step_length,
+            )
+            ## avoid decelerating from desired speed, assuming the front vehicles does not change speed
+            assert vtype.headway_time >= 0
+            front_gap_desired = gap_to_next_vehicle > max(
+                # step length not required
+                vtype.headway_time * v['depart_speed'],  # TODO use corresponding vtype
+                vtype.min_gap,
+            )
+            # enough space to the vehicle behind
+            ## avoid a crash
+            back_gap_safe = is_gap_safe(
+                front_position=spawn_position,
+                front_speed=v['depart_speed'],
+                front_max_deceleration=vtype.max_deceleration,  # TODO use corresponding vtype
+                front_length=vtype.length,  # TODO use corresponding vtype
+                back_position=vehicle_before_spawn_position.position,
+                back_speed=vehicle_before_spawn_position.speed,
+                back_max_acceleration=vehicle_before_spawn_position.max_acceleration,
+                back_min_gap=vehicle_before_spawn_position.min_gap,
+                step_length=step_length,
+            )
+            ## avoid decelerating of rear vehicle from desired speed, assuming the speed does not change
+            assert vehicle_before_spawn_position.desired_headway_time >= 0
+            back_gap_desired = gap_to_previous_vehicle > max(
+                # step length not required
+                vehicle_before_spawn_position.desired_headway_time * vehicle_before_spawn_position.speed,
+                vehicle_before_spawn_position.min_gap,
+            )
+
+            if (trip_possible and front_gap_safe and front_gap_desired and back_gap_safe and back_gap_desired):
                 vehicle_to_spawn_now = v
                 break
+            else:
+                LOG.trace(f"{v['vid']} could not be spawned at {spawn_position} due to constraints (trip: {trip_possible}, front safe: {front_gap_safe}, front desired: {front_gap_desired}, back safe: {back_gap_safe}, back desired: {back_gap_desired})!")
 
         # vehicles are sorted, so we always pick the longest waiting vehicle first :-)
         if not vehicle_to_spawn_now:
