@@ -506,7 +506,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--random-seed",
         type=int,
         default=DEFAULTS['random_seed'],
-        help="The seed (>=0) for the random number generator instead of the current system time",
+        help="The seed (>=0) for the random number generator. A value of -1 uses the current system time",
     )
     g_simulation.add_argument(
         "--progress",
