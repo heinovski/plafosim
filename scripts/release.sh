@@ -46,7 +46,8 @@ then
     echo "Publishing to TestPyPI..."
     poetry publish --build -r testpypi
     # wait for release on testpypi
-    sleep 10s
+    echo "..."
+    sleep 30s
 else
     echo "TestPyPI already has version $VERSION."
 fi
@@ -73,15 +74,13 @@ then
     echo "Publishing to PyPI..."
     poetry publish --build
     # wait for release on pypi
-    sleep 10s
+    echo "..."
+    sleep 30s
 else
     echo "PyPI already has version $VERSION."
 fi
 
 echo "Installing from PyPI..."
-
-# wait for release on pypi
-sleep 20s
 
 pip install plafosim==$VERSION
 # check version
