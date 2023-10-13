@@ -130,12 +130,12 @@ class Vehicle:
         # statistics
         self._time_loss = 0
         self._emissions = {
-            'CO': 0,  # the total CO (Kohlenmonoxid) emission in mg
-            'CO2': 0,  # the total CO2 (Kohlendioxid) emission in mg
-            'HC': 0,  # the total HC (Kohlenwasserstoffe) emission in mg
-            'NOx': 0,  # the total NOx (Stickoxide) emission in mg
-            'PMx': 0,  # the total PM (Partikel) emission in mg
-            'fuel': 0,  # the total mKr (Kraftstoffverbrauch) emission in mg
+            'CO': 0,  # the total carbon monoxide (CO) emission in mg
+            'CO2': 0,  # the total carbon dioxide (CO2) emission in mg
+            'HC': 0,  # the total hydro carbon (HC) emission in mg
+            'NOx': 0,  # the total nitrogen oxides (NO and NO2) emission in mg
+            'PMx': 0,  # the total fine-particle (PMx) emission in mg
+            'fuel': 0,  # the total fuel consumption emission in ml
         }
 
         # gui properties
