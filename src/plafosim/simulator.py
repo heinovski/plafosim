@@ -531,7 +531,7 @@ class Simulator:
             if maximum_trip_length == minimum_trip_length:
                 LOG.debug(f"Using static trip length of {maximum_trip_length}m for all vehicles")
                 if not random_arrival_position:
-                    sys.exit("ERROR: Static trip length is only possible in conjuction with random-arrival-position!")
+                    sys.exit("ERROR: Static trip length is only possible in conjunction with random-arrival-position!")
             self._maximum_trip_length = maximum_trip_length  # the maximum trip length
 
         # communication properties
