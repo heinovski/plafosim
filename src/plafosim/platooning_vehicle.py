@@ -83,17 +83,17 @@ class PlatooningVehicle(Vehicle):
         vehicle_type : VehicleType
             The vehicle type of the vehicle
         depart_position : int
-            The depart position of the vehicle
+            The departure position of the vehicle
         arrival_position : int
             The arrival position of the vehicle
         desired_speed : float
             The desired driving speed of the vehicle
         depart_lane : int
-            The depart lane of the vehicle
+            The departure lane of the vehicle
         depart_speed : float
-            The depart speed of the vehicle
+            The departure speed of the vehicle
         depart_time : int
-            The depart time of the vehicle
+            The departure time of the vehicle
         depart_delay : int
             The time the vehicle had to wait before starting its trip
         communication_range : int
@@ -661,7 +661,7 @@ class PlatooningVehicle(Vehicle):
             return
 
         if new_position < self._depart_position:
-            LOG.warning(f"{self._vid}'s new position would be before its depart position! Aborting the join maneuver!")
+            LOG.warning(f"{self._vid}'s new position would be before its departure position! Aborting the join maneuver!")
             self.in_maneuver = False
             self._platoon_role = PlatoonRole.NONE
 

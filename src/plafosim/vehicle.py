@@ -81,17 +81,17 @@ class Vehicle:
         vehicle_type : VehicleType
             The vehicle type of the vehicle
         depart_position : int
-            The depart position of the vehicle
+            The departure position of the vehicle
         arrival_position : int
             The arrival position of the vehicle
         desired_speed : float
             The desired driving speed of the vehicle
         depart_lane : int
-            The depart lane of the vehicle
+            The departure lane of the vehicle
         depart_speed : float
-            The depart speed of the vehicle
+            The departure speed of the vehicle
         depart_time : int
-            The depart time of the vehicle
+            The departure time of the vehicle
         depart_delay : int
             The time the vehicle had to wait before starting its trip
         communication_range : int
@@ -112,7 +112,7 @@ class Vehicle:
         self._depart_lane = depart_lane  # the departure lane of the vehicle
         self._depart_speed = depart_speed  # the departure speed of the vehicle
         self._depart_time = depart_time  # the departure time of the vehicle
-        self._depart_delay = depart_delay  # the depart delay of the vehicle
+        self._depart_delay = depart_delay  # the departure delay of the vehicle
         self._pre_filled = pre_filled  # whether this vehicle was pre-filled
         # vehicle details
         self._position = self._depart_position  # the current position of the vehicle
@@ -232,7 +232,7 @@ class Vehicle:
     @property
     def depart_position(self) -> int:
         """
-        Return the depart position of the vehicle.
+        Return the departure position of the vehicle.
         """
 
         return self._depart_position
@@ -268,7 +268,7 @@ class Vehicle:
     @property
     def depart_lane(self) -> int:
         """
-        Return the depart lane of the vehicle.
+        Return the departure lane of the vehicle.
         """
 
         return self._depart_lane
@@ -276,7 +276,7 @@ class Vehicle:
     @property
     def depart_speed(self) -> float:
         """
-        Return the depart speed of the vehicle.
+        Return the departure speed of the vehicle.
         """
 
         return self._depart_speed
@@ -284,7 +284,7 @@ class Vehicle:
     @property
     def depart_time(self) -> int:
         """
-        Return the depart time of the vehicle.
+        Return the departure time of the vehicle.
         """
 
         return self._depart_time

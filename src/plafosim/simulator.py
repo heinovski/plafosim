@@ -464,7 +464,7 @@ class Simulator:
         self._penetration_rate = penetration_rate  # the penetration rate of platooning vehicles
 
         # trip properties
-        self._random_depart_position = random_depart_position  # whether to use random depart positions
+        self._random_depart_position = random_depart_position  # whether to use random departure positions
         self._depart_all_lanes = depart_all_lanes  # whether to use all lanes for departure
         self._desired_speed = desired_speed  # the desired driving speed
         self._random_desired_speed = random_desired_speed  # whether to use random desired driving speeds
@@ -474,20 +474,20 @@ class Simulator:
         if not (min_desired_speed <= desired_speed <= max_desired_speed):
             sys.exit("ERROR: desired speed has to be between limits!")
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
-        self._depart_desired = depart_desired  # whether to depart with the desired driving speed
+        self._depart_desired = depart_desired  # whether to departure with the desired driving speed
         if random_depart_position and not depart_desired:
             sys.exit("ERROR: random-depart-position is only possible in conjunction with depart-desired!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         if not depart_flow and depart_method == "number":
-            sys.exit("ERROR: The depart method number can only be used in conjunction with a depart flow!")
+            sys.exit("ERROR: The departure method number can only be used in conjunction with a departure flow!")
         self._depart_method = depart_method  # the departure method to use
         if depart_interval <= 0:
-            sys.exit("ERROR: The depart interval has to be bigger than 0!")
+            sys.exit("ERROR: The departure interval has to be bigger than 0!")
         self._depart_interval = depart_interval  # the interval between two vehicle departures
         if depart_probability < 0 or depart_probability > 1:
-            sys.exit("ERROR: The depart probability needs to be between 0 and 1!")
+            sys.exit("ERROR: The departure probability needs to be between 0 and 1!")
         if depart_probability == 0:
-            sys.exit("ERROR: A depart probability of 0 does not make sense!")
+            sys.exit("ERROR: A departure probability of 0 does not make sense!")
         self._depart_probability = depart_probability  # the departure probability
         if depart_rate <= 0:
             sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
@@ -499,22 +499,22 @@ class Simulator:
             # spawn #vehicles per hour, similar to SUMO's flow param vehsPerHour
             self._effective_depart_rate = self._depart_rate / 3600
         elif self._depart_method == "number":
-            LOG.warning("This depart method is not yet tested!")
+            LOG.warning("This departure method is not yet tested!")
             # spawn #number vehicles, similar to SUMO's flow param number
-            # TODO other depart method for constant number of concurrent vehicles
+            # TODO other departure method for constant number of concurrent vehicles
             # thus: all vehicles have an equal spacing
             self._effective_depart_rate = self._number_of_vehicles / max_step
         elif self._depart_method != "probability":
-            sys.exit("ERROR: Unknown depart method!")
+            sys.exit("ERROR: Unknown departure method!")
         if self._effective_depart_rate is not None:
             if 0.5 < self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
-                LOG.warning(f"The current effective depart rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
+                LOG.warning(f"The current effective departure rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
             if self._effective_depart_rate > 1 and not self._random_depart_position:
-                sys.exit("ERROR: an effective depart rate > 1 vehicles/step is incompatible with just spawning at the origin (random depart position == false)")
+                sys.exit("ERROR: an effective departure rate > 1 vehicles/step is incompatible with just spawning at the origin (random departure position == false)")
             if self._effective_depart_rate < 0:
                 sys.exit("ERROR: effective spawn rate < 0 vehicles/step.")
             if self._effective_depart_rate > len(self._ramp_positions):
-                LOG.warning(f"The current effective depart rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
+                LOG.warning(f"The current effective departure rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
             sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
@@ -669,7 +669,7 @@ class Simulator:
         # average number of vehicles in the spawn queue
         self._avg_number_vehicles_queue = 0
         self._values_in_avg_number_vehicles_queue = 0
-        # average number of vehicles spawned (depart flow)
+        # average number of vehicles spawned (departure flow)
         self._avg_number_vehicles_spawned = 0
         self._values_in_avg_number_vehicles_spawned = 0
         # average number of vehicles arrival (arrival flow)
@@ -887,7 +887,7 @@ class Simulator:
                 depart_lane = 0
 
                 if vid == 0:
-                    # pick regular depart speed
+                    # pick regular departure speed
                     depart_speed = get_depart_speed(
                         desired_speed=desired_speed,
                         rng=self._rng,
@@ -909,7 +909,7 @@ class Simulator:
                     collision = False
                     # actual calculation of position and lane
                     # always use random position for pre-filled vehicle
-                    # we do not consider depart interval here since this is supposed to be a snapshot from an earlier point of simulation
+                    # we do not consider departure interval here since this is supposed to be a snapshot from an earlier point of simulation
                     # make sure to also include the end of the road itself
                     # consider length, equal to departPos="base" in SUMO
                     # we assume that a vehicle has to drive at least 1m
@@ -917,7 +917,7 @@ class Simulator:
                     # always use random lane for pre-filled vehicle
                     depart_lane = self._rng.randrange(0, self._number_of_lanes, 1)
 
-                    LOG.trace(f"Generated random depart position for vehicle {vid}: {depart_position}-{vtype.length},{depart_lane}")
+                    LOG.trace(f"Generated random departure position for vehicle {vid}: {depart_position}-{vtype.length},{depart_lane}")
 
                     if not self._vehicles:
                         continue
@@ -1010,7 +1010,7 @@ class Simulator:
 
     def _vehicles_to_be_scheduled(self):
         """
-        1) Calculate how many vehicles should be spawned according to the depart method.
+        1) Calculate how many vehicles should be spawned according to the departure method.
         """
 
         vehicles_to_be_scheduled = -1
@@ -1029,7 +1029,7 @@ class Simulator:
                 else:
                     vehicles_to_be_scheduled = int(self._rng.random() <= self._depart_probability)
             else:
-                # 1) estimate how many vehicles their need to be with the given effective depart rate
+                # 1) estimate how many vehicles their need to be with the given effective departure rate
                 # 2) subtract all already generated (i.e., finished, spawned, queued)
                 # and all pre-filled vehicles
                 desired_number_vehicles = int(self._step * self._effective_depart_rate) + 1
@@ -1042,7 +1042,7 @@ class Simulator:
         """
         Spawns vehicles within the current step.
 
-        1) Calculate how many vehicles should be spawned according to the depart method
+        1) Calculate how many vehicles should be spawned according to the departure method
         2) Calculate properties for these vehicles (e.g., desired speed)
         3) Add vehicles to spawn queue
         4) Spawn as many vehicles as possible from the queue (sorted by waiting time)
@@ -1179,17 +1179,17 @@ class Simulator:
         vtype : VehicleType
             The vehicle type of the vehicle
         depart_position : int
-            The depart position of the vehicle
+            The departure position of the vehicle
         arrival_position : int
             The arrival position of the vehicle
         desired_speed : float
             The desired driving speed of the vehicle
         depart_lane : int
-            The depart lane of the vehicle
+            The departure lane of the vehicle
         depart_speed : float
-            The depart speed of the vehicle
+            The departure speed of the vehicle
         depart_time : int
-            The depart time of the vehicle
+            The departure time of the vehicle
         depart_delay : int
             The time the vehicle had to wait before starting its trip
         communication_range : int
@@ -1617,7 +1617,7 @@ class Simulator:
             (self._values_in_avg_number_vehicles_queue * self._avg_number_vehicles_queue + vehicles_in_queue) /
             (self._values_in_avg_number_vehicles_queue + 1)
         )
-        # average number of vehicles spawned (depart flow)
+        # average number of vehicles spawned (departure flow)
         self._avg_number_vehicles_spawned = float(
             (self._values_in_avg_number_vehicles_spawned * self._avg_number_vehicles_spawned + vehicles_spawned) /
             (self._values_in_avg_number_vehicles_spawned + 1)
@@ -1894,7 +1894,7 @@ def compute_vehicle_spawns(
     """
     Schritt 4, siehe oben.
 
-    Assumption: list of vehicles is already sorted ascending by depart priority (e.g., waiting time)
+    Assumption: list of vehicles is already sorted ascending by departure priority (e.g., waiting time)
     Assumption: ramp positions is sorted in ascending manner
     """
 
@@ -1955,7 +1955,7 @@ def compute_vehicle_spawns(
         # in case the corresponding vehicles apply their maximum acceleration/deceleration
         # (see mobility.is_gap_safe)
         # NOTE: departing with desired speed is not really realistic and unnecessary
-        # The vehicle could depart already with max(0, rear_vehicle.speed), which will decrease the required gap
+        # The vehicle could departure already with max(0, rear_vehicle.speed), which will decrease the required gap
         for v in vehicles:
             # TODO use correct headway time (Human vs. ACC)
             # enough space on the road to reach the minimum trip length
