@@ -79,13 +79,13 @@ sumo_trips = sumo_trips.astype({'arrivalLane': int, 'departLane': int, 'id': int
 sumo_trips = sumo_trips.assign(desiredSpeed=lambda x: x.speedFactor * args.desired_speed)
 sumo_trips = sumo_trips.set_index('id').sort_index()
 assert(sumo_trips.index.is_unique)
-assert(len(sumo_trips.index == args.vehicles))
+assert(len(sumo_trips.index) == args.vehicles)
 
 plafosim_trips = pd.read_csv('%s_vehicle_trips.csv' % args.experiment)
 plafosim_trips = plafosim_trips.round(2)
 plafosim_trips = plafosim_trips.set_index('id').sort_index()
 assert(plafosim_trips.index.is_unique)
-assert(len(plafosim_trips.index == args.vehicles))
+assert(len(plafosim_trips.index) == args.vehicles)
 # assert same vehicles
 assert(list(sumo_trips.index) == list(plafosim_trips.index))
 
@@ -93,7 +93,7 @@ plafosim_emissions = pd.read_csv('%s_vehicle_emissions.csv' % args.experiment)
 plafosim_emissions = plafosim_emissions.round(2)
 plafosim_emissions = plafosim_emissions.set_index('id').sort_index()
 assert(plafosim_emissions.index.is_unique)
-assert(len(plafosim_emissions.index == args.vehicles))
+assert(len(plafosim_emissions.index) == args.vehicles)
 # assert same vehicles
 assert(list(sumo_trips.index) == list(plafosim_emissions.index))
 
