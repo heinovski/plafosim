@@ -45,12 +45,14 @@ Or, run a simulation with the default configuration (`-d`):
 
 ### Live GUI
 
-You can visualize the simulation via a simple live GUI based on [SUMO](https://github.com/eclipse/sumo/), using the `gui` parameter:
+You can visualize the simulation via a simple live GUI based on [SUMO](https://github.com/eclipse/sumo/), using the argument `gui` (requires installation of SUMO and decleration of `SUMO_HOME` variable):
 
 ```plafosim --gui```
 
 ![](docs/gui.png)
 *A screenshot of PlaFoSim's live GUI showing 2 platoons and various individual vehicles. Copyright © 2021 IEEE.*
+
+More options for the live GUI can be found within the ``GUI properties`` section of the help.
 
 **NOTE**: This requires installation of SUMO (>=1.6.0) and decleration of the `SUMO_HOME` variable.
 
@@ -129,7 +131,8 @@ In order to extend PlaFoSim, you first need ot install it from source.
 ```pip install poetry```
 - Clone this repository:
 ```git clone https://github.com/heinovski/plafosim.git```
-- Install PlaFoSim from source in editable mode (from within the newly created directory):
+- Navigate to newly created directory of the cloned repository in the command-line
+- Install PlaFoSim from source in editable mode:
 ```poetry install```
 - Run PlaFoSim in the virtual environment:
 ```poetry run plafosim```
@@ -141,7 +144,7 @@ In order to add a new formation algorithm, you need to follow these steps:
 - Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`). You can use the `Dummy` algorithm (see `algorithms/dummy.py`) as an example.
 - Import your algorithm and add its `__name__` to the list of available algorithms (see `--formation-algorithm`) within `cli/plafosim.py`.
 - Add specific properties of your algorithm via an argument parser group and a corresponding help message to `cli/plafosim.py` if necessary.
-- Import your algorithm within `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`).
+- Import your algorithm in `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`).
 
 You should now be able to use your new algorithm with
 ```
