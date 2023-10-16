@@ -87,7 +87,7 @@ def parse_args() -> argparse.Namespace:
         "--sumo-config",
         type=find_resource,
         default=DEFAULTS['sumo_config'],
-        help="The name of the SUMO config file",
+        help="The name of the SUMO configuration file",
     )
     parser.add_argument(
         '--gui-delay',
@@ -99,7 +99,7 @@ def parse_args() -> argparse.Namespace:
         '--track-vehicle',
         type=int,
         default=-1,
-        help="The id of a vehicle to track in the gui"
+        help="The id of a vehicle to track in the GUI"
     )
     parser.add_argument(
         '--start',

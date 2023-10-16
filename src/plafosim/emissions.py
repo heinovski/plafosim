@@ -20,6 +20,12 @@
 from enum import Enum
 
 # emission factors of the HBEFA3 model
+# CO - the total carbon monoxide (CO) emission in mg
+# CO2 - the total carbon dioxide (CO2) emission in mg
+# HC - the total hydro carbon (HC) emission in mg
+# NOx - the total nitrogen oxides (NO and NO2) emission in mg
+# PMx - the total fine-particle (PMx) emission in mg
+# fuel - the total fuel consumption emission in ml
 EMISSION_FACTORS = {
     'PC_G_EU4': {
         'CO': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],

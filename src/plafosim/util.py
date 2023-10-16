@@ -61,7 +61,7 @@ def hex2rgb(hex: str) -> tuple:
 
 def assert_index_equal(a, b):
     """
-    Ensure the indeces of two Sequences/DataFrames are equal.
+    Ensure the indices of two Sequences/DataFrames are equal.
 
     Parameters
     ----------

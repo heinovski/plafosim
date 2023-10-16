@@ -68,7 +68,7 @@ def is_gap_safe(
     - the back vehicle can accelerate as hard as possible for one step
     - the vehicle will not crash
 
-    Assumes euclidian/non-ballistic position updates.
+    Assumes euclidean/non-ballistic position updates.
     """
 
     assert front_position >= 0
@@ -372,7 +372,7 @@ def compute_new_speeds(
     new_speed = vdf.speed.copy()
     new_speed.loc[m_human] = speed_human_df(vdf.loc[m_human])
     new_speed.loc[m_acc] = speed_acc_df(vdf.loc[m_acc], step_length)
-    # TODO: apply clamping only to human and acc vehicles (not cacc)
+    # TODO: apply clamping only to human and ACC vehicles (not CACC)
     new_speed.loc[m_cacc] = new_speed[vdf.loc[m_cacc].leader_id].values
 
     # clamp speed by common constraints
@@ -613,7 +613,7 @@ def safe_speed(
 
 def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
     """
-    Return the clipped positions (i.e., by arrival position) of vehicles within a pandas DataFrame.
+    Return the clipped positions (i.e., by arrival position) of vehicles within a pandas Dataframe.
 
     Parameters
     ----------
@@ -622,7 +622,7 @@ def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
         index: vid
         columns: [position, length, lane, ..]
     vdf : pandas.DataFrame
-        The dataframe containing the vehicles as rows
+        The Dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
     """
@@ -644,7 +644,7 @@ def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
 
 def update_position(vdf: pd.DataFrame, step_length: float) -> pd.DataFrame:
     """
-    Update the position of vehicles within a pandas DataFrame.
+    Update the position of vehicles within a pandas Dataframe.
 
     This is based on Krauss' single lane traffic:
     adjust position (move)
@@ -653,7 +653,7 @@ def update_position(vdf: pd.DataFrame, step_length: float) -> pd.DataFrame:
     Parameters
     ----------
     vdf : pandas.DataFrame
-        The dataframe containing the vehicles as rows
+        The Dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
     step_length : float
@@ -674,7 +674,7 @@ def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
     Parameters
     ----------
     vdf : pandas.DataFrame
-        The dataframe containing the vehicles as rows
+        The Dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
     """

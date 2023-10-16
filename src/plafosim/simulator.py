@@ -249,7 +249,7 @@ def check_collisions(vdf: pd.DataFrame):
     Parameters
     ----------
     vdf : pandas.DataFrame
-        The dataframe containing the vehicles as rows
+        The Dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
     """
@@ -279,12 +279,12 @@ def has_collision(
 
     Parameters
     ----------
-    position1 : The current position of vehicle1
-    rear_position1 : The current rear position of vehicle1
-    lane1 : The current lane of vehicle1
-    position2 : The current position of vehicle2
-    rear_position2 : The current rear position of vehicle2
-    lane2 : The current lane of vehicle2
+    position1 : The current position of vehicle 1
+    rear_position1 : The current rear position of vehicle 1
+    lane1 : The current lane of vehicle 1
+    position2 : The current position of vehicle 2
+    rear_position2 : The current rear position of vehicle 2
+    lane2 : The current lane of vehicle 2
     """
 
     if lane1 != lane2:
@@ -312,7 +312,7 @@ def is_insert_safe(
     # would it be unsafe to insert the vehicle?
     if other_vehicle.position <= depart_position:
         # the other vehicle is behind the current vehicle
-        # check if the other vehicle could crash into the current vehicle within the next timestep
+        # check if the other vehicle could crash into the current vehicle within the next time step
         return is_gap_safe(
             front_position=depart_position,
             front_speed=depart_speed,
@@ -326,7 +326,7 @@ def is_insert_safe(
         )
     else:
         # the current vehicle is behind the other vehicle
-        # check if the current vehicle could crash into the other vehicle within the next timestep
+        # check if the current vehicle could crash into the other vehicle within the next time step
         return is_gap_safe(
             front_position=other_vehicle.position,
             front_speed=other_vehicle.speed,
@@ -496,11 +496,11 @@ class Simulator:
         if self._depart_method == "interval":
             self._effective_depart_rate = step_length / self._depart_interval
         elif self._depart_method == "rate":
-            # spawn #vehicles per hour, similar to SUMO's flow param vehsPerHour
+            # spawn #vehicles per hour, similar to SUMO's flow parameter vehsPerHour
             self._effective_depart_rate = self._depart_rate / 3600
         elif self._depart_method == "number":
             LOG.warning("This departure method is not yet tested!")
-            # spawn #number vehicles, similar to SUMO's flow param number
+            # spawn #number vehicles, similar to SUMO's flow parameter number
             # TODO other departure method for constant number of concurrent vehicles
             # thus: all vehicles have an equal spacing
             self._effective_depart_rate = self._number_of_vehicles / max_step
@@ -609,7 +609,7 @@ class Simulator:
         self._rng = random.Random(random_seed)
         self._progress = progress  # whether to enable the (simulation) progress bar
 
-        # gui properties
+        # GUI properties
         self._gui = gui  # whether to show a live sumo-gui
         if gui:
             check_and_prepare_gui()
@@ -621,9 +621,9 @@ class Simulator:
             if number_of_lanes < 4:
                 LOG.warning("The current number of lanes supported by the GUI is 4!")
 
-        self._gui_delay = gui_delay  # the delay in every simulation step for the gui
-        self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the gui
-        self._sumo_config = sumo_config  # the name of the SUMO config file
+        self._gui_delay = gui_delay  # the delay in every simulation step for the GUI
+        self._gui_track_vehicle = gui_track_vehicle  # the id of a vehicle to track in the GUI
+        self._sumo_config = sumo_config  # the name of the SUMO configuration file
         self._gui_play = gui_play  # whether to start the simulation immediately
         if gui_start < 0:
             sys.exit("ERROR: GUI start time cannot be negative!")
@@ -851,7 +851,7 @@ class Simulator:
         for vid in arrived_vehicles:
             # call finish on arrived vehicle
             self._vehicles[vid].finish()
-            # remove arrived vehicle from gui
+            # remove arrived vehicle from the GUI
             if self._gui and self._step >= self._gui_start:
                 remove_gui_vehicle(vid)
             # remove from vehicles
@@ -1022,7 +1022,7 @@ class Simulator:
         else:
             # 1) number of new vehicles
             if self._depart_method == "probability":
-                # spawn probability per time step, similar to SUMO's flow param probability
+                # spawn probability per time step, similar to SUMO's flow parameter probability
                 if self._step == 0:
                     # special case in step 0 to avoid not having any vehicles and thus stopping the simulation
                     vehicles_to_be_scheduled = 1
@@ -1372,7 +1372,7 @@ class Simulator:
         Initialize the GUI.
         """
 
-        # start gui
+        # start GUI
         start_gui(self._sumo_config, self._step_length, self._gui_play)
 
         # set correct boundary and zoom
@@ -1480,7 +1480,7 @@ class Simulator:
 
                 # BEGIN VECTORIZATION PART
                 # TODO move upwards/get rid of it entirely
-                # convert dict of vehicles to dataframe (temporary)
+                # convert dict of vehicles to Dataframe (temporary)
                 vdf = self._get_vehicles_df()
                 vdf = vdf.sort_values(["position", "lane"], ascending=False)
 
@@ -1527,7 +1527,7 @@ class Simulator:
                 # adjust positions (of all vehicles)
                 vdf = update_position(vdf, self._step_length)
 
-                # convert dataframe back to dict of vehicles
+                # convert Dataframe back to dict of vehicles
                 self._write_back_vehicles_df(vdf)
 
                 # get arrived vehicles
@@ -1535,7 +1535,7 @@ class Simulator:
                     (vdf.position >= vdf.arrival_position)
                 ].index.values
 
-                # remove arrived vehicles from dataframe
+                # remove arrived vehicles from Dataframe
                 vdf = vdf.drop(arrived_vehicles)
 
                 # do collision check (for all vehicles)
@@ -1693,7 +1693,7 @@ class Simulator:
 
     def _get_vehicles_df(self) -> pd.DataFrame:
         """
-        Return a pandas dataframe from the internal data structure.
+        Return a pandas Dataframe from the internal data structure.
         """
         platoon_fields = [
             "leader_id",
@@ -1762,7 +1762,7 @@ class Simulator:
             .set_index('vid')
             # compute effective limits
             # These computations may negatively impact performance, but will
-            # eventually be removed from here anyway once the DataFrame stays
+            # eventually be removed from here anyway once the Dataframe stays
             # and computations/updates move to actions (like platoon updates).
             .assign(
                 max_speed=lambda df: df[["max_speed", "cf_target_speed", "platoon_max_speed", "platoon_desired_speed"]].min(axis="columns"),
@@ -1780,7 +1780,7 @@ class Simulator:
         Parameters
         ----------
         vdf : pandas.DataFrame
-            The dataframe containing the vehicles as rows
+            The Dataframe containing the vehicles as rows
             index: vid
             columns: [position, length, lane, ..]
         """

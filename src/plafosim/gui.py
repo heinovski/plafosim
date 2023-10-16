@@ -86,8 +86,8 @@ def start_gui(config: str, step_length: float, play: bool = True):
     sumo_version = sumo_version.split(' ')[1]
     assert sumo_version
 
-    # NOTE: we allow other SUMO vesions with the correct TraCI api_version version (e.g., development versions).
-    # However, these versions are untested and thus might lead lead to unexpected behaior.
+    # NOTE: we allow other SUMO versions with the correct TraCI API_version version (e.g., development versions).
+    # However, these versions are untested and thus might lead lead to unexpected behavior.
     if sumo_version not in SUMO_SUPPORTED_VERSIONS:
         LOG.warning(f"You are using an untested SUMO version ({sumo_version})! We recommend one of {SUMO_SUPPORTED_VERSIONS}.")
 

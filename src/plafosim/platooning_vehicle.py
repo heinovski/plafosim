@@ -738,7 +738,7 @@ class PlatooningVehicle(Vehicle):
             total_approach_time = round_to_next_base(total_approach_time, self._simulator.step_length)
             # the platoon will be driving while we are waiting
             new_position += total_approach_time * leader.platoon.speed
-            # FIXME the extra distance from above increases the distance to approach, which should also increse the total approching time (by time to drive this extra distance with maximum speed)
+            # FIXME the extra distance from above increases the distance to approach, which should also increase the total approaching time (by time to drive this extra distance with maximum speed)
             # TODO use classical formulas from school physics: when do 2 cars meet and where?
             if new_position >= self._simulator.road_length:
                 LOG.warning(f"{self._vid}'s new position would be outside of the road! Aborting the join maneuver")
@@ -822,12 +822,12 @@ class PlatooningVehicle(Vehicle):
             # MAKE SPACE FOR THE JOINER
             # the idea is to move the vehicle(s) behind the platoon to make room for the joiner
             # we start with the first one (direct follower) and proceed with the next vehicle(s) as long as we need more space
-            # thus, we move only as little vehicles and as little as necessary (until they reach the mingap to the front vehicle)
+            # thus, we move only as little vehicles and as little as necessary (until they reach the minimum gap to the front vehicle)
             # this way, it is more realistic and keeps the correct order of vehicles without producing an incorrect state during the process
             # we might also move the method to the vehicle class or make it even part of the simulator
 
             # how big needs the gap behind the platoon in front of the platoon successor to be
-            # cacc spacing + joiner + successor's min gap
+            # CACC spacing + joiner + successor's min gap
             required_gap = self._cacc_spacing + self.length + platoon_successor.min_gap
             LOG.trace(f"We need a gap of {required_gap}m behind the platoon (vehicle {last.vid}) to teleport vehicle {self._vid}")
             current_gap = last.rear_position - platoon_successor.position

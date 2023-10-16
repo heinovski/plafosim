@@ -522,13 +522,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="Whether to enable the (simulation) progress bar",
     )
 
-    # gui properties
-    g_gui = parser.add_argument_group("gui properties")
+    # GUI properties
+    g_gui = parser.add_argument_group("GUI properties")
     g_help.add_argument(
         "--help-gui",
         action='store_true',
         default=argparse.SUPPRESS,
-        help="show help message for gui properties and exit",
+        help="show help message for GUI properties and exit",
     )
     g_gui.add_argument(
         "--gui",
@@ -546,7 +546,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         type=int,
         dest='gui_track_vehicle',
         default=DEFAULTS['gui_track_vehicle'],
-        help="The id of a vehicle to track in the gui",
+        help="The id of a vehicle to track in the GUI",
     )
     g_gui.add_argument(
         "--sumo-config",
@@ -867,7 +867,7 @@ def create_simulator(**kwargs: dict) -> Simulator:
 
 def main():
 
-    # get argument values (and gui argument group)
+    # get argument values (and GUI argument group)
     args, gui = parse_args()
 
     if args.default:
@@ -882,7 +882,7 @@ def main():
         # load snapshot
         simulator = load_snapshot(snapshot_filename=args.load_snapshot)
 
-        # allow to override the loaded gui parameters
+        # allow to override the loaded GUI parameters
         simulator.__dict__.update(
             {
                 f"_{k}": v
