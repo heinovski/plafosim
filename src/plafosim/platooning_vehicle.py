@@ -24,13 +24,14 @@ from typing import TYPE_CHECKING
 
 from .algorithms.speed_position import SpeedPosition  # noqa 401
 from .gui import change_gui_vehicle_color
-from .mobility import CF_Model
+from .mobility import CF_Model, is_gap_safe
 from .platoon import Platoon
 from .platoon_role import PlatoonRole
 from .statistics import (
     record_platoon_formation,
     record_platoon_trace,
     record_platoon_trip,
+    record_vehicle_change,
     record_vehicle_platoon_maneuvers,
     record_vehicle_platoon_trace,
     record_vehicle_teleport,
@@ -1183,12 +1184,39 @@ class PlatooningVehicle(Vehicle):
                 # TODO this looks strange in the GUI, since we do this before actually leaving the formation
                 self._platoon_role = PlatoonRole.LEAVER
                 self._cf_model = CF_Model.ACC
-                # FIXME Missing method. TODO Implement with new function!
-                sys.exit(f"ERROR: This is not implemented (anymore)! {__file__}:{sys._getframe().f_lineno}")
-                if not self._simulator._change_lane(self, self._lane + 1, "maneuver"):
-                    # could not leave the platoon
+
+                if not self._left_lane_blocked():
+                    # leave current platoon by changing to next lane
+                    self._lane += 1
+
+                    # write the lane change into related statistics
+                    if self._simulator._record_vehicle_changes:
+                        record_vehicle_change(
+                            basename=self._simulator._result_base_filename,
+                            step=self._simulator.step,
+                            vid=self.vid,
+                            position=self.position,
+                            speed=self.speed,
+                            source_lane=self.lane - 1,
+                            target_lane=self.lane,
+                            reason="maneuver",
+                        )
+                    LOG.trace(f"{self.vid} left platoon {self.platoon.platoon_id} by changing to lane {self.lane}.")
+
+                else:
+                    # the left lane is not available for leaving
+                    # revert leaving process
+                    self.in_maneuver = False
+                    leader.in_maneuver = False
+                    self._leaves_arbitrary -= 1
+                    self._leaves_aborted += 1
+                    self._platoon_role = PlatoonRole.FOLLOWER
+                    self._cf_model = CF_Model.CACC
+
                     # TODO this could be just a return in future to let the leaver try again
-                    sys.exit(f"ERROR: Could not move vehicle {self._vid} to the adjacent lane to leave the platoon {self._platoon.platoon_id}!")
+                    #sys.exit(f"ERROR: Could not move vehicle {self._vid} to the adjacent lane to leave platoon {self.platoon.platoon_id}!")
+                    LOG.trace(f"Could not move vehicle {self._vid} to the adjacent lane to leave platoon {self.platoon.platoon_id}!")
+                    return
 
             # move all remaining platoon members further to the front
             front = self._platoon.get_front(self)
@@ -1245,3 +1273,57 @@ class PlatooningVehicle(Vehicle):
         assert self._last_platoon_join_position >= 0
         self._distance_in_platoon += self._position - self._last_platoon_join_position
         self._leaves_successful += 1
+
+    def _left_lane_blocked(self):
+        """
+        Check whether a vehicle can move to the left lane in order to leave its current platoon.
+        """
+        # TODO prime example for use of pandas Dataframe
+
+        # make sure lane is within road bounds
+        if self._simulator.number_of_lanes <= self._lane + 1:
+            LOG.trace(
+                f"ERROR: Could not move vehicle {self.vid} to the adjacent lane to leave the platoon "
+                f"{self.platoon.platoon_id} because the platoon is already driving on the leftmost lane!")
+            return True
+
+        # TODO same logic as in spawning and lane changing -> avoid duplicated code
+
+        # find closest vehicle on left lane (forwards)
+        closest_front = min(
+            [vehicle for vehicle in self._simulator._vehicles.values() if
+             vehicle.position >= self.position and vehicle.lane == (self.lane + 1)],
+            key=lambda vehicle: vehicle.position,
+            default=None,
+        )
+        # find closest vehicle on left lane (backwards)
+        closest_back = max(
+            [vehicle for vehicle in self._simulator._vehicles.values() if
+             vehicle.position < self.position and vehicle.lane == (self.lane + 1)],
+            key=lambda vehicle: vehicle.position,
+            default=None,
+        )
+        front_gap_safe = not closest_front or is_gap_safe(
+            front_position=closest_front._position,
+            front_speed=closest_front.speed,
+            front_max_deceleration=closest_front.max_deceleration,
+            front_length=closest_front.length,
+            back_position=self.position,
+            back_speed=self.speed,
+            back_max_acceleration=self.max_acceleration,
+            back_min_gap=self.min_gap,
+            step_length=self._simulator.step_length
+        )
+        back_gap_safe = not closest_back or is_gap_safe(
+            front_position=self.position,
+            front_speed=self.speed,
+            front_max_deceleration=self.max_deceleration,
+            front_length=self.length,
+            back_position=closest_back.position,
+            back_speed=closest_back.speed,
+            back_max_acceleration=closest_back.max_acceleration,
+            back_min_gap=closest_back.min_gap,
+            step_length=self._simulator.step_length
+        )
+
+        return not (front_gap_safe & back_gap_safe)
