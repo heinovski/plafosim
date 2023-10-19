@@ -1015,6 +1015,7 @@ class PlatooningVehicle(Vehicle):
             else:
                 # we need to decelerate to approach the platoon
                 # the time we need to decelerate to target speed (given a linear deceleration)
+                # TODO do not use maximum deceleration for maneuver
                 time_deceleration = (self._speed - target_speed) / self.max_deceleration
                 # the distance driven while decelerating to the target speed (given a linear acceleration
                 distance_deceleration = (self._speed + target_speed) / 2 * time_deceleration
