@@ -1148,6 +1148,14 @@ class PlatooningVehicle(Vehicle):
                 new_leader = self._platoon.formation[1]
                 new_leader._platoon_role = PlatoonRole.LEADER
                 new_leader._cf_model = CF_Model.ACC
+                # platoon is changed to current leader_id
+                new_leader._platoon._platoon_id = new_leader.vid
+
+                # reset color of all remaining vehicle
+                if self._simulator._gui and self._simulator.step >= self._simulator._gui_start:
+                    for vehicle in self.platoon.formation[1:]:
+                        change_gui_vehicle_color(vehicle.vid, new_leader._color)
+
                 LOG.debug(f"{new_leader.vid} became leader of platoon {new_leader.platoon.platoon_id}")
         elif self is self._platoon.last:
             # leave at back
