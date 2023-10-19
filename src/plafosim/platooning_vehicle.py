@@ -691,7 +691,7 @@ class PlatooningVehicle(Vehicle):
             return
 
         if self.max_speed <= leader.platoon.speed:
-            # we will never be able to approach the platoon
+            # we will never be able to approach the platoon or maintain the platoon speed
             LOG.warning(f"{self._vid}'s maximum speed is too low such that it can never reach the platoon! Aborting the join maneuver!")
             self.in_maneuver = False
             self._platoon_role = PlatoonRole.NONE
