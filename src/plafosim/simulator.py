@@ -1162,8 +1162,8 @@ class Simulator:
         desired_speed: float,
         depart_lane: int,
         depart_speed: float,
-        depart_time: int,
-        depart_delay: int = 0,
+        depart_time: float,
+        depart_delay: float = 0,
         communication_range: int = DEFAULTS['communication_range'],
         pre_filled: bool = False,
     ):
@@ -1188,9 +1188,9 @@ class Simulator:
             The departure lane of the vehicle
         depart_speed : float
             The departure speed of the vehicle
-        depart_time : int
-            The departure time of the vehicle
-        depart_delay : int
+        depart_time : float
+            The actual departure time of the vehicle
+        depart_delay : float
             The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle
@@ -2056,8 +2056,8 @@ def compute_vehicle_spawns(
         'position': float,
         'depart_lane': int,
         'lane': int,
-        'depart_time': int,
-        'depart_delay': int,
+        'depart_time': float,
+        'depart_delay': float,
         'arrival_position': float,
         'schedule_time': int,
         'min_trip_length': int,

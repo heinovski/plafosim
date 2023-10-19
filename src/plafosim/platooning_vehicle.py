@@ -61,8 +61,8 @@ class PlatooningVehicle(Vehicle):
             desired_speed: float,
             depart_lane: int,
             depart_speed: float,
-            depart_time: int,
-            depart_delay: int = 0,
+            depart_time: float,
+            depart_delay: float = 0,
             communication_range: int = 1000,  # TODO use defaults
             acc_headway_time: float = 1.0,  # TODO use defaults
             cacc_spacing: float = 5.0,  # TODO use defaults
@@ -93,9 +93,9 @@ class PlatooningVehicle(Vehicle):
             The departure lane of the vehicle
         depart_speed : float
             The departure speed of the vehicle
-        depart_time : int
-            The departure time of the vehicle
-        depart_delay : int
+        depart_time : float
+            The actual departure time of the vehicle
+        depart_delay : float
             The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle

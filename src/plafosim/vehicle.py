@@ -64,8 +64,8 @@ class Vehicle:
             desired_speed: float,
             depart_lane: int,
             depart_speed: float,
-            depart_time: int,
-            depart_delay: int,
+            depart_time: float,
+            depart_delay: float,
             communication_range: int,
             pre_filled: bool = False,
     ):
@@ -90,9 +90,9 @@ class Vehicle:
             The departure lane of the vehicle
         depart_speed : float
             The departure speed of the vehicle
-        depart_time : int
-            The departure time of the vehicle
-        depart_delay : int
+        depart_time : float
+            The actual departure time of the vehicle
+        depart_delay : float
             The time the vehicle had to wait before starting its trip
         communication_range : int
             The maximum communication range of the vehicle
@@ -282,7 +282,7 @@ class Vehicle:
         return self._depart_speed
 
     @property
-    def depart_time(self) -> int:
+    def depart_time(self) -> float:
         """
         Return the departure time of the vehicle.
         """
