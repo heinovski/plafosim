@@ -384,13 +384,13 @@ class Vehicle:
         if self._simulator._actions:
             self._action(step)
 
-    def _action(self, step: int):
+    def _action(self, step: float):
         """
         Triggers specific actions of a vehicle.
 
         Parameters
         ----------
-        step : int
+        step : float
             The current simulation step
         """
 

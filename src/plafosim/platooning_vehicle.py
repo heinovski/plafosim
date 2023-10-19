@@ -468,13 +468,13 @@ class PlatooningVehicle(Vehicle):
                 candidates_filtered_avg=candidates_filtered_avg,
             )
 
-    def _action(self, step: int):
+    def _action(self, step: float):
         """
         Triggers specific actions of a PlatooningVehicle.
 
         Parameters
         ----------
-        step : int
+        step : float
             The current simulation step
         """
 
