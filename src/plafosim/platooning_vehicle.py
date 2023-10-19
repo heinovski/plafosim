@@ -536,7 +536,7 @@ class PlatooningVehicle(Vehicle):
                 record_platoon_trace(
                     basename=self._simulator._result_base_filename,
                     step=self._simulator.step,
-                    vehicle=self
+                    vehicle=self,
                 )
 
         if self._simulator._record_vehicle_platoon_traces:
@@ -544,7 +544,7 @@ class PlatooningVehicle(Vehicle):
             record_vehicle_platoon_trace(
                 basename=self._simulator._result_base_filename,
                 step=self._simulator.step,
-                vehicle=self
+                vehicle=self,
             )
 
     # TODO rework to only include "neighbors" and move platoon extraction to formation algorithm
@@ -803,7 +803,10 @@ class PlatooningVehicle(Vehicle):
         assert self._in_maneuver
         assert self._platoon_role is PlatoonRole.JOINER
         assert leader.in_maneuver
-        assert (leader.platoon_role is PlatoonRole.LEADER or leader.platoon_role is PlatoonRole.NONE)
+        assert (
+            leader.platoon_role is PlatoonRole.LEADER
+            or leader.platoon_role is PlatoonRole.NONE
+        )
 
         # re-calculate new position
         new_position = last.rear_position - self._cacc_spacing
@@ -1296,7 +1299,8 @@ class PlatooningVehicle(Vehicle):
         if self._simulator.number_of_lanes <= self._lane + 1:
             LOG.trace(
                 f"ERROR: Could not move vehicle {self.vid} to the adjacent lane to leave the platoon "
-                f"{self.platoon.platoon_id} because the platoon is already driving on the leftmost lane!")
+                f"{self.platoon.platoon_id} because the platoon is already driving on the leftmost lane!"
+            )
             return True
 
         # TODO same logic as in spawning and lane changing -> avoid duplicated code
@@ -1324,7 +1328,7 @@ class PlatooningVehicle(Vehicle):
             back_speed=self.speed,
             back_max_acceleration=self.max_acceleration,
             back_min_gap=self.min_gap,
-            step_length=self._simulator.step_length
+            step_length=self._simulator.step_length,
         )
         back_gap_safe = not closest_back or is_gap_safe(
             front_position=self.position,
@@ -1335,7 +1339,7 @@ class PlatooningVehicle(Vehicle):
             back_speed=closest_back.speed,
             back_max_acceleration=closest_back.max_acceleration,
             back_min_gap=closest_back.min_gap,
-            step_length=self._simulator.step_length
+            step_length=self._simulator.step_length,
         )
 
         return not (front_gap_safe & back_gap_safe)

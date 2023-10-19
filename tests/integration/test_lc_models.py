@@ -93,7 +93,7 @@ def test_lc_models(penetration_rate: float, headway_time: float):
         back_speed=s._vehicles[1].speed,
         back_max_acceleration=vtype.max_acceleration,
         back_min_gap=vtype.min_gap,
-        step_length=s._step_length
+        step_length=s._step_length,
     )
 
     # run the simulation to record the trace file
@@ -129,20 +129,14 @@ def test_lc_models(penetration_rate: float, headway_time: float):
         traces.query("id == 1").lane.diff() == -1
     ).sum() == 1, "vehicle 1 lane-changes left and right exaclty once each"
     # vehicle 1 first changes left and then right
-    change_left_step = (
-        traces.query("id == 1").set_index("step").lane.diff().idxmax()
-    )
-    change_right_step = (
-        traces.query("id == 1").set_index("step").lane.diff().idxmin()
-    )
+    change_left_step = traces.query("id == 1").set_index("step").lane.diff().idxmax()
+    change_right_step = traces.query("id == 1").set_index("step").lane.diff().idxmin()
     assert change_left_step < change_right_step
 
     v_front = traces_indexed.loc[change_right_step, 1]
     v_back = traces_indexed.loc[change_right_step, 0]
     # after changing left, vehicle 1 is never again longer blocked
-    assert not traces.query(
-        f"id == 1 and step > {change_left_step}"
-    ).blocked.any()
+    assert not traces.query(f"id == 1 and step > {change_left_step}").blocked.any()
     # when changing right, vehicle 1 is faster than vehicle 0
     assert v_front.speed > v_back.speed
     # when changing right, vehicle 1 is in front of vehicle 0
@@ -159,15 +153,13 @@ def test_lc_models(penetration_rate: float, headway_time: float):
         back_speed=s._vehicles[0].speed,
         back_max_acceleration=vtype.max_acceleration,
         back_min_gap=vtype.min_gap,
-        step_length=s._step_length
+        step_length=s._step_length,
     )
 
 
 @pytest.mark.parametrize("penetration_rate", [0, 1], ids=["HUMAN", "ACC"])
 @pytest.mark.parametrize("headway_time", HEADWAY_TIME)
-def test_lc_models_with_interferer(
-    penetration_rate: float, headway_time: float
-):
+def test_lc_models_with_interferer(penetration_rate: float, headway_time: float):
     """
     Two vehicles (a slow and a fast one) that drive on two lanes and the faster overtakes.
     But there is a third vehicle also overtaking the slowest one, which is slower than the fastest.
@@ -245,7 +237,7 @@ def test_lc_models_with_interferer(
         back_speed=s._vehicles[1].speed,
         back_max_acceleration=vtype.max_acceleration,
         back_min_gap=vtype.min_gap,
-        step_length=s._step_length
+        step_length=s._step_length,
     )
 
     # run the simulation to record the trace file
@@ -287,12 +279,8 @@ def test_lc_models_with_interferer(
         traces.query("id == 2").lane.diff().dropna() != 0
     ).sum() == 1, "vehicle 2 also only lane-changes once"
     # vehicle 1 first changes left and then right
-    change_left_step = (
-        traces.query("id == 1").set_index("step").lane.diff().idxmax()
-    )
-    change_right_step = (
-        traces.query("id == 1").set_index("step").lane.diff().idxmin()
-    )
+    change_left_step = traces.query("id == 1").set_index("step").lane.diff().idxmax()
+    change_right_step = traces.query("id == 1").set_index("step").lane.diff().idxmin()
     assert change_left_step < change_right_step
 
     # vehicle 1 only changes to the left lane once there is enough space
@@ -385,9 +373,7 @@ def test_lc_model_CACC(size: int, cacc_spacing: float):
     assert (traces.query(f"id == {size}").lane == 0).all()
     # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
-    assert (
-        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
-    )
+    assert followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     # the platoon maintains its order through the whole simulation
     assert (
         (
@@ -517,9 +503,7 @@ def test_lc_model_CACC_with_interferer(size: int, cacc_spacing: float):
     assert (predecessor.lane == 0).all()
     # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
-    assert (
-        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
-    )
+    assert followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     # the platoon maintains its order through the whole simulation
     assert (
         (
@@ -667,9 +651,7 @@ def test_lc_model_CACC_with_interferer_leader(size: int, cacc_spacing: float):
     assert (predecessor.lane == 0).all()
     # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
-    assert (
-        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
-    )
+    assert followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     # the platoon maintains its order through the whole simulation
     assert (
         (
@@ -817,9 +799,7 @@ def test_lc_model_CACC_with_interferer_members(size: int, cacc_spacing: float):
     assert (predecessor.lane == 0).all()
     # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
-    assert (
-        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
-    )
+    assert followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     # the platoon maintains its order through the whole simulation
     assert (
         (
@@ -967,9 +947,7 @@ def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
     assert (predecessor.lane == 0).all()
     # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
-    assert (
-        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
-    )
+    assert followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     # the platoon maintains its order through the whole simulation
     assert (
         (
@@ -1024,7 +1002,7 @@ def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
         interferer.loc[same_lane_steps],
         left_index=True,
         right_index=True,
-        suffixes=['_leader', '_interferer'],
+        suffixes=["_leader", "_interferer"],
     )
 
     # the platoon only changes to the left lane once there is enough space
@@ -1041,11 +1019,15 @@ def test_lc_model_CACC_conflict_leader(size: int, cacc_spacing: float):
             back_min_gap=vtype.min_gap,
             step_length=s.step_length,
         )
-    assert df_same_lane.apply(myfunc, axis=1, raw=False, result_type='reduce').all()
+
+    assert df_same_lane.apply(myfunc, axis=1, raw=False, result_type="reduce").all()
     # the platoon changes back to the right lane before vehicle 2 did that
     assert change_right_step < interferer.lane.diff().idxmin()
     # platoon does not overtake the interferer
-    assert (platoon_end.query(f'step >= {change_right_step}').position < interferer.query(f'step >= {change_right_step}').position).all()
+    assert (
+        platoon_end.query(f"step >= {change_right_step}").position
+        < interferer.query(f"step >= {change_right_step}").position
+    ).all()
 
 
 @pytest.mark.parametrize("size", [10, 15, 20])
@@ -1128,9 +1110,7 @@ def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
     assert (predecessor.lane == 0).all()
     # all platoon followers have the same lane and speed as the leader
     assert followers.groupby("id").lane.apply(lambda x: x == leader.lane).all()
-    assert (
-        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
-    )
+    assert followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     # the platoon maintains its order through the whole simulation
     assert (
         (
@@ -1185,7 +1165,7 @@ def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
         interferer.loc[same_lane_steps],
         left_index=True,
         right_index=True,
-        suffixes=['_leader', '_interferer'],
+        suffixes=["_leader", "_interferer"],
     )
 
     # the platoon only changes to the left lane once there is enough space
@@ -1202,8 +1182,12 @@ def test_lc_model_CACC_conflict_members(size: int, cacc_spacing: float):
             back_min_gap=vtype.min_gap,
             step_length=s.step_length,
         )
-    assert df_same_lane.apply(myfunc, axis=1, raw=False, result_type='reduce').all()
+
+    assert df_same_lane.apply(myfunc, axis=1, raw=False, result_type="reduce").all()
     # the platoon changes back to the right lane before vehicle 2 did that
     assert change_right_step < interferer.lane.diff().idxmin()
     # platoon does not overtake the interferer
-    assert (platoon_end.query(f'step >= {change_right_step}').position < interferer.query(f'step >= {change_right_step}').position).all()
+    assert (
+        platoon_end.query(f"step >= {change_right_step}").position
+        < interferer.query(f"step >= {change_right_step}").position
+    ).all()

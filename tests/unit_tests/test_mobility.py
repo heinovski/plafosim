@@ -63,12 +63,9 @@ def test_found_predecessors_are_valid(random_vdf):
     for lane_nr in range(num_lanes):
         # predecessors on each potential lanes are in front of test vehicles
         assert (
-            x_vdf.position.loc[predecessors[lane_nr]].values
-            >= test_vdf.position
+            x_vdf.position.loc[predecessors[lane_nr]].values >= test_vdf.position
         ).all()
 
         # each vehicle is actually on the lane that is can be a predecessor for
         real_predecessors = predecessors[lane_nr][predecessors[lane_nr] > 0]
-        assert (
-            test_vdf.set_index("vid").loc[real_predecessors].lane == lane_nr
-        ).all()
+        assert (test_vdf.set_index("vid").loc[real_predecessors].lane == lane_nr).all()

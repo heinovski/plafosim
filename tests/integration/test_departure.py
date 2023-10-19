@@ -125,8 +125,13 @@ def test_depart_method_interval_flow(interval: int, step_length: int = 1):
     assert not traces.empty
 
     # calculate depature of all vehicles
-    spawn_step = traces.groupby('id')['step'].min()
-    departure = traces.set_index(['id', 'step']).loc[list(zip(spawn_step.index, spawn_step.values))].reset_index().sort_values('id')
+    spawn_step = traces.groupby("id")["step"].min()
+    departure = (
+        traces.set_index(["id", "step"])
+        .loc[list(zip(spawn_step.index, spawn_step.values))]
+        .reset_index()
+        .sort_values("id")
+    )
 
     # correct number of vehicles
     roughly = s._max_step / interval
@@ -230,8 +235,13 @@ def test_depart_method_rate_flow(rate: int, step_length: int = 1):
     assert not traces.empty
 
     # calculate depature of all vehicles
-    spawn_step = traces.groupby('id')['step'].min()
-    departure = traces.set_index(['id', 'step']).loc[list(zip(spawn_step.index, spawn_step.values))].reset_index().sort_values('id')
+    spawn_step = traces.groupby("id")["step"].min()
+    departure = (
+        traces.set_index(["id", "step"])
+        .loc[list(zip(spawn_step.index, spawn_step.values))]
+        .reset_index()
+        .sort_values("id")
+    )
 
     # correct number of vehicles
     assert departure.id.count() == int(s._max_step / 3600 * rate)

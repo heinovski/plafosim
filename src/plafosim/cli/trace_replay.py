@@ -93,25 +93,25 @@ def parse_args() -> argparse.Namespace:
         '--gui-delay',
         type=int,
         default=0,
-        help="The delay used in every simulation step to visualize the current network state in ms"
+        help="The delay used in every simulation step to visualize the current network state in ms",
     )
     parser.add_argument(
         '--track-vehicle',
         type=int,
         default=-1,
-        help="The id of a vehicle to track in the GUI"
+        help="The id of a vehicle to track in the GUI",
     )
     parser.add_argument(
         '--start',
         type=float,
         default=0,
-        help="The first step to re-play from the trace file"
+        help="The first step to re-play from the trace file",
     )
     parser.add_argument(
         '--end',
         type=float,
         default=-1,
-        help="The last step to re-play from the trace file. -1 is no limit"
+        help="The last step to re-play from the trace file. -1 is no limit",
     )
     parser.add_argument(
         '--screenshot-file',

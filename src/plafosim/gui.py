@@ -34,9 +34,9 @@ def check_and_prepare_gui():
     Check and prepare GUI environment.
     """
 
-    if 'SUMO_HOME' not in os.environ:
+    if "SUMO_HOME" not in os.environ:
         sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
-    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    tools = os.path.join(os.environ["SUMO_HOME"], "tools")
     sys.path.append(tools)
 
     # check TraCI API version
@@ -58,17 +58,23 @@ def start_gui(config: str, step_length: float, play: bool = True):
         The name of the configuration file
     """
 
-    binary = os.path.join(os.environ['SUMO_HOME'], 'bin/sumo-gui')
+    binary = os.path.join(os.environ["SUMO_HOME"], "bin/sumo-gui")
     command = [
         binary,
-        '-Q',
-        '-c', config,
-        '--step-length', str(step_length),
-        '--collision.mingap-factor', '0',
-        '--collision.action', 'none',
-        '--start', str(play),
+        "-Q",
+        "-c",
+        config,
+        "--step-length",
+        str(step_length),
+        "--collision.mingap-factor",
+        "0",
+        "--collision.action",
+        "none",
+        "--start",
+        str(play),
     ]
     import traci
+
     traci.start(command)
 
     # check TraCI API and SUMO version
@@ -83,7 +89,7 @@ def start_gui(config: str, step_length: float, play: bool = True):
     assert api_version == traci.constants.TRACI_VERSION
 
     # remove "SUMO" prefix
-    sumo_version = sumo_version.split(' ')[1]
+    sumo_version = sumo_version.split(" ")[1]
     assert sumo_version
 
     # NOTE: we allow other SUMO versions with the correct TraCI API_version version (e.g., development versions).
@@ -102,6 +108,7 @@ def set_gui_window(road_length: int):
         The length of the road in m
     """
     import traci
+
     traci.gui.setBoundary(
         traci.gui.DEFAULT_VIEW,
         xmin=0,
@@ -113,7 +120,14 @@ def set_gui_window(road_length: int):
     # traci.gui.setZoom(traci.gui.DEFAULT_VIEW, 1000)
 
 
-def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: tuple = (0, 255, 0), track: bool = False):
+def add_gui_vehicle(
+    vid: int,
+    position: float,
+    lane: int,
+    speed: float,
+    color: tuple = (0, 255, 0),
+    track: bool = False,
+):
     """
     Add a vehicle to the GUI.
 
@@ -135,11 +149,12 @@ def add_gui_vehicle(vid: int, position: float, lane: int, speed: float, color: t
 
     LOG.trace(f"Adding vehicle {vid} at {position},{lane} with {speed},{color}")
     import traci
+
     if vid not in traci.vehicle.getIDList():
         traci.vehicle.add(
             vehID=str(vid),
-            routeID='route',
-            typeID='vehicle',
+            routeID="route",
+            typeID="vehicle",
             departLane=lane,
             departPos=position,
             departSpeed=speed,
@@ -170,9 +185,10 @@ def move_gui_vehicle(vid: int, position: float, lane: int, speed: float):
     """
 
     import traci
+
     LOG.trace(f"Moving vehicle {vid} to {position},{lane} with {speed}")
     traci.vehicle.setSpeed(vehID=str(vid), speed=speed)
-    traci.vehicle.moveTo(vehID=str(vid), laneID=f'edge_0_0_{lane}', pos=position)
+    traci.vehicle.moveTo(vehID=str(vid), laneID=f"edge_0_0_{lane}", pos=position)
 
 
 def gui_step(target_step: int, screenshot_filename: str = None):
@@ -188,6 +204,7 @@ def gui_step(target_step: int, screenshot_filename: str = None):
     """
 
     import traci
+
     if screenshot_filename:
         file_name, file_extension = os.path.splitext(screenshot_filename)
         traci.gui.screenshot(
@@ -213,6 +230,7 @@ def change_gui_vehicle_color(vid: int, color: tuple):
     """
 
     import traci
+
     LOG.trace(f"Changing color of vehicle {vid} to {color}")
     traci.vehicle.setColor(str(vid), color)
 
@@ -228,6 +246,7 @@ def remove_gui_vehicle(vid: int):
     """
 
     import traci
+
     LOG.trace(f"Removing vehicle {vid}")
     traci.vehicle.remove(str(vid), 2)
 
@@ -243,6 +262,7 @@ def prune_vehicles(keep_vids: list):
     """
 
     import traci
+
     for vid in set(map(int, traci.vehicle.getIDList())) - set(keep_vids):
         remove_gui_vehicle(vid)
 
@@ -253,6 +273,7 @@ def close_gui():
     """
 
     import traci
+
     traci.close(False)
 
 
@@ -276,13 +297,19 @@ def draw_ramps(road_length: int, interval: int, labels: bool):
     height = 150
 
     import traci
+
     for x in range(0, road_length + 1, interval):
-        traci.polygon.add(f"ramp-{x}", [
-            (x - width / 2, y),  # top left
-            (x + width / 2, y),  # top right
-            (x + width / 2, y - height),  # bottom right
-            (x - width / 2, y - height)   # bottom left
-        ], color, fill=True)
+        traci.polygon.add(
+            f"ramp-{x}",
+            [
+                (x - width / 2, y),  # top left
+                (x + width / 2, y),  # top right
+                (x + width / 2, y - height),  # bottom right
+                (x - width / 2, y - height),  # bottom left
+            ],
+            color,
+            fill=True,
+        )
         if labels:
             traci.poi.add(
                 f"Ramp at {x}m",
@@ -310,12 +337,19 @@ def draw_road_end(road_length: int, label: bool):
     color = (255, 0, 0)
 
     import traci
-    traci.polygon.add("road-end", [
-        (road_length - width / 2, y_bottom),  # bottom left
-        (road_length + width / 2, y_bottom),  # bottom right
-        (road_length + width / 2, y_top),  # top right
-        (road_length - width / 2, y_top)  # top left
-    ], color, fill=True, layer=3)
+
+    traci.polygon.add(
+        "road-end",
+        [
+            (road_length - width / 2, y_bottom),  # bottom left
+            (road_length + width / 2, y_bottom),  # bottom right
+            (road_length + width / 2, y_top),  # top right
+            (road_length - width / 2, y_top),  # top left
+        ],
+        color,
+        fill=True,
+        layer=3,
+    )
     if label:
         traci.poi.add(
             "Road End",
@@ -342,20 +376,27 @@ def draw_infrastructures(infrastructures: list, labels: bool):
     color = (0, 0, 255)
 
     import traci
+
     for infrastructure in infrastructures:
         from .infrastructure import Infrastructure
+
         assert isinstance(infrastructure, Infrastructure)
         iid = str(infrastructure.iid)
         position = infrastructure.position
 
         # add infrastructure
         if iid not in traci.polygon.getIDList():
-            traci.polygon.add(f"rsu-{iid}", [
-                (position - width / 2, y),  # bottom left
-                (position + width / 2, y),  # bottom right
-                (position + width / 2, y + width),  # top right
-                (position - width / 2, y + width)  # top left
-            ], color, fill=True)
+            traci.polygon.add(
+                f"rsu-{iid}",
+                [
+                    (position - width / 2, y),  # bottom left
+                    (position + width / 2, y),  # bottom right
+                    (position + width / 2, y + width),  # top right
+                    (position - width / 2, y + width),  # top left
+                ],
+                color,
+                fill=True,
+            )
             if labels:
                 traci.poi.add(
                     f"RSU {iid}",

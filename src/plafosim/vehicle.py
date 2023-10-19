@@ -130,12 +130,12 @@ class Vehicle:
         # statistics
         self._time_loss = 0  # SUMO: "The time lost due to driving below the ideal speed."
         self._emissions = {
-            'CO': 0,  # the total carbon monoxide (CO) emission in mg
-            'CO2': 0,  # the total carbon dioxide (CO2) emission in mg
-            'HC': 0,  # the total hydro carbon (HC) emission in mg
-            'NOx': 0,  # the total nitrogen oxides (NO and NO2) emission in mg
-            'PMx': 0,  # the total fine-particle (PMx) emission in mg
-            'fuel': 0,  # the total fuel consumption emission in ml
+            "CO": 0,  # the total carbon monoxide (CO) emission in mg
+            "CO2": 0,  # the total carbon dioxide (CO2) emission in mg
+            "HC": 0,  # the total hydro carbon (HC) emission in mg
+            "NOx": 0,  # the total nitrogen oxides (NO and NO2) emission in mg
+            "PMx": 0,  # the total fine-particle (PMx) emission in mg
+            "fuel": 0,  # the total fuel consumption emission in ml
         }
 
         # gui properties
@@ -436,7 +436,11 @@ class Vehicle:
 
         if self._simulator._record_vehicle_traces:
             # mobility/trip statistics
-            record_vehicle_trace(basename=self._simulator._result_base_filename, step=self._simulator.step, vehicle=self)
+            record_vehicle_trace(
+                basename=self._simulator._result_base_filename,
+                step=self._simulator.step,
+                vehicle=self,
+            )
 
         self._calculate_emissions()
 
@@ -467,17 +471,20 @@ class Vehicle:
         ec = self._vehicle_type.emission_class
         for variable in self._emissions.keys():
             scale = 3.6
-            if variable == 'fuel':
+            if variable == "fuel":
                 if ec.is_diesel:
                     scale *= 836.0
                 else:
                     scale *= 742.0
-            value = (self._calculate_emission(
-                self._acceleration,
-                self._speed,
-                ec.emission_factors[variable],
-                scale
-            ) * self._simulator.step_length)
+            value = (
+                self._calculate_emission(
+                    self._acceleration,
+                    self._speed,
+                    ec.emission_factors[variable],
+                    scale,
+                )
+                * self._simulator.step_length
+            )
             self._emissions[variable] += value
 
             if self._simulator._record_emission_traces:
@@ -504,7 +511,18 @@ class Vehicle:
 
         if a < 0:
             return 0
-        return max((f[0] + f[1] * a * v + f[2] * a * a * v + f[3] * v + f[4] * v * v + f[5] * v * v * v) / scale, 0.0)
+        return max(
+            (
+                f[0]
+                + f[1] * a * v
+                + f[2] * a * a * v
+                + f[3] * v
+                + f[4] * v * v
+                + f[5] * v * v * v
+            )
+            / scale,
+            0.0,
+        )
 
     def finish(self):
         """
@@ -543,9 +561,8 @@ class Vehicle:
             # this should only be the case for pre-filled vehicles or if started as platoon
             # TODO use pre_filled flag
             assert (
-                (self._simulator._record_prefilled and self._depart_time == -1)
-                or self._simulator._start_as_platoon
-            )
+                self._simulator._record_prefilled and self._depart_time == -1
+            ) or self._simulator._start_as_platoon
 
         assert travel_time_ratio >= 0
         assert average_driving_speed >= 0

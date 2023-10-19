@@ -27,13 +27,13 @@ from enum import Enum
 # PMx - the total fine-particle (PMx) emission in mg
 # fuel - the total fuel consumption emission in ml
 EMISSION_FACTORS = {
-    'PC_G_EU4': {
-        'CO': [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
-        'CO2': [9449, 938.4, 0.0, -467.1, 28.26, 0.0],
-        'HC': [2.923, 0.1113, 0.0, -0.3476, 0.01032, 0.0],
-        'NOx': [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
-        'PMx': [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
-        'fuel': [3014, 299.3, 0.0, -149, 9.014, 0.0],
+    "PC_G_EU4": {
+        "CO": [593.2, 19.32, 0.0, -73.25, 2.086, 0.0],
+        "CO2": [9449, 938.4, 0.0, -467.1, 28.26, 0.0],
+        "HC": [2.923, 0.1113, 0.0, -0.3476, 0.01032, 0.0],
+        "NOx": [4.336, 0.4428, 0.0, -0.3204, 0.01371, 0.0],
+        "PMx": [0.2375, 0.0245, 0.0, -0.03251, 0.001325, 0.0],
+        "fuel": [3014, 299.3, 0.0, -149, 9.014, 0.0],
     }
 }
 
@@ -59,6 +59,6 @@ class EmissionClass(Enum):
         Return whether an emission class is for a diesel engine.
         """
 
-        split = self.name.split('_')
+        split = self.name.split("_")
         assert len(split) == 3
-        return split[1] == 'D'
+        return split[1] == "D"

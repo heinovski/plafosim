@@ -45,20 +45,20 @@ def test_single_ramp_empty_road():
 
     vdf = pd.DataFrame(
         {
-            'vid': [],
-            'speed': [],
-            'position': [],
-            'lane': [],
+            "vid": [],
+            "speed": [],
+            "position": [],
+            "lane": [],
         }
     )
     new_vehicles = [
         {
-            'vid': vid,
-            'desired_speed': desired_speed,
-            'depart_speed': depart_speed,
-            'schedule_time': schedule_time,
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": vid,
+            "desired_speed": desired_speed,
+            "depart_speed": depart_speed,
+            "schedule_time": schedule_time,
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         }
     ]
 
@@ -111,22 +111,22 @@ def test_single_ramp_existing_vehicle():
 
     vdf = pd.DataFrame(
         {
-            'vid': [0],
-            'speed': [36],
-            'position': [50],
-            'lane': [0],
-            'length': vtype.length,
-            'max_deceleration': vtype.max_deceleration,
+            "vid": [0],
+            "speed": [36],
+            "position": [50],
+            "lane": [0],
+            "length": vtype.length,
+            "max_deceleration": vtype.max_deceleration,
         }
     )
     new_vehicles = [
         {
-            'vid': vid,
-            'desired_speed': desired_speed,
-            'depart_speed': depart_speed,
-            'schedule_time': schedule_time,
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": vid,
+            "desired_speed": desired_speed,
+            "depart_speed": depart_speed,
+            "schedule_time": schedule_time,
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         }
     ]
 
@@ -178,22 +178,22 @@ def test_single_ramp_blocked():
 
     vdf = pd.DataFrame(
         {
-            'vid': [0],
-            'speed': [36],
-            'position': [10],
-            'lane': [0],
-            'length': vtype.length,
-            'max_deceleration': vtype.max_deceleration,
+            "vid": [0],
+            "speed": [36],
+            "position": [10],
+            "lane": [0],
+            "length": vtype.length,
+            "max_deceleration": vtype.max_deceleration,
         }
     )
     new_vehicles = [
         {
-            'vid': vid,
-            'desired_speed': desired_speed,
-            'depart_speed': depart_speed,
-            'schedule_time': schedule_time,
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": vid,
+            "desired_speed": desired_speed,
+            "depart_speed": depart_speed,
+            "schedule_time": schedule_time,
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         }
     ]
 
@@ -212,7 +212,7 @@ def test_single_ramp_blocked():
     # vehicle could not be inserted
     assert spawned_vehicles_df.empty
     assert len(not_spawned_vehicles) == 1
-    assert not_spawned_vehicles[0]['vid'] == vid
+    assert not_spawned_vehicles[0]["vid"] == vid
 
 
 def test_single_ramp_blocked_exact():
@@ -235,22 +235,22 @@ def test_single_ramp_blocked_exact():
 
     vdf = pd.DataFrame(
         {
-            'vid': [0],
-            'speed': [36],
-            'position': [vtype.length],
-            'lane': [0],
-            'length': vtype.length,
-            'max_deceleration': vtype.max_deceleration,
+            "vid": [0],
+            "speed": [36],
+            "position": [vtype.length],
+            "lane": [0],
+            "length": vtype.length,
+            "max_deceleration": vtype.max_deceleration,
         }
     )
     new_vehicles = [
         {
-            'vid': vid,
-            'desired_speed': desired_speed,
-            'depart_speed': depart_speed,
-            'schedule_time': schedule_time,
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": vid,
+            "desired_speed": desired_speed,
+            "depart_speed": depart_speed,
+            "schedule_time": schedule_time,
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         }
     ]
 
@@ -269,7 +269,7 @@ def test_single_ramp_blocked_exact():
     # vehicle could not be inserted
     assert spawned_vehicles_df.empty
     assert len(not_spawned_vehicles) == 1
-    assert not_spawned_vehicles[0]['vid'] == vid
+    assert not_spawned_vehicles[0]["vid"] == vid
 
 
 def test_first_ramp_blocked():
@@ -292,26 +292,26 @@ def test_first_ramp_blocked():
 
     vdf = pd.DataFrame(
         {
-            'vid': [0],
-            'speed': [36],
-            'position': [10],
-            'lane': [0],
-            'length': vtype.length,
-            'max_acceleration': vtype.max_acceleration,
-            'max_deceleration': vtype.max_deceleration,
-            'min_gap': vtype.min_gap,
-            'desired_headway_time': vtype.headway_time,
+            "vid": [0],
+            "speed": [36],
+            "position": [10],
+            "lane": [0],
+            "length": vtype.length,
+            "max_acceleration": vtype.max_acceleration,
+            "max_deceleration": vtype.max_deceleration,
+            "min_gap": vtype.min_gap,
+            "desired_headway_time": vtype.headway_time,
         }
     )
     new_vehicles = [
         {
-            'vid': vid,
-            'desired_speed': desired_speed,
-            'depart_speed': depart_speed,
-            'schedule_time': schedule_time,
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
-            'max_acceleration': vtype.max_acceleration,
+            "vid": vid,
+            "desired_speed": desired_speed,
+            "depart_speed": depart_speed,
+            "schedule_time": schedule_time,
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
+            "max_acceleration": vtype.max_acceleration,
         }
     ]
 
@@ -365,28 +365,28 @@ def test_multiple_single_ramp_empty_road():
 
     vdf = pd.DataFrame(
         {
-            'vid': [],
-            'speed': [],
-            'position': [],
-            'lane': [],
+            "vid": [],
+            "speed": [],
+            "position": [],
+            "lane": [],
         }
     )
     new_vehicles = [
         {
-            'vid': ids[0],
-            'desired_speed': desired_speeds[0],
-            'depart_speed': depart_speeds[0],
-            'schedule_time': schedule_times[0],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": ids[0],
+            "desired_speed": desired_speeds[0],
+            "depart_speed": depart_speeds[0],
+            "schedule_time": schedule_times[0],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         },
         {
-            'vid': ids[1],
-            'desired_speed': desired_speeds[1],
-            'depart_speed': depart_speeds[1],
-            'schedule_time': schedule_times[1],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": ids[1],
+            "desired_speed": desired_speeds[1],
+            "depart_speed": depart_speeds[1],
+            "schedule_time": schedule_times[1],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         },
     ]
 
@@ -405,7 +405,7 @@ def test_multiple_single_ramp_empty_road():
     # 1 vehicle could be inserted, 1 vehicle could not be inserted
     assert len(spawned_vehicles_df) == 1
     assert len(not_spawned_vehicles) == 1
-    assert not_spawned_vehicles[0]['vid'] == ids[1]
+    assert not_spawned_vehicles[0]["vid"] == ids[1]
 
     v = spawned_vehicles_df.iloc[0]
     assert v.vid == ids[0]
@@ -440,33 +440,33 @@ def test_multiple_first_ramp_blocked():
 
     vdf = pd.DataFrame(
         {
-            'vid': [0],
-            'speed': [36],
-            'position': [10],
-            'lane': [0],
-            'length': vtype.length,
-            'max_acceleration': vtype.max_acceleration,
-            'max_deceleration': vtype.max_deceleration,
-            'min_gap': vtype.min_gap,
-            'desired_headway_time': vtype.headway_time,
+            "vid": [0],
+            "speed": [36],
+            "position": [10],
+            "lane": [0],
+            "length": vtype.length,
+            "max_acceleration": vtype.max_acceleration,
+            "max_deceleration": vtype.max_deceleration,
+            "min_gap": vtype.min_gap,
+            "desired_headway_time": vtype.headway_time,
         }
     )
     new_vehicles = [
         {
-            'vid': ids[0],
-            'desired_speed': desired_speeds[0],
-            'depart_speed': depart_speeds[0],
-            'schedule_time': schedule_times[0],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": ids[0],
+            "desired_speed": desired_speeds[0],
+            "depart_speed": depart_speeds[0],
+            "schedule_time": schedule_times[0],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         },
         {
-            'vid': ids[1],
-            'desired_speed': desired_speeds[1],
-            'depart_speed': depart_speeds[1],
-            'schedule_time': schedule_times[1],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": ids[1],
+            "desired_speed": desired_speeds[1],
+            "depart_speed": depart_speeds[1],
+            "schedule_time": schedule_times[1],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         },
     ]
 
@@ -486,7 +486,7 @@ def test_multiple_first_ramp_blocked():
     # 1 vehicle could be inserted, 1 vehicle could not be inserted
     assert len(spawned_vehicles_df) == 1
     assert len(not_spawned_vehicles) == 1
-    assert not_spawned_vehicles[0]['vid'] == ids[1]
+    assert not_spawned_vehicles[0]["vid"] == ids[1]
 
     v = spawned_vehicles_df.iloc[0]
     assert v.vid == ids[0]
@@ -522,33 +522,33 @@ def test_multiple_single_ramp_empty_road_priority():
 
     vdf = pd.DataFrame(
         {
-            'vid': [],
-            'speed': [],
-            'position': [],
-            'lane': [],
+            "vid": [],
+            "speed": [],
+            "position": [],
+            "lane": [],
         }
     )
     new_vehicles = [
         {
-            'vid': ids[0],
-            'desired_speed': desired_speeds[0],
-            'depart_speed': depart_speeds[0],
-            'schedule_time': schedule_times[0],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": ids[0],
+            "desired_speed": desired_speeds[0],
+            "depart_speed": depart_speeds[0],
+            "schedule_time": schedule_times[0],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         },
         {
-            'vid': ids[1],
-            'desired_speed': desired_speeds[1],
-            'depart_speed': depart_speeds[1],
-            'schedule_time': schedule_times[1],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": ids[1],
+            "desired_speed": desired_speeds[1],
+            "depart_speed": depart_speeds[1],
+            "schedule_time": schedule_times[1],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         },
     ]
 
     spawned_vehicles_df, not_spawned_vehicles = compute_vehicle_spawns(
-        vehicles=sorted(new_vehicles, key=lambda d: d['schedule_time']),
+        vehicles=sorted(new_vehicles, key=lambda d: d["schedule_time"]),
         vdf=vdf,
         ramp_positions=ramp_positions,
         number_of_lanes=1,
@@ -563,7 +563,7 @@ def test_multiple_single_ramp_empty_road_priority():
     assert len(spawned_vehicles_df) == 1
     assert len(not_spawned_vehicles) == 1
     assert spawned_vehicles_df.iloc[0].vid == ids[1]
-    assert not_spawned_vehicles[0]['vid'] == ids[0]
+    assert not_spawned_vehicles[0]["vid"] == ids[0]
 
     v = spawned_vehicles_df.iloc[0]
     assert v.vid == ids[1]
@@ -598,29 +598,29 @@ def test_multiple_vehicle_mutiple_ramps_empty_road():
 
     vdf = pd.DataFrame(
         {
-            'vid': [],
-            'speed': [],
-            'position': [],
-            'lane': [],
+            "vid": [],
+            "speed": [],
+            "position": [],
+            "lane": [],
         }
     )
     new_vehicles = [
         {
-            'vid': ids[0],
-            'desired_speed': desired_speeds[0],
-            'depart_speed': depart_speeds[0],
-            'schedule_time': schedule_times[0],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": ids[0],
+            "desired_speed": desired_speeds[0],
+            "depart_speed": depart_speeds[0],
+            "schedule_time": schedule_times[0],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         },
         {
-            'vid': ids[1],
-            'desired_speed': desired_speeds[1],
-            'depart_speed': depart_speeds[1],
-            'schedule_time': schedule_times[1],
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
-        }
+            "vid": ids[1],
+            "desired_speed": desired_speeds[1],
+            "depart_speed": depart_speeds[1],
+            "schedule_time": schedule_times[1],
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
+        },
     ]
 
     spawned_vehicles_df, not_spawned_vehicles = compute_vehicle_spawns(
@@ -686,25 +686,25 @@ def test_rear_blocking_vehicle():
 
     vdf = pd.DataFrame(
         {
-            'vid': [0, 1],
-            'speed': [36, 36],
-            'position': [10, 490],
-            'lane': [0, 0],
-            'length': vtype.length,
-            'max_acceleration': vtype.max_acceleration,
-            'max_deceleration': vtype.max_deceleration,
-            'min_gap': vtype.min_gap,
-            'desired_headway_time': vtype.headway_time,
+            "vid": [0, 1],
+            "speed": [36, 36],
+            "position": [10, 490],
+            "lane": [0, 0],
+            "length": vtype.length,
+            "max_acceleration": vtype.max_acceleration,
+            "max_deceleration": vtype.max_deceleration,
+            "min_gap": vtype.min_gap,
+            "desired_headway_time": vtype.headway_time,
         }
     )
     new_vehicles = [
         {
-            'vid': vid,
-            'desired_speed': desired_speed,
-            'depart_speed': depart_speed,
-            'schedule_time': schedule_time,
-            'min_trip_length': trip_length,
-            'max_trip_length': trip_length,
+            "vid": vid,
+            "desired_speed": desired_speed,
+            "depart_speed": depart_speed,
+            "schedule_time": schedule_time,
+            "min_trip_length": trip_length,
+            "max_trip_length": trip_length,
         }
     ]
 
@@ -724,7 +724,7 @@ def test_rear_blocking_vehicle():
     # 1 vehicle could not be inserted
     assert len(spawned_vehicles_df) == 0
     assert len(not_spawned_vehicles) == 1
-    assert not_spawned_vehicles[0]['vid'] == vid
+    assert not_spawned_vehicles[0]["vid"] == vid
 
 
 def test_single_trip_lengths():
@@ -748,20 +748,20 @@ def test_single_trip_lengths():
 
     vdf = pd.DataFrame(
         {
-            'vid': [],
-            'speed': [],
-            'position': [],
-            'lane': [],
+            "vid": [],
+            "speed": [],
+            "position": [],
+            "lane": [],
         }
     )
     new_vehicles = [
         {
-            'vid': vid,
-            'desired_speed': desired_speed,
-            'depart_speed': depart_speed,
-            'schedule_time': schedule_time,
-            'min_trip_length': min_trip_length,
-            'max_trip_length': max_trip_length,
+            "vid": vid,
+            "desired_speed": desired_speed,
+            "depart_speed": depart_speed,
+            "schedule_time": schedule_time,
+            "min_trip_length": min_trip_length,
+            "max_trip_length": max_trip_length,
         }
     ]
 

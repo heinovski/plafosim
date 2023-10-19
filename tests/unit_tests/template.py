@@ -19,4 +19,4 @@
 
 
 def test_creation():
-    assert(False)
+    assert False

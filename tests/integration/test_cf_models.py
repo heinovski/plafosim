@@ -96,7 +96,7 @@ def test_cf_models_blocked(
         back_speed=s._vehicles[1].speed,
         back_max_acceleration=vtype.max_acceleration,
         back_min_gap=vtype.min_gap,
-        step_length=s._step_length
+        step_length=s._step_length,
     )
 
     # run the simulation to record the trace file
@@ -129,7 +129,9 @@ def test_cf_models_blocked(
     assert first_step_desired > traces.step.min()
 
     # the first step vehicle 1 brakes
-    first_step_braking = traces.query("id == 1")[traces.query("id == 1").speed.pct_change() < 0].step.min()
+    first_step_braking = traces.query("id == 1")[
+        traces.query("id == 1").speed.pct_change() < 0
+    ].step.min()
     # vehicle 1 is not blocked until starting to brake
     assert not traces.query(f"id == 1 and step < {first_step_braking}").blocked.any()
 
@@ -149,10 +151,17 @@ def test_cf_models_blocked(
     assert first_step_desired < first_step_speed_vehicle0
 
     # vehicle 1 sticks with the (slow) speed (of vehicle 1)
-    assert (traces.query(f"id == 1 and step >= {first_step_speed_vehicle0}").speed.std() < 0.01).all()
+    assert (
+        traces.query(f"id == 1 and step >= {first_step_speed_vehicle0}").speed.std()
+        < 0.01
+    ).all()
 
     # correct order of vehicles at the end
-    assert traces.query(f"step == {traces.step.max()}").sort_values('id', ascending=False).position.is_monotonic
+    assert (
+        traces.query(f"step == {traces.step.max()}")
+        .sort_values("id", ascending=False)
+        .position.is_monotonic
+    )
 
 
 @pytest.mark.parametrize("size", PLATOON_SIZE)
@@ -208,7 +217,12 @@ def test_cf_model_CACC(size: int, cacc_spacing: float):
 
     # all followers have the same speed as the leader during the entire simulation
     leader_speed = traces.query("id == 0").set_index("step").speed
-    assert traces.set_index("step").groupby("id").speed.apply(lambda x: x == leader_speed).all()
+    assert (
+        traces.set_index("step")
+        .groupby("id")
+        .speed.apply(lambda x: x == leader_speed)
+        .all()
+    )
 
     follower_gaps = (
         traces
@@ -242,7 +256,7 @@ def test_cf_model_CACC(size: int, cacc_spacing: float):
 @pytest.mark.parametrize("headway_time", HEADWAY_TIME)
 @pytest.mark.parametrize("slow_speed", SPEED)
 def test_cf_model_CACC_blocked(
-        size: int, cacc_spacing: float, headway_time: float, slow_speed: float
+    size: int, cacc_spacing: float, headway_time: float, slow_speed: float
 ):
     """
     A platoon driving on one lane and one slower vehicle in front.
@@ -307,9 +321,7 @@ def test_cf_model_CACC_blocked(
     assert (followers.cfModel == CF_Model.CACC.name).all()
 
     # all platoon followers have the same speed as the leader
-    assert (
-        followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
-    )
+    assert followers.groupby("id").speed.apply(lambda x: x == leader.speed).all()
     # the platoon maintains its order through the whole simulation
     assert (
         (
@@ -322,10 +334,7 @@ def test_cf_model_CACC_blocked(
     # predecessor has the same speed in the entire simulation
     assert predecessor.speed.std() == 0
     # (constant) speed of vehicle 0
-    speed_predecessor = (
-        predecessor
-        .loc[predecessor.reset_index().step.min(), "speed"]
-    )
+    speed_predecessor = predecessor.loc[predecessor.reset_index().step.min(), "speed"]
 
     # the first step the leader brakes
     first_step_braking = leader[leader.speed.pct_change() < 0].reset_index().step.min()
@@ -349,7 +358,10 @@ def test_cf_model_CACC_blocked(
     assert not np.isnan(first_step_speed_vehicle)
 
     # the platoon sticks with the (slow) speed
-    assert (traces.query(f"id == 0 and step >= {first_step_speed_vehicle}").speed.std() < 0.01).all()
+    assert (
+        traces.query(f"id == 0 and step >= {first_step_speed_vehicle}").speed.std()
+        < 0.01
+    ).all()
 
     # correct order of vehicles at the end
     assert (leader.position < predecessor.position).all()

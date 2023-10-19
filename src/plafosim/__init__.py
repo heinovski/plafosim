@@ -24,7 +24,8 @@ from plafosim.util import addLoggingLevel
 
 __version__ = "0.16.2"
 
-__description__ = textwrap.dedent(f"""\
+__description__ = textwrap.dedent(
+    f"""\
     Platoon Formation Simulator (PlaFoSim) -- Version {__version__}.
     A simple and scalable simulator for platoon formation.
 
@@ -41,9 +42,11 @@ __description__ = textwrap.dedent(f"""\
     "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
     Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
     Poster Session, Virtual Conference, November 2021, pp. 137–138.
-""")
+"""
+)
 
-__citation__ = textwrap.dedent("""\
+__citation__ = textwrap.dedent(
+    """\
     @inproceedings{heinovski2021scalable,
         author = {Heinovski, Julian and Buse, Dominik S. and Dressler, Falko},
         doi = {10.1109/VNC52810.2021.9644678},
@@ -57,10 +60,11 @@ __citation__ = textwrap.dedent("""\
         month = {11},
         year = {2021},
     }
-""")
+"""
+)
 
 # add additional custom log level
-addLoggingLevel('TRACE', 5)
+addLoggingLevel("TRACE", 5)
 
 
 class CustomFormatter(

@@ -1383,7 +1383,7 @@ class Simulator:
             draw_ramps(
                 road_length=self._road_length,
                 interval=self._ramp_interval,
-                labels=self._draw_ramp_labels
+                labels=self._draw_ramp_labels,
             )
 
         # draw road end
@@ -1397,7 +1397,7 @@ class Simulator:
         if self._draw_infrastructures:
             draw_infrastructures(
                 infrastructures=self._infrastructures.values(),
-                labels=self._draw_infrastructure_labels
+                labels=self._draw_infrastructure_labels,
             )
 
         # draw pre-filled vehicles
@@ -1545,7 +1545,11 @@ class Simulator:
                         # record final vehicle trace entries
                         if self._record_vehicle_traces:
                             for v in self._vehicles.values():
-                                record_vehicle_trace(basename=self._result_base_filename, step=self._step + self._step_length, vehicle=v)
+                                record_vehicle_trace(
+                                    basename=self._result_base_filename,
+                                    step=self._step + self._step_length,
+                                    vehicle=v,
+                                )
 
                         sys.exit("ERROR: There were collisions between vehicles!")
 

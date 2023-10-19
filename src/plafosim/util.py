@@ -47,7 +47,7 @@ def round_to_next_base(x: float, base: float) -> float:
 def rgb2hex(rgb: tuple) -> str:
     assert len(rgb) == 3
     for c in rgb:
-        assert (type(c) == int and 0 <= c <= 255)
+        assert type(c) == int and 0 <= c <= 255
 
     return '#' + ''.join(f'{i:02X}' for i in rgb)
 
