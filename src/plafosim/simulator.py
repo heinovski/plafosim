@@ -510,9 +510,9 @@ class Simulator:
             if 0.5 < self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
                 LOG.warning(f"The current effective departure rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
             if self._effective_depart_rate > 1 and not self._random_depart_position:
-                sys.exit("ERROR: an effective departure rate > 1 vehicles/step is incompatible with just spawning at the origin (random departure position == false)")
+                sys.exit("ERROR: An effective departure rate > 1 vehicles/step is incompatible with spawning only at the origin! Use '--random-departure-position True' to allow spawning at all on-ramps.")
             if self._effective_depart_rate < 0:
-                sys.exit("ERROR: effective spawn rate < 0 vehicles/step.")
+                sys.exit("ERROR: The effective departure rate is < 0 vehicles/step!")
             if self._effective_depart_rate > len(self._ramp_positions):
                 LOG.warning(f"The current effective departure rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
