@@ -1233,7 +1233,7 @@ class PlatooningVehicle(Vehicle):
                     continue
                 LOG.trace(f"Moving follower {vehicle.vid} from {vehicle.position} by {gap_error}m ")
                 vehicle._position += gap_error
-                LOG.trace(f"{vehicle.vid} is not at {vehicle.position}")
+                LOG.trace(f"{vehicle.vid} is now at {vehicle.position}")
                 follower_gap = front.rear_position - vehicle.position
                 # avoid issues due to floating point precision
                 assert math.isclose(follower_gap, vehicle._cacc_spacing)
