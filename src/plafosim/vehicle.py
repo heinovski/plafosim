@@ -128,7 +128,7 @@ class Vehicle:
         self._communication_range = communication_range  # the maximum communication range between two vehicles
 
         # statistics
-        self._time_loss = 0
+        self._time_loss = 0  # SUMO: "The time lost due to driving below the ideal speed."
         self._emissions = {
             'CO': 0,  # the total carbon monoxide (CO) emission in mg
             'CO2': 0,  # the total carbon dioxide (CO2) emission in mg
@@ -431,8 +431,7 @@ class Vehicle:
         # calculate time loss
         # SUMO: "The time lost due to driving below the ideal speed."
         # can also use higher layer desired speed
-        # FIXME: should this be the cf target speed?
-        if self._speed < self.desired_speed:
+        if self._speed < self._cf_target_speed:
             self._time_loss += self._simulator.step_length
 
         if self._simulator._record_vehicle_traces:
