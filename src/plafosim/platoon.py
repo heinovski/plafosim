@@ -274,6 +274,10 @@ class Platoon:
         self.update_max_acceleration()
         self.update_max_deceleration()
 
+    def update_cf_target_speed(self):
+        for member in self._formation:
+            member._cf_target_speed = self._desired_speed
+
     def __str__(self) -> str:
         """
         Return the str representation of the platoon.

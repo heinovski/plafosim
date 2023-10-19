@@ -971,6 +971,7 @@ class PlatooningVehicle(Vehicle):
             # thus, the follower now drives as fast as the already existing platoon
             # (i.e., only the leader in the worst case)
             vehicle._platoon = leader.platoon
+            # TODO should be replaced by call to platoon.update_cf_target_speed()
             vehicle._cf_target_speed = vehicle._platoon.desired_speed
 
         LOG.debug(f"{self._vid} joined platoon {leader.platoon.platoon_id} (leader: {leader.vid})")
@@ -1246,6 +1247,7 @@ class PlatooningVehicle(Vehicle):
         if self._simulator._update_desired_speed:
             self._platoon.update_desired_speed()
         self._platoon.update_limits()
+        self._platoon.update_cf_target_speed()
 
         # update formation for all (remaining) members
         # TODO this could be nicer, e.g., by taking the (new) leader's updated formation
@@ -1258,6 +1260,7 @@ class PlatooningVehicle(Vehicle):
         LOG.debug(f"{self._vid} left platoon {self._platoon.platoon_id} (leader {self._platoon.leader.vid})")
         self._platoon_role = PlatoonRole.NONE  # the current platoon role
         self._platoon = Platoon(self._vid, [self], self._desired_speed)  # use explicit individual desired speed
+        self._cf_target_speed = self._desired_speed  # we reset the cf_target_speed
         self._cf_model = CF_Model.ACC  # not necessary, but we still do it explicitly
 
         # reset color of vehicle
