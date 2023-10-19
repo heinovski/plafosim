@@ -935,6 +935,7 @@ class PlatooningVehicle(Vehicle):
             leader._platoon_role = PlatoonRole.LEADER
         else:
             assert leader.platoon_role is PlatoonRole.LEADER
+        leader.platoon._formation.append(self)
 
         # update self
         self._platoon_role = PlatoonRole.FOLLOWER
@@ -960,7 +961,6 @@ class PlatooningVehicle(Vehicle):
         self._number_platoons += 1
 
         # update all members
-        leader.platoon._formation.append(self)
         # update the desired speed of the platoon to the average of all platoon members
         if self._simulator._update_desired_speed:
             leader.platoon.update_desired_speed()
