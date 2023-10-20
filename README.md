@@ -54,7 +54,7 @@ You can visualize the simulation via a simple live GUI based on [SUMO](https://g
 
 More options for the live GUI can be found within the ``GUI properties`` section of the help.
 
-**NOTE**: This requires installation of SUMO (>=1.6.0) and decleration of the `SUMO_HOME` variable.
+**NOTE**: This requires installation of SUMO (>=1.6.0) and declaration of the `SUMO_HOME` variable.
 
 ### Advanced Simulation Control
 
