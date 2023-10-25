@@ -67,9 +67,9 @@ class Dummy(FormationAlgorithm):
 
         from ..infrastructure import Infrastructure
         if isinstance(self._owner, Infrastructure):
-            print(f'Running formation algorithm {self.name} on infrastructure! Unfortunately, this is just a dummy!')
+            print(f'Running formation algorithm {self.name} on infrastructure {self.owner.iid}. Unfortunately, this is just a dummy!')
         else:
-            print(f'Running formation algorithm {self.name} on a vehicle! Unfortunately, this is just a dummy!')
+            print(f'Running formation algorithm {self.name} on a vehicle {self._owner.vid}. Unfortunately, this is just a dummy!')
 
     def finish(self):
         """
