@@ -75,7 +75,7 @@ then
     poetry publish --build
     # wait for release on pypi
     echo "..."
-    sleep 30s
+    sleep 40s
 else
     echo "PyPI already has version $VERSION."
 fi
