@@ -20,7 +20,7 @@
 import logging
 import sys
 
-from .algorithms.speed_position import SpeedPosition  # noqa 401
+from .algorithms import *  # noqa 401
 from .platooning_vehicle import PlatooningVehicle
 
 #from .simulator import Simulator  # TODO fix circular import

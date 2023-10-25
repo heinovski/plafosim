@@ -27,7 +27,7 @@ from signal import SIGINT, signal
 from timeit import default_timer as timer
 
 from plafosim import CustomFormatter, __citation__, __description__, __version__
-from plafosim.algorithms.speed_position import SpeedPosition
+from plafosim.algorithms import *  # noqa 401
 from plafosim.simulator import DEFAULTS, Simulator
 from plafosim.util import find_resource
 
@@ -439,8 +439,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--formation-algorithm",
         type=str,
         default=DEFAULTS['formation_algorithm'],
-        # TODO use enum
-        choices=[SpeedPosition.__name__],
+        choices=globals()['algorithms'],
         help="The formation algorithm to use",
     )
     g_formation.add_argument(
@@ -745,14 +744,15 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     )
 
     # formation algorithm specific properties
-    ## speed position
-    g_sp = SpeedPosition.add_parser_argument_group(parser)
-    g_help.add_argument(
-        f"--help-{SpeedPosition.__name__}",
-        action='store_true',
-        default=argparse.SUPPRESS,
-        help=f"show help message for {SpeedPosition.__name__} formation algorithm and exit",
-    )
+    for algorithm in globals()['algorithms']:
+        globals()[f'group_{algorithm}'] = globals()[algorithm].add_parser_argument_group(parser)
+
+        g_help.add_argument(
+            f"--help-{algorithm}",
+            action='store_true',
+            default=argparse.SUPPRESS,
+            help=f"show help message for {algorithm} formation algorithm and exit",
+        )
 
     # print usage without any arguments
     if len(sys.argv) < 2:
@@ -817,9 +817,12 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     elif 'help_results' in args and args.help_results:
         print(format_help(parser, misc_groups + [g_results]), end='')
         parser.exit()
-    elif f'help_{SpeedPosition.__name__}' in args and getattr(args, f'help_{SpeedPosition.__name__}'):
-        print(format_help(parser, misc_groups + [g_sp]), end='')
-        parser.exit()
+    # formation algorithm specific properties
+    else:
+        for algorithm in globals()['algorithms']:
+            if f'help_{algorithm}' in args and getattr(args, f'help_{algorithm}'):
+                print(format_help(parser, misc_groups + [globals()[f'group_{algorithm}']]), end='')
+                parser.exit()
 
     # transform argument values into correct units
     args.road_length *= 1000  # km -> m

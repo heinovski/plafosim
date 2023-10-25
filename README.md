@@ -141,10 +141,9 @@ You can also activate the virtual enviroment first with ```poetry shell``` and r
 ### Adding a new Formation Algorithm
 
 In order to add a new formation algorithm, you need to follow these steps:
-- Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`). You can use the `Dummy` algorithm (see `algorithms/dummy.py`) as an example.
-- Import your algorithm and add its `__name__` to the list of available algorithms (see `--formation-algorithm`) within `cli/plafosim.py`.
-- Add specific properties of your algorithm via an argument parser group and a corresponding help message to `cli/plafosim.py` if necessary.
-- Import your algorithm in `PlatooningVehicle` (see `platooning_vehicle.py`) and/or `Infrastructure` (see `infrastructure.py`).
+- Create a new sub-class of `FormationAlgorithm` (see `formation_algorithm.py`) within the sub-directory `algorithms`.
+You can use the `Dummy` algorithm (see `algorithms/dummy.py`) as an example.
+- Add specific arguments for your algorithm to the argument parser group within the new sub-class if necessary.
 
 You should now be able to use your new algorithm with
 ```

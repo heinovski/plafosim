@@ -22,7 +22,7 @@ import math
 import sys
 from typing import TYPE_CHECKING
 
-from .algorithms.speed_position import SpeedPosition  # noqa 401
+from .algorithms import *  # noqa 401
 from .gui import change_gui_vehicle_color
 from .mobility import CF_Model, is_gap_safe
 from .platoon import Platoon
