@@ -1,5 +1,40 @@
 # Changelog
 
+## [v0.17.0](https://github.com/heinovski/plafosim/releases/tag/v0.17.0) - 2023-10-25
+* BREAKING CHANGES
+  * Changed default deceleration values
+  * Changed default desired speed values
+  * Changed default vehicle length
+  * Reworked Krauss' model
+  * Reworked vehicle generation
+  * Reworked vehicle insertion
+* FIXES
+  * Fixed duplicated platoon id upon leaving
+  * Fixed leave in the middle maneuver
+  * Fixed time loss computation
+  * Fixed updating cf target speed upon leaving
+* NEW FEATURES
+  * Added dedicated CLI argument for vehicle platoon trace
+  * Added possibility to record continuous screenshots
+  * Added possibility to record vehicle teleports
+  * Added simple script to create video from screenshots
+  * Added support for spawning on multiple lanes
+  * Added support for various step lengths
+  * Added timeloss to vehicle trace
+  * Added trace recording after collision
+* UPDATES
+  * Applied some formatting with black
+  * Extended rolling average statistics
+  * Extended simulation statistics
+  * Extended vehicle platoon trace
+  * Improved documentation
+  * Improved trace replay when tracking vehicle
+  * Tightened constraint for recording platoon trace
+  * Updated AUTHORS
+  * Updated code comments
+  * Updated README
+  * Updated release script
+
 ## [v0.16.2](https://github.com/heinovski/plafosim/releases/tag/v0.16.2) - 2023-10-06
 * BREAKING CHANGES
   * Replace log-level with verbosity & quiet arguments
