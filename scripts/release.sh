@@ -44,7 +44,7 @@ source $DIRNAME/bin/activate
 if [ -z "$(curl -v --silent https://test.pypi.org/simple/plafosim/ --stderr - | grep $VERSION)" ]
 then
     echo "Publishing to TestPyPI..."
-    poetry publish --build -r testpypi
+    poetry publish --build -n -r testpypi
     # wait for release on testpypi
     echo "..."
     sleep 30s
@@ -72,7 +72,7 @@ pip uninstall plafosim -y
 if [ -z "$(curl -v --silent https://pypi.org/simple/plafosim/ --stderr - | grep $VERSION)" ]
 then
     echo "Publishing to PyPI..."
-    poetry publish --build
+    poetry publish --build -n
     # wait for release on pypi
     echo "..."
     sleep 40s
