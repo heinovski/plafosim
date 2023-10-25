@@ -177,7 +177,7 @@ You can profile the runtime of PlaFoSim's code by using [cProfile](https://docs.
 
 ```poetry run python -m cProfile -o profile.out -m plafosim.cli.plafosim```
 
-You can visualize the results of the profiling run by using [SnakeViz](https://docs.python.org/3/library/profile.html#module-cProfile):
+You can visualize the results of the profiling run by using [SnakeViz](https://jiffyclub.github.io/snakeviz/):
 
 ```snakeviz profile.out```
 
