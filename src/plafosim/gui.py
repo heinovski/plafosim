@@ -109,6 +109,8 @@ def set_gui_window(road_length: int):
     """
     import traci
 
+    # set window bounday
+    # TODO make y-lim dependet on road length
     traci.gui.setBoundary(
         traci.gui.DEFAULT_VIEW,
         xmin=0,
@@ -116,8 +118,10 @@ def set_gui_window(road_length: int):
         xmax=road_length,
         ymax=25000,
     )
-    # TODO set zoom?
-    # traci.gui.setZoom(traci.gui.DEFAULT_VIEW, 1000)
+
+    # set zoom level based on raod length
+    zoom_factor = (1e8 / road_length) * 0.97
+    traci.gui.setZoom(traci.gui.DEFAULT_VIEW, zoom_factor)
 
 
 def add_gui_vehicle(
