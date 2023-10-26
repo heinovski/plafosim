@@ -1858,7 +1858,6 @@ class Simulator:
 
 DUMMY = pd.DataFrame([
     {
-        'vid': -1,
         'position': HIGHVAL,
         'speed': HIGHVAL,
         'lane': 0,
@@ -1869,7 +1868,6 @@ DUMMY = pd.DataFrame([
         'desired_headway_time': 0,
     },
     {
-        'vid': -1,
         'position': -HIGHVAL,
         'speed': 0,
         'lane': 0,
