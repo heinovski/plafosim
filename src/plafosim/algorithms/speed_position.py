@@ -301,7 +301,7 @@ class SpeedPosition(FormationAlgorithm):
         LOG.debug(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
         self._owner._candidates_found += len(found_candidates)
 
-        if len(found_candidates) == 0:
+        if not found_candidates:
             LOG.debug(f"{self._owner.vid} has no candidates")
             return
 
