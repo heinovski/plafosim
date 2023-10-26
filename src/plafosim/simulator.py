@@ -160,7 +160,7 @@ DEFAULTS = {
     'update_desired_speed': True,
     'formation_algorithm': None,
     'formation_strategy': 'distributed',  # TODO rename
-    'execution_interval': 1,  # s
+    'execution_interval': 10,  # s
     'infrastructures': 0,
     'step_length': 1.0,  # s
     'max_step': 1 * 3600,  # h -> s
