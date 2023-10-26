@@ -264,6 +264,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--depart-all-lanes",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['depart_all_lanes'],
+        choices=(True, False),
         help="Whether vehicles are allowed to departure on all lanes"
     )
     g_trips.add_argument(
