@@ -62,7 +62,7 @@ class Dummy(FormationAlgorithm):
     def do_formation(self):
         """
         Run platoon formation algorithm to search for a platooning opportunity
-        and performs the corresponding maneuvers.
+        and perform the corresponding join maneuver.
         """
 
         from ..infrastructure import Infrastructure

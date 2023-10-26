@@ -206,7 +206,7 @@ class SpeedPosition(FormationAlgorithm):
     def do_formation(self):
         """
         Run platoon formation algorithms to search for a platooning opportunity
-        and performs the corresponding join maneuver.
+        and perform the corresponding join maneuver.
         """
 
         from ..infrastructure import Infrastructure
