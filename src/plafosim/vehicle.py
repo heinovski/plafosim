@@ -478,10 +478,10 @@ class Vehicle:
                     scale *= 742.0
             value = (
                 self._calculate_emission(
-                    self._acceleration,
-                    self._speed,
-                    ec.emission_factors[variable],
-                    scale,
+                    a=self._acceleration,
+                    v=self._speed,
+                    f=ec.emission_factors[variable],
+                    scale=scale,
                 )
                 * self._simulator.step_length
             )
