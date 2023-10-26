@@ -151,7 +151,7 @@ DEFAULTS = {
     'random_arrival_position': False,
     'minimum_trip_length': 0,
     'maximum_trip_length': -1 * 1000,  # km -> m
-    'communication_range': 1000,  # m
+    'communication_range': 500,  # m
     'start_as_platoon': False,
     'reduced_air_drag': True,
     'maximum_teleport_distance': 2000,  # m
