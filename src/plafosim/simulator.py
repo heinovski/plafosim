@@ -132,37 +132,37 @@ DEFAULTS = {
     'vehicle_density': -1,
     'max_speed': vtype.max_speed,  # TODO not used currently
     'acc_headway_time': vtype.headway_time,
-    'cacc_spacing': 5.0,
+    'cacc_spacing': 5.0,  # m
     'penetration_rate': 1.0,
     'random_depart_position': False,
     'depart_all_lanes': True,
-    'desired_speed': 33.0,
+    'desired_speed': 33.0,  # m/s
     'random_desired_speed': True,
     'speed_variation': 0.1,
-    'min_desired_speed': 22.0,
-    'max_desired_speed': 44.0,
+    'min_desired_speed': 22.0,  # m/s
+    'max_desired_speed': 44.0,  # m/s
     'random_depart_speed': False,
     'depart_desired': False,
     'depart_flow': False,
     'depart_method': 'interval',
-    'depart_interval': 2.0,
+    'depart_interval': 2.0,  # s
     'depart_probability': 1.0,
-    'depart_rate': 3600,
+    'depart_rate': 3600,  # v/h
     'random_arrival_position': False,
     'minimum_trip_length': 0,
     'maximum_trip_length': -1 * 1000,  # km -> m
-    'communication_range': 1000,
+    'communication_range': 1000,  # m
     'start_as_platoon': False,
     'reduced_air_drag': True,
-    'maximum_teleport_distance': 2000,
-    'maximum_approach_time': 60,
+    'maximum_teleport_distance': 2000,  # m
+    'maximum_approach_time': 60,  # s
     'delay_teleports': True,
     'update_desired_speed': True,
     'formation_algorithm': None,
     'formation_strategy': 'distributed',  # TODO rename
-    'execution_interval': 1,
+    'execution_interval': 1,  # s
     'infrastructures': 0,
-    'step_length': 1.0,
+    'step_length': 1.0,  # s
     'max_step': 1 * 3600,  # h -> s
     'actions': True,
     'collisions': True,
@@ -170,11 +170,11 @@ DEFAULTS = {
     'log_level': logging.WARNING,
     'progress': True,
     'gui': False,
-    'gui_delay': 0,
+    'gui_delay': 0,  # ms
     'gui_track_vehicle': -1,
     'sumo_config': 'sumocfg/freeway.sumo.cfg',
     'gui_play': True,
-    'gui_start': 0,
+    'gui_start': 0,  # s
     'draw_ramps': True,
     'draw_ramp_labels': False,
     'draw_road_end': True,
