@@ -1997,7 +1997,7 @@ def compute_vehicle_spawns(
                 back_min_gap=vehicle_before_spawn_position.min_gap,
                 step_length=step_length,
             )
-            ## avoid decelerating of rear vehicle from desired speed, assuming the speed does not change
+            ## avoid deceleration of rear vehicle from desired speed, assuming the speed does not change
             assert vehicle_before_spawn_position.desired_headway_time >= 0
             back_gap_desired = gap_to_previous_vehicle > max(
                 # step length not required
