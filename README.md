@@ -160,7 +160,7 @@ In order to contribute, please follow these steps:
 
 ### Documentation
 
-When making changes to the doce, make sure to add or adjust corresponding documentation in form of python docstrings.
+When making changes to the code, make sure to add or adjust corresponding documentation in form of python docstrings.
 Those should use the Numpy docstring format in Sphinx and follow the [style guide](https://numpydoc.readthedocs.io/en/latest/format.html) by numpydoc to ensure consistency and compatibility.
 
 ### Testing

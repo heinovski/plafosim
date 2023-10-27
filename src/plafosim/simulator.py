@@ -1925,7 +1925,7 @@ def compute_vehicle_spawns(
 
         spawn_position = position + vtype.length
 
-        # select predecessor at spawn position
+        # select predecessors at spawn position
         # since we have the dummy, we can assume there is always at least one vehicle
         vehicle_after_spawn_position = (
             vdf
