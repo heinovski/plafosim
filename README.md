@@ -154,9 +154,14 @@ plafosim --formation-algorithm dummy_algorithm_name
 
 In order to contribute, please follow these steps:
 - Install PlaFoSim from source (see Extending)
-- Make desired changes
+- Make desired changes and adjust the documentation if required
 - Run the tests located in `tests` as well as the validation scripts located in `scripts` (see `.drone.yml` for details)
 - Submit a Pull Request (PR)
+
+### Documentation
+
+When making changes to the doce, make sure to add or adjust corresponding documentation in form of python docstrings.
+Those should use the Numpy docstring format in Sphinx and follow the [style guide](https://numpydoc.readthedocs.io/en/latest/format.html) by numpydoc to ensure consistency and compatibility.
 
 ### Testing
 
