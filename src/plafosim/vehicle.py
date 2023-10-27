@@ -507,6 +507,10 @@ class Vehicle:
             The emission factors to use for current emission variable to be calculated
         scale : float
             The scale to normalize the calculated value
+
+        Returns
+        -------
+        float : The calculcated emission in ml/mg per s
         """
 
         if a < 0:
