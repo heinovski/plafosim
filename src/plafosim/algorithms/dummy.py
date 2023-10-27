@@ -23,6 +23,9 @@ import logging
 from ..formation_algorithm import FormationAlgorithm
 
 LOG = logging.getLogger(__name__)
+DEFAULTS = {
+    'dummy': -1,
+}
 
 
 class Dummy(FormationAlgorithm):
@@ -33,6 +36,7 @@ class Dummy(FormationAlgorithm):
     def __init__(
         self,
         owner: object,
+        dummy: int = DEFAULTS['dummy'],
         **kw_args,
     ):
 
@@ -44,9 +48,13 @@ class Dummy(FormationAlgorithm):
         owner : object
             The owning object that is execution this algorithm.
             This can be either a PlatooningVehicle or an Infrastructure.
+        dummy : int, optional
+            The value for the dummy parameter.
         """
 
         super().__init__(owner)
+
+        self._dummy = dummy
 
     @classmethod
     def add_parser_argument_group(cls, parser: argparse.ArgumentParser):
@@ -54,7 +62,7 @@ class Dummy(FormationAlgorithm):
         group.add_argument(
             "--dummy",
             type=int,
-            default=-1,
+            default=DEFAULTS['dummy'],
             help="A dummy parameter",
         )
         return group
