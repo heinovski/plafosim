@@ -885,7 +885,7 @@ def main():
     """
 
     # get argument values (and GUI argument group)
-    args, gui = parse_args()
+    args, g_gui = parse_args()
 
     if args.default:
         print("Running with default configuration...")
@@ -904,7 +904,7 @@ def main():
             {
                 f"_{k}": v
                 for k, v in vars(args).items()
-                if k in [x.dest for x in gui._group_actions]
+                if k in [x.dest for x in g_gui._group_actions]
             }
         )
         print(f"Loaded a snapshot of the simulation from {args.load_snapshot}. Running simulation with the loaded state...")
