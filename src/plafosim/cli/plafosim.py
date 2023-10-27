@@ -88,6 +88,16 @@ def format_help(parser: argparse.ArgumentParser, groups=None) -> str:
 
 # TODO duplicated code with trace replay
 def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
+    """
+    Parse arguments given to this module.
+
+    Returns
+    -------
+    args : argparse.Namespace
+        The namespace of parsed arguments and corresponding values.
+    g_gui : argparse._ArgumentGroup
+        The specific argument group for the GUI properties.
+    """
 
     # parse some parameters
     parser = argparse.ArgumentParser(
@@ -870,6 +880,9 @@ def create_simulator(**kwargs: dict) -> Simulator:
 
 
 def main():
+    """
+    The main entry point of PlaFoSim.
+    """
 
     # get argument values (and GUI argument group)
     args, gui = parse_args()

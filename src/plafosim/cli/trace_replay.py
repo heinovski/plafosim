@@ -45,6 +45,15 @@ LOG = logging.getLogger(__name__)
 
 # TODO duplicated code with main script
 def parse_args() -> argparse.Namespace:
+    """
+    Parse arguments given to this module.
+
+    Returns
+    -------
+    argparse.Namespace
+        The namespace of parsed arguments and corresponding values.
+    """
+
     # parse some parameters
     parser = argparse.ArgumentParser(
         formatter_class=CustomFormatter,
@@ -135,6 +144,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def main():
+    """
+    The main entry point of PlaFoSim's trace replay.
+    """
+
     args = parse_args()
 
     log_level = logging.getLevelName(max(DEFAULTS['log_level'] - ((args.verbosity - args.quiet) * 10), 5))
