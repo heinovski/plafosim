@@ -72,7 +72,8 @@ pip uninstall plafosim -y
 if [ -z "$(curl -v --silent https://pypi.org/simple/plafosim/ --stderr - | grep $VERSION)" ]
 then
     echo "Publishing to PyPI..."
-    poetry publish --build -n
+    # no buildig required, built already in the previos step
+    poetry publish
     # wait for release on pypi
     echo "..."
     sleep 40s
