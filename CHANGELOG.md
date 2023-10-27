@@ -1,5 +1,20 @@
 # Changelog
 
+## [v0.17.1](https://github.com/heinovski/plafosim/releases/tag/v0.17.1) - 2023-10-27
+* BREAKING CHANGES
+  * Changed default communication range
+  * Changed default execution interval
+* FIXES
+  * Fixed invalid value for headway time
+  * Fixed missing choices for CLI arguments
+  * Fixed links in README
+* NEW FEATURES
+  * GUI: Set zoom dependent on road length
+  * Made algorithm loading fully dynamic
+* UPDATES
+  * Updated docstrings
+  * Updated README
+
 ## [v0.17.0](https://github.com/heinovski/plafosim/releases/tag/v0.17.0) - 2023-10-25
 * BREAKING CHANGES
   * Changed default deceleration values
@@ -33,7 +48,6 @@
   * Updated AUTHORS
   * Updated code comments
   * Updated README
-  * Updated release script
 
 ## [v0.16.2](https://github.com/heinovski/plafosim/releases/tag/v0.16.2) - 2023-10-06
 * BREAKING CHANGES
