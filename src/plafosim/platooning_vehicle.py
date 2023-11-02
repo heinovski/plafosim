@@ -204,6 +204,8 @@ class PlatooningVehicle(Vehicle):
         # formation statistics
         self._formation_iterations = 0
         self._candidates_found = 0
+        self._candidates_found_individual = 0
+        self._candidates_found_platoon = 0
         self._candidates_filtered = 0
         self._candidates_filtered_follower = 0
         self._candidates_filtered_maneuver = 0
@@ -435,6 +437,16 @@ class PlatooningVehicle(Vehicle):
             if self._formation_iterations > 0
             else 0
         )
+        candidates_found_individual_avg = (
+            self._candidates_found_individual / self._formation_iterations
+            if self._formation_iterations > 0
+            else 0
+        )
+        candidates_found_platoon_avg = (
+            self._candidates_found_platoon / self._formation_iterations
+            if self._formation_iterations > 0
+            else 0
+        )
 
         assert platoon_time_ratio >= 0
         assert platoon_distance_ratio >= 0
@@ -471,6 +483,8 @@ class PlatooningVehicle(Vehicle):
                 basename=self._simulator._result_base_filename,
                 vehicle=self,
                 candidates_found_avg=candidates_found_avg,
+                candidates_found_individual_avg=candidates_found_individual_avg,
+                candidates_found_platoon_avg=candidates_found_platoon_avg,
                 candidates_filtered_avg=candidates_filtered_avg,
             )
 

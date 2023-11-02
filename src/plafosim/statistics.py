@@ -286,6 +286,10 @@ def initialize_platoon_formation(basename: str):
             "formationIterations,"
             "candidatesFound,"
             "candidatesFoundAvg,"
+            "candidatesFoundIndividual,"
+            "candidatesFoundPlatoon,"
+            "candidatesFoundIndividualAvg,"
+            "candidatesFoundPlatoonAvg,"
             "candidatesFiltered,"
             "candidatesFilteredAvg,"
             "candidatesFilteredFollower,"
@@ -298,6 +302,8 @@ def record_platoon_formation(
     basename: str,
     vehicle: 'PlatooningVehicle',
     candidates_found_avg: float,
+    candidates_found_individual_avg: float,
+    candidates_found_platoon_avg: float,
     candidates_filtered_avg: float
 ):
     assert basename
@@ -310,6 +316,10 @@ def record_platoon_formation(
             f"{vehicle._formation_iterations},"
             f"{vehicle._candidates_found},"
             f"{candidates_found_avg},"
+            f"{vehicle._candidates_found_individual},"
+            f"{vehicle._candidates_found_platoon},"
+            f"{candidates_found_individual_avg},"
+            f"{candidates_found_platoon_avg},"
             f"{vehicle._candidates_filtered},"
             f"{candidates_filtered_avg},"
             f"{vehicle._candidates_filtered_follower},"
