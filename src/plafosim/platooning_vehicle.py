@@ -1069,7 +1069,7 @@ class PlatooningVehicle(Vehicle):
                 total_approach_time = time_current_speed + time_deceleration
         else:
             # we do not need to consider this case as our error is only between 0m and last.length + cacc_spacing (e.g., 9m)
-            assert abs(initial_distance) <= self.length + self._cacc_spacing  # FIXME use length of last vehicle in platoon
+            assert abs(initial_distance) <= self.length + self._cacc_spacing  # TODO use length of last vehicle in platoon
             total_approach_time = 0  # FIXME: we ignore that for now, since the time should be very small anyhow
 
         return total_approach_time

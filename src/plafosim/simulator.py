@@ -510,7 +510,7 @@ class Simulator:
         if number_of_vehicles <= 0:
             sys.exit("ERROR: A simulation with 0 vehicles does not make sense!")
         self._number_of_vehicles = number_of_vehicles
-        self._max_speed = max_speed  # the maximum driving speed # FIXME not used currently
+        self._max_speed = max_speed  # the maximum driving speed # TODO not used currently
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
         if acc_headway_time < 1.0:
             LOG.warning("Values for ACC headway time lower 1.0s are not recommended to avoid crashes!")
@@ -1180,7 +1180,7 @@ class Simulator:
             # TODO duplicate
             assert row.arrival_position >= row.depart_position + self._minimum_trip_length - vtype.length
 
-            # FIXME: add to global vdf once it is available
+            # TODO: add to global vdf once it is available
             vehicle = self._add_vehicle(
                 vid=row.vid,
                 vtype=vtype,
