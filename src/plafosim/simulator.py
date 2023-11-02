@@ -1968,7 +1968,7 @@ DUMMY = pd.DataFrame([
     {
         'position': HIGHVAL,
         'speed': HIGHVAL,
-        'lane': 0,
+        'lane': -1,
         'length': 0.1,
         'max_acceleration': 0,
         'max_deceleration': 0,
@@ -1978,7 +1978,7 @@ DUMMY = pd.DataFrame([
     {
         'position': -HIGHVAL,
         'speed': 0,
-        'lane': 0,
+        'lane': -1,
         'length': 0.1,
         'max_acceleration': 0,
         'max_deceleration': 0,
