@@ -59,7 +59,6 @@ from .platooning_vehicle import PlatooningVehicle
 from .spawning import get_arrival_position, get_depart_speed, get_desired_speed
 from .statistics import (
     initialize_emission_traces,
-    initialize_infrastructure_assignments,
     initialize_platoon_changes,
     initialize_platoon_formation,
     initialize_platoon_maneuvers,
@@ -1368,10 +1367,6 @@ class Simulator:
         if self._record_platoon_formation:
             # create output file for platoon formation
             initialize_platoon_formation(basename=self._result_base_filename)
-
-        if self._record_infrastructure_assignments:
-            # create output file for infrastructure assignments
-            initialize_infrastructure_assignments(basename=self._result_base_filename)
 
         # traces
 

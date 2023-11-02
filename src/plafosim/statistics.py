@@ -23,7 +23,6 @@ from typing import TYPE_CHECKING
 
 from plafosim import __version__
 
-from .formation_algorithm import FormationAlgorithm
 from .util import rgb2hex
 
 if TYPE_CHECKING:
@@ -327,42 +326,6 @@ def record_platoon_formation(
             "\n"
         )
 
-
-def initialize_infrastructure_assignments(basename: str):
-    assert basename
-    with open(f'{basename}_infrastructure_assignments.csv', 'w') as f:
-        f.write(
-            "id,"
-            "assignmentsSolved,"
-            "assignmentsNotSolvable,"
-            "assignmentsSolvedOptimal,"
-            "assignmentsSolvedFeasible,"
-            "assignmentsNone,"
-            "assignmentsSelf,"
-            "assignmentsCandidateJoinedAlready,"
-            "assignmentsVehicleBecameLeader,"
-            "assignmentsSuccessful"
-            "\n"
-        )
-
-
-def record_infrastructure_assignments(basename: str, iid: int, algorithm: FormationAlgorithm):
-    assert basename
-    assert isinstance(algorithm, FormationAlgorithm)
-    with open(f'{basename}_infrastructure_assignments.csv', 'a') as f:
-        f.write(
-            f"{iid},"
-            f"{algorithm._assignments_solved},"
-            f"{algorithm._assignments_not_solvable},"
-            f"{algorithm._assignments_solved_optimal},"
-            f"{algorithm._assignments_solved_feasible},"
-            f"{algorithm._assignments_none},"
-            f"{algorithm._assignments_self},"
-            f"{algorithm._assignments_candidate_joined_already},"
-            f"{algorithm._assingments_vehicle_became_leader},"
-            f"{algorithm._assignments_successful}"
-            "\n"
-        )
 
 # traces
 

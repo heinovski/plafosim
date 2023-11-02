@@ -20,34 +20,156 @@
 import argparse
 import logging
 import sys
+from distutils.util import strtobool
 from timeit import default_timer as timer
 from typing import TYPE_CHECKING
 
 from ..formation_algorithm import FormationAlgorithm
 from ..platoon_role import PlatoonRole
-from ..statistics import record_infrastructure_assignments
 
 if TYPE_CHECKING:
     from ..platooning_vehicle import Platoon  # noqa 401
     from ..platooning_vehicle import PlatooningVehicle  # noqa 401
 
 LOG = logging.getLogger(__name__)
+
+# default values for this algorithm's parameters
 DEFAULTS = {
     'alpha': 0.5,
     'speed_deviation_threshold': -1,
-    'position_deviation_threshold': 2000,
+    'position_deviation_threshold': 2000,  # m
     'formation_centralized_kind': 'greedy',
-    'solver_time_limit': 60 * 1000,  # s -> ms
+    'solver_time_limit': 60,  # s
+    'record_solver_traces': False,
+    'record_infrastructure_assignments': False,
 }
+
+
+def initialize_solver_traces(basename: str):
+    """
+    Initialize the solver trace file.
+
+    Parameters
+    ----------
+    basename : str
+        The basename of the trace file
+    """
+
+    assert basename
+    with open(f'{basename}_solver_traces.csv', 'w') as f:
+        f.write(
+            "step,"
+            "id,"
+            "numVariables,"
+            "numConstraints,"
+            "runTime,"
+            "resultStatus,"
+            "solutionValue,"
+            "bestBound,"
+            "solutionQuality"
+            "\n"
+        )
+
+
+def record_solver_trace(
+    basename: str,
+    step: float,
+    iid: int,
+    variables: int,
+    constraints: int,
+    run_time: float,
+    result_status: int,
+    solution_value: float,
+    best_bound: float,
+    solution_quality: float,
+):
+    """
+    Record one line in the solver trace file.
+
+    Parameters
+    ----------
+    basename : str
+        The basename of the trace file
+    step : float
+        The current simulation step
+    iid : int
+        The id of the infrastructure which executed the solver run
+    variables : int
+        The number of variables
+    constraints : int
+        The number of constraints
+    run_time : float
+        The run time of the solver
+    result_status : int
+        The result status of the solver
+    solution_value : float
+        The solution value of the solver
+    best_bound : float
+        The best bound of the problem
+    solution_quality : float
+        The quality of the solution
+    """
+
+    assert basename
+    with open(f'{basename}_solver_traces.csv', 'a') as f:
+        f.write(
+            f"{step},"
+            f"{iid},"
+            f"{variables},"
+            f"{constraints},"
+            f"{run_time},"
+            f"{result_status},"
+            f"{solution_value},"
+            f"{best_bound},"
+            f"{solution_quality}"
+            "\n"
+        )
+
+
+def initialize_infrastructure_assignments(basename: str):
+    """
+    Initialize the infrastructure assignments result file.
+
+    Parameters
+    ----------
+    basename : str
+        The basename of the result file
+    """
+
+    assert basename
+    with open(f'{basename}_infrastructure_assignments.csv', 'w') as f:
+        f.write(
+            "id,"
+            "assignmentsSolved,"
+            "assignmentsNotSolved,"
+            "assignmentsSolvedOptimal,"
+            "assignmentsSolvedFeasible,"
+            "assignmentsNone,"
+            "assignmentsSelf,"
+            "assignmentsCandidateJoinedAlready,"
+            "assignmentsVehicleBecameLeader,"
+            "assignmentsSuccessful"
+            "\n"
+        )
 
 
 class SpeedPosition(FormationAlgorithm):
     """
-    Formation Algorithm based on:
+    Platoon Formation Algorithm based on Similarity, considering Speed and Position.
+
+    See papers
+
+    Julian Heinovski and Falko Dressler,
+    "Where to Decide? Centralized vs. Distributed Vehicle Assignment for Platoon Formation,"
+    arXiv, cs.MA, 2310.09580, October 2023.
+    https://www.tkn.tu-berlin.de/bib/heinovski2023where-preprint/
+
+    and
 
     Julian Heinovski and Falko Dressler,
     "Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols,"
     Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
+    https://www.tkn.tu-berlin.de/bib/heinovski2018platoon/
     """
 
     def __init__(
@@ -58,9 +180,10 @@ class SpeedPosition(FormationAlgorithm):
         position_deviation_threshold: int = DEFAULTS['position_deviation_threshold'],
         formation_centralized_kind: str = DEFAULTS['formation_centralized_kind'],
         solver_time_limit: int = DEFAULTS['solver_time_limit'],
+        record_solver_traces: bool = DEFAULTS['record_solver_traces'],
+        record_infrastructure_assignments: bool = DEFAULTS['record_infrastructure_assignments'],
         **kw_args,
     ):
-
         """
         Initialize an instance of this formation algorithm to be used in a vehicle or an infrastructure.
 
@@ -73,8 +196,17 @@ class SpeedPosition(FormationAlgorithm):
             The weighting factor alpha
         speed_deviation_threshold : float
             The threshold for speed deviation
-        position_deviation_threshold : float
+        position_deviation_threshold : int
             The threshold for position deviation
+        formation_centralized_kind : str
+            TODO
+        solver_time_limit : int
+            The time limit in s to apply to the solver
+        record_solver_traces : bool
+            Whether to record continuous solver traces
+        record_infrastructure_assignments : bool
+            Whether to record infrastructure assignments
+
         """
 
         super().__init__(owner)
@@ -84,24 +216,30 @@ class SpeedPosition(FormationAlgorithm):
         self._alpha = alpha  # the weight of the speed deviation
         # the maximum deviation from the desired driving speed
         if speed_deviation_threshold == -1:
+            # use 100% speed deviation from own desired driving speed
+            # e.g., des = 30 m/s, possible speed in [0, 60] m/s
             self._speed_deviation_threshold = 1.0
         else:
             self._speed_deviation_threshold = speed_deviation_threshold
         # the maximum deviation from the current position
         if position_deviation_threshold == -1:
-            self._position_deviation_threshold = self._owner._simulator.road_length  # FIXME
+            # use maximum possible distance aka total road length
+            self._position_deviation_threshold = self._owner._simulator.road_length
         else:
             self._position_deviation_threshold = position_deviation_threshold
-        if solver_time_limit < 2 * 1000:
-            LOG.warning("The time limit for the solver should be at least 2s! Otherwise it may not be possible for the solver to produce a solution (especially with many vehicles)!")
         self._formation_centralized_kind = formation_centralized_kind  # the kind of the centralized formation
-        self._solver_time_limit = solver_time_limit  # the time limit for the optimal solver per assignment problem
         if formation_centralized_kind == "optimal":
-            LOG.warning("NOTE: The optimal solver is still experimental!")
+            if solver_time_limit <= 0:
+                LOG.warning("Running the solver without a time limit may lead to long simulation times!")
+            elif solver_time_limit < 2:
+                LOG.warning("The time limit for the solver should be at least 2s! Otherwise it may not be possible for the solver to produce a solution (especially with many vehicles)!")
+        self._solver_time_limit = solver_time_limit  # the time limit for the optimal solver per assignment problem
+        self._record_solver_traces = record_solver_traces  # whether to record continuous solver traces
+        self._record_infrastructure_assignments = record_infrastructure_assignments  # whether to record infrastructure assignments
 
         # statistics
         self._assignments_solved = 0
-        self._assignments_not_solvable = 0
+        self._assignments_not_solved = 0
         self._assignments_solved_optimal = 0
         self._assignments_solved_feasible = 0
         self._assignments_none = 0
@@ -110,8 +248,17 @@ class SpeedPosition(FormationAlgorithm):
         self._assingments_vehicle_became_leader = 0
         self._assignments_successful = 0
 
+        from ..infrastructure import Infrastructure
+        if isinstance(self._owner, Infrastructure) and self._formation_centralized_kind == 'optimal':
+            if self._record_solver_traces:
+                # create output file for solver traces
+                initialize_solver_traces(basename=self._owner._simulator._result_base_filename)
+            if self._record_infrastructure_assignments:
+                # create output file for infrastructure assignments
+                initialize_infrastructure_assignments(basename=self._owner._simulator._result_base_filename)
+
     @classmethod
-    def add_parser_argument_group(cls, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
+    def add_parser_argument_group(self, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
         """
         Create and return specific argument group for this algorithm to use in global argument parser.
 
@@ -126,7 +273,7 @@ class SpeedPosition(FormationAlgorithm):
             The specific argument group for this algorithm.
         """
 
-        group = parser.add_argument_group(f"Formation Algorithm -- {cls.__name__}")
+        group = parser.add_argument_group(f"Formation Algorithm -- {self.__name__}")
         group.add_argument(
             "--alpha",
             type=float,
@@ -137,13 +284,13 @@ class SpeedPosition(FormationAlgorithm):
             "--speed-deviation-threshold",
             type=float,
             default=DEFAULTS['speed_deviation_threshold'],
-            help="The maximum allowed (relative) deviation from the desired speed for considering neighbors as candidates. A value of -1 disables the threshold",
+            help="The maximum allowed relative deviation from the desired speed for considering neighbors as candidates. A value of -1 disables the threshold (i.e., 100%% desired speed)",
         )
         group.add_argument(
             "--position-deviation-threshold",
             type=int,
             default=DEFAULTS['position_deviation_threshold'],
-            help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold",
+            help="The maximum allowed absolute deviation from the current position for considering neighbors as candidates. A value of -1 disables the threshold (i.e., total road length)",
         )
         group.add_argument(
             "--formation-centralized-kind",
@@ -155,12 +302,26 @@ class SpeedPosition(FormationAlgorithm):
         group.add_argument(
             "--solver-time-limit",
             type=int,
-            default=int(DEFAULTS['solver_time_limit'] / 1000),  # ms -> s
-            help="The time limit for the optimal solver per assignment problem in s. Influences the quality of the solution.",
+            default=int(DEFAULTS['solver_time_limit']),
+            help="The time limit for the optimal solver per assignment problem in s. Influences the quality of the solution. A value below 1 disables the limit.",
+        )
+        group.add_argument(
+            "--record-solver-traces",
+            type=lambda x: bool(strtobool(x)),
+            default=DEFAULTS['record_solver_traces'],
+            choices=(True, False),
+            help="Whether to record solver traces",
+        )
+        group.add_argument(
+            "--record-infrastructure-assignments",
+            type=lambda x: bool(strtobool(x)),
+            default=DEFAULTS['record_infrastructure_assignments'],
+            choices=(True, False),
+            help="Whether to record infrastructure assignments",
         )
         return group
 
-    def ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+    def ds(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon') -> float:
         """
         Return the deviation in speed from a given platoon.
 
@@ -172,14 +333,20 @@ class SpeedPosition(FormationAlgorithm):
             The vehicle for which the deviation is calculated
         platoon : Platoon
             The platoon to which the deviation is calculated
+
+        Returns
+        -------
+        float
+            The relative deviation in speed
         """
 
         diff = abs(vehicle._desired_speed - platoon.desired_speed)
 
         # normalize deviation by maximum allowed speed deviation
+        # a value in [0, 1] from maximum
         return (diff / (self._speed_deviation_threshold * vehicle._desired_speed))
 
-    def dp(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon'):
+    def dp(self, vehicle: 'PlatooningVehicle', platoon: 'Platoon') -> float:
         """
         Return the deviation in position from a given platoon.
 
@@ -191,19 +358,29 @@ class SpeedPosition(FormationAlgorithm):
             The vehicle for which the deviation is calculated
         platoon : Platoon
             The platoon to which the deviation is calculated
+
+        Returns
+        -------
+        float
+            The relative deviation in position
         """
 
-        if vehicle.rear_position > platoon.position:
-            # we are in front of the platoon
-            diff = abs(vehicle.rear_position - platoon.position)
-        else:
-            # we are behind the platoon
-            diff = abs(platoon.rear_position - vehicle.position)
+        # NOTE: we have multiple options
+        # a) take the leader's position
+        # b) take the last's position
+        # c) take the platoon's middle position
+        # d) take minimum from a) and b)
+        diff = min(
+            # TODO consider vehicles' length as well
+            abs(vehicle.position - platoon.position),  # vehicle is in front of platoon
+            abs(platoon.last.position - vehicle.position),  # platoon is in front of vehicle
+        )
 
         # normalize deviation by maximum allowed position deviation
+        # a value in [0, 1] from maximum
         return (diff / self._position_deviation_threshold)
 
-    def cost_speed_position(self, ds: float, dp: int):
+    def cost_speed_position(self, ds: float, dp: float) -> float:
         """
         Return the overall cost (i.e., the weighted deviation) for a candidate.
 
@@ -213,14 +390,20 @@ class SpeedPosition(FormationAlgorithm):
             The deviation in speed
         dp : int
             The deviation in position
+
+        Returns
+        -------
+        float
+            The weighted relative deviation
         """
 
-        return (self._alpha * ds) + ((1.0 - self._alpha) * dp)
+        fx = (self._alpha * ds) + ((1.0 - self._alpha) * dp)
+        assert 0.0 <= fx <= 1.0
+        return fx
 
     def do_formation(self):
         """
-        Run platoon formation algorithms to search for a platooning opportunity
-        and perform the corresponding join maneuver.
+        Run platoon formation algorithms to search for a platooning opportunity and perform the corresponding join maneuver.
         """
 
         from ..infrastructure import Infrastructure
@@ -228,13 +411,39 @@ class SpeedPosition(FormationAlgorithm):
             LOG.info(f"{self._owner.iid} is running formation algorithm {self.name} ({self._formation_centralized_kind}) at {self._owner._simulator.step}")
             if self._formation_centralized_kind == 'optimal':
                 # optimal
-                self._do_formation_optimal()  # still experimental
+                self._do_formation_optimal()
             else:
                 # greedy
                 self._do_formation_centralized()
         else:
             # greedy
             self._do_formation_distributed()
+
+    def _record_infrastructure_assignments(self, basename: str):
+        """
+        Record infrastructure assignments.
+
+        Parameters
+        ----------
+        basename : str
+            The basename of the result file
+        """
+
+        assert basename
+        with open(f'{basename}_infrastructure_assignments.csv', 'a') as f:
+            f.write(
+                f"{self._owner.iid},"
+                f"{self._assignments_solved},"
+                f"{self._assignments_not_solved},"
+                f"{self._assignments_solved_optimal},"
+                f"{self._assignments_solved_feasible},"
+                f"{self._assignments_none},"
+                f"{self._assignments_self},"
+                f"{self._assignments_candidate_joined_already},"
+                f"{self._assingments_vehicle_became_leader},"
+                f"{self._assignments_successful}"
+                "\n"
+            )
 
     def finish(self):
         """
@@ -253,11 +462,7 @@ class SpeedPosition(FormationAlgorithm):
         assert isinstance(self._owner, Infrastructure)
 
         if self._owner._simulator._record_infrastructure_assignments:
-            record_infrastructure_assignments(
-                basename=self._owner._simulator._result_base_filename,
-                iid=self._owner.iid,
-                algorithm=self,
-            )
+            self._record_infrastructure_assignments(self._owner._simulator._result_base_filename)
 
     def _do_formation_distributed(self):
         """
@@ -290,19 +495,20 @@ class SpeedPosition(FormationAlgorithm):
             ds = self.ds(self._owner, platoon)
             dp = self.dp(self._owner, platoon)
 
-            # TODO HACK for skipping platoons behind us
+            # FIXME HACK for skipping platoons behind us
             if self._owner.position > platoon.rear_position:
-                LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
+                LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its absolute position")
+                # we do not record stats here since this is different to the communication aspect filtering
                 continue
 
             # remove platoon if not in speed range
             if ds > 1.0:
-                LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
+                LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its speed difference")
                 continue
 
             # remove platoon if not in position range
             if dp > 1.0:
-                LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
+                LOG.trace(f"{self._owner.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its position difference")
                 continue
 
             # calculate deviation/cost
@@ -310,6 +516,12 @@ class SpeedPosition(FormationAlgorithm):
 
             # add platoon to list
             found_candidates.append({'vid': self._owner.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
+
+            # stats
+            if platoon.size > 1:
+                self._owner._candidates_found_platoon += 1
+            else:
+                self._owner._candidates_found_individual += 1
 
         # the number of candidates found in this iteration
         LOG.debug(f"{self._owner.vid} found {len(found_candidates)} applicable candidates")
@@ -325,8 +537,6 @@ class SpeedPosition(FormationAlgorithm):
         LOG.debug(f"{self._owner.vid}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
 
         # perform a join maneuver with the candidate's platoon
-        # do we really want the candidate to advertise its platoon
-        # or do we just want the leader to advertise its platoon?
         self._owner._join(best['pid'], best['lid'])
 
     def _do_formation_centralized(self):
@@ -396,28 +606,40 @@ class SpeedPosition(FormationAlgorithm):
                 ds = self.ds(vehicle, platoon)
                 dp = self.dp(vehicle, platoon)
 
-                # TODO HACK for skipping platoons behind us
+                # FIXME HACK for skipping platoons behind us
                 if vehicle.position > platoon.rear_position:
-                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
+                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its absolute position")
+                    # we do not record stats here since this is different to the communication aspect filtering
                     continue
 
                 # remove platoon if not in speed range
                 if ds > 1.0:
-                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference")
+                    # simply applying the threshold
+                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its speed difference")
                     continue
 
                 # remove platoon if not in position range
                 if dp > 1.0:
-                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference")
+                    # simply applying the threshold
+                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its position difference")
                     continue
 
                 # calculate deviation/cost
                 fx = self.cost_speed_position(ds, dp)
 
+                # NOTE: The distinction of vid and lid is superfluous, since we can only join either individual vehicles or platoon leaders.
+                # More specifically, only individual vehicles or platoon leader are able to "advertise" their platoon (see above)
+                assert other_vehicle.vid == platoon.leader.vid, f"We can only join individual vehicles or platoon leaders! {other_vehicle.vid}, {platoon.platoon_id}, {platoon.leader.vid}"
                 # add platoon to list
                 all_found_candidates.append({'vid': vehicle.vid, 'pid': platoon.platoon_id, 'lid': platoon.leader.vid, 'cost': fx})
-                LOG.debug(f"{vehicle.vid} found applicable candidate {platoon.platoon_id}")
+                LOG.trace(f"{vehicle.vid} found applicable platoon {platoon.platoon_id} (leader {platoon.leader.vid})")
+
+                # stats
                 vehicle._candidates_found += 1
+                if platoon.size > 1:
+                    vehicle._candidates_found_platoon += 1
+                else:
+                    vehicle._candidates_found_individual += 1
 
             # end vehicle
 
@@ -430,9 +652,12 @@ class SpeedPosition(FormationAlgorithm):
         # get unique list of searching vehicles from within the possible matches
         uids = set(x['vid'] for x in all_found_candidates)
 
+        # TODO apply random to uids?
+        # go through all searching vehicles (i.e., their ids)
         for v in uids:
             # get vehicle data and candidates
             vehicle = self._owner._simulator._vehicles[v]
+            # get all candidates that vehicle could join
             found_candidates = [x for x in all_found_candidates if x['vid'] == v]
 
             if len(found_candidates) == 0:
@@ -443,14 +668,13 @@ class SpeedPosition(FormationAlgorithm):
             # find best candidate to join
             # pick the platoon with the lowest deviation
             best = min(found_candidates, key=lambda x: x['cost'])
-            LOG.debug(f"{v}'s best platoon is {best['pid']} (leader {best['lid']}) with {best['cost']}")
+            LOG.trace(f"{v}'s best platoon is {best['pid']} (leader {best['lid']}) with cost {best['cost']}")
 
             # perform a join maneuver with the candidate's platoon
-            # do we really want the candidate to advertise its platoon
-            # or do we just want the leader to advertise its platoon?
             vehicle._join(best['pid'], best['lid'])
 
             # remove all matches from the list of possible matches that would include the selected vehicle
+            # this is exactly avoiding using candidates that became followers meanwhile or are at least within a maneuver
             def is_available(x: dict) -> bool:
                 """
                 Return whether an entry from the list of possible matches is (still) available.
@@ -462,10 +686,10 @@ class SpeedPosition(FormationAlgorithm):
                 """
 
                 return (
-                    x['vid'] != best['vid'] and  # noqa 504 # this vehicle does not search anymore
-                    x['lid'] != best['vid'] and  # noqa 504 # this vehicle will not be applicable as leader anymore
-                    x['vid'] != best['lid'] and  # noqa 504 # the other vehicle is not searching anymore, since it will become a leader
-                    x['lid'] != best['lid']  # the leader is not applicable as leader anymore
+                    x['vid'] != best['vid'] and  # noqa 504 # this vehicle does not search anymore, since it just started a join maneuver
+                    x['lid'] != best['vid'] and  # noqa 504 # this vehicle will not be applicable as leader anymore, since it just started a join maneuver
+                    x['vid'] != best['lid'] and  # noqa 504 # the other vehicle is not searching anymore, since it will become a leader in the current join maneuver
+                    x['lid'] != best['lid']  # the other vehicle is not available as leader anymore, since it is busy with the current join maneuver
                 )
 
             all_found_candidates = [x for x in all_found_candidates if is_available(x)]
@@ -475,20 +699,20 @@ class SpeedPosition(FormationAlgorithm):
         Run centralized optimal formation approach.
 
         This selects candidates and triggers join maneuvers.
-
-        NOTE: This functionality is still experimental!
         """
 
+        from ortools import __version__ as solver_version
         from ortools.linear_solver import pywraplp
-        solver = pywraplp.Solver(f"{self.name} solver", pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
+        solver = pywraplp.Solver(f"{self.name} solver (version {solver_version}) @ {self._owner.iid}", pywraplp.Solver.SCIP_MIXED_INTEGER_PROGRAMMING)
         solver.SetNumThreads(1)
-        # influences the quality of the solution
-        solver.set_time_limit(self._solver_time_limit)
+        if self._solver_time_limit > 0:
+            # influences the quality of the solution
+            solver.set_time_limit(self._solver_time_limit * 1000)  # s --> ms
 
         # import sys
         # infinity = sys.float_info.max  # does work
         # infinity = solver.infinity() does work?
-        individual = 1e+6  # big magic number for the cost of driving individually
+        individual = 1  # big magic number for the cost of driving individually
 
         objective = solver.Objective()
         objective.SetMinimization()
@@ -518,10 +742,12 @@ class SpeedPosition(FormationAlgorithm):
             vehicle._formation_iterations += 1
 
             # allow a vehicle to be assigned to exactly one platoon
-            constraint_one_target_platoon = solver.RowConstraint(1, 1, f"one platoon: {vehicle.vid}")
+            constraint_one_target_platoon = solver.RowConstraint(1, 1, f"only one platoon for {vehicle.vid}")
 
             # get all available platoons or platoon candidates
             for other_vehicle in self._owner._simulator._vehicles.values():
+                # NOTE: we do not filter same car because staying individual is possible here
+
                 # filter vehicles that are technically not able to do platooning
                 if not isinstance(other_vehicle, PlatooningVehicle):
                     LOG.trace(f"{other_vehicle.vid} is not capable of platooning")
@@ -555,10 +781,11 @@ class SpeedPosition(FormationAlgorithm):
                 # we assume driving alone is worse than to do platooning
                 if platoon is vehicle.platoon:
                     fx = individual
-                    LOG.trace(f"Considering driving individually for vehicle {vehicle.vid}")
+                    LOG.trace(f"Considering driving individually for vehicle {vehicle.vid} (with cost {fx})")
                 elif vehicle.position > platoon.rear_position:
-                    # TODO HACK for skipping platoons behind us
-                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its absolute position")
+                    # FIXME HACK for skipping platoons behind us
+                    # we do not record stats here since this is different to the communication aspect filtering
+                    LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its absolute position")
                     continue
                 else:
                     # calculate deviation values
@@ -567,20 +794,34 @@ class SpeedPosition(FormationAlgorithm):
 
                     # remove platoon if not in speed range
                     if ds > 1.0:
-                        LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its speed difference ({ds})")
+                        # simply applying the threshold
+                        LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its speed difference ({ds})")
                         continue
+
                     # remove platoon if not in position range
                     elif dp > 1.0:
-                        LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} not applicable because of its position difference ({dp})")
+                        # simply applying the threshold
+                        LOG.trace(f"{vehicle.vid}'s platoon {platoon.platoon_id} (leader {platoon.leader.vid}) not applicable because of its position difference ({dp})")
                         continue
+
                     else:
                         # calculate deviation/cost
-                        LOG.debug(f"Considering platoon {platoon.platoon_id} for vehicle {vehicle.vid}")
                         fx = self.cost_speed_position(ds, dp)
+                        LOG.trace(f"Considering platoon {platoon.platoon_id} (leader {platoon.leader.vid}) for vehicle {vehicle.vid} with cost {fx}")
+
+                        # stats
                         vehicle._candidates_found += 1
+                        if platoon.size > 1:
+                            vehicle._candidates_found_platoon += 1
+                        else:
+                            vehicle._candidates_found_individual += 1
+
+                # NOTE: The distinction of vid and lid is superfluous, since we can only join either individual vehicles or platoon leaders.
+                # More specifically, only individual vehicles or platoon leader are able to "advertise" their platoon (see above)
+                assert other_vehicle.vid == platoon.leader.vid, f"We can only join individual vehicles or platoon leaders! {other_vehicle.vid}, {platoon.platoon_id}, {platoon.leader.vid}"
 
                 # define (0,1) decision variable for assignment of vehicle to platoon
-                variable = solver.IntVar(0, 1, f"{vehicle.vid} -> {platoon.platoon_id}")
+                variable = solver.IntVar(0, 1, f"{vehicle.vid} -> {platoon.platoon_id} ({platoon.leader.vid})")
 
                 # add variable to assignment matrix
                 decision_variables[variable.index()] = {
@@ -601,24 +842,44 @@ class SpeedPosition(FormationAlgorithm):
 
         # end all vehicles
 
+        # print cost matrix
+        if LOG.getEffectiveLevel() <= logging.DEBUG:
+            print(' ', end=' ')
+            for lid in set([x['lid'] for x in decision_variables.values()]):
+                print(lid, ' ', end=' ')
+            print('(lid)')
+            for vid in set([x['vid'] for x in decision_variables.values()]):
+                print(vid, end=' ')
+                for lid in set([x['lid'] for x in decision_variables.values()]):
+                    variables = [x['var'] for x in decision_variables.values() if x['vid'] == vid and x['lid'] == lid]
+                    if variables:
+                        print(round(decision_variables[solver.variable(variables[0]).index()]['cost'], 1), end=' ')
+                    else:
+                        print(' - ', end=' ')
+                print()
+            print('(vid)')
+
         # add more platoon constraints
+        # NOTE: We need to take the leader here, since the platoon id does not necessarily match the leader id (e.g., when the leader left already)
+        # Also, we want to compare the vehicle id to the leader id to make sure that only one assignment is done for this vehicle
         LOG.debug(f"{self._owner.iid} is adding additional platoon constraints")
+
         # get all platoons
-        for pid in set([x['pid'] for x in decision_variables.values()]):
+        for lid in set([x['lid'] for x in decision_variables.values()]):
             # create constraint for this platoon
-            # assign only one (other) vehicle to this platoon
-            constraint_one_member_per_platoon = solver.RowConstraint(0, 1, f"one other member per platoon: {pid}")
-            # assign a vehicle only if no other vehicles has been assigned
-            constraint_one_assignment_per_vehicle = solver.RowConstraint(0, 1, f"one assignment per vehicle: {pid}")
-            # get all variables that assign a vehicle to that platoon
-            for var in [x['var'] for x in decision_variables.values() if x['pid'] == pid and x['vid'] != pid]:
+            # assign only one (other) vehicle to this leader
+            constraint_one_member_per_platoon = solver.RowConstraint(0, 1, f"one other member for leader {lid}")
+            # assign a vehicle only if no other vehicles has been assigned to this vehicle
+            constraint_one_assignment_per_vehicle = solver.RowConstraint(0, 1, f"one assignment per vehicle {lid}")
+            # get all variables that assign a vehicle to this vehicle (as leader)
+            for var in [x['var'] for x in decision_variables.values() if x['lid'] == lid and x['vid'] != lid]:
                 # not a self-assignment
                 variable = solver.variable(var)
                 constraint_one_member_per_platoon.SetCoefficient(variable, 1)
                 constraint_one_assignment_per_vehicle.SetCoefficient(variable, 1)
 
-            # get all variables that assign this vehicle to someone else
-            for var in [x['var'] for x in decision_variables.values() if x['vid'] == pid and x['pid'] != pid]:
+            # get all variables that assign this vehicle to someone else (as leader)
+            for var in [x['var'] for x in decision_variables.values() if x['vid'] == lid and x['lid'] != lid]:
                 # not a self-assignment
                 constraint_one_assignment_per_vehicle.SetCoefficient(solver.variable(var), 1)
 
@@ -629,65 +890,119 @@ class SpeedPosition(FormationAlgorithm):
         # run the solver to calculate the optimal assignments
         LOG.info(f"{self._owner.iid} is running the solver for {solver.NumVariables()} possible assignments, and {solver.NumConstraints()} constraints")
 
+        # solver debug output
+        if LOG.getEffectiveLevel() <= logging.DEBUG:
+            solver.EnableOutput()
+
         start_time = timer()
         result_status = solver.Solve()
         end_time = timer()
         run_time = end_time - start_time
 
-        if result_status == solver.OPTIMAL:
-            LOG.info(f"{self._owner.iid}'s solution is optimal")
-            self._assignments_solved_optimal += 1
-        elif result_status == solver.FEASIBLE:
-            LOG.info(f"{self._owner.iid}'s solution is not optimal")
-            self._assignments_solved_feasible += 1
-        elif result_status >= solver.INFEASIBLE:
-            LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
-            self._assignments_not_solvable += 1
-            return
+        LOG.info(f"{self._owner.iid}'s solver ran for {run_time}s")
+        LOG.info(f"{self._owner.iid}'s solver ran for {solver.iterations()} iterations")  # broken?
+        solution_quality = objective.BestBound() / objective.Value()
 
-        self._assignments_solved += 1
+        # record solver trace
+        if self._record_solver_traces:
+            record_solver_trace(
+                basename=self._owner._simulator._result_base_filename,
+                step=self._owner._simulator.step,
+                iid=self._owner.iid,
+                variables=solver.NumVariables(),
+                constraints=solver.NumConstraints(),
+                run_time=run_time,
+                result_status=result_status,  # this is a simple int
+                solution_value=objective.Value(),
+                best_bound=objective.BestBound(),
+                solution_quality=solution_quality,
+            )
+
+        # TODO record mean runtime
+
+        if result_status == solver.OPTIMAL:  # 0
+            LOG.info(f"{self._owner.iid}'s solution is optimal")
+            self._assignments_solved += 1
+            self._assignments_solved_optimal += 1
+        elif result_status == solver.FEASIBLE:  # 1
+            # from or-tools' documentation:
+            # The solver had enough time to find some solution that satisfies all
+            # constraints, but it did not prove optimality (which means it may or may
+            # not have reached the optimal).
+            # This can happen for large LP models (Linear Programming), and is a frequent
+            # response for time-limited MIPs (Mixed Integer Programming). In the MIP
+            # case, the difference between the solution 'objective_value' and
+            # 'best_objective_bound' fields of the MPSolutionResponse will give an
+            # indication of how far this solution is from the optimal one.
+            LOG.info(f"{self._owner.iid}'s solution is not optimal")
+            self._assignments_solved += 1
+            self._assignments_solved_feasible += 1
+            LOG.debug(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
+            LOG.debug(f"{self._owner.iid}'s best bound is {objective.BestBound()}")
+            LOG.info(f"{solution_quality} approximation of the optimal solution")
+        elif result_status >= solver.INFEASIBLE:  # 2
+            LOG.warning(f"{self._owner.iid}'s optimization problem was not solvable!")
+            self._assignments_not_solved += 1
+            return
 
         if objective.Value() == 0:
             LOG.info(f"{self._owner.iid} made no assignment!")
             self._assignments_none += 1
             return
 
-        # TODO record mean runtime?
+        # print assingment matrix
+        if LOG.getEffectiveLevel() <= logging.DEBUG:
+            print(' ', end=' ')
+            for lid in set([x['lid'] for x in decision_variables.values()]):
+                print(lid, '', end=' ')
+            print('(lid)')
+            for vid in set([x['vid'] for x in decision_variables.values()]):
+                print(vid, end=' ')
+                for lid in set([x['lid'] for x in decision_variables.values()]):
+                    variables = [x['var'] for x in decision_variables.values() if x['vid'] == vid and x['lid'] == lid]
+                    if variables:
+                        print(int(solver.variable(variables[0]).solution_value()), '', end=' ')
+                    else:
+                        print('- ', end=' ')
+                print()
+            print('(vid)')
 
-        LOG.info(f"{self._owner.iid} solved the optimization problem in {run_time}s ({solver.wall_time()}ms)")
-        LOG.info(f"{self._owner.iid} solved the optimization problem in {solver.iterations()} iterations")  # broken?
-        LOG.debug(f"{self._owner.iid}'s optimal objective value is {objective.Value()}")
-        LOG.debug(f"{self._owner.iid}'s best bound is {objective.BestBound()}")
-
+        LOG.debug("Applying solver solution...")
         for variable in solver.variables():
             if variable.solution_value() > 0:
                 mapping = decision_variables[variable.index()]
-                LOG.debug(f"{mapping['vid']} was assigned to platoon {mapping['pid']} (leader {mapping['lid']}) with cost {mapping['cost']}")
+                LOG.trace(f"{mapping['vid']} was assigned to leader {mapping['lid']} (platoon {mapping['pid']}) with cost {mapping['cost']}")
+                # get vehicle & platoon data
                 # HACK for oracle knowledge
                 leader = self._owner._simulator._vehicles[mapping['lid']]
                 vehicle = self._owner._simulator._vehicles[mapping['vid']]
                 target_platoon = leader.platoon
-                if vehicle.platoon.platoon_id == mapping['pid']:
+                if mapping['vid'] == mapping['lid']:
                     # self-assignment
-                    LOG.debug(f"{vehicle.vid} keeps driving individually")
+                    assert mapping['cost'] == individual
+                    LOG.trace(f"{vehicle.vid} keeps driving individually")
                     self._assignments_self += 1
                     self._assignments_successful += 1
                     continue
                 if target_platoon.platoon_id != mapping['pid']:
-                    # meanwhile, the leader became a platoon member
+                    # meanwhile, the leader became a platoon member (during application of the solver's solution)
+                    # NOTE: this should never happen
                     assert (leader.is_in_platoon() and leader.platoon_role == PlatoonRole.FOLLOWER)
-                    LOG.warning(f"{vehicle.vid}'s assigned platoon {mapping['pid']} (leader {leader.vid}) meanwhile joined another platoon {target_platoon.platoon_id}!")
+                    LOG.warning(f"{vehicle.vid}'s assigned leader {leader.vid} (platoon {mapping['pid']}) meanwhile joined another platoon {target_platoon.platoon_id}!")
                     self._assignments_candidate_joined_already += 1
+                    sys.exit("ERROR: This should never happen!")
                     continue
                 else:
                     assert not leader.in_maneuver
                     assert (not leader.is_in_platoon() or leader.platoon_role == PlatoonRole.LEADER)
                 # let vehicle join platoon
                 if vehicle.is_in_platoon():
-                    # meanwhile, we became a platoon leader
+                    # meanwhile, we became a platoon leader (during application of the solver's solution)
+                    # NOTE: this should never happen
                     assert vehicle.platoon_role == PlatoonRole.LEADER
                     LOG.warning(f"{vehicle.vid} meanwhile became the leader of platoon {vehicle.platoon.platoon_id}. Hence, no assignment is possible/necessary anymore")
                     self._assingments_vehicle_became_leader += 1
+                    sys.exit("ERROR: This should never happen!")
                     continue
                 assert not vehicle.in_maneuver
                 assert not leader.in_maneuver
