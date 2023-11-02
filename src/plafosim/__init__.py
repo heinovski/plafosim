@@ -28,6 +28,7 @@ __description__ = textwrap.dedent(
     f"""\
     Platoon Formation Simulator (PlaFoSim) -- Version {__version__}.
     A simple and scalable simulator for platoon formation.
+    Website: https://www.plafosim.de/
 
     Copyright (c) 2020-2023 Julian Heinovski <heinovski@ccs-labs.org>
 
@@ -42,6 +43,7 @@ __description__ = textwrap.dedent(
     "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim,"
     Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021),
     Poster Session, Virtual Conference, November 2021, pp. 137–138.
+    https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/
 """
 )
 
