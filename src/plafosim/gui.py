@@ -56,6 +56,10 @@ def start_gui(config: str, step_length: float, play: bool = True):
     ----------
     config : str
         The name of the configuration file
+    step_length : float
+        The length of one simulation step in s
+    play : bool, optional
+        Whether to start the simulation automatically
     """
 
     binary = os.path.join(os.environ["SUMO_HOME"], "bin/sumo-gui")
@@ -203,7 +207,7 @@ def gui_step(target_step: int, screenshot_filename: str = None):
     ----------
     target_step : int
         The target simulation step
-    screenshot_filename : str
+    screenshot_filename : str, optional
         The name of the screenshot file
     """
 

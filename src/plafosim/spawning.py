@@ -29,7 +29,27 @@ def get_desired_speed(
     random_desired_speed: bool = False,
 ) -> float:
     """
-    Return a (random) departure speed.
+    Return a (random) desired driving speed.
+
+    Parameters
+    ----------
+    desired_speed : float
+        The value to be used as is or as the mean for sampling from a normal distribution
+    rng: random.Random
+        The random number generator to use
+    speed_variation : float
+        The value to be used as variation for sampling from a normal distribution
+    min_desired_speed : float
+        The minimum allowed value for the desired driving speed
+    max_desired_speed : float
+        The maximum allowed value for the desired driving speed
+    random_desired_speed : bool, optional
+        Whether to choose a random value from a normal distribution
+
+    Returns
+    -------
+    float
+        The value for the desired driving speed
     """
 
     if random_desired_speed:
@@ -57,6 +77,17 @@ def get_depart_speed(
     ----------
     desired_speed : float
         The desired speed to consider
+    rng: random.Random
+        The random number generator to use
+    depart_desired : bool, optional
+        Whether to depart with the desired speed
+    random_depart_speed : bool, optional
+        Whether to choose a random value from a range
+
+    Returns
+    -------
+    float
+        The value for the departure speed
     """
 
     if random_depart_speed:
@@ -99,11 +130,16 @@ def get_arrival_position(
     max_trip_length : int
         The maximum trip length
     rng : random.Random
-        The RNG to be used
+        The random number generator to use
     random_arrival_position : bool
         Whether to use random arrival positions
-    prefill : bool, optional
+    pre_fill : bool, optional
         Whether the trip is for a pre-filled vehicle
+
+    Returns
+    -------
+    int
+        The arrival position in m
     """
 
     # set minimum theoretical arrival position

@@ -69,6 +69,31 @@ def is_gap_safe(
     - the vehicle will not crash
 
     Assumes euclidean/non-ballistic position updates.
+
+    Parameters
+    ----------
+    front_position : float
+        The position of the front vehicle in m
+    front_speed : float
+        The speed of the front vehicle in m/s
+    front_max_deceleration : float
+        The maximum deceleration of the front vehicle in m/s2
+    front_length : length
+        The length of the front vehicle in m
+    back_position : float
+        The position of the back vehicle in m
+    back_speed : float
+        The speed of the back vehicle in m/s
+    back_max_acceleration : float
+        The maximum acceleration of the back vehicle in m/s2
+    back_min_gap : float
+        The minimum gap of the back vehicle in m
+    step_length : float
+        The length of a simulation step in s
+
+    Returns
+    -------
+    bool : Whether the gap between the two vehicles is safe
     """
 
     assert front_position >= 0
@@ -109,6 +134,13 @@ def safe_speed_df(vdf: pd.DataFrame) -> pd.Series:
     safety is guaranteed, if step length <= tau and gap_desired >= v_leader * step_length
     <=> if the true reaction time (i.e., the length of one time step) is
     smaller than or equal to the reaction time that each driver assumes
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
     """
 
     if vdf.empty:
@@ -139,6 +171,13 @@ def speed_human_df(vdf: pd.DataFrame) -> pd.Series:
     Compute new speed for human vehicles, DataFrame variant.
 
     Basically just safe speed, clamping is done outside this function.
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
     """
 
     # TODO: implement dawdling
@@ -153,6 +192,15 @@ def speed_acc_df(vdf: pd.DataFrame, step_length: float) -> pd.Series:
     Clamping is done outside this function.
 
     See Eq. 6.18 of R. Rajamani, Vehicle Dynamics and Control, 2nd. Springer, 2012.
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    step_length : float
+        The length of a simulation step in s
     """
 
     if vdf.empty:
@@ -220,6 +268,15 @@ def lane_predecessors(vdf: pd.DataFrame, max_lane: int) -> pd.DataFrame:
 
     Preconditions:
     - vdf.sorted_values(['position', 'lane'], ascending=False)
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    max_lane : int
+        The largest lane id
     """
 
     assert max_lane >= 0
@@ -247,6 +304,15 @@ def lane_successors(vdf: pd.DataFrame, max_lane: int) -> pd.DataFrame:
 
     Preconditions:
     - vdf.sorted_values(['position', 'lane'], ascending=False)
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    max_lane : int
+        The largest lane id
     """
 
     assert max_lane >= 0
@@ -332,6 +398,21 @@ def compute_new_speeds(
     Can compute "potential" new speed for different target lanes.
     Assume vdf already contains predecessor and successor data.
     Just pass the right predecessor/successor data for different lanes.
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    step_length : float
+        The length of a simulation step
+
+    Returns
+    -------
+    pandas.Series
+        The series of new speeds
+        index: vid
     """
 
     assert step_length > 0
@@ -406,6 +487,24 @@ def compute_lane_changes(
     if ((favorable(i->j) or (rand < p_change)) and safe(i->j)) then change(i->j)
     for vehicles on the right lane:
     if (v > v^0_safe) and (not congested) then v <- v^0_safe
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    max_lane : int
+        The largest lane id
+    step_length : float
+        The length of a simulation step
+
+    Returns
+    -------
+    pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [lane, reason]
     """
 
     assert 0 <= max_lane
@@ -625,6 +724,12 @@ def clip_position(position: pd.Series, vdf: pd.DataFrame) -> pd.Series:
         The Dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
+
+    Returns
+    -------
+    pandas.Series
+        The series of clipped positions
+        index: vid
     """
 
     assert_index_equal(position, vdf)
@@ -658,6 +763,13 @@ def update_position(vdf: pd.DataFrame, step_length: float) -> pd.DataFrame:
         columns: [position, length, lane, ..]
     step_length : float
         The length of the simulated step
+
+    Returns
+    -------
+    pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
     """
 
     assert step_length > 0
@@ -677,6 +789,10 @@ def get_crashed_vehicles(vdf: pd.DataFrame) -> list:
         The Dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
+
+    Returns
+    -------
+    list(int) : the list of vehicles that crashed
     """
 
     if vdf.empty:

@@ -40,7 +40,9 @@ EMISSION_FACTORS = {
 
 class EmissionClass(Enum):
     """
-    Emission class for the HBEFA3 model.
+    Emission class for combustion engines using the HBEFA3 model.
+
+    Website: https://www.hbefa.net/
     """
 
     PC_G_EU4 = 0
@@ -48,7 +50,11 @@ class EmissionClass(Enum):
     @property
     def emission_factors(self) -> dict:
         """
-        Return the emission factors of an emission class.
+        Return the emission factors of the emission class.
+
+        Returns
+        -------
+        dict : The emission factors of the emission class
         """
 
         return EMISSION_FACTORS[self.name]
@@ -56,7 +62,11 @@ class EmissionClass(Enum):
     @property
     def is_diesel(self) -> bool:
         """
-        Return whether an emission class is for a diesel engine.
+        Return whether the emission class is for a diesel engine.
+
+        Returns
+        -------
+        bool : Whether the emission class is for a diesel engine
         """
 
         split = self.name.split("_")

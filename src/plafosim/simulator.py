@@ -213,6 +213,25 @@ def report_rough_braking(
     Rough braking meaning more than rough_factor times max_deceleration.
 
     Return number of rough braking vehicles
+
+    Parameters
+    ----------
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    new_speed : pandas.Series
+        The Series containing the new speeds of the vehicles
+        index: vid
+    step_length : float
+        The length of one simulation step in s
+    rough_factor : float, optional
+        The factor to apply to the maximum deceleration for setting a rough braking threshold
+
+    Returns
+    -------
+    int
+        The number of vehicles performing rough braking
     """
 
     assert_index_equal(vdf, new_speed)
@@ -252,6 +271,11 @@ def check_collisions(vdf: pd.DataFrame) -> bool:
         The Dataframe containing the vehicles as rows
         index: vid
         columns: [position, length, lane, ..]
+
+    Returns
+    -------
+    bool
+        Whether there are collisions between vehicles
     """
 
     if vdf.empty:
@@ -279,12 +303,23 @@ def has_collision(
 
     Parameters
     ----------
-    position1 : The current position of vehicle 1
-    rear_position1 : The current rear position of vehicle 1
-    lane1 : The current lane of vehicle 1
-    position2 : The current position of vehicle 2
-    rear_position2 : The current rear position of vehicle 2
-    lane2 : The current lane of vehicle 2
+    position1 : float
+        The current position of vehicle 1
+    rear_position1 : float
+        The current rear position of vehicle 1
+    lane1 : int
+        The current lane of vehicle 1
+    position2 : float
+        The current position of vehicle 2
+    rear_position2 : float
+        The current rear position of vehicle 2
+    lane2 : int
+        The current lane of vehicle 2
+
+    Returns
+    -------
+    bool
+        Whether there is a collision between two vehicles
     """
 
     if lane1 != lane2:
@@ -302,6 +337,24 @@ def is_insert_safe(
 ) -> bool:
     """
     Checks if a vehicle can be inserted safely at a given position.
+
+    Parameters
+    ----------
+    depart_position : float
+        The planned depature position of the vehicle
+    depart_speed : float
+        The planned departure speed of the vehicle
+    vtype : VehicleType
+        The vehicle type of the vehicle
+    other_vehicle: Vehicle
+        The other vehicle to check
+    step_length: float
+        The step length
+
+    Returns
+    -------
+    bool
+        Whether the insertion of a vehicle is safe
     """
 
     assert depart_position >= 0
@@ -695,7 +748,7 @@ class Simulator:
     @property
     def road_length(self) -> int:
         """
-        Return the road length.
+        Return the road length in m.
         """
 
         return self._road_length
@@ -1010,7 +1063,12 @@ class Simulator:
 
     def _vehicles_to_be_scheduled(self) -> int:
         """
-        1) Calculate how many vehicles should be spawned according to the departure method.
+        Calculate how many vehicles should be spawned according to the departure method.
+
+        Returns
+        -------
+        int
+            The number of vehicles to be spawned within this time step
         """
 
         vehicles_to_be_scheduled = -1
@@ -1190,12 +1248,17 @@ class Simulator:
             The departure speed of the vehicle
         depart_time : float
             The actual departure time of the vehicle
-        depart_delay : float
+        depart_delay : float, optional
             The time the vehicle had to wait before starting its trip
-        communication_range : int
+        communication_range : int, optional
             The maximum communication range of the vehicle
-        pre_filled : bool
+        pre_filled : bool, optional
             Whether this vehicle was pre-filled
+
+        Returns
+        -------
+        Vehicle
+            The added vehicle
         """
 
         # choose vehicle "type" depending on the penetration rate
@@ -1433,6 +1496,7 @@ class Simulator:
     def run(self):
         """
         Run the simulation with the specified parameters until it is stopped.
+
         Main simulation method.
 
         This is based on Krauss' multi lane traffic:
@@ -1609,6 +1673,23 @@ class Simulator:
     ):
         """
         Record some period statistics.
+
+        Parameters
+        ----------
+        vehicles_in_simulator : int
+            The number of vehicles in the scenario within this step
+        vehicles_in_queue : int
+            The number of vehicles in the spawn queue within this step
+        vehicles_spawned : int
+            The number of vehicles that departed within this step
+        vehicles_arrived : int
+            The number of vehicles that arrived within this step
+        runtime : float
+            The run time of this step
+        average_vehicle_speed : int
+            The average driving speed amog all vehicles in the scenario within this step
+        vehicles_braking_rough : int
+            The number of vehicles performing rough braking within this step
         """
 
         # average number of vehicles in simulation
@@ -1657,6 +1738,17 @@ class Simulator:
             )
 
     def _record_lane_changes(self, vdf: pd.DataFrame):
+        """
+        Record lane changes.
+
+        Parameters
+        ----------
+        vdf : pd.DataFrame
+            The Dataframe containing the vehicles as rows
+            index: vid
+            columns: [position, length, lane, ..]
+        """
+
         for row in vdf[vdf.lane != vdf.old_lane].itertuples():
             if row.cf_model != CF_Model.CACC:
                 if self._record_vehicle_changes:
@@ -1698,7 +1790,15 @@ class Simulator:
     def _get_vehicles_df(self) -> pd.DataFrame:
         """
         Return a pandas Dataframe from the internal data structure.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The Dataframe containing the vehicles as rows
+            index: vid
+            columns: [position, length, lane, ..]
         """
+
         platoon_fields = [
             "leader_id",
             "platoon_id",
@@ -1894,10 +1994,35 @@ def compute_vehicle_spawns(
     step_length: float = 1.0,
 ):
     """
-    Schritt 4, siehe oben.
+    Spawn as many vehicles as possible from the queue (sorted by waiting time).
 
     Assumption: list of vehicles is already sorted ascending by departure priority (e.g., waiting time)
     Assumption: ramp positions is sorted in ascending manner
+
+    Parameters
+    ----------
+    vehicles : list(dict)
+        The list of vehicles to add
+    vdf : pandas.DataFrame
+        The Dataframe containing the vehicles as rows
+        index: vid
+        columns: [position, length, lane, ..]
+    ramp_positions : list(int)
+        The list of available on-ramp positions in m
+    number_of_lanes : int
+        The number of available lanes
+    current_step : float
+        The current simulation step
+    rng : random.Random
+        The random number generator to use
+    random_depart_position : bool
+        Whether the vehicles sould depart at a random position
+    random_arrival_position : bool
+        Whether the vehicles should arrive at a random position
+    depart_all_lanes : bool
+        Whether to use all availale lanes for depature
+    step_length : float, optioal
+        The length of a simulation step
     """
 
     if not vehicles:

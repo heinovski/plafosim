@@ -26,8 +26,16 @@ import textwrap
 def find_resource(path: str) -> str:
     """
     Find the resouces under relpath locally or as a packaged resource.
-    """
 
+    Parameters
+    ----------
+    path : str
+        The path to search for the ressource
+
+    Returns
+    -------
+    str : The path of the resource
+    """
     # prioritize local paths
     if os.path.exists(path):
         return path
@@ -41,10 +49,37 @@ def find_resource(path: str) -> str:
 
 
 def round_to_next_base(x: float, base: float) -> float:
+    """
+    Round a value to the next base value.
+
+    Parameters
+    ----------
+    x : float
+        The value to round
+    base : float
+        The base value to round to
+
+    Returns
+    -------
+    float : The rounded value
+    """
     return base * math.ceil(x / base)
 
 
 def rgb2hex(rgb: tuple) -> str:
+    """
+    Convert a color in RGB values to a color in hex values.
+
+    Parameters
+    ----------
+    rgb : tuple(int, int, int)
+        The color in RGB values
+
+    Returns
+    -------
+    str : The color in hex values
+    """
+
     assert len(rgb) == 3
     for c in rgb:
         assert type(c) == int and 0 <= c <= 255
@@ -53,6 +88,19 @@ def rgb2hex(rgb: tuple) -> str:
 
 
 def hex2rgb(hex: str) -> tuple:
+    """
+    Convert a color in hex values to a color in RGB values.
+
+    Parameters
+    ----------
+    hex : str
+        The color in hex values
+
+    Returns
+    -------
+    tuple(int, int, int) : The color in RGB values
+    """
+
     assert hex[0] == '#'
     assert len(hex[1:]) == 6
 
@@ -66,7 +114,13 @@ def assert_index_equal(a, b) -> bool:
     Parameters
     ----------
     a : pandas.Sequence / pandas.DataFrame
+        The first object for the comparison
     b : pandas.Sequence / pandas.DataFrame
+        The second object for the comparsion
+
+    Returns
+    -------
+    bool : Whether the two indices are equal
     """
 
     # TODO use pandas.testing.assert_index_equal?
@@ -83,6 +137,10 @@ def speed2distance(speed: float, time_interval: float = 1.0) -> float:
         The speed to be converted
     time_interval : float, optional
         The time to consider
+
+    Returns
+    -------
+    float : The converted value
     """
 
     return speed * time_interval
@@ -98,6 +156,10 @@ def distance2speed(distance: float, time_interval: float = 1.0) -> float:
         The distance to be converted
     time_interval : float, optional
         The time to consider
+
+    Returns
+    -------
+    float : The converted value
     """
 
     return distance / time_interval
@@ -113,6 +175,10 @@ def acceleration2speed(acceleration: float, time_interval: float = 1.0) -> float
         The acceleration to be converted
     time_interval : float, optional
         The time to consider
+
+    Returns
+    -------
+    float : The converted value
     """
 
     return acceleration * time_interval
@@ -130,6 +196,10 @@ def speed2acceleration(speed_from: float, speed_to: float, time_interval: float 
         The target speed
     time_interval : float, optional
         The time to consider
+
+    Returns
+    -------
+    float : The converted value
     """
 
     return (speed_to - speed_from) / time_interval
@@ -144,6 +214,15 @@ def addLoggingLevel(levelName: str, levelNum: int, methodName: str = None):
     To avoid accidental clobberings of existing attributes, this method will raise an `AttributeError` if the level name is already an attribute of the `logging` module or if the method name is already present.
 
     Taken from https://stackoverflow.com/a/35804945.
+
+    Parameters
+    ----------
+    levelName : str
+        The name of the level to add
+    levelNum : int
+        The number of the level to add
+    methodName : str
+        The name of the method for the level to add
     """
 
     if not methodName:
@@ -176,6 +255,7 @@ class FakeLog:
     """
     A fake logger, hide LOG behind this and be happy.
     """
+
     def trace(self, *arg, **kwd):
         pass
 

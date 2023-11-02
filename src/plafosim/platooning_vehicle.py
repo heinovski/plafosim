@@ -335,7 +335,9 @@ class PlatooningVehicle(Vehicle):
 
     @property
     def color(self) -> tuple:
-        """Return the current color of the vehicle."""
+        """
+        Return the current color of the vehicle.
+        """
 
         return self._platoon.leader._color if self.is_in_platoon() else self._color
 
@@ -353,6 +355,10 @@ class PlatooningVehicle(Vehicle):
             The emission factors to use for current emission variable to be calculated
         scale : float
             The scale to normalize the calculated value
+
+        Returns
+        -------
+        float : The calculcated emission in ml/mg per s
         """
 
         # calculate impact of platooning on air drag based on
@@ -553,6 +559,10 @@ class PlatooningVehicle(Vehicle):
         Return the available platoon candidates of the vehicle.
 
         This imitates neighbor maintenance by using a neighbor table.
+
+        Returns
+        -------
+        list(PlatooninVehicle) : The list of available platoons
         """
 
         # HACK FOR AVOIDING MAINTAINING A NEIGHBOR TABLE (for now)
@@ -776,6 +786,8 @@ class PlatooningVehicle(Vehicle):
 
     def _join_teleport(self, leader: 'PlatooningVehicle', last: 'PlatooningVehicle', new_position: float):
         """
+        Perform the actual teleporting of the join maneuver.
+
         Parameters
         ----------
         leader : PlatooningVehicle
@@ -988,11 +1000,14 @@ class PlatooningVehicle(Vehicle):
 
         Parameters
         ----------
-
         target_position : float
             The target position to approach
         target_speed : float
             The target speed after approaching
+
+        Returns
+        -------
+        float : The calculated approaching time
         """
 
         initial_distance = target_position - self._position
@@ -1046,7 +1061,7 @@ class PlatooningVehicle(Vehicle):
             The new position
         new_lane : int
             The new lane
-        new_speed : int
+        new_speed : float
             The new speed
         """
 
@@ -1292,6 +1307,10 @@ class PlatooningVehicle(Vehicle):
     def _left_lane_blocked(self) -> bool:
         """
         Check whether a vehicle can move to the left lane in order to leave its current platoon.
+
+        Returns
+        -------
+        bool : Whether the left lane is blocked
         """
         # TODO prime example for use of pandas Dataframe
 

@@ -21,6 +21,12 @@ import sys
 
 
 def main():
+    """
+    The main entry point of PlaFoSim's img2video script.
+
+    This script uses ffmpeg.
+    """
+
     if len(sys.argv) != 3:
         print(f"usage: {sys.argv[0]} 'prefix_*.png' video.mp4")
         sys.exit()

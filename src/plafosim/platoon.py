@@ -39,6 +39,8 @@ class Platoon:
         desired_speed: float,
     ):
         """
+        Initialize a platoon instance.
+
         Parameters
         ----------
         platoon_id : int
@@ -225,6 +227,10 @@ class Platoon:
         ----------
         vehicle : PlatooningVehicle
             The considered vehicle within the platoon.
+
+        Returns
+        -------
+        int : The index of the member within the platoon
         """
 
         return self._formation.index(vehicle)
@@ -237,6 +243,10 @@ class Platoon:
         ----------
         vehicle : PlatooningVehicle
             The considered vehicle within the platoon.
+
+        Returns
+        -------
+        PlatooningVehicle : The member in the front
         """
 
         if vehicle is not self.leader:
@@ -252,6 +262,10 @@ class Platoon:
         ----------
         vehicle : PlatooningVehicle
             The considered vehicle within the platoon.
+
+        Returns
+        -------
+        PlatooningVehicle : The member in the back
         """
 
         if vehicle is not self.last:
@@ -271,11 +285,19 @@ class Platoon:
         LOG.debug(f"Updated platoon {self.platoon_id}'s desired speed to {self.desired_speed} (from {old_desired_speed})")
 
     def update_limits(self):
+        """
+        Update mobility limits for the platoon.
+        """
+
         self.update_max_speed()
         self.update_max_acceleration()
         self.update_max_deceleration()
 
     def update_cf_target_speed(self):
+        """
+        Update the cf target speed for the platoon.
+        """
+
         for member in self._formation:
             member._cf_target_speed = self._desired_speed
 

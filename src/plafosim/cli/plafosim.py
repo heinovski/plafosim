@@ -55,7 +55,7 @@ Examples:
 
 def format_help(parser: argparse.ArgumentParser, groups=None) -> str:
     """
-    Format help message for argument groups
+    Format help message for argument groups.
 
     Taken from https://stackoverflow.com/a/40730878.
     """
@@ -848,6 +848,19 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
 
 
 def load_snapshot(snapshot_filename: str) -> Simulator:
+    """
+    Load a simulator object from a snapshot file.
+
+    Parameters
+    ----------
+    snapshot_filename : str
+        The name of the file containing the snapshot
+
+    Returns
+    -------
+    Simulator : The loaded simulator object
+    """
+
     assert snapshot_filename
 
     with open(snapshot_filename, "rb") as f:
@@ -859,6 +872,17 @@ def load_snapshot(snapshot_filename: str) -> Simulator:
 
 
 def save_snapshot(simulator: Simulator, snapshot_filename: str):
+    """
+    Store a simulator object to a snapshot file.
+
+    Parameters
+    ----------
+    simulator : Simulator
+        The simulator object to store
+    snapshot_filename : str
+        The name of the file for storing the snapshot
+    """
+
     assert isinstance(simulator, Simulator)
     assert snapshot_filename
 
@@ -867,6 +891,19 @@ def save_snapshot(simulator: Simulator, snapshot_filename: str):
 
 
 def create_simulator(**kwargs: dict) -> Simulator:
+    """
+    Create a simulator object from given keyword arguments.
+
+    Parameters
+    ----------
+    kwargs : dict
+        The dictionary of keyword arguments to use for the creation
+
+    Returns
+    -------
+    Simulator : The created simulator object
+    """
+
     assert kwargs
 
     # prepare keyword arguments for simulator

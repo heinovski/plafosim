@@ -63,6 +63,11 @@ class FormationAlgorithm(ABC):
         Abstract method for performing any type of platoon formation (i.e., assignment calculation).
 
         This methods needs to be overridden in implementing sub-classes.
+
+        Returns
+        -------
+        argparse._ArgumentGroup
+            The specific argument group for this algorithm.
         """
 
         sys.exit("ERROR: There shouldn't be an instance of this abstract base class!")

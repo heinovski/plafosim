@@ -29,6 +29,11 @@ LOG = logging.getLogger(__name__)
 
 
 class Infrastructure:
+    """
+    A class representing road side infrastructure / road side units.
+
+    The infrastructure can execute formation algorithms.
+    """
 
     def __init__(
             self,
@@ -40,6 +45,8 @@ class Infrastructure:
             **kw_args,
     ):
         """
+        Initialize an Infrastructure instance.
+
         Parameters
         ----------
         simulator : Simulator

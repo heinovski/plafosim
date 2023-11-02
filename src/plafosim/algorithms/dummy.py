@@ -39,7 +39,6 @@ class Dummy(FormationAlgorithm):
         dummy: int = DEFAULTS['dummy'],
         **kw_args,
     ):
-
         """
         Initialize an instance of this formation algorithm to be used in a vehicle or an infrastructure.
 
@@ -83,8 +82,7 @@ class Dummy(FormationAlgorithm):
 
     def do_formation(self):
         """
-        Run platoon formation algorithm to search for a platooning opportunity
-        and perform the corresponding join maneuver.
+        Run platoon formation algorithm to search for a platooning opportunity and perform the corresponding join maneuver.
         """
 
         from ..infrastructure import Infrastructure
