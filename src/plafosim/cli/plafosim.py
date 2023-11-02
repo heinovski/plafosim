@@ -275,7 +275,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['depart_all_lanes'],
         choices=(True, False),
-        help="Whether vehicles are allowed to departure on all lanes"
+        help="Whether vehicles are allowed to depart on all lanes"
     )
     g_trips.add_argument(
         "--desired-speed",
@@ -320,7 +320,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['depart_desired'],
         choices=(True, False),
-        help="Whether the vehicle should departure with its desired speed. Overrides --random-depart-speed",
+        help="Whether the vehicle should depart with its desired speed. Overrides --random-depart-speed",
     )
     g_trips.add_argument(
         "--depart-flow",
@@ -340,7 +340,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "--depart-interval",
         type=float,
         default=DEFAULTS['depart_interval'],
-        help="The interval between two vehicle departures in s for departure method 'interval'",
+        help="The interval between two vehicles' departures in s for departure method 'interval'",
     )
     g_trips.add_argument(
         "--depart-probability",

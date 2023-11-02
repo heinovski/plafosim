@@ -1957,7 +1957,7 @@ def compute_vehicle_spawns(
         # in case the corresponding vehicles apply their maximum acceleration/deceleration
         # (see mobility.is_gap_safe)
         # NOTE: departing with desired speed is not really realistic and unnecessary
-        # The vehicle could departure already with max(0, rear_vehicle.speed), which will decrease the required gap
+        # The vehicle could depart already with max(0, rear_vehicle.speed), which will decrease the required gap
         for v in vehicles:
             # TODO use correct headway time (Human vs. ACC)
             # enough space on the road to reach the minimum trip length
