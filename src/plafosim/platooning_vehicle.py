@@ -591,14 +591,20 @@ class PlatooningVehicle(Vehicle):
             if not isinstance(vehicle, PlatooningVehicle):
                 continue
 
-            # filter non-platoons
-            if vehicle.platoon_role != PlatoonRole.LEADER and vehicle.platoon_role != PlatoonRole.NONE:
-                continue
-
             # filter non-available vehicles based on communication range
             if abs(vehicle.position - self._position) > self._communication_range:
                 LOG.trace(f"{self._vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range}m)")
                 continue
+
+            # filter non-platoons
+            # this mimics advertisements that are only done by platoon leaders or individual vehicles
+            # this does not include outdated information, e.g., due to an individual vehicle not available anymore
+            # disabling this increases the number of false positives, thereby increasing the number of failed join maneuvers
+            if self._simulator._distributed_platoon_knowledge:
+                if vehicle.platoon_role != PlatoonRole.LEADER and vehicle.platoon_role != PlatoonRole.NONE:
+                    self._candidates_filtered += 1
+                    self._candidates_filtered_follower += 1
+                    continue
 
             # filter vehicles which are already in a maneuver
             # disabling this increases the number of false positives, thereby increasing the number of failed join maneuvers

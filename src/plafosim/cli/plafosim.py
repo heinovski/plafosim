@@ -389,6 +389,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         help="The maximum communication range between two vehicles in m. A value of -1 disables the communication range check",
     )
     g_communication.add_argument(
+        "--distributed-platoon-knowledge",
+        type=lambda x: bool(strtobool(x)),
+        default=DEFAULTS['distributed_platoon_knowledge'],
+        choices=(True, False),
+        help="Whether the distributed approach should have perfect platoon knowledge (e.g., platoon role)."
+    )
+    g_communication.add_argument(
         "--distributed-maneuver-knowledge",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['distributed_maneuver_knowledge'],
