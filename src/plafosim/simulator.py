@@ -152,6 +152,8 @@ DEFAULTS = {
     'minimum_trip_length': 0,
     'maximum_trip_length': -1 * 1000,  # km -> m
     'communication_range': 500,  # m
+    # TODO apply also to infrastructure-based approaches
+    'distributed_maneuver_knowledge': False,
     'start_as_platoon': False,
     'reduced_air_drag': True,
     'maximum_teleport_distance': 2000,  # m
@@ -429,6 +431,7 @@ class Simulator:
             minimum_trip_length: int = DEFAULTS['minimum_trip_length'],
             maximum_trip_length: int = DEFAULTS['maximum_trip_length'],
             communication_range: int = DEFAULTS['communication_range'],
+            distributed_maneuver_knowledge: bool = DEFAULTS['distributed_maneuver_knowledge'],
             start_as_platoon: bool = DEFAULTS['start_as_platoon'],
             reduced_air_drag: bool = DEFAULTS['reduced_air_drag'],
             maximum_teleport_distance: int = DEFAULTS['maximum_teleport_distance'],
@@ -589,6 +592,7 @@ class Simulator:
 
         # communication properties
         self._communication_range = communication_range  # the maximum communication range between two vehicles
+        self._distributed_maneuver_knowledge = distributed_maneuver_knowledge  # whether the distributed approach should have perfect maneuver knowledge
         if communication_range == -1:
             self._communication_range = road_length
         if self._communication_range <= 0:

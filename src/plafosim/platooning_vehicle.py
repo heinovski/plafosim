@@ -586,6 +586,15 @@ class PlatooningVehicle(Vehicle):
                 LOG.trace(f"{self._vid}'s neighbor {vehicle.vid} is out of communication range ({self._communication_range}m)")
                 continue
 
+            # filter vehicles which are already in a maneuver
+            # disabling this increases the number of false positives, thereby increasing the number of failed join maneuvers
+            if self._simulator._distributed_maneuver_knowledge:
+                if vehicle.in_maneuver:
+                    LOG.trace(f"{vehicle.vid} is already in a maneuver")
+                    self._candidates_filtered += 1
+                    self._candidates_filtered_maneuver += 1
+                    continue
+
             platoons.append(vehicle.platoon)
 
         return platoons

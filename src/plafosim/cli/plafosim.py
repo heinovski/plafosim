@@ -388,6 +388,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         default=DEFAULTS['communication_range'],
         help="The maximum communication range between two vehicles in m. A value of -1 disables the communication range check",
     )
+    g_communication.add_argument(
+        "--distributed-maneuver-knowledge",
+        type=lambda x: bool(strtobool(x)),
+        default=DEFAULTS['distributed_maneuver_knowledge'],
+        choices=(True, False),
+        help="Whether the distributed approach should have perfect maneuver knowledge."
+    )
 
     # platoon properties
     g_platoon = parser.add_argument_group("platoon properties")
