@@ -161,7 +161,8 @@ In order to contribute, please follow these steps:
 ### Documentation
 
 When making changes to the code, make sure to add or adjust corresponding documentation in form of python docstrings.
-Those should use the Numpy docstring format in Sphinx and follow the [style guide](https://numpydoc.readthedocs.io/en/latest/format.html) by numpydoc to ensure consistency and compatibility.
+Those should use the Numpy docstring format for Sphinx and follow the [style guide](https://numpydoc.readthedocs.io/en/latest/format.html) by numpydoc to ensure consistency and compatibility.
+See also the [style guide](https://pandas.pydata.org/docs/development/contributing_docstring.html) by pandas.
 
 ### Testing
 
