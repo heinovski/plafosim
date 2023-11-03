@@ -256,25 +256,25 @@ class FakeLog:
     A fake logger, hide LOG behind this and be happy.
     """
 
-    def trace(self, *arg, **kwd):
+    def trace(self, *arg, **kwd):  # noqa D102
         pass
 
-    def debug(self, *arg, **kwd):
+    def debug(self, *arg, **kwd):  # noqa D102
         pass
 
-    def info(self, *arg, **kwd):
+    def info(self, *arg, **kwd):  # noqa D102
         pass
 
-    def warning(self, *arg, **kwd):
+    def warning(self, *arg, **kwd):  # noqa D102
         pass
 
-    def warn(self, *arg, **kwd):
+    def warn(self, *arg, **kwd):  # noqa D102
         pass
 
-    def error(self, *arg, **kwd):
+    def error(self, *arg, **kwd):  # noqa D102
         pass
 
-    def fatal(self, *arg, **kwd):
+    def fatal(self, *arg, **kwd):  # noqa D102
         pass
 
 
