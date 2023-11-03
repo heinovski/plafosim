@@ -129,6 +129,18 @@ To see all options of this script, run:
 
 **NOTE**: This requires installation of SUMO (>=1.6.0) and declaration of the `SUMO_HOME` variable.
 
+## Recording of Screenshots and Video from a Simulation
+
+PlaFoSim offers functionality to automatically record a screenshot of the GUI in every simulation step with
+
+```plafosim --gui --screenshot-file screenshot```
+
+These screenshots can be used to create a video by using an integrated script based on [ffmpeg](https://ffmpeg.org/):
+
+```plafosim-img2video 'screenshot_*.png' video.mp4```
+
+**NOTE**: This requires installation of ffmpeg.
+
 ## Extending PlaFoSim
 
 In order to extend PlaFoSim, you first need ot install it from source.
