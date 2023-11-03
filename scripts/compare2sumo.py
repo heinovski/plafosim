@@ -28,18 +28,10 @@ import pandas as pd
 import seaborn as sns
 from scipy.stats import ks_2samp
 
+sys.path.append("../plafosim/src")
+from plafosim import CustomFormatter  # noqa E402
+
 # Read parameters
-
-
-class CustomFormatter(argparse.ArgumentDefaultsHelpFormatter,
-                      argparse.RawDescriptionHelpFormatter,
-                      argparse.MetavarTypeHelpFormatter):
-    """
-    Metaclass combining multiple formatter classes for argparse.
-    """
-    pass
-
-
 parser = argparse.ArgumentParser(formatter_class=CustomFormatter, description="")
 parser.add_argument('experiment', type=str,
                     help="The name of the experiment to use for all result files")
