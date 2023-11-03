@@ -46,7 +46,7 @@ class FormationAlgorithm(ABC):
         from .infrastructure import Infrastructure
         from .platooning_vehicle import PlatooningVehicle  # noqa 811
 
-        assert isinstance(owner, PlatooningVehicle) or isinstance(owner, Infrastructure)
+        assert isinstance(owner, (Infrastructure, PlatooningVehicle))
         self._owner = owner  # the owning vehicle or infrastructure
 
     @property
@@ -58,7 +58,7 @@ class FormationAlgorithm(ABC):
         return self.__class__.__name__
 
     @abstractmethod
-    def add_parser_argument_group(cls, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
+    def add_parser_argument_group(self, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
         """
         Abstract method for performing any type of platoon formation (i.e., assignment calculation).
 

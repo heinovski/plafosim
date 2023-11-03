@@ -58,7 +58,7 @@ class Dummy(FormationAlgorithm):
         self._dummy = dummy
 
     @classmethod
-    def add_parser_argument_group(cls, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
+    def add_parser_argument_group(self, parser: argparse.ArgumentParser) -> argparse._ArgumentGroup:
         """
         Create and return specific argument group for this algorithm to use in global argument parser.
 
@@ -73,7 +73,7 @@ class Dummy(FormationAlgorithm):
             The specific argument group for this algorithm.
         """
 
-        group = parser.add_argument_group(f"Formation Algorithm -- {cls.__name__}")
+        group = parser.add_argument_group(f"Formation Algorithm -- {self.__name__}")
         group.add_argument(
             "--dummy",
             type=int,

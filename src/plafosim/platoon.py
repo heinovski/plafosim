@@ -22,7 +22,7 @@ from statistics import mean
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .platooning_vehicle import PlatooningVehicle  # noqa 401
+    from plafosim.platooning_vehicle import PlatooningVehicle  # noqa 401
 
 LOG = logging.getLogger(__name__)
 
@@ -251,8 +251,7 @@ class Platoon:
 
         if vehicle is not self.leader:
             return self._formation[self.get_member_index(vehicle) - 1]
-        else:
-            return None
+        return None
 
     def get_back(self, vehicle: 'PlatooningVehicle'):
         """
@@ -270,8 +269,7 @@ class Platoon:
 
         if vehicle is not self.last:
             return self._formation[self.get_member_index(vehicle) + 1]
-        else:
-            return None
+        return None
 
     def update_desired_speed(self):
         """

@@ -40,7 +40,7 @@ def check_and_prepare_gui():
     sys.path.append(tools)
 
     # check TraCI API version
-    import traci
+    import traci  # noqa C415
     api_version = traci.constants.TRACI_VERSION
     assert api_version
 
@@ -77,7 +77,7 @@ def start_gui(config: str, step_length: float, play: bool = True):
         "--start",
         str(play),
     ]
-    import traci
+    import traci  # noqa C415
 
     traci.start(command)
 
@@ -111,7 +111,8 @@ def set_gui_window(road_length: int):
     road_length : int
         The length of the road in m
     """
-    import traci
+
+    import traci  # noqa C415
 
     # set window bounday
     # TODO make y-lim dependet on road length
@@ -156,7 +157,7 @@ def add_gui_vehicle(
     """
 
     LOG.trace(f"Adding vehicle {vid} at {position},{lane} with {speed},{color}")
-    import traci
+    import traci  # noqa C415
 
     if vid not in traci.vehicle.getIDList():
         traci.vehicle.add(
@@ -192,7 +193,7 @@ def move_gui_vehicle(vid: int, position: float, lane: int, speed: float):
         The vehicle's new speed
     """
 
-    import traci
+    import traci  # noqa C415
 
     LOG.trace(f"Moving vehicle {vid} to {position},{lane} with {speed}")
     traci.vehicle.setSpeed(vehID=str(vid), speed=speed)
@@ -211,7 +212,7 @@ def gui_step(target_step: int, screenshot_filename: str = None):
         The name of the screenshot file
     """
 
-    import traci
+    import traci  # noqa C415
 
     if screenshot_filename:
         file_name, file_extension = os.path.splitext(screenshot_filename)
@@ -237,7 +238,7 @@ def change_gui_vehicle_color(vid: int, color: tuple):
         The color (R, G, B) to use for the vehicle
     """
 
-    import traci
+    import traci  # noqa C415
 
     LOG.trace(f"Changing color of vehicle {vid} to {color}")
     traci.vehicle.setColor(str(vid), color)
@@ -253,7 +254,7 @@ def remove_gui_vehicle(vid: int):
         The id of the vehicle to remove
     """
 
-    import traci
+    import traci  # noqa C415
 
     LOG.trace(f"Removing vehicle {vid}")
     traci.vehicle.remove(str(vid), 2)
@@ -269,7 +270,7 @@ def prune_vehicles(keep_vids: list):
         The ids of the vehicle that should be kept
     """
 
-    import traci
+    import traci  # noqa C415
 
     for vid in set(map(int, traci.vehicle.getIDList())) - set(keep_vids):
         remove_gui_vehicle(vid)
@@ -280,7 +281,7 @@ def close_gui():
     Close the GUI.
     """
 
-    import traci
+    import traci  # noqa C415
 
     traci.close(False)
 
@@ -304,7 +305,7 @@ def draw_ramps(road_length: int, interval: int, labels: bool):
     width = 4
     height = 150
 
-    import traci
+    import traci  # noqa C415
 
     for x in range(0, road_length + 1, interval):
         traci.polygon.add(
@@ -344,7 +345,7 @@ def draw_road_end(road_length: int, label: bool):
     width = 4
     color = (255, 0, 0)
 
-    import traci
+    import traci  # noqa C415
 
     traci.polygon.add(
         "road-end",
@@ -383,7 +384,7 @@ def draw_infrastructures(infrastructures: list, labels: bool):
     width = 20
     color = (0, 0, 255)
 
-    import traci
+    import traci  # noqa C415
 
     for infrastructure in infrastructures:
         from .infrastructure import Infrastructure

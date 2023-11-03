@@ -19,11 +19,13 @@
 
 import logging
 import sys
+from typing import TYPE_CHECKING
 
-from .algorithms import *  # noqa 401
-from .platooning_vehicle import PlatooningVehicle
+from plafosim.algorithms import *  # noqa 401
+from plafosim.platooning_vehicle import PlatooningVehicle
 
-#from .simulator import Simulator  # TODO fix circular import
+if TYPE_CHECKING:
+    from plafosim.simulator import Simulator  # noqa 401
 
 LOG = logging.getLogger(__name__)
 
@@ -37,7 +39,7 @@ class Infrastructure:
 
     def __init__(
             self,
-            simulator,
+            simulator: 'Simulator',
             iid: int,
             position: int,
             formation_algorithm: str,

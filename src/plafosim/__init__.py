@@ -20,7 +20,7 @@
 import argparse
 import textwrap
 
-from plafosim.util import addLoggingLevel
+from plafosim.util import add_logging_level
 
 __version__ = "0.17.1"
 
@@ -66,7 +66,7 @@ __citation__ = textwrap.dedent(
 )
 
 # add additional custom log level
-addLoggingLevel("TRACE", 5)
+add_logging_level("TRACE", 5)
 
 
 class CustomFormatter(
@@ -77,5 +77,3 @@ class CustomFormatter(
     """
     Metaclass combining multiple formatter classes for argparse.
     """
-
-    pass

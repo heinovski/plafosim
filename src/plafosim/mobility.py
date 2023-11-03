@@ -23,7 +23,7 @@ from enum import Enum
 import numpy as np
 import pandas as pd
 
-from .util import assert_index_equal
+from plafosim.util import assert_index_equal
 
 # misc constants
 HIGHVAL = 1e15  # virtually infinite position or speed
@@ -41,7 +41,7 @@ class CF_Model(Enum):
     Car Following models that vehicles can use for their mobility.
     """
 
-    Human = 0  # safe speed
+    HUMAN = 0  # safe speed
     ACC = 1  # fixed time gap
     CACC = 2  # small fixed distance
 
@@ -442,7 +442,7 @@ def compute_new_speeds(
     # predecessor. If there is none, the values should just be large defaults.
     # The CF functions should be able to deal with this inherently.
 
-    m_human = vdf.cf_model == CF_Model.Human
+    m_human = vdf.cf_model == CF_Model.HUMAN
     m_acc = vdf.cf_model == CF_Model.ACC
     m_cacc = vdf.cf_model == CF_Model.CACC
 
@@ -507,7 +507,7 @@ def compute_lane_changes(
         columns: [lane, reason]
     """
 
-    assert 0 <= max_lane
+    assert max_lane >= 0
     assert step_length > 0
 
     # TODO: check order of computation for performance

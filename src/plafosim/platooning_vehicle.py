@@ -22,12 +22,12 @@ import math
 import sys
 from typing import TYPE_CHECKING
 
-from .algorithms import *  # noqa 401
-from .gui import change_gui_vehicle_color
-from .mobility import CF_Model, is_gap_safe
-from .platoon import Platoon
-from .platoon_role import PlatoonRole
-from .statistics import (
+from plafosim.algorithms import *  # noqa 401
+from plafosim.gui import change_gui_vehicle_color
+from plafosim.mobility import CF_Model, is_gap_safe
+from plafosim.platoon import Platoon
+from plafosim.platoon_role import PlatoonRole
+from plafosim.statistics import (
     record_platoon_formation,
     record_platoon_trace,
     record_platoon_trip,
@@ -36,12 +36,12 @@ from .statistics import (
     record_vehicle_platoon_trace,
     record_vehicle_teleport,
 )
-from .util import round_to_next_base
-from .vehicle import Vehicle
-from .vehicle_type import VehicleType
+from plafosim.util import round_to_next_base
+from plafosim.vehicle import Vehicle
+from plafosim.vehicle_type import VehicleType
 
 if TYPE_CHECKING:
-    from .simulator import Simulator  # noqa 401
+    from plafosim.simulator import Simulator  # noqa 401
 
 LOG = logging.getLogger(__name__)
 
@@ -228,7 +228,7 @@ class PlatooningVehicle(Vehicle):
 
         if self._cf_model == CF_Model.ACC:
             return self._acc_headway_time
-        elif self._cf_model == CF_Model.CACC:
+        if self._cf_model == CF_Model.CACC:
             return 0
         return super().desired_headway_time
 
@@ -400,7 +400,7 @@ class PlatooningVehicle(Vehicle):
         This includes leaving the platoon and mostly statistics recording.
         """
 
-        if (self._position < self._arrival_position):
+        if self._position < self._arrival_position:
             LOG.warning(f"{self._vid}'s finish method was called even though vehicle did not arrive yet!")
             return
 
@@ -671,7 +671,7 @@ class PlatooningVehicle(Vehicle):
             self._joins_aborted += 1
             self._joins_aborted_front += 1
             return
-        elif self._position > leader.platoon.last.position:
+        if self._position > leader.platoon.last.position:
             # TODO join at (arbitrary position) in the middle
             LOG.debug(f"{self._vid} is in front of (at least) the last vehicle {leader.platoon.last.vid} of the target platoon {platoon_id} ({leader_id})")
             LOG.warning("Join at arbitrary positions of a platoon is not yet implemented! Aborting the join maneuver!")
@@ -1390,4 +1390,4 @@ class PlatooningVehicle(Vehicle):
             step_length=self._simulator.step_length,
         )
 
-        return not (front_gap_safe & back_gap_safe)
+        return not front_gap_safe & back_gap_safe

@@ -27,8 +27,8 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from .emissions import EmissionClass
-from .gui import (
+from plafosim.emissions import EmissionClass
+from plafosim.gui import (
     add_gui_vehicle,
     check_and_prepare_gui,
     close_gui,
@@ -42,8 +42,8 @@ from .gui import (
     set_gui_window,
     start_gui,
 )
-from .infrastructure import Infrastructure
-from .mobility import (
+from plafosim.infrastructure import Infrastructure
+from plafosim.mobility import (
     HIGHVAL,
     CF_Model,
     compute_lane_changes,
@@ -54,10 +54,10 @@ from .mobility import (
     lane_predecessors,
     update_position,
 )
-from .platoon_role import PlatoonRole
-from .platooning_vehicle import PlatooningVehicle
-from .spawning import get_arrival_position, get_depart_speed, get_desired_speed
-from .statistics import (
+from plafosim.platoon_role import PlatoonRole
+from plafosim.platooning_vehicle import PlatooningVehicle
+from plafosim.spawning import get_arrival_position, get_depart_speed, get_desired_speed
+from plafosim.statistics import (
     initialize_emission_traces,
     initialize_platoon_changes,
     initialize_platoon_formation,
@@ -80,9 +80,9 @@ from .statistics import (
     record_vehicle_platoon_change,
     record_vehicle_trace,
 )
-from .util import assert_index_equal
-from .vehicle import Vehicle
-from .vehicle_type import VehicleType
+from plafosim.util import assert_index_equal
+from plafosim.vehicle import Vehicle
+from plafosim.vehicle_type import VehicleType
 
 LOG = logging.getLogger(__name__)
 
@@ -289,8 +289,7 @@ def check_collisions(vdf: pd.DataFrame) -> bool:
         for v in crashed_vehicles:
             print(f"{v}: {vdf.at[v, 'position']}-{vdf.at[v, 'position']-vdf.at[v, 'length']},{vdf.at[v, 'lane']}")
         return True
-    else:
-        return False
+    return False
 
 
 def has_collision(
@@ -380,20 +379,19 @@ def is_insert_safe(
             back_min_gap=other_vehicle.min_gap,
             step_length=step_length,
         )
-    else:
-        # the current vehicle is behind the other vehicle
-        # check if the current vehicle could crash into the other vehicle within the next time step
-        return is_gap_safe(
-            front_position=other_vehicle.position,
-            front_speed=other_vehicle.speed,
-            front_max_deceleration=other_vehicle.max_deceleration,
-            front_length=other_vehicle.length,
-            back_position=depart_position,
-            back_speed=depart_speed,
-            back_max_acceleration=vtype.max_acceleration,
-            back_min_gap=vtype.min_gap,
-            step_length=step_length,
-        )
+    # the current vehicle is behind the other vehicle
+    # check if the current vehicle could crash into the other vehicle within the next time step
+    return is_gap_safe(
+        front_position=other_vehicle.position,
+        front_speed=other_vehicle.speed,
+        front_max_deceleration=other_vehicle.max_deceleration,
+        front_length=other_vehicle.length,
+        back_position=depart_position,
+        back_speed=depart_speed,
+        back_max_acceleration=vtype.max_acceleration,
+        back_min_gap=vtype.min_gap,
+        step_length=step_length,
+    )
 
 
 class Simulator:
@@ -529,7 +527,7 @@ class Simulator:
         self._speed_variation = speed_variation  # the deviation from the desired driving speed
         self._min_desired_speed = min_desired_speed  # the minimum desired driving speed
         self._max_desired_speed = max_desired_speed  # the maximum desired driving speed
-        if not (min_desired_speed <= desired_speed <= max_desired_speed):
+        if not min_desired_speed <= desired_speed <= max_desired_speed:
             sys.exit("ERROR: desired speed has to be between limits!")
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to departure with the desired driving speed
@@ -584,7 +582,7 @@ class Simulator:
                 sys.exit("ERROR: Maximum trip length cannot be smaller than the minimum trip length!")
             if maximum_trip_length < ramp_interval:
                 sys.exit("ERROR: Maximum trip length cannot be smaller than the ramp interval!")
-            if not maximum_trip_length % ramp_interval == 0:
+            if maximum_trip_length % ramp_interval != 0:
                 sys.exit("ERROR: Maximum trip length has to be a multiple of the ramp interval!")
             if maximum_trip_length == minimum_trip_length:
                 LOG.debug(f"Using static trip length of {maximum_trip_length}m for all vehicles")
@@ -621,7 +619,7 @@ class Simulator:
         else:
             if maximum_teleport_distance >= ramp_interval:
                 LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports beyond the next highway ramp! ")
-            if maximum_teleport_distance >= minimum_trip_length and minimum_trip_length > 0:
+            if 0 < minimum_trip_length <= maximum_teleport_distance:
                 LOG.warning(f"A maximum teleport distance of {maximum_teleport_distance}m allows teleports beyond the minimum trip length!")
             self._maximum_teleport_distance = maximum_teleport_distance  # maximum teleport distance
         if maximum_approach_time == -1:
@@ -876,8 +874,7 @@ class Simulator:
         p = self._get_predecessor(vehicle, lane)
         if not p:
             return -1
-        else:
-            return p.rear_position
+        return p.rear_position
 
     def _get_predecessor_speed(self, vehicle: Vehicle, lane: int = -1) -> float:
         """
@@ -895,8 +892,7 @@ class Simulator:
         p = self._get_predecessor(vehicle, lane)
         if not p:
             return -1
-        else:
-            return p._speed
+        return p.speed
 
     def _remove_arrived_vehicles(self, arrived_vehicles: list):
         """
@@ -1281,7 +1277,7 @@ class Simulator:
                 depart_speed=depart_speed,
                 depart_time=depart_time,
                 depart_delay=depart_delay,
-                communication_range=self._communication_range,
+                communication_range=communication_range,
                 acc_headway_time=self._acc_headway_time,
                 cacc_spacing=self._cacc_spacing,
                 formation_algorithm=self._formation_algorithm if self._formation_strategy == "distributed" else None,
@@ -1609,18 +1605,17 @@ class Simulator:
 
                 # do collision check (for all vehicles)
                 # without arrived vehicles
-                if self._collisions:
-                    if check_collisions(vdf):
-                        # record final vehicle trace entries
-                        if self._record_vehicle_traces:
-                            for v in self._vehicles.values():
-                                record_vehicle_trace(
-                                    basename=self._result_base_filename,
-                                    step=self._step + self._step_length,
-                                    vehicle=v,
-                                )
+                if self._collisions and check_collisions(vdf):
+                    # record final vehicle trace entries
+                    if self._record_vehicle_traces:
+                        for v in self._vehicles.values():
+                            record_vehicle_trace(
+                                basename=self._result_base_filename,
+                                step=self._step + self._step_length,
+                                vehicle=v,
+                            )
 
-                        sys.exit("ERROR: There were collisions between vehicles!")
+                    sys.exit("ERROR: There were collisions between vehicles!")
 
                 # remove arrived vehicles from dict and do finish
                 self._remove_arrived_vehicles(arrived_vehicles)
@@ -2089,7 +2084,7 @@ def compute_vehicle_spawns(
         # NOTE: departing with desired speed is not really realistic and unnecessary
         # The vehicle could depart already with max(0, rear_vehicle.speed), which will decrease the required gap
         for v in vehicles:
-            # TODO use correct headway time (Human vs. ACC)
+            # TODO use correct headway time (HUMAN vs. ACC)
             # enough space on the road to reach the minimum trip length
             trip_possible = max_remanining_trip_length >= v['min_trip_length']
             # enough space to the vehicle in front

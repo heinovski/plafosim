@@ -20,8 +20,8 @@
 import logging
 from typing import TYPE_CHECKING
 
-from .mobility import CF_Model
-from .statistics import (
+from plafosim.mobility import CF_Model
+from plafosim.statistics import (
     record_emission_trace_prefix,
     record_emission_trace_suffix,
     record_emission_trace_value,
@@ -29,8 +29,8 @@ from .statistics import (
     record_vehicle_trace,
     record_vehicle_trip,
 )
-from .util import speed2distance
-from .vehicle_type import VehicleType
+from plafosim.util import speed2distance
+from plafosim.vehicle_type import VehicleType
 
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike
@@ -120,7 +120,7 @@ class Vehicle:
         self._speed = self._depart_speed  # the current speed of the vehicle
         self._blocked_front = False  # whether the vehicle is blocked by a slower vehicle in front
         self._acceleration = 0  # the current acceleration of the vehicle, used (only) for the emission model
-        self._cf_model = CF_Model.Human  # the current car following model
+        self._cf_model = CF_Model.HUMAN  # the current car following model
         self._cf_target_speed = desired_speed  # the target speed for the car following
 
         # communication properties

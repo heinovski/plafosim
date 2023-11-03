@@ -48,13 +48,13 @@ def find_resource(path: str) -> str:
     return str(resource_path)
 
 
-def round_to_next_base(x: float, base: float) -> float:
+def round_to_next_base(value: float, base: float) -> float:
     """
     Round a value to the next base value.
 
     Parameters
     ----------
-    x : float
+    value : float
         The value to round
     base : float
         The base value to round to
@@ -63,16 +63,16 @@ def round_to_next_base(x: float, base: float) -> float:
     -------
     float : The rounded value
     """
-    return base * math.ceil(x / base)
+    return base * math.ceil(value / base)
 
 
-def rgb2hex(rgb: tuple) -> str:
+def rgb2hex(c_rgb: tuple) -> str:
     """
     Convert a color in RGB values to a color in hex values.
 
     Parameters
     ----------
-    rgb : tuple(int, int, int)
+    c_rgb : tuple(int, int, int)
         The color in RGB values
 
     Returns
@@ -80,20 +80,20 @@ def rgb2hex(rgb: tuple) -> str:
     str : The color in hex values
     """
 
-    assert len(rgb) == 3
-    for c in rgb:
-        assert type(c) == int and 0 <= c <= 255
+    assert len(c_rgb) == 3
+    for c in c_rgb:  # pylint: disable=C0103
+        assert isinstance(c, int) and 0 <= c <= 255
 
-    return '#' + ''.join(f'{i:02X}' for i in rgb)
+    return '#' + ''.join(f'{i:02X}' for i in c_rgb)
 
 
-def hex2rgb(hex: str) -> tuple:
+def hex2rgb(c_hex: str) -> tuple:
     """
     Convert a color in hex values to a color in RGB values.
 
     Parameters
     ----------
-    hex : str
+    c_hex : str
         The color in hex values
 
     Returns
@@ -101,21 +101,21 @@ def hex2rgb(hex: str) -> tuple:
     tuple(int, int, int) : The color in RGB values
     """
 
-    assert hex[0] == '#'
-    assert len(hex[1:]) == 6
+    assert c_hex[0] == '#'
+    assert len(c_hex[1:]) == 6
 
-    return tuple(int(i, 16) for i in textwrap.wrap(hex[1:], 2))
+    return tuple(int(i, 16) for i in textwrap.wrap(c_hex[1:], 2))
 
 
-def assert_index_equal(a, b) -> bool:
+def assert_index_equal(one, two) -> bool:
     """
     Ensure the indices of two Sequences/DataFrames are equal.
 
     Parameters
     ----------
-    a : pandas.Sequence / pandas.DataFrame
+    one : pandas.Sequence / pandas.DataFrame
         The first object for the comparison
-    b : pandas.Sequence / pandas.DataFrame
+    two : pandas.Sequence / pandas.DataFrame
         The second object for the comparsion
 
     Returns
@@ -124,7 +124,7 @@ def assert_index_equal(a, b) -> bool:
     """
 
     # TODO use pandas.testing.assert_index_equal?
-    assert list(a.index) == list(b.index)
+    assert list(one.index) == list(two.index)
 
 
 def speed2distance(speed: float, time_interval: float = 1.0) -> float:
@@ -205,7 +205,7 @@ def speed2acceleration(speed_from: float, speed_to: float, time_interval: float 
     return (speed_to - speed_from) / time_interval
 
 
-def addLoggingLevel(levelName: str, levelNum: int, methodName: str = None):
+def add_logging_level(level_name: str, level_num: int, method_name: str = None):
     """
     Comprehensively adds a new logging level to the `logging` module and the currently configured logging class.
 
@@ -217,38 +217,38 @@ def addLoggingLevel(levelName: str, levelNum: int, methodName: str = None):
 
     Parameters
     ----------
-    levelName : str
+    level_name : str
         The name of the level to add
-    levelNum : int
+    level_num : int
         The number of the level to add
-    methodName : str
+    method_name : str
         The name of the method for the level to add
     """
 
-    if not methodName:
-        methodName = levelName.lower()
+    if not method_name:
+        method_name = level_name.lower()
 
-    if hasattr(logging, levelName):
-        raise AttributeError('{} already defined in logging module'.format(levelName))
-    if hasattr(logging, methodName):
-        raise AttributeError('{} already defined in logging module'.format(methodName))
-    if hasattr(logging.getLoggerClass(), methodName):
-        raise AttributeError('{} already defined in logger class'.format(methodName))
+    if hasattr(logging, level_name):
+        raise AttributeError('{} already defined in logging module'.format(level_name))
+    if hasattr(logging, method_name):
+        raise AttributeError('{} already defined in logging module'.format(method_name))
+    if hasattr(logging.getLoggerClass(), method_name):
+        raise AttributeError('{} already defined in logger class'.format(method_name))
 
     # This method was inspired by the answers to Stack Overflow post
     # http://stackoverflow.com/q/2183233/2988730, especially
     # http://stackoverflow.com/a/13638084/2988730
-    def logForLevel(self, message, *args, **kwargs):
-        if self.isEnabledFor(levelNum):
-            self._log(levelNum, message, args, **kwargs)
+    def log_for_level(self, message, *args, **kwargs):
+        if self.isEnabledFor(level_num):
+            self._log(level_num, message, args, **kwargs)
 
-    def logToRoot(message, *args, **kwargs):
-        logging.log(levelNum, message, *args, **kwargs)
+    def log_to_root(message, *args, **kwargs):
+        logging.log(level_num, message, *args, **kwargs)
 
-    logging.addLevelName(levelNum, levelName)
-    setattr(logging, levelName, levelNum)
-    setattr(logging.getLoggerClass(), methodName, logForLevel)
-    setattr(logging, methodName, logToRoot)
+    logging.addLevelName(level_num, level_name)
+    setattr(logging, level_name, level_num)
+    setattr(logging.getLoggerClass(), method_name, log_for_level)
+    setattr(logging, method_name, log_to_root)
 
 
 class FakeLog:

@@ -17,7 +17,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-from .emissions import EmissionClass
+from plafosim.emissions import EmissionClass
 
 
 class VehicleType:

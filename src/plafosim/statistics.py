@@ -22,18 +22,17 @@ import time
 from typing import TYPE_CHECKING
 
 from plafosim import __version__
-
-from .util import rgb2hex
+from plafosim.util import rgb2hex
 
 if TYPE_CHECKING:
-    from .platooning_vehicle import PlatooningVehicle  # noqa 401
-    from .simulator import Simulator  # noqa 401
-    from .vehicle import Vehicle  # noqa 401
+    from plafosim.platooning_vehicle import PlatooningVehicle  # noqa 401
+    from plafosim.simulator import Simulator  # noqa 401
+    from plafosim.vehicle import Vehicle  # noqa 401
 
 
 def record_general_data_begin(basename: str, simulator: 'Simulator'):
     assert basename
-    from .simulator import Simulator
+    from plafosim.simulator import Simulator
     assert isinstance(simulator, Simulator)
     with open(f'{basename}_general.out', 'w') as f:
         f.write(f"simulation start: {time.asctime(time.localtime(time.time()))}\n")
@@ -44,7 +43,7 @@ def record_general_data_begin(basename: str, simulator: 'Simulator'):
 
 def record_general_data_end(basename: str, simulator: 'Simulator'):
     assert basename
-    from .simulator import Simulator
+    from plafosim.simulator import Simulator
     assert isinstance(simulator, Simulator)
     with open(f'{basename}_general.out', 'a') as f:
         f.write(f"simulation end: {time.asctime(time.localtime(time.time()))}\n")
@@ -545,9 +544,9 @@ def record_platoon_change(
     reason: str,
 ):
     assert basename
-    from .platooning_vehicle import PlatooningVehicle
+    from plafosim.platooning_vehicle import PlatooningVehicle
     assert isinstance(leader, PlatooningVehicle)
-    from .platoon_role import PlatoonRole
+    from plafosim.platoon_role import PlatoonRole
     assert leader.platoon_role == PlatoonRole.LEADER and leader.platoon.leader.vid == leader.vid
     with open(f'{basename}_platoon_changes.csv', 'a') as f:
         f.write(
