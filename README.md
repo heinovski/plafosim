@@ -35,7 +35,11 @@ PlaFoSim has been published at [IEEE VNC 2021](https://www.tkn.tu-berlin.de/bib/
 
 ### Quickstart
 
-Use PlaFoSim's help to get a list of available parameters:
+Run PlaFoSim with:
+
+```plafosim```
+
+You can use PlaFoSim's help to get a list of available parameters:
 
 ```plafosim -h, --help```
 
