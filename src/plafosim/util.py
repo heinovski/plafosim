@@ -59,7 +59,7 @@ def hex2rgb(hex: str) -> tuple:
     return tuple(int(i, 16) for i in textwrap.wrap(hex[1:], 2))
 
 
-def assert_index_equal(a, b):
+def assert_index_equal(a, b) -> bool:
     """
     Ensure the indices of two Sequences/DataFrames are equal.
 
@@ -135,7 +135,7 @@ def speed2acceleration(speed_from: float, speed_to: float, time_interval: float 
     return (speed_to - speed_from) / time_interval
 
 
-def addLoggingLevel(levelName, levelNum, methodName=None):
+def addLoggingLevel(levelName: str, levelNum: int, methodName: str = None):
     """
     Comprehensively adds a new logging level to the `logging` module and the currently configured logging class.
 

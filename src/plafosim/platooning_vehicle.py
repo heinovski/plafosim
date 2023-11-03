@@ -548,7 +548,7 @@ class PlatooningVehicle(Vehicle):
             )
 
     # TODO rework to only include "neighbors" and move platoon extraction to formation algorithm
-    def _get_available_platoons(self):
+    def _get_available_platoons(self) -> list:
         """
         Return the available platoon candidates of the vehicle.
 
@@ -1289,7 +1289,7 @@ class PlatooningVehicle(Vehicle):
         self._distance_in_platoon += self._position - self._last_platoon_join_position
         self._leaves_successful += 1
 
-    def _left_lane_blocked(self):
+    def _left_lane_blocked(self) -> bool:
         """
         Check whether a vehicle can move to the left lane in order to leave its current platoon.
         """

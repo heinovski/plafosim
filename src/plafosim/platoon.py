@@ -33,10 +33,11 @@ class Platoon:
     """
 
     def __init__(
-            self,
-            platoon_id: int,
-            formation: list,
-            desired_speed: float):
+        self,
+        platoon_id: int,
+        formation: list,
+        desired_speed: float,
+    ):
         """
         Parameters
         ----------

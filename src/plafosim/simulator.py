@@ -242,7 +242,7 @@ def report_rough_braking(
     return len(brake_df)
 
 
-def check_collisions(vdf: pd.DataFrame):
+def check_collisions(vdf: pd.DataFrame) -> bool:
     """
     Do collision checks for all vehicles in the simulation.
 
@@ -296,7 +296,7 @@ def has_collision(
 def is_insert_safe(
     depart_position: float,
     depart_speed: float,
-    vtype,
+    vtype: VehicleType,
     other_vehicle: Vehicle,
     step_length: float,
 ) -> bool:
@@ -1008,7 +1008,7 @@ class Simulator:
         if self._start_as_platoon:
             self._initialize_prefilled_platoon()
 
-    def _vehicles_to_be_scheduled(self):
+    def _vehicles_to_be_scheduled(self) -> int:
         """
         1) Calculate how many vehicles should be spawned according to the departure method.
         """
@@ -1166,7 +1166,7 @@ class Simulator:
         depart_delay: float = 0,
         communication_range: int = DEFAULTS['communication_range'],
         pre_filled: bool = False,
-    ):
+    ) -> Vehicle:
         """
         Add a vehicle to the simulation based on the given parameters.
 
@@ -1886,7 +1886,7 @@ def compute_vehicle_spawns(
     vdf: pd.DataFrame,
     ramp_positions: list,
     number_of_lanes: int,
-    current_step: int,
+    current_step: float,
     rng: random.Random,
     random_depart_position: bool,
     random_arrival_position: bool,
