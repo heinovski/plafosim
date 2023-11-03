@@ -127,6 +127,8 @@ To see all options of this script, run:
 
 ```plafosim-replay -h, --help```
 
+**NOTE**: This requires installation of SUMO (>=1.6.0) and declaration of the `SUMO_HOME` variable.
+
 ## Extending PlaFoSim
 
 In order to extend PlaFoSim, you first need ot install it from source.
