@@ -398,8 +398,8 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.7"
-content-hash = "1908b6385fe4ff34559ecf9344237db7a9e577556ecb7ee6a7aba3fa77721c89"
+python-versions = "^3.7, <3.10"  # 3.10 is not yet possible due to incompatible dependencies
+content-hash = "c1ba67d6e69297dbe14747787db9694ed08b6a544b4206f100761b4c35d48fa0"
 
 [metadata.files]
 absl-py = [
