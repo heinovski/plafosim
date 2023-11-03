@@ -28,7 +28,7 @@ def main():
     """
 
     if len(sys.argv) != 3:
-        print(f"usage: {sys.argv[0]} 'prefix_*.png' video.mp4")
+        print(f"A script for creating a video from screenshots with fmpeg.\n\nusage: {sys.argv[0]} 'prefix_*.png' video.mp4")
         sys.exit()
 
     print(f"Creating video {sys.argv[2]} from images with glob pattern {sys.argv[1]} ...")
