@@ -784,6 +784,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         )
         parser.exit()
 
+    # parse the arguments
     args = parser.parse_args()
 
     # simple help

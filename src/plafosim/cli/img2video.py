@@ -33,6 +33,7 @@ def main():
 
     print(f"Creating video {sys.argv[2]} from images with glob pattern {sys.argv[1]} ...")
 
+    # use ffmpeg to create a video from screenshot
     cmd = [
         'ffmpeg',
         '-framerate',

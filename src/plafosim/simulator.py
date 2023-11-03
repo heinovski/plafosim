@@ -1558,6 +1558,7 @@ class Simulator:
                     max_lane=self._number_of_lanes - 1,
                     step_length=self._step_length,
                 )
+                # apply lane changes
                 vdf['old_lane'] = vdf['lane']
                 vdf['lane'] = lane_changes['lane']
                 vdf['lc_reason'] = lane_changes['reason']
@@ -1581,6 +1582,7 @@ class Simulator:
                     vdf.merge(predecessor, left_index=True, right_index=True),
                     step_length=self._step_length,
                 )
+                # apply new speed
                 vehicles_braking_rough = report_rough_braking(vdf, new_speed, step_length=self._step_length)
                 vdf['old_speed'] = vdf['speed']
                 vdf['speed'] = new_speed

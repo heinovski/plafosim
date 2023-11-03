@@ -23,6 +23,8 @@ import logging
 from ..formation_algorithm import FormationAlgorithm
 
 LOG = logging.getLogger(__name__)
+
+# default values for this algorithm's parameters
 DEFAULTS = {
     'dummy': -1,
 }

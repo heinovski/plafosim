@@ -20,6 +20,7 @@
 from enum import Enum
 
 # emission factors of the HBEFA3 model
+# see https://sumo.dlr.de/docs/Models/Emissions/HBEFA3-based.html
 # CO - the total carbon monoxide (CO) emission in mg
 # CO2 - the total carbon dioxide (CO2) emission in mg
 # HC - the total hydro carbon (HC) emission in mg

@@ -25,6 +25,7 @@ from pkgutil import iter_modules
 from ..formation_algorithm import FormationAlgorithm
 
 # iterate through the modules in the current package
+# and dynamically load all available algorithms
 globals()['algorithms'] = list()
 # based on https://julienharbulot.com/python-dynamical-import.html
 package_dir = os.path.dirname(__file__)
@@ -35,6 +36,6 @@ for (_, module_name, _) in iter_modules([package_dir]):
         attribute = getattr(module, attribute_name)
 
         if isclass(attribute) and issubclass(attribute, FormationAlgorithm) and attribute != FormationAlgorithm:
-            # Add the class to this package's variables
+            # add the class to this package's variables
             globals()[attribute_name] = attribute
             globals()['algorithms'].append(attribute_name)
