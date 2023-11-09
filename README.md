@@ -51,7 +51,7 @@ Or, run a simulation with the default configuration (`-d`):
 
 ### Live GUI
 
-You can visualize the simulation via a simple live GUI based on [SUMO](https://github.com/eclipse/sumo/), using the argument `gui` (requires installation of SUMO and decleration of `SUMO_HOME` variable):
+You can visualize the simulation via a simple live GUI based on [sumo-gui](https://sumo.dlr.de/docs/sumo-gui.html), using the argument `gui`:
 
 ```plafosim --gui```
 
@@ -60,7 +60,7 @@ You can visualize the simulation via a simple live GUI based on [SUMO](https://g
 
 More options for the live GUI can be found within the ``GUI properties`` section of the help.
 
-**NOTE**: This requires installation of SUMO (>=1.6.0) and declaration of the `SUMO_HOME` variable.
+**NOTE**: This requires installation of [SUMO](https://sumo.dlr.de/) (>=1.6.0) and declaration of the `SUMO_HOME` variable (see [documentation](https://sumo.dlr.de/docs/Installing/Linux_Build.html#definition_of_sumo_home)).
 
 ### Advanced Simulation Control
 
