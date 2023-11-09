@@ -1,3 +1,4 @@
+
 # PlaFoSim - A simple and scalable simulator for platoon formation
 [![Code Version](https://img.shields.io/badge/code-v0.17.1-blue)](CHANGELOG.md)
 [![PyPI Version](https://img.shields.io/pypi/v/plafosim)](https://pypi.org/project/plafosim/)
@@ -5,7 +6,8 @@
 [![License](https://img.shields.io/github/license/heinovski/plafosim?color=green)](LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.1109/VNC52810.2021.9644678-blue)](http://dx.doi.org/10.1109/VNC52810.2021.9644678)
 
-[PlaFoSim](https://www.plafosim.de) aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
+<img align="right" width="100" height="100" src="docs/logo.png" alt="PlaFoSim's logo">
+PlaFoSim aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
 While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is implemented in a more abstract way.
 
 A conceptional overview of the process of Platoon Formation that is employed in PlaFoSim [1-2]:
