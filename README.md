@@ -27,7 +27,7 @@ PlaFoSim has been published at [IEEE VNC 2021](https://www.tkn.tu-berlin.de/bib/
 - Install PlaFoSim from [pypi](https://pypi.org/project/plafosim/):
 ```pip install plafosim```
 
-**NOTE**: The project is developed and currently only tested on Linux.
+**NOTE**: The project is developed and tested only on Linux.
 
 ## Running a Simulation
 
