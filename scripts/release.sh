@@ -41,13 +41,18 @@ virtualenv $DIRNAME
 source $DIRNAME/bin/activate
 
 # publish to testpypi
-if [ -z "$(curl -v --silent https://test.pypi.org/simple/plafosim/ --stderr - | grep $VERSION)" ]
+if [ "$VERSION" != "$(curl -v --silent https://test.pypi.org/simple/plafosim/ --stderr - | grep $VERSION | sed -E 's/.*('$VERSION').*/\1/' | uniq)" ]
 then
     echo "Publishing to TestPyPI..."
     poetry publish --build -n -r testpypi
-    # wait for release on testpypi
-    echo "..."
-    sleep 30s
+
+    echo -n "Waiting for release on TestPyPI..."
+    while [ "$VERSION" != "$(curl -v --silent https://test.pypi.org/simple/plafosim/ --stderr - | grep $VERSION | sed -E 's/.*('$VERSION').*/\1/' | uniq)" ]
+    do
+        echo -n "."
+        sleep 1
+    done
+    echo ""
 else
     echo "TestPyPI already has version $VERSION."
 fi
@@ -69,20 +74,25 @@ fi
 pip uninstall plafosim -y
 
 # publish to pypi
-if [ -z "$(curl -v --silent https://pypi.org/simple/plafosim/ --stderr - | grep $VERSION)" ]
+if [ "$VERSION" != "$(curl -v --silent https://pypi.org/simple/plafosim/ --stderr - | grep $VERSION | sed -E 's/.*('$VERSION').*/\1/' | uniq)" ]
 then
     echo "Publishing to PyPI..."
     # no buildig required, built already in the previos step
     poetry publish
-    # wait for release on pypi
-    echo "..."
-    sleep 40s
+
+    echo -n "Waiting for release on PyPI..."
+    while [ "$VERSION" != "$(curl -v --silent https://pypi.org/simple/plafosim/ --stderr - | grep $VERSION | sed -E 's/.*('$VERSION').*/\1/' | uniq)" ]
+    do
+        echo -n "."
+        sleep 1
+    done
+    echo ""
 else
     echo "PyPI already has version $VERSION."
 fi
 
+# install from pypi
 echo "Installing from PyPI..."
-
 pip install plafosim==$VERSION
 # check version
 if [ "$(plafosim -V)" != "plafosim $VERSION" ]
@@ -91,6 +101,7 @@ then
     exit 1
 fi
 pip uninstall plafosim -y
+
 # clean up virtualenv
 deactivate
 rm -r $DIRNAME
