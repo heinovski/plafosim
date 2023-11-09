@@ -44,7 +44,7 @@ PROBABILITY = [
 
 @pytest.mark.parametrize("vehicles", VEHICLES)
 @pytest.mark.parametrize("interval", INTERVAL)
-def test_depart_method_interval(vehicles: int, interval: int, step_length: int = 1):
+def test_depart_method_interval(vehicles: int, interval: int, step_length: float = 1.0):
     """
     """
 
@@ -93,7 +93,7 @@ def test_depart_method_interval(vehicles: int, interval: int, step_length: int =
 
 
 @pytest.mark.parametrize("interval", INTERVAL)
-def test_depart_method_interval_flow(interval: int, step_length: int = 1):
+def test_depart_method_interval_flow(interval: int, step_length: float = 1.0):
     """
     """
 
@@ -153,7 +153,7 @@ def test_depart_method_interval_flow(interval: int, step_length: int = 1):
 
 @pytest.mark.parametrize("vehicles", VEHICLES)
 @pytest.mark.parametrize("rate", RATE)
-def test_depart_method_rate(vehicles: int, rate: int, step_length: int = 1):
+def test_depart_method_rate(vehicles: int, rate: int, step_length: float = 1.0):
     """
     """
 
@@ -203,7 +203,7 @@ def test_depart_method_rate(vehicles: int, rate: int, step_length: int = 1):
 
 
 @pytest.mark.parametrize("rate", RATE)
-def test_depart_method_rate_flow(rate: int, step_length: int = 1):
+def test_depart_method_rate_flow(rate: int, step_length: float = 1.0):
     """
     """
 
@@ -263,7 +263,7 @@ def test_depart_method_rate_flow(rate: int, step_length: int = 1):
 
 @pytest.mark.parametrize("vehicles", VEHICLES)
 @pytest.mark.parametrize("probability", PROBABILITY)
-def test_depart_method_probability(vehicles: int, probability: float, step_length: int = 1):
+def test_depart_method_probability(vehicles: int, probability: float, step_length: float = 1.0):
     """
     """
 
@@ -310,7 +310,7 @@ def test_depart_method_probability(vehicles: int, probability: float, step_lengt
 
 # TODO fix these tests
 #@pytest.mark.parametrize("probability", PROBABILITY)
-#def test_depart_method_probability_flow(probability: float, step_length: int = 1):
+#def test_depart_method_probability_flow(probability: float, step_length: float = 1.0):
 #    """
 #    """
 #
@@ -364,7 +364,7 @@ def test_depart_method_probability(vehicles: int, probability: float, step_lengt
 
 # TODO depart method number
 #@pytest.mark.parametrize("vehicles", VEHICLES)
-#def test_depart_method_number(vehicles: int, step_length: int = 1):
+#def test_depart_method_number(vehicles: int, step_length: float = 1.0):
 #    """
 #    """
 #
