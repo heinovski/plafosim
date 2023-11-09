@@ -1,5 +1,25 @@
 # Changelog
 
+## [v0.17.2](https://github.com/heinovski/plafosim/releases/tag/v0.17.2) - 2023-11-09
+* BREAKING CHANGES
+  * Rework SpeedPosition algorithm
+* FIXES
+  * Fixed publishing in release script
+* NEW FEATURES
+  * Added possibility to configure knowledge about maneuver status
+  * Added possibility to configure knowledge about platoon status
+  * Added pydocstyle for development
+  * Extended found candidate metrics
+* UPDATES
+  * Added PlaFoSim's logo
+  * Applied some feedback from pylint
+  * Updated docstrings
+  * Updated flake8 config
+  * Updated inline comments
+  * Updated method/function signatures
+  * Updated poetry.lock file
+  * Updated README
+
 ## [v0.17.1](https://github.com/heinovski/plafosim/releases/tag/v0.17.1) - 2023-10-27
 * BREAKING CHANGES
   * Changed default communication range
