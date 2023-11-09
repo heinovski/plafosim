@@ -141,6 +141,13 @@ These screenshots can be used to create a video by using an integrated script ba
 
 **NOTE**: This requires installation of ffmpeg.
 
+## Documentation
+
+Documentation is available via this README and [our paper](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/).
+Further, technical documentation is available via python docstrings and comments in the code.
+
+**NOTE**: A proper documentation is still under development.
+
 ## Extending PlaFoSim
 
 In order to extend PlaFoSim, you first need ot install it from source.
