@@ -502,6 +502,7 @@ class Simulator:
         # the maximum number of vehicles
         if vehicle_density > 0:
             # override vehicles
+            LOG.debug("Using '--density' instead of '--vehicles' for number of vehicles. Use '--density -1' to disable this.")
             number_of_vehicles = int(vehicle_density * (self._road_length / 1000) * self._number_of_lanes)
         if vehicle_density == 0:
             sys.exit("ERROR: A vehicle density of 0 vehicles per lane per km does not make sense!")
@@ -530,10 +531,10 @@ class Simulator:
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to departure with the desired driving speed
         if random_depart_position and not depart_desired:
-            sys.exit("ERROR: random-depart-position is only possible in conjunction with depart-desired!")
+            sys.exit("ERROR: '--random-depart-position' can only be used in conjunction with '--depart-desired'!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         if not depart_flow and depart_method == "number":
-            sys.exit("ERROR: The departure method number can only be used in conjunction with a departure flow!")
+            sys.exit("ERROR: The departure method 'number' can only be used in conjunction with '--depart-flow'!")
         self._depart_method = depart_method  # the departure method to use
         if depart_interval <= 0:
             sys.exit("ERROR: The departure interval has to be bigger than 0!")
@@ -583,7 +584,7 @@ class Simulator:
             if maximum_trip_length % ramp_interval != 0:
                 sys.exit("ERROR: Maximum trip length has to be a multiple of the ramp interval!")
             if maximum_trip_length == minimum_trip_length:
-                LOG.debug(f"Using static trip length of {maximum_trip_length}m for all vehicles")
+                LOG.debug(f"Using static trip length of {maximum_trip_length}m for all vehicles.")
                 if not random_arrival_position:
                     sys.exit("ERROR: Static trip length is only possible in conjunction with random-arrival-position!")
             self._maximum_trip_length = maximum_trip_length  # the maximum trip length
@@ -648,12 +649,14 @@ class Simulator:
         assert step_length > 0
         if step_length != 1.0:
             LOG.warning("Step lengths other than 1s are not yet properly implemented and tested. Use at your own risk!")
+        if step_length != 0.5:
+            LOG.warning("Step lengths other than 0.5s are not yet properly implemented and tested. Use at your own risk!")
         if step_length % 1 != 0:
             LOG.warning("Non-integer step lengths are not yet properly implemented and tested. Use at your own risk!")
         if step_length < 1.0:
             LOG.warning("Step lengths smaller than 1s are not recommended in order to avoid collisions and long runtimes!")
         if step_length >= vtype.headway_time:
-            LOG.warning("Step lengths bigger than or equal to the headway time are not recommended in order to avoid rough braking and collisions!")
+            LOG.warning("Step lengths bigger than or equal to the headway time are not recommended in order to avoid rough braking and collisions. Use at your own risk!")
         self._step_length = step_length  # the length of a simulation step
         self._max_step = int(max_step)
         self._running = False  # whether the simulation is running
@@ -661,7 +664,7 @@ class Simulator:
         self._collisions = collisions  # whether to check for collisions
         if random_seed < 0:
             random_seed = random.randint(0, 10000)
-        LOG.debug(f"Using random seed {random_seed}")
+        LOG.debug(f"Using random seed {random_seed}.")
         self._rng = random.Random(random_seed)
         self._progress = progress  # whether to enable the (simulation) progress bar
 
