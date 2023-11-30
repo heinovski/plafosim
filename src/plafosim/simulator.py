@@ -591,13 +591,14 @@ class Simulator:
             self._maximum_trip_length = maximum_trip_length  # the maximum trip length
 
         # communication properties
-        self._communication_range = communication_range  # the maximum communication range between two vehicles
-        self._distributed_platoon_knowledge = distributed_platoon_knowledge  # whether the distributed approach should have perfect platoon knowledge (e.g., platoon role)
-        self._distributed_maneuver_knowledge = distributed_maneuver_knowledge  # whether the distributed approach should have perfect maneuver knowledge
         if communication_range == -1:
             self._communication_range = road_length
-        if self._communication_range <= 0:
+        elif communication_range <= 0:
             sys.exit("ERROR: Communication range has to be > 0!")
+        else:
+            self._communication_range = communication_range  # the maximum communication range between two vehicles
+        self._distributed_platoon_knowledge = distributed_platoon_knowledge  # whether the distributed approach should have perfect platoon knowledge (e.g., platoon role)
+        self._distributed_maneuver_knowledge = distributed_maneuver_knowledge  # whether the distributed approach should have perfect maneuver knowledge
 
         # platoon properties
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
