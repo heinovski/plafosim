@@ -151,6 +151,7 @@ class PlatooningVehicle(Vehicle):
 
             # initialize timers
             if pre_filled:
+                # FIXME float step lenghts not supported!
                 self._last_formation_step = simulator._rng.randint(0, self._execution_interval - 1)
             else:
                 self._last_formation_step = self._depart_time  # initialize with vehicle start

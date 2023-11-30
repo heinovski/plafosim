@@ -483,6 +483,7 @@ class Simulator:
         Initialize a simulator instance.
         """
 
+        # set up logging
         # TODO add custom filter that prepends the log entry with the step time
         logging.basicConfig(level=log_level, stream=sys.stdout, format="%(levelname)s [%(name)s]: %(message)s")
 
@@ -1088,6 +1089,7 @@ class Simulator:
                     # special case in step 0 to avoid not having any vehicles and thus stopping the simulation
                     vehicles_to_be_scheduled = 1
                 else:
+                    # interpret comparison result as vehicle spawn
                     vehicles_to_be_scheduled = int(self._rng.random() <= self._depart_probability)
             else:
                 # 1) estimate how many vehicles their need to be with the given effective departure rate
