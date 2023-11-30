@@ -140,13 +140,13 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         "-q", "--quiet",
         action="count",
         default=0,
-        help=f"The amount of verbosity levels to be removed for printing the logs to the CLI. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
+        help=f"The amount of verbosity levels to be removed for printing the logs to stdout. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
     )
     parser.add_argument(
         "-v", "--verbosity",
         action="count",
         default=0,
-        help=f"The amount of verbosity levels to be added for printing the logs to the CLI. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
+        help=f"The amount of verbosity levels to be added for printing the logs to stdout. The starting level is {logging.getLevelName(DEFAULTS['log_level'])}.",
     )
     parser.add_argument(
         "--save-snapshot",
