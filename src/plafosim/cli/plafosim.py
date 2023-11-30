@@ -118,7 +118,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     parser.add_argument(
         "-C", "--citation",
         action="version",
-        help="show the citation information and exit",
+        help="show the citation information (bibtex) and exit",
         version=__citation__,
     )
     parser.add_argument(
