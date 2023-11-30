@@ -124,7 +124,7 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
     parser.add_argument(
         "-V", "--version",
         action="version",
-        version=f"%(prog)s {__version__}",
+        version=f"plafosim {__version__}",
     )
     parser.add_argument(
         "-d", "--default",

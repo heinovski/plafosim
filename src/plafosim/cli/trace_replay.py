@@ -71,7 +71,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-V", "--version",
         action="version",
-        version=f"%(prog)s {__version__}",
+        version=f"plafosim {__version__}",
     )
     parser.add_argument(
         "-q", "--quiet",
