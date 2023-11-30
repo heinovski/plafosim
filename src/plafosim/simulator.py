@@ -320,8 +320,7 @@ def has_collision(
 
     Returns
     -------
-    bool
-        Whether there is a collision between two vehicles
+    bool : Whether there is a collision between two vehicles
     """
 
     if lane1 != lane2:
@@ -355,8 +354,7 @@ def is_insert_safe(
 
     Returns
     -------
-    bool
-        Whether the insertion of a vehicle is safe
+    bool : Whether the insertion of a vehicle is safe
     """
 
     assert depart_position >= 0
@@ -1070,8 +1068,7 @@ class Simulator:
 
         Returns
         -------
-        int
-            The number of vehicles to be spawned within this time step
+        int : The number of vehicles to be spawned within this time step
         """
 
         vehicles_to_be_scheduled = -1
