@@ -36,8 +36,8 @@ LOG = logging.getLogger(__name__)
 # default values for this algorithm's parameters
 DEFAULTS = {
     'alpha': 0.5,
-    'speed_deviation_threshold': -1,
-    'position_deviation_threshold': 2000,  # m
+    'speed_deviation_threshold': 0.2,
+    'position_deviation_threshold': 1000,  # m
     'formation_centralized_kind': 'greedy',
     'solver_time_limit': 60,  # s
     'record_solver_traces': False,
