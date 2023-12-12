@@ -50,7 +50,7 @@ class Dummy(FormationAlgorithm):
             The owning object that is execution this algorithm.
             This can be either a PlatooningVehicle or an Infrastructure.
         dummy : int, optional
-            The value for the dummy parameter.
+            The value for the dummy parameter
         """
 
         super().__init__(owner)
@@ -65,12 +65,12 @@ class Dummy(FormationAlgorithm):
         Parameters
         ----------
         parser : argparse.ArgumentParser
-            The global argument parser.
+            The global argument parser
 
         Returns
         -------
         argparse._ArgumentGroup
-            The specific argument group for this algorithm.
+            The specific argument group for this algorithm
         """
 
         group = parser.add_argument_group(f"Formation Algorithm -- {self.__name__}")

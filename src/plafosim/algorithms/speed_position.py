@@ -265,12 +265,12 @@ class SpeedPosition(FormationAlgorithm):
         Parameters
         ----------
         parser : argparse.ArgumentParser
-            The global argument parser.
+            The global argument parser
 
         Returns
         -------
         argparse._ArgumentGroup
-            The specific argument group for this algorithm.
+            The specific argument group for this algorithm
         """
 
         group = parser.add_argument_group(f"Formation Algorithm -- {self.__name__}")
