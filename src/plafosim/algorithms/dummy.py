@@ -32,7 +32,7 @@ DEFAULTS = {
 
 class Dummy(FormationAlgorithm):
     """
-    Dummy Formation Algorithm.
+    Dummy Platoon Formation Algorithm.
     """
 
     def __init__(
