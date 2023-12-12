@@ -72,7 +72,7 @@ def format_help(parser: argparse.ArgumentParser, groups=None) -> str:
     # description
     formatter.add_text(parser.description)
 
-    if groups is None:
+    if not groups:
         groups = parser._action_groups
 
     # positionals, optionals and user-defined groups
