@@ -140,10 +140,7 @@ These screenshots can be used to create a video by using an integrated script ba
 
 ## Documentation
 
-Documentation is available via this README and [our paper](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/).
-Further, technical documentation is available via python docstrings and comments in the code.
-
-**NOTE**: A proper documentation is still under development.
+Documentation is available via this README and via the [official documentation](https://plafosim.readthedocs.io/).
 
 ## Extending PlaFoSim
 
@@ -188,6 +185,7 @@ In order to contribute, please follow these steps:
 When making changes to the code, make sure to add or adjust corresponding documentation in form of python docstrings.
 Those should use the Numpy docstring format for Sphinx and follow the [style guide](https://numpydoc.readthedocs.io/en/latest/format.html) by numpydoc to ensure consistency and compatibility.
 See also the [style guide](https://pandas.pydata.org/docs/development/contributing_docstring.html) by pandas.
+You can build the documentation using Sphinx `make -C docs`.
 
 ### Testing
 
