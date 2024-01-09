@@ -1,4 +1,3 @@
-
 # PlaFoSim - A simple and scalable simulator for platoon formation
 [![Code Version](https://img.shields.io/badge/code-v0.17.2-blue)](CHANGELOG.md)
 [![PyPI Version](https://img.shields.io/pypi/v/plafosim)](https://pypi.org/project/plafosim/)
@@ -7,6 +6,7 @@
 [![DOI](https://img.shields.io/badge/DOI-10.1109/VNC52810.2021.9644678-blue)](http://dx.doi.org/10.1109/VNC52810.2021.9644678)
 
 <img align="right" width="100" height="100" src="docs/logo.png" alt="PlaFoSim's logo">
+"Platoon Formation Simulator", or "PlaFoSim" for short, is an open source simulator for platoon formation, aiming for simplicity, flexibility, and scalability.
 PlaFoSim aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
 While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is implemented in a more abstract way.
 
@@ -19,7 +19,7 @@ PlaFoSim has been published at [IEEE VNC 2021](https://www.tkn.tu-berlin.de/bib/
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
 
-**NOTE**: PlaFoSim is (still) under heavy development.
+**NOTE**: This project is under active development.
 
 ---
 
@@ -152,7 +152,10 @@ Further, technical documentation is available via python docstrings and comments
 
 ## Extending PlaFoSim
 
-In order to extend PlaFoSim, you first need ot install it from source.
+You can extend and customize PlaFoSim flexibly by modifying its source code.
+For this, you first need ot install it from source.
+
+### Installing from Source
 
 - Install [poetry](https://python-poetry.org/):
 ```pip install poetry```
