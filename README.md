@@ -10,11 +10,6 @@
 PlaFoSim aims to facilitate and accelerate the research of platoon maneuvers and formation for individually driven vehicles.
 While the main focus of the simulator is on the assignment process, simulation of advertisements and maneuvers is implemented in a more abstract way.
 
-A conceptional overview of the process of Platoon Formation that is employed in PlaFoSim [1-2]:
-| Scenario | Advertisement | Assignment | Maneuver |
-| -------- | ------------- | ---------- | -------- |
-| ![Scenario](docs/scenario.png)*A new vehicle enters the highway.* | ![Advertisement](docs/advertisement.png)*The vehicle advertises itself as interested in Platooning.* | ![Assignment](docs/assignment.png)*A Vehicle-to-Platoon assignment is computed.* | ![Maneuver](docs/maneuver.png)*The new vehicle performs a join maneuver.* |
-
 PlaFoSim has been published at [IEEE VNC 2021](https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/):
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
@@ -264,9 +259,3 @@ PlaFoSim is licensed under the terms of the GNU General Public License 3.0 or la
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
-
-## List of References
-
-[1] Julian Heinovski and Falko Dressler, ["Platoon Formation: Optimized Car to Platoon Assignment Strategies and Protocols,"](https://www.tkn.tu-berlin.de/bib/heinovski2018platoon/) Proceedings of 10th IEEE Vehicular Networking Conference (VNC 2018), Taipei, Taiwan, December 2018.
-
-[2] Julian Heinovski, ["Platoon Formation: Car-to-Platoon Assignments for Individual Cars,"](https://www.tkn.tu-berlin.de/bib/heinovski2019platoon/) Proceedings of International Conference on Networked Systems (NetSys 2019), PhD Forum, Munich, Germany, March 2019.
