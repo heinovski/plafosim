@@ -23,6 +23,7 @@ from inspect import isclass
 from pkgutil import iter_modules
 
 from ..formation_algorithm import FormationAlgorithm
+from .dummy import Dummy
 
 # iterate through the modules in the current package
 # and dynamically load all available algorithms
@@ -35,7 +36,12 @@ for (_, module_name, _) in iter_modules([package_dir]):
     for attribute_name in dir(module):
         attribute = getattr(module, attribute_name)
 
-        if isclass(attribute) and issubclass(attribute, FormationAlgorithm) and attribute != FormationAlgorithm:
+        if (
+            isclass(attribute)  # require is class
+            and issubclass(attribute, FormationAlgorithm)  # require is sub-class
+            and attribute != FormationAlgorithm  # skip abstract base class
+            and attribute != Dummy  # skip dummy algorithm
+        ):
             # add the class to this package's variables
             globals()[attribute_name] = attribute
             globals()['algorithms'].append(attribute_name)
