@@ -523,14 +523,14 @@ def parse_args() -> (argparse.Namespace, argparse._ArgumentGroup):
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['actions'],
         choices=(True, False),
-        help="Whether to enable actions",
+        help="Whether to enable actions of vehicles and infrastructures",
     )
     g_simulation.add_argument(
         "--collisions",
         type=lambda x: bool(strtobool(x)),
         default=DEFAULTS['collisions'],
         choices=(True, False),
-        help="Whether to enable collision checks",
+        help="Whether to enable checks for collision among vehicles",
     )
     g_simulation.add_argument(
         "--random-seed",
