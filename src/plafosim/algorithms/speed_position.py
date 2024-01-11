@@ -212,7 +212,7 @@ class SpeedPosition(FormationAlgorithm):
         super().__init__(owner)
 
         if alpha < 0 or alpha > 1:
-            sys.exit("ERROR: The weighting factor alpha needs to be in [0,1]!")
+            sys.exit(f"ERROR [{__name__}]: The weighting factor alpha needs to be in [0,1]!")
         self._alpha = alpha  # the weight of the speed deviation
         # the maximum deviation from the desired driving speed
         if speed_deviation_threshold == -1:
@@ -990,7 +990,7 @@ class SpeedPosition(FormationAlgorithm):
                     assert (leader.is_in_platoon() and leader.platoon_role == PlatoonRole.FOLLOWER)
                     LOG.warning(f"{vehicle.vid}'s assigned leader {leader.vid} (platoon {mapping['pid']}) meanwhile joined another platoon {target_platoon.platoon_id}!")
                     self._assignments_candidate_joined_already += 1
-                    sys.exit("ERROR: This should never happen!")
+                    sys.exit(f"ERROR [{__name__}]: This should never happen!")
                     continue
                 else:
                     assert not leader.in_maneuver
@@ -1002,7 +1002,7 @@ class SpeedPosition(FormationAlgorithm):
                     assert vehicle.platoon_role == PlatoonRole.LEADER
                     LOG.warning(f"{vehicle.vid} meanwhile became the leader of platoon {vehicle.platoon.platoon_id}. Hence, no assignment is possible/necessary anymore")
                     self._assingments_vehicle_became_leader += 1
-                    sys.exit("ERROR: This should never happen!")
+                    sys.exit(f"ERROR [{__name__}]: This should never happen!")
                     continue
                 assert not vehicle.in_maneuver
                 assert not leader.in_maneuver

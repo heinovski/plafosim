@@ -72,7 +72,7 @@ class Infrastructure:
             try:
                 self._formation_algorithm = globals()[formation_algorithm](self, **kw_args)
             except KeyError:
-                sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}! Did you import it?")
+                sys.exit(f"ERROR [{__name__}]: Unknown formation algorithm {formation_algorithm}! Did you import it?")
             self._execution_interval = execution_interval
 
             # initialize timer

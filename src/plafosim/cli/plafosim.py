@@ -958,7 +958,7 @@ def main():
 
     if args.save_snapshot:
         if args.load_snapshot:
-            sys.exit("ERROR: Saving a loaded snapshot does not make sense!")
+            sys.exit(f"ERROR [{__name__}]: Saving a loaded snapshot does not make sense!")
         # save snapshot
         save_snapshot(simulator, snapshot_filename=args.save_snapshot)
         print(f"Saved a snapshot of the simulation to {args.save_snapshot}. Exiting...")

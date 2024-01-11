@@ -35,7 +35,7 @@ def check_and_prepare_gui():
     """
 
     if "SUMO_HOME" not in os.environ:
-        sys.exit("ERROR: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
+        sys.exit(f"ERROR [{__name__}]: Environment variable 'SUMO_HOME' is not declared! Have you installed SUMO?")
     tools = os.path.join(os.environ["SUMO_HOME"], "tools")
     sys.path.append(tools)
 
@@ -45,7 +45,7 @@ def check_and_prepare_gui():
     assert api_version
 
     if api_version != TRACI_SUPPORTED_VERSION:
-        sys.exit(f"ERROR: You are using an unsupported TraCI version ({api_version})! Make sure to install a SUMO version with TraCI API version {TRACI_SUPPORTED_VERSION}.")
+        sys.exit(f"ERROR [{__name__}]: You are using an unsupported TraCI version ({api_version})! Make sure to install a SUMO version with TraCI API version {TRACI_SUPPORTED_VERSION}.")
 
 
 def start_gui(config: str, step_length: float, play: bool = True):

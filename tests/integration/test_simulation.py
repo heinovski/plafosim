@@ -73,6 +73,6 @@ def test_collision_detection():
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         s.run()
     assert pytest_wrapped_e.type == SystemExit
-    assert pytest_wrapped_e.value.code == "ERROR: There were collisions between vehicles!"
+    assert pytest_wrapped_e.value.code == "ERROR [plafosim.simulator]: There were collisions between vehicles!"
 
     # TODO: check extreme collision cases in which one vehicle completely passes its successor. The check should still catch this.

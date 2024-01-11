@@ -70,7 +70,7 @@ class FormationAlgorithm(ABC):
             The specific argument group for this algorithm.
         """
 
-        sys.exit("ERROR: There shouldn't be an instance of this abstract base class!")
+        sys.exit(f"ERROR [{__name__}]: There shouldn't be an instance of this abstract base class!")
 
     @abstractmethod
     def do_formation(self):
@@ -80,7 +80,7 @@ class FormationAlgorithm(ABC):
         This methods needs to be overridden in implementing sub-classes.
         """
 
-        sys.exit("ERROR: There shouldn't be an instance of this abstract base class!")
+        sys.exit(f"ERROR [{__name__}]: There shouldn't be an instance of this abstract base class!")
 
     def finish(self):
         """

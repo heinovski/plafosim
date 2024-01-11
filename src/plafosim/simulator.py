@@ -491,7 +491,7 @@ class Simulator:
         self._road_length = road_length  # the length of the road
         self._number_of_lanes = number_of_lanes  # the number of lanes
         if road_length % ramp_interval != 0:
-            sys.exit("ERROR: The road length has to be a multiple of the ramp interval!")
+            sys.exit(f"ERROR [{__name__}]: The road length has to be a multiple of the ramp interval!")
         self._ramp_interval = ramp_interval  # the distance between any two on-/off-ramps
         self._ramp_positions = list(range(0, self._road_length + 1, self._ramp_interval))
 
@@ -506,9 +506,9 @@ class Simulator:
             LOG.debug("Using '--density' instead of '--vehicles' for number of vehicles. Use '--density -1' to disable this.")
             number_of_vehicles = int(vehicle_density * (self._road_length / 1000) * self._number_of_lanes)
         if vehicle_density == 0:
-            sys.exit("ERROR: A vehicle density of 0 vehicles per lane per km does not make sense!")
+            sys.exit(f"ERROR [{__name__}]: A vehicle density of 0 vehicles per lane per km does not make sense!")
         if number_of_vehicles <= 0:
-            sys.exit("ERROR: A simulation with 0 vehicles does not make sense!")
+            sys.exit(f"ERROR [{__name__}]: A simulation with 0 vehicles does not make sense!")
         self._number_of_vehicles = number_of_vehicles
         self._max_speed = max_speed  # the maximum driving speed # TODO not used currently
         self._acc_headway_time = acc_headway_time  # the headway time for ACC
@@ -528,25 +528,25 @@ class Simulator:
         self._min_desired_speed = min_desired_speed  # the minimum desired driving speed
         self._max_desired_speed = max_desired_speed  # the maximum desired driving speed
         if not min_desired_speed <= desired_speed <= max_desired_speed:
-            sys.exit("ERROR: desired speed has to be between limits!")
+            sys.exit(f"ERROR [{__name__}]: desired speed has to be between limits!")
         self._random_depart_speed = random_depart_speed  # whether to use random departure speeds
         self._depart_desired = depart_desired  # whether to departure with the desired driving speed
         if random_depart_position and not depart_desired:
-            sys.exit("ERROR: '--random-depart-position' can only be used in conjunction with '--depart-desired'!")
+            sys.exit(f"ERROR [{__name__}]: '--random-depart-position' can only be used in conjunction with '--depart-desired'!")
         self._depart_flow = depart_flow  # whether to spawn vehicles in a continuous flow
         if not depart_flow and depart_method == "number":
-            sys.exit("ERROR: The departure method 'number' can only be used in conjunction with '--depart-flow'!")
+            sys.exit(f"ERROR [{__name__}]: The departure method 'number' can only be used in conjunction with '--depart-flow'!")
         self._depart_method = depart_method  # the departure method to use
         if depart_interval <= 0:
-            sys.exit("ERROR: The departure interval has to be bigger than 0!")
+            sys.exit(f"ERROR [{__name__}]: The departure interval has to be bigger than 0!")
         self._depart_interval = depart_interval  # the interval between two vehicle departures
         if depart_probability < 0 or depart_probability > 1:
-            sys.exit("ERROR: The departure probability needs to be between 0 and 1!")
+            sys.exit(f"ERROR [{__name__}]: The departure probability needs to be between 0 and 1!")
         if depart_probability == 0:
-            sys.exit("ERROR: A departure probability of 0 does not make sense!")
+            sys.exit(f"ERROR [{__name__}]: A departure probability of 0 does not make sense!")
         self._depart_probability = depart_probability  # the departure probability
         if depart_rate <= 0:
-            sys.exit("ERROR: The departure rate has to be at least 1 vehicle per hour!")
+            sys.exit(f"ERROR [{__name__}]: The departure rate has to be at least 1 vehicle per hour!")
         self._depart_rate = depart_rate  # the departure rate
         self._effective_depart_rate = None
         if self._depart_method == "interval":
@@ -561,40 +561,40 @@ class Simulator:
             # thus: all vehicles have an equal spacing
             self._effective_depart_rate = self._number_of_vehicles / max_step
         elif self._depart_method != "probability":
-            sys.exit("ERROR: Unknown departure method!")
+            sys.exit(f"ERROR [{__name__}]: Unknown departure method!")
         if self._effective_depart_rate is not None:
             if 0.5 < self._effective_depart_rate <= 1 and (not random_depart_position or ramp_interval == road_length):
                 LOG.warning(f"The current effective departure rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
             if self._effective_depart_rate > 1 and not self._random_depart_position:
-                sys.exit("ERROR: An effective departure rate > 1 vehicles/step is incompatible with spawning only at the origin! Use '--random-departure-position True' to allow spawning at all on-ramps.")
+                sys.exit(f"ERROR [{__name__}]: An effective departure rate > 1 vehicles/step is incompatible with spawning only at the origin! Use '--random-departure-position True' to allow spawning at all on-ramps.")
             if self._effective_depart_rate < 0:
-                sys.exit("ERROR: The effective departure rate is < 0 vehicles/step!")
+                sys.exit(f"ERROR [{__name__}]: The effective departure rate is < 0 vehicles/step!")
             if self._effective_depart_rate > len(self._ramp_positions):
                 LOG.warning(f"The current effective departure rate {self._effective_depart_rate} vehicles/step will lead to departure delays for vehicles!")
         self._random_arrival_position = random_arrival_position  # whether to use random arrival positions
         if minimum_trip_length > road_length:
-            sys.exit("ERROR: Minimum trip length cannot be bigger than the length of the entire road!")
+            sys.exit(f"ERROR [{__name__}]: Minimum trip length cannot be bigger than the length of the entire road!")
         self._minimum_trip_length = max(minimum_trip_length, ramp_interval)  # the minimum trip length
         if maximum_trip_length == -1 * 1000:
             self._maximum_trip_length = road_length
         else:
             if maximum_trip_length < minimum_trip_length:
-                sys.exit("ERROR: Maximum trip length cannot be smaller than the minimum trip length!")
+                sys.exit(f"ERROR [{__name__}]: Maximum trip length cannot be smaller than the minimum trip length!")
             if maximum_trip_length < ramp_interval:
-                sys.exit("ERROR: Maximum trip length cannot be smaller than the ramp interval!")
+                sys.exit(f"ERROR [{__name__}]: Maximum trip length cannot be smaller than the ramp interval!")
             if maximum_trip_length % ramp_interval != 0:
-                sys.exit("ERROR: Maximum trip length has to be a multiple of the ramp interval!")
+                sys.exit(f"ERROR [{__name__}]: Maximum trip length has to be a multiple of the ramp interval!")
             if maximum_trip_length == minimum_trip_length:
                 LOG.debug(f"Using static trip length of {maximum_trip_length}m for all vehicles.")
                 if not random_arrival_position:
-                    sys.exit("ERROR: Static trip length is only possible in conjunction with random-arrival-position!")
+                    sys.exit(f"ERROR [{__name__}]: Static trip length is only possible in conjunction with random-arrival-position!")
             self._maximum_trip_length = maximum_trip_length  # the maximum trip length
 
         # communication properties
         if communication_range == -1:
             self._communication_range = road_length
         elif communication_range <= 0:
-            sys.exit("ERROR: Communication range has to be > 0!")
+            sys.exit(f"ERROR [{__name__}]: Communication range has to be > 0!")
         else:
             self._communication_range = communication_range  # the maximum communication range between two vehicles
         self._distributed_platoon_knowledge = distributed_platoon_knowledge  # whether the distributed approach should have perfect platoon knowledge (e.g., platoon role)
@@ -604,15 +604,15 @@ class Simulator:
         self._start_as_platoon = start_as_platoon  # whether vehicles start as one platoon
         if start_as_platoon:
             if penetration_rate < 1.0:
-                sys.exit("ERROR: The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
+                sys.exit(f"ERROR [{__name__}]: The penetration rate cannot be smaller than 1.0 when starting as one platoon!")
             if formation_algorithm:
-                sys.exit("ERROR: A formation algorithm cannot be used when all starting as one platoon!")
+                sys.exit(f"ERROR [{__name__}]: A formation algorithm cannot be used when all starting as one platoon!")
             if not pre_fill:
-                sys.exit("ERROR: start-as-platoon is only available when using prefill!")
+                sys.exit(f"ERROR [{__name__}]: start-as-platoon is only available when using prefill!")
             if depart_flow:
-                sys.exit("ERROR: Vehicles can not spawn in a flow when starting as one platoon!")
+                sys.exit(f"ERROR [{__name__}]: Vehicles can not spawn in a flow when starting as one platoon!")
             if random_depart_position:
-                sys.exit("ERROR: Vehicles can not have random departure positions when starting as one platoon!")
+                sys.exit(f"ERROR [{__name__}]: Vehicles can not have random departure positions when starting as one platoon!")
         self._reduced_air_drag = reduced_air_drag  # whether the reduced air drag due to platooning should be considered in the emissions calculation
         if maximum_teleport_distance == -1:
             self._maximum_teleport_distance = road_length
@@ -635,13 +635,13 @@ class Simulator:
         self._update_desired_speed = update_desired_speed  # whether to update the platoon's desired driving speed to the average speed of all members after the formation changed
         self._formation_algorithm = formation_algorithm  # the formation algorithm to use
         if formation_strategy == "centralized" and number_of_infrastructures <= 0:
-            sys.exit("ERROR: When using a centralized strategy at least 1 infrastructure is needed!")
+            sys.exit(f"ERROR [{__name__}]: When using a centralized strategy at least 1 infrastructure is needed!")
         self._formation_strategy = formation_strategy  # the formation strategy to use
 
         # formation properties
         self._execution_interval = execution_interval  # the interval between two iterations of a formation algorithm
         if execution_interval <= 0:
-            sys.exit("ERROR: Execution interval has to be at least 1 second!")
+            sys.exit(f"ERROR [{__name__}]: Execution interval has to be at least 1 second!")
 
         # infrastructure properties
         self._infrastructures = {}  # the list (dict) of infrastructures in the simulation
@@ -676,9 +676,9 @@ class Simulator:
             check_and_prepare_gui()
 
             if road_length > 1000 * 1000:
-                sys.exit("ERROR: The current maximum road length supported in the GUI is 1000km!")
+                sys.exit(f"ERROR [{__name__}]: The current maximum road length supported in the GUI is 1000km!")
             if number_of_lanes > 4:
-                sys.exit("ERROR: The current maximum number of lanes supported by the GUI is 4!")
+                sys.exit(f"ERROR [{__name__}]: The current maximum number of lanes supported by the GUI is 4!")
             if number_of_lanes < 4:
                 LOG.warning("The current number of lanes supported by the GUI is 4!")
 
@@ -687,7 +687,7 @@ class Simulator:
         self._sumo_config = sumo_config  # the name of the SUMO configuration file
         self._gui_play = gui_play  # whether to start the simulation immediately
         if gui_start < 0:
-            sys.exit("ERROR: GUI start time cannot be negative!")
+            sys.exit(f"ERROR [{__name__}]: GUI start time cannot be negative!")
         self._gui_start = gui_start  # the time when to connect to the GUI
         self._draw_ramps = draw_ramps  # whether to draw on-/off-ramps
         self._draw_ramp_labels = draw_ramp_labels  # whether to draw labels for on-/off-ramps
@@ -696,7 +696,7 @@ class Simulator:
         self._draw_infrastructures = draw_infrastructures  # whether to draw infrastructures
         self._draw_infrastructure_labels = draw_infrastructure_labels  # whether to draw labels for infrastructures
         if screenshot_filename and not gui:
-            sys.exit("ERROR: Saving screenshots is only possible with the GUI enabled!")
+            sys.exit(f"ERROR [{__name__}]: Saving screenshots is only possible with the GUI enabled!")
         self._screenshot_file = screenshot_filename  # the name of the screenshot file
 
         # result recording properties
@@ -1618,7 +1618,7 @@ class Simulator:
                                 vehicle=v,
                             )
 
-                    sys.exit("ERROR: There were collisions between vehicles!")
+                    sys.exit(f"ERROR [{__name__}]: There were collisions between vehicles!")
 
                 # remove arrived vehicles from dict and do finish
                 self._remove_arrived_vehicles(arrived_vehicles)
