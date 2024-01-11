@@ -146,7 +146,7 @@ class PlatooningVehicle(Vehicle):
             try:
                 self._formation_algorithm = globals()[formation_algorithm](self, **kw_args)
             except KeyError:
-                sys.exit(f"ERROR: Unknown formation algorithm {formation_algorithm}! Did you import it?")
+                sys.exit(f"ERROR [{__name__}]: Unknown formation algorithm {formation_algorithm}! Did you import it?")
             self._execution_interval = execution_interval
 
             # initialize timers
@@ -1272,7 +1272,7 @@ class PlatooningVehicle(Vehicle):
                     self._cf_model = CF_Model.CACC
 
                     # TODO this could be just a return in future to let the leaver try again
-                    #sys.exit(f"ERROR: Could not move vehicle {self._vid} to the adjacent lane to leave platoon {self.platoon.platoon_id}!")
+                    #sys.exit(f"ERROR [{__name__}]: Could not move vehicle {self._vid} to the adjacent lane to leave platoon {self.platoon.platoon_id}!")
                     LOG.trace(f"Could not move vehicle {self._vid} to the adjacent lane to leave platoon {self.platoon.platoon_id}!")
                     return
 
@@ -1347,7 +1347,7 @@ class PlatooningVehicle(Vehicle):
         # make sure lane is within road bounds
         if self._simulator.number_of_lanes <= self._lane + 1:
             LOG.trace(
-                f"ERROR: Could not move vehicle {self.vid} to the adjacent lane to leave the platoon "
+                f"ERROR [{__name__}]: Could not move vehicle {self.vid} to the adjacent lane to leave the platoon "
                 f"{self.platoon.platoon_id} because the platoon is already driving on the leftmost lane!"
             )
             return True
