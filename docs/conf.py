@@ -24,7 +24,7 @@ from plafosim import  __version__  # noqa 402
 # -- Project information -----------------------------------------------------
 
 project = 'PlaFoSim'
-copyright = '2020-2023, Julian Heinovski'
+copyright = '2020-2024, Julian Heinovski'
 author = 'Julian Heinovski'
 
 # The full version, including alpha/beta/rc tags

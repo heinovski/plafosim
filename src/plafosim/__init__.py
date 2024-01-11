@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2020-2023 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (c) 2020-2024 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -30,7 +30,7 @@ __description__ = textwrap.dedent(
     A simple and scalable simulator for platoon formation.
     Website: https://www.plafosim.de/
 
-    Copyright (c) 2020-2023 Julian Heinovski <heinovski@ccs-labs.org>
+    Copyright (c) 2020-2024 Julian Heinovski <heinovski@ccs-labs.org>
 
     SPDX-License-Identifier: GPL-3.0-or-later
 
