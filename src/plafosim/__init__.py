@@ -22,7 +22,7 @@ import textwrap
 
 from plafosim.util import add_logging_level
 
-__version__ = "0.17.2"
+__version__ = "0.17.3"
 
 __description__ = textwrap.dedent(
     f"""\
