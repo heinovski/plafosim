@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.17.3](https://github.com/heinovski/plafosim/releases/tag/v0.17.3) - 2024-01-11
+* NEW FEATURES
+  * Added documentation with readthedocs
+* UPDATES
+  * Applied sane default values for algorithm parameters
+  * Improved dynamic loading of algorithms
+  * Updated docstrings
+  * Updated help messages in CLI
+  * Updated log statements
+  * Updated README
+
 ## [v0.17.2](https://github.com/heinovski/plafosim/releases/tag/v0.17.2) - 2023-11-09
 * BREAKING CHANGES
   * Rework SpeedPosition algorithm
