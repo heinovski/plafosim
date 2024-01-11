@@ -67,7 +67,7 @@ class Infrastructure:
         self._iid = iid  # the id of the infrastructure
         self._position = position  # the x position of the infrastructure
 
-        if formation_algorithm is not None:
+        if formation_algorithm:
             # initialize formation algorithm
             try:
                 self._formation_algorithm = globals()[formation_algorithm](self, **kw_args)
