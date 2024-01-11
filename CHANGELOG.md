@@ -3,8 +3,6 @@
 ## [v0.17.2](https://github.com/heinovski/plafosim/releases/tag/v0.17.2) - 2023-11-09
 * BREAKING CHANGES
   * Rework SpeedPosition algorithm
-* FIXES
-  * Fixed publishing in release script
 * NEW FEATURES
   * Added possibility to configure knowledge about maneuver status
   * Added possibility to configure knowledge about platoon status
