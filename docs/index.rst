@@ -4,7 +4,7 @@ Welcome to PlaFoSim's documentation!
 .. include:: ../README.md
    :parser: markdown
    :start-line: 1
-   :end-line: 6
+   :end-line: 7
 
 .. image:: logo.png
    :scale: 10%
@@ -12,8 +12,8 @@ Welcome to PlaFoSim's documentation!
 
 .. include:: ../README.md
    :parser: markdown
-   :start-line: 8
-   :end-line: 15
+   :start-line: 9
+   :end-line: 16
 
 .. note::
    This project is under active development.
@@ -25,7 +25,7 @@ If you are working with PlaFoSim, we would appreciate a citation of our paper:
 
 .. include:: ../README.md
    :parser: markdown
-   :start-line: 221
+   :start-line: 222
 
 .. toctree::
    :hidden:

@@ -3,5 +3,5 @@ Usage
 
 .. include:: ../README.md
    :parser: markdown
-   :start-line: 20
-   :end-line: 140
+   :start-line: 21
+   :end-line: 141

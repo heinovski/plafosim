@@ -4,6 +4,7 @@
 [![PyPI - Python Versions](https://img.shields.io/pypi/pyversions/plafosim)](https://pypi.org/project/plafosim/)
 [![License](https://img.shields.io/github/license/heinovski/plafosim?color=green)](LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.1109/VNC52810.2021.9644678-blue)](http://dx.doi.org/10.1109/VNC52810.2021.9644678)
+[![Read the Docs](https://readthedocs.org/projects/plafosim/badge/)](https://plafosim.readthedocs.io/)
 
 <img align="right" width="100" height="100" src="docs/logo.png" alt="PlaFoSim's logo">
 "Platoon Formation Simulator", or "PlaFoSim" for short, is an open source simulator for platoon formation, aiming for simplicity, flexibility, and scalability.
