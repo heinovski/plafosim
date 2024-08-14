@@ -134,6 +134,7 @@ steps:
     commands:
       - pip install --upgrade pip poetry
       - poetry build
+      - poetry export -f requirements.txt -E solver -o requirements.solver.txt
   - name: install (wheel)
     image: python:3.7-buster
     commands:
@@ -171,6 +172,7 @@ steps:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
       - . .venv/bin/activate
+      - pip install -r requirements.solver.txt
         # we are testing both vehicle types
       - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy centralized --formation-centralized-kind optimal --infrastructures 1 --random-seed $SEED
 
