@@ -92,25 +92,25 @@ name: integration
 
 steps:
   - name: cf models (tox)
-    image: python:3.7-buster
+    image: python:3.8-buster
     commands:
       # dev depedency with tox is currently broken
       - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e test_cf_models
   - name: lc models (tox)
-    image: python:3.7-buster
+    image: python:3.8-buster
     commands:
       # dev depedency with tox is currently broken
       - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e test_lc_models
   - name: departure (tox)
-    image: python:3.7-buster
+    image: python:3.8-buster
     commands:
       # dev depedency with tox is currently broken
       - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
       - tox -e test_departure
   - name: simulation (tox)
-    image: python:3.7-buster
+    image: python:3.8-buster
     commands:
       # dev depedency with tox is currently broken
       - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
@@ -130,20 +130,20 @@ name: execution
 
 steps:
   - name: build
-    image: python:3.7-buster
+    image: python:3.8-buster
     commands:
       - pip install --upgrade pip poetry
       - poetry build
       - poetry export -f requirements.txt -E solver -o requirements.solver.txt
   - name: install (wheel)
-    image: python:3.7-buster
+    image: python:3.8-buster
     commands:
       - python3 -m venv .venv
       - . .venv/bin/activate
       - pip install --upgrade wheel
       - pip install dist/plafosim-*-py3-none-any.whl
   - name: no formation
-    image: python:3.7-buster
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
@@ -151,7 +151,7 @@ steps:
         # we are testing both vehicle types
       - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --random-seed $SEED
   - name: distributed formation
-    image: python:3.7-buster
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
@@ -159,7 +159,7 @@ steps:
         # we are testing both vehicle types
       - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy distributed --random-seed $SEED
   - name: centralized formation (greedy)
-    image: python:3.7-buster
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
@@ -167,7 +167,7 @@ steps:
         # we are testing both vehicle types
       - plafosim --vehicles 100 --penetration 0.5 --time-limit 0.5 --formation-algorithm SpeedPosition --formation-strategy centralized --formation-centralized-kind greedy --infrastructures 1 --random-seed $SEED
   - name: centralized formation (optimal)
-    image: python:3.7-buster
+    image: python:3.8-buster
     environment:
       SEED: ${DRONE_BUILD_NUMBER}
     commands:
@@ -190,7 +190,7 @@ name: correctness
 
 steps:
 - name: install (poetry)
-  image: python:3.7-buster
+  image: python:3.8-buster
   environment:
     POETRY_VIRTUALENVS_IN_PROJECT: true
   commands:
@@ -198,7 +198,7 @@ steps:
     - poetry install
     - poetry run pip install git+https://github.com/michele-segata/plexe-pyapi.git
 - name: Human
-  image: dbuse/sumo-python:3.7-buster-1_6_0-slim
+  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
     - apt install time
@@ -206,7 +206,7 @@ steps:
     - ./scripts/validate-cf-model-human-single.sh
     - ./scripts/validate-cf-model-human-100.sh
 - name: ACC
-  image: dbuse/sumo-python:3.7-buster-1_6_0-slim
+  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
     - apt install time
@@ -214,7 +214,7 @@ steps:
     - ./scripts/validate-cf-model-acc-single.sh
     - ./scripts/validate-cf-model-acc-100.sh
 - name: CACC
-  image: dbuse/sumo-python:3.7-buster-1_6_0-slim
+  image: dbuse/sumo-python:3.8-buster-1_6_0-slim
   commands:
     - apt update
     - apt install time
@@ -267,44 +267,44 @@ name: performance
 
 steps:
 - name: build
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - pip install --upgrade pip poetry
     - poetry build
 - name: install (wheel)
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - python3 -m venv .venv
     - . .venv/bin/activate
     - pip install --upgrade wheel
     - pip install dist/plafosim-*-py3-none-any.whl
 - name: Human-5
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 5 --penetration 0 --depart-flow true --random-depart-position true --depart-method number
 - name: Human-10
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 10 --penetration 0 --depart-flow true --random-depart-position true --depart-method number
 - name: ACC-5
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 5 --penetration 1 --depart-flow true --random-depart-position true --depart-method number
 - name: ACC-10
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 10 --penetration 1 --depart-flow true --random-depart-position true --depart-method number
 - name: CACC-5
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 5 --penetration 1 --start-as-platoon true
 - name: CACC-10
-  image: python:3.7-buster
+  image: python:3.8-buster
   commands:
     - . .venv/bin/activate
     - plafosim -q --pre-fill true --random-seed 0 --depart-desired true --time-limit 0.1 --road-length 100 --lanes 4 --density 10 --penetration 1 --start-as-platoon true
