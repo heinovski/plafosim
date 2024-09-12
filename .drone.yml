@@ -1,35 +1,6 @@
 ---
 kind: pipeline
 type: docker
-name: python3.7
-
-steps:
-  - name: test (tox) and build
-    image: python:3.7-buster
-    commands:
-      # dev depedency with tox is currently broken
-      - pip install --upgrade pip poetry==1.4.2 tox==3.28.0 tox-poetry-installer==0.10.2
-      - tox -e py37
-      - poetry build
-  - name: install (sdist)
-    image: python:3.7-buster
-    commands:
-      - python -m venv .venv-sdist
-      - . .venv-sdist/bin/activate
-      - pip install dist/plafosim-*.tar.gz
-      - plafosim
-  - name: install (wheel)
-    image: python:3.7-buster
-    commands:
-      - python3 -m venv .venv-wheel
-      - . .venv-wheel/bin/activate
-      - pip install --upgrade wheel
-      - pip install dist/plafosim-*-py3-none-any.whl
-      - plafosim
-
----
-kind: pipeline
-type: docker
 name: python3.8
 
 steps:

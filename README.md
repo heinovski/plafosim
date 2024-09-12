@@ -21,7 +21,7 @@ PlaFoSim has been published at [IEEE VNC 2021](https://www.tkn.tu-berlin.de/bib/
 
 ## Installation
 
-- Install Python (>=3.7,<=3.9)
+- Install Python (>=3.8,<=3.9)
 - Install PlaFoSim from [pypi](https://pypi.org/project/plafosim/):
 ```pip install plafosim```
 
