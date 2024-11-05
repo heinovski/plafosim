@@ -2,6 +2,8 @@
 kind: pipeline
 type: docker
 name: python3.8
+clone:
+  depth: 1
 
 steps:
   - name: test (tox) and build
@@ -31,6 +33,8 @@ steps:
 kind: pipeline
 type: docker
 name: python3.9
+clone:
+  depth: 1
 
 steps:
   - name: test (tox) and build
@@ -60,6 +64,8 @@ steps:
 kind: pipeline
 type: docker
 name: integration
+clone:
+  depth: 1
 
 steps:
   - name: cf models (tox)
@@ -98,6 +104,8 @@ trigger:
 kind: pipeline
 type: docker
 name: execution
+clone:
+  depth: 1
 
 steps:
   - name: build
@@ -158,6 +166,8 @@ trigger:
 kind: pipeline
 type: docker
 name: correctness
+clone:
+  depth: 1
 
 steps:
 - name: install (poetry)
@@ -235,6 +245,8 @@ trigger:
 kind: pipeline
 type: docker
 name: performance
+clone:
+  depth: 1
 
 steps:
 - name: build
