@@ -161,7 +161,7 @@ class SpeedPosition(FormationAlgorithm):
 
     Julian Heinovski and Falko Dressler,
     "Where to Decide? Centralized vs. Distributed Vehicle Assignment for Platoon Formation,"
-    IEEE Transactions on Intelligent Transportation Systems, 2024.
+    IEEE Transactions on Intelligent Transportation Systems, vol. 25 (11), pp. 17317–17334, November 2024.
     https://www.tkn.tu-berlin.de/bib/heinovski2024where/
 
     and
