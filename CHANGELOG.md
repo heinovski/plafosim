@@ -1,5 +1,22 @@
 # Changelog
 
+## [v0.17.4](https://github.com/heinovski/plafosim/releases/tag/v0.17.4) - 2025-07-09
+* BREAKING CHANGES
+  * Dropped support for obsolete Python 3.7
+* NEW FEATURES
+  * Added recent publications to docs
+  * Removed from version control
+  * Updated CI pipeline to clone only most recent commit
+  * Updated README
+* FIXES
+  * Added missing version of Plexe Python API to validation scripts
+* UPDATES
+  * Made ortools package optional
+  * Updated bibliography information
+  * Updated CI pipelines to Python 3.8
+  * Updated development note
+  * Updated lock file
+
 ## [v0.17.3](https://github.com/heinovski/plafosim/releases/tag/v0.17.3) - 2024-01-11
 * NEW FEATURES
   * Added documentation with readthedocs
