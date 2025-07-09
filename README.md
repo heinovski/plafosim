@@ -15,7 +15,7 @@ PlaFoSim has been published at [IEEE VNC 2021](https://www.tkn.tu-berlin.de/bib/
 
 > Julian Heinovski, Dominik S. Buse and Falko Dressler, "Scalable Simulation of Platoon Formation Maneuvers with PlaFoSim," Proceedings of 13th IEEE Vehicular Networking Conference (VNC 2021), Poster Session, Virtual Conference, November 2021, pp. 137–138.
 
-**NOTE**: This project is under active development.
+**NOTE**: This project is under active (internal) development.
 
 ---
 
