@@ -111,3 +111,5 @@ Further Reading
 - https://www.tkn.tu-berlin.de/bib/heinovski2021scalable/
 - https://www.tkn.tu-berlin.de/bib/heinovski2018platoon/
 - https://www.tkn.tu-berlin.de/bib/heinovski2024where/
+- https://www.tkn.tu-berlin.de/bib/heinovski2024platooning/
+- https://www.tkn.tu-berlin.de/bib/heinovski2025incentive/
