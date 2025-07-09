@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2023-2023 Arno Bock <arno.bock@hotmail.de>
-# Copyright (c) 2023-2024 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (c) 2023-2025 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #

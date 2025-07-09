@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (c) 2018 Michele Segata <segata@ccs-labs.org>
-# Copyright (c) 2020-2024 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (c) 2020-2025 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
