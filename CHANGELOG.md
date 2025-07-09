@@ -4,8 +4,6 @@
 * BREAKING CHANGES
   * Dropped support for obsolete Python 3.7
 * NEW FEATURES
-  * Added recent publications to docs
-  * Removed from version control
   * Updated CI pipeline to clone only most recent commit
   * Updated README
 * FIXES
@@ -15,6 +13,7 @@
   * Updated bibliography information
   * Updated CI pipelines to Python 3.8
   * Updated development note
+  * Updated further reading with recent publications
   * Updated lock file
 
 ## [v0.17.3](https://github.com/heinovski/plafosim/releases/tag/v0.17.3) - 2024-01-11
